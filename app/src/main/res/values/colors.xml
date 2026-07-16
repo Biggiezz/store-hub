@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="background">#FAF8F4</color>
+    <color name="dark_green">#14291F</color>
+    <color name="dark_green_pressed">#1A2821</color>
+
+    <color name="text_primary">#41413F</color>
+    <color name="text_secondary">#50504D</color>
+
+    <color name="input_border">#BDC4C0</color>
+    <color name="hint">#B5B7B4</color>
+    <color name="white">#FFFFFF</color>
+    <color name="register_input_border">#68768B</color>
+    <color name="button_disabled">#8B9690</color>
 </resources>
