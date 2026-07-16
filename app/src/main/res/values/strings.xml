@@ -1,3 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- Ứng dụng -->
     <string name="app_name">StoreHub</string>
+    <string name="store_hub">StoreHub</string>
+    <string name="back">Quay lại</string>
+
+    <!-- Đăng nhập -->
+    <string name="login">Đăng nhập</string>
+    <string name="login_description">Quản lý cửa hàng của bạn một cách tinh tế và\nhiệu quả.</string>
+
+    <string name="email">Email</string>
+    <string name="email_hint">example@storehub.vn</string>
+
+    <string name="password">Mật khẩu</string>
+    <string name="password_hint">••••••••</string>
+
+    <string name="forgot_password">Quên mật khẩu?</string>
+    <string name="no_account">Chưa có tài khoản?</string>
+    <string name="register_now">Đăng ký ngay</string>
+
+    <!-- Đăng ký -->
+    <string name="register">Đăng ký</string>
+    <string name="register_description">Tạo tài khoản để bắt đầu trải nghiệm</string>
+
+    <string name="full_name">Họ và tên</string>
+    <string name="full_name_hint">Nguyễn Văn A</string>
+
+    <string name="register_email_hint">email@example.com</string>
+
+    <string name="phone_number">Số điện thoại</string>
+    <string name="phone_hint">090 123 4567</string>
+
+    <string name="confirm_password">Xác nhận mật khẩu</string>
+
+    <string name="show_password">Hiển thị mật khẩu</string>
+    <string name="hide_password">Ẩn mật khẩu</string>
+
+    <string name="show_confirm_password">Hiển thị mật khẩu xác nhận</string>
+    <string name="hide_confirm_password">Ẩn mật khẩu xác nhận</string>
+
+    <string name="already_have_account">Đã có tài khoản?</string>
+    <string name="login_now">Đăng nhập ngay</string>
+
 </resources>
