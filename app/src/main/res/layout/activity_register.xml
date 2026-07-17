@@ -35,8 +35,8 @@
                 app:icon="@drawable/ic_back"
                 app:iconPadding="0dp"
                 app:iconTint="@color/dark_green"
-                app:insetTop="0dp"
-                app:insetBottom="0dp" />
+                android:insetTop="0dp"
+                android:insetBottom="0dp" />
 
             <TextView
                 android:layout_width="0dp"
@@ -245,8 +245,8 @@
             android:textSize="20sp"
             app:backgroundTint="@color/dark_green"
             app:cornerRadius="14dp"
-            app:insetTop="0dp"
-            app:insetBottom="0dp" />
+            android:insetTop="0dp"
+            android:insetBottom="0dp" />
 
         <!-- Đăng nhập -->
         <LinearLayout
