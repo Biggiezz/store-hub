@@ -14,8 +14,10 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.storehub.adapter.NewsAdapter;
 import com.example.storehub.adapter.ProductAdapter;
 import com.example.storehub.adapter.SlideShowAdapter;
+import com.example.storehub.model.News;
 import com.example.storehub.model.Product;
 import com.example.storehub.model.Response;
 import com.example.storehub.services.HttpResquest;
@@ -31,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView dotOne, dotTwo, dotThree;
     private RecyclerView rvProducts;
     private ProductAdapter productAdapter;
+    private RecyclerView rvNews;
+    private NewsAdapter newsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,8 +71,14 @@ public class MainActivity extends AppCompatActivity {
         productAdapter = new ProductAdapter(this);
         rvProducts.setAdapter(productAdapter);
 
-        // Load products from server
+        // Initialize RecyclerView for news
+        rvNews = findViewById(R.id.rvNews);
+        newsAdapter = new NewsAdapter(this);
+        rvNews.setAdapter(newsAdapter);
+
+        // Load products & news from server
         fetchProducts();
+        fetchNews();
     }
 
     private void fetchProducts() {
@@ -92,6 +102,31 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull Throwable t) {
                 Log.e("MainActivity", "Error fetching products", t);
+            }
+        });
+    }
+
+    private void fetchNews() {
+        HttpResquest httpResquest = new HttpResquest();
+        httpResquest.callAPI().getListNews().enqueue(new Callback<Response<ArrayList<News>>>() {
+            @Override
+            public void onResponse(Call<Response<ArrayList<News>>> call, retrofit2.Response<Response<ArrayList<News>>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Response<ArrayList<News>> apiResponse = response.body();
+                    if (apiResponse.getCode() == 200 && apiResponse.getData() != null) {
+                        ArrayList<News> newsList = apiResponse.getData();
+                        newsAdapter.updateData(newsList);
+                    } else {
+                        Log.e("MainActivity", "Server news response error: " + apiResponse.getMessage());
+                    }
+                } else {
+                    Log.e("MainActivity", "Failed to fetch news: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Response<ArrayList<News>>> call, @NonNull Throwable t) {
+                Log.e("MainActivity", "Error fetching news", t);
             }
         });
     }

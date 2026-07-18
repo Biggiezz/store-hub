@@ -212,6 +212,8 @@
                 </LinearLayout>
 
                 <!-- Danh sách sản phẩm từ server -->
+
+                <!-- Tin tức -->
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvProducts"
                     android:layout_width="match_parent"
@@ -224,7 +226,6 @@
                     app:spanCount="2"
                     tools:listitem="@layout/item_product" />
 
-                <!-- Tin tức -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

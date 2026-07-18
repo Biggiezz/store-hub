@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true">
+
+    <!-- Custom Header Bar -->
+    <RelativeLayout
+        android:id="@+id/headerBar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/background"
+        android:elevation="4dp"
+        android:paddingHorizontal="16dp">
+
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Quay lại"
+            android:padding="6dp"
+            android:src="@drawable/ic_back"
+            app:tint="@color/dark_green" />
+
+        <TextView
+            android:id="@+id/tvHeaderTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:fontFamily="serif"
+            android:text="Chi tiết tin tức"
+            android:textColor="@color/dark_green"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#C3C8C3" />
+
+    <!-- Scrollable News Content -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- Card View container for Image -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="0dp"
+                app:strokeColor="#EAE6DF"
+                app:strokeWidth="1dp">
+
+                <ImageView
+                    android:id="@+id/ivDetailNewsImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="Ảnh tin tức"
+                    android:scaleType="centerCrop"
+                    tools:src="@tools:sample/backgrounds/scenic" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- News Title -->
+            <TextView
+                android:id="@+id/tvDetailNewsTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:textColor="@color/dark_green"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:fontFamily="serif"
+                tools:text="Tiêu đề bài viết tin tức mẫu cực kỳ hấp dẫn tại StoreHub" />
+
+            <!-- News Metadata (Author & Time) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvDetailNewsAuthor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tác giả: Admin"
+                    android:textColor="@color/subtext_primary"
+                    android:textSize="13sp"
+                    android:textStyle="italic" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="12dp"
+                    android:layout_marginHorizontal="10dp"
+                    android:background="#C3C8C3" />
+
+                <TextView
+                    android:id="@+id/tvDetailNewsTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/subtext_primary"
+                    android:textSize="13sp"
+                    tools:text="Đăng lúc: 18/07/2026 00:00" />
+
+            </LinearLayout>
+
+            <!-- Separator Line -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginVertical="16dp"
+                android:background="#D8D2C4" />
+
+            <!-- Detailed Content -->
+            <TextView
+                android:id="@+id/tvDetailNewsContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lineSpacingMultiplier="1.25"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                tools:text="Đây là nội dung mô tả chi tiết bài viết tin tức. Nội dung này có thể rất dài và sẽ hỗ trợ cuộn màn hình một cách mượt mà nhờ việc đặt trong NestedScrollView." />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>
