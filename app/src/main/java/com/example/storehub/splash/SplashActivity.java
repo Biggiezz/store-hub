@@ -8,8 +8,10 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 
+import com.example.storehub.MainActivity;
 import com.example.storehub.R;
 import com.example.storehub.login.LoginActivity;
+import com.example.storehub.utils.SharedPreferencesManager;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -18,10 +20,18 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_splash);
-      new Handler().postDelayed(() -> {
-          Intent intent = new Intent(this, LoginActivity.class);
-          startActivity(intent);
-          finish();
-      }, 3000);
+        
+        SharedPreferencesManager prefManager = new SharedPreferencesManager(this);
+
+        new Handler().postDelayed(() -> {
+            Intent intent;
+            if (prefManager.isLoggedIn()) {
+                intent = new Intent(this, MainActivity.class);
+            } else {
+                intent = new Intent(this, LoginActivity.class);
+            }
+            startActivity(intent);
+            finish();
+        }, 3000);
     }
 }
