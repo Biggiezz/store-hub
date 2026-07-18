@@ -28,6 +28,9 @@
         <activity
             android:name=".NewsDetailActivity"
             android:exported="false" />
+        <activity
+            android:name=".NewsActivity"
+            android:exported="false" />
 
         <service
             android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"

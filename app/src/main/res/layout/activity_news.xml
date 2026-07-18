@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true">
+
+    <!-- Header -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/background"
+        android:paddingHorizontal="16dp">
+
+        <ImageView
+            android:id="@+id/btnBackNews"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Quay lại"
+            android:padding="6dp"
+            android:src="@drawable/ic_back"
+            app:tint="@color/dark_green" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:fontFamily="serif"
+            android:text="Tin tức công nghệ"
+            android:textColor="@color/dark_green"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#C3C8C3" />
+
+    <!-- Danh sách tin tức cuộn đầy đủ -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvAllNews"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="14dp"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_new" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#C3C8C3" />
+
+    <!-- Thanh điều hướng dưới (Đồng bộ với Trang chủ, nút Tin tức ở trạng thái Active) -->
+    <LinearLayout
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="78dp"
+        android:background="@color/background"
+        android:elevation="8dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingStart="4dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="4dp"
+        android:paddingBottom="8dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnHome"
+            style="@style/Widget.StoreHub.BottomNavButton"
+            android:text="Trang chủ"
+            android:textColor="#AAA49D"
+            app:icon="@drawable/ic_home"
+            app:iconTint="#AAA49D" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnProducts"
+            style="@style/Widget.StoreHub.BottomNavButton"
+            android:text="Sản phẩm"
+            android:textColor="#AAA49D"
+            app:icon="@drawable/ic_product"
+            app:iconTint="#AAA49D" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCart"
+            style="@style/Widget.StoreHub.BottomNavButton"
+            android:text="Giỏ hàng"
+            android:textColor="#AAA49D"
+            app:icon="@drawable/ic_cart"
+            app:iconTint="#AAA49D" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnNews"
+            style="@style/Widget.StoreHub.BottomNavButton"
+            android:text="Tin tức"
+            android:textColor="#756E67"
+            app:icon="@drawable/ic_new"
+            app:iconTint="#756E67" />
+
+    </LinearLayout>
+
+</LinearLayout>

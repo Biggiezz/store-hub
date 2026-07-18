@@ -1,5 +1,6 @@
 package com.example.storehub;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -79,6 +80,14 @@ public class MainActivity extends AppCompatActivity {
         // Load products & news from server
         fetchProducts();
         fetchNews();
+
+        // Setup bottom nav news button click to open NewsActivity
+        findViewById(R.id.btnNews).setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, NewsActivity.class);
+            startActivity(intent);
+            // Disable default transition to simulate tab changes
+            overridePendingTransition(0, 0);//tắt hiệu ứng chuyển màn hình giữa các màn hình
+        });
     }
 
     private void fetchProducts() {
