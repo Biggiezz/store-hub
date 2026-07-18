@@ -1,4 +1,4 @@
-package com.example.storehub.register;
+package com.example.storehub.auth;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.storehub.R;
-import com.example.storehub.login.LoginActivity;
 import com.example.storehub.model.RegisterRequest;
 import com.example.storehub.model.Response;
 import com.example.storehub.model.User;

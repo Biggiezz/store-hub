@@ -25,11 +25,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".register.RegisterActivity"
+            android:name=".auth.RegisterActivity"
             android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
-            android:name=".login.LoginActivity"
+            android:name=".auth.LoginActivity"
             android:exported="false" />
 
         <service

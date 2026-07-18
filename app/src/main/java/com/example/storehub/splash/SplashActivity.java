@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.storehub.MainActivity;
 import com.example.storehub.R;
-import com.example.storehub.login.LoginActivity;
+import com.example.storehub.auth.LoginActivity;
 import com.example.storehub.utils.SharedPreferencesManager;
 
 public class SplashActivity extends AppCompatActivity {

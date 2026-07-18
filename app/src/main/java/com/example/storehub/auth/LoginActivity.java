@@ -1,4 +1,4 @@
-package com.example.storehub.login;
+package com.example.storehub.auth;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,7 +14,6 @@ import com.example.storehub.MainActivity;
 import com.example.storehub.R;
 import com.example.storehub.model.LoginRequest;
 import com.example.storehub.model.LoginResponse;
-import com.example.storehub.register.RegisterActivity;
 import com.example.storehub.services.HttpResquest;
 import com.example.storehub.utils.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
