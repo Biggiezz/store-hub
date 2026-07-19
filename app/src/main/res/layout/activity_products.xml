@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="16dp"
+    android:background="#FAF8F5"
+    android:id="@+id/main_products"
+    android:orientation="vertical">
+
+    <!-- Toolbar -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@android:color/white"
+        app:menu="@menu/menu_product"
+        app:navigationIcon="@drawable/ic_back"
+        app:title="Danh sách sản phẩm"
+        app:titleCentered="true" />
+
+    <!-- Nội dung -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Search -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/inputSearch"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:startIconDrawable="@drawable/ic_search">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtSearch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Tìm kiếm sản phẩm..."
+                    android:inputType="text" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Sắp xếp -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_sort" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:text="Sắp xếp:"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnPrice"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="12dp"
+                        android:text="Giá thấp đến cao" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnAZ"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="8dp"
+                        android:text="A - Z" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnZA"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="8dp"
+                        android:text="Z - A" />
+
+                </LinearLayout>
+
+            </HorizontalScrollView>
+
+            <!-- Danh sách sản phẩm -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvProducts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="false"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:spanCount="2" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Thanh điều hướng dưới -->
+    <LinearLayout
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="78dp"
+        android:background="@color/background"
+        android:elevation="8dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingStart="4dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="4dp"
+        android:paddingBottom="8dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnHome"
+            style="@style/Widget.StoreHub.BottomNavButton"
+            android:text="Trang chủ"
+            android:textColor="#756E67"
+            app:icon="@drawable/ic_home"
+            app:iconTint="#756E67" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnProducts"
+            style="@style/Widget.StoreHub.BottomNavButton"
+            android:text="Sản phẩm"
+            android:textColor="#AAA49D"
+            app:icon="@drawable/ic_product"
+            app:iconTint="#AAA49D" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCart"
+            style="@style/Widget.StoreHub.BottomNavButton"
+            android:text="Giỏ hàng"
+            android:textColor="#AAA49D"
+            app:icon="@drawable/ic_cart"
+            app:iconTint="#AAA49D" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnNews"
+            style="@style/Widget.StoreHub.BottomNavButton"
+            android:text="Tin tức"
+            android:textColor="#AAA49D"
+            app:icon="@drawable/ic_new"
+            app:iconTint="#AAA49D" />
+
+    </LinearLayout>
+
+</LinearLayout>

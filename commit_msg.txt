@@ -1,0 +1,9 @@
+Triển khai màn hình danh sách sản phẩm và tối ưu hóa hiệu năng ứng dụng
+
+- Thêm giao diện và logic cho `ProductsActivity` hỗ trợ tìm kiếm, lọc và phân trang (Load More).
+- Cải thiện trải nghiệm đăng nhập: Thêm `ProgressDialog` và cơ chế tải trước (preload) dữ liệu sản phẩm/tin tức từ `LoginActivity`.
+- Cập nhật `MainActivity`:
+    - Tích hợp bộ lọc sản phẩm theo danh mục (Điện thoại, Laptop, Tai nghe) với hiệu ứng chọn nút động.
+    - Hỗ trợ sử dụng dữ liệu preloaded để tăng tốc độ hiển thị trang chủ.
+- Mở rộng model `Response` và `Pagination` để hỗ trợ xử lý dữ liệu từ API tốt hơn.
+- Thêm các tài nguyên XML mới: layout `activity_products`, menu `menu_product` và các icon hệ thống (search, sort, receipt).
