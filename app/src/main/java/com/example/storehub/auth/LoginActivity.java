@@ -10,14 +10,20 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import com.example.storehub.MainActivity;
 import com.example.storehub.R;
 import com.example.storehub.model.LoginRequest;
 import com.example.storehub.model.LoginResponse;
+import com.example.storehub.model.Product;
+import com.example.storehub.model.News;
+import com.example.storehub.model.Response;
 import com.example.storehub.services.HttpResquest;
 import com.example.storehub.utils.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -28,6 +34,11 @@ public class LoginActivity extends AppCompatActivity {
     private MaterialButton btnLogin;
     private TextView tvRegisterNow;
     private SharedPreferencesManager prefManager;
+
+    private ArrayList<Product> preloadedProducts = null;
+    private ArrayList<News> preloadedNews = null;
+    private boolean isProductsCallDone = false;
+    private boolean isNewsCallDone = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +82,12 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
+        // Hiển thị loading dialog
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Đang đăng nhập...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
         // Khởi tạo Login Request
         LoginRequest request = new LoginRequest(email, password);
 
@@ -82,28 +99,100 @@ public class LoginActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     LoginResponse apiResponse = response.body();
                     if (apiResponse.getCode() == 200) {
-                        Toast.makeText(LoginActivity.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
-
                         // Lưu Token & thông tin User
                         prefManager.saveToken(apiResponse.getToken());
                         prefManager.saveUser(apiResponse.getData());
 
-                        // Chuyển sang MainActivity
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        finish();
+                        // Cập nhật thông báo tải dữ liệu
+                        progressDialog.setMessage("Đang tải dữ liệu sản phẩm...");
+                        
+                        // Tải trước dữ liệu
+                        preloadData(progressDialog);
                     } else {
+                        progressDialog.dismiss();
                         Toast.makeText(LoginActivity.this, apiResponse.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
+                    progressDialog.dismiss();
                     Toast.makeText(LoginActivity.this, "Đăng nhập thất bại. Sai tài khoản hoặc mật khẩu.", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable t) {
+                progressDialog.dismiss();
                 Toast.makeText(LoginActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void preloadData(ProgressDialog progressDialog) {
+        HttpResquest httpResquest = new HttpResquest();
+        
+        isProductsCallDone = false;
+        isNewsCallDone = false;
+        preloadedProducts = null;
+        preloadedNews = null;
+
+        // Tải danh sách sản phẩm (50 sản phẩm để phục vụ lọc danh mục)
+        httpResquest.callAPI().getListProduct(1, 50).enqueue(new Callback<Response<ArrayList<Product>>>() {
+            @Override
+            public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
+                isProductsCallDone = true;
+                if (response.isSuccessful() && response.body() != null) {
+                    Response<ArrayList<Product>> apiResponse = response.body();
+                    if (apiResponse.getCode() == 200) {
+                        preloadedProducts = apiResponse.getData();
+                    }
+                }
+                checkPreloadComplete(progressDialog);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull Throwable t) {
+                isProductsCallDone = true;
+                checkPreloadComplete(progressDialog);
+            }
+        });
+
+        // Tải danh sách tin tức
+        httpResquest.callAPI().getListNews().enqueue(new Callback<Response<ArrayList<News>>>() {
+            @Override
+            public void onResponse(@NonNull Call<Response<ArrayList<News>>> call, @NonNull retrofit2.Response<Response<ArrayList<News>>> response) {
+                isNewsCallDone = true;
+                if (response.isSuccessful() && response.body() != null) {
+                    Response<ArrayList<News>> apiResponse = response.body();
+                    if (apiResponse.getCode() == 200) {
+                        preloadedNews = apiResponse.getData();
+                    }
+                }
+                checkPreloadComplete(progressDialog);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Response<ArrayList<News>>> call, @NonNull Throwable t) {
+                isNewsCallDone = true;
+                checkPreloadComplete(progressDialog);
+            }
+        });
+    }
+
+    private void checkPreloadComplete(ProgressDialog progressDialog) {
+        if (isProductsCallDone && isNewsCallDone) {
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+
+            // Gán dữ liệu preload vào cache static của MainActivity
+            MainActivity.preloadedProducts = preloadedProducts;
+            MainActivity.preloadedNews = preloadedNews;
+
+            Toast.makeText(LoginActivity.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+
+            // Chuyển sang MainActivity
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 }
