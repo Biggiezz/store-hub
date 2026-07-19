@@ -15,6 +15,7 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface ApiServices {
     @GET("api/productsRouter/get-all-product")
@@ -29,9 +30,9 @@ public interface ApiServices {
     @POST("users/login")
     Call<LoginResponse> login(@Body LoginRequest request);
 
-    // Lấy danh sách toàn bộ tin tức đã xuất bản
+    // Lấy danh sách toàn bộ tin tức đã xuất bản hỗ trợ phân trang
     @GET("api/newsRouter/get-all-news")
-    Call<Response<ArrayList<News>>> getListNews();
+    Call<Response<ArrayList<News>>> getListNews(@Query("page") int page, @Query("limit") int limit);
 
     // Lấy chi tiết một bài viết tin tức dựa vào ID
     @GET("api/newsRouter/get-news-by-id/{id}")

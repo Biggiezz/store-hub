@@ -1,5 +1,6 @@
 package com.example.storehub;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -45,6 +46,10 @@ public class NewsDetailActivity extends AppCompatActivity {
 
         // Bắt sự kiện nút Quay lại (Back)
         btnBack.setOnClickListener(v -> finish());
+
+        // Thiết lập sự kiện click cho Bottom Navigation và các nút tương tác
+        setupBottomNavigation();
+        setupInteractionButtons();
 
         // Lấy dữ liệu đối tượng News được truyền từ Adapter
         News news = (News) getIntent().getSerializableExtra("news_item");
@@ -107,5 +112,51 @@ public class NewsDetailActivity extends AppCompatActivity {
                 return isoDateString;
             }
         }
+    }
+
+    /**
+     * Cấu hình điều hướng cho thanh Bottom Navigation ở góc dưới màn hình chi tiết
+     */
+    private void setupBottomNavigation() {
+        // Nút "Trang chủ" -> quay lại MainActivity và xóa các activity khác khỏi stack
+        findViewById(R.id.btnHome).setOnClickListener(v -> {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            overridePendingTransition(0, 0);
+            finish();
+        });
+
+        // Các nút khác (Sản phẩm, Giỏ hàng) -> báo tính năng đang phát triển
+        findViewById(R.id.btnProducts).setOnClickListener(v -> {
+            Toast.makeText(this, "Chức năng Sản phẩm đang được phát triển!", Toast.LENGTH_SHORT).show();
+        });
+
+        findViewById(R.id.btnCart).setOnClickListener(v -> {
+            Toast.makeText(this, "Chức năng Giỏ hàng đang được phát triển!", Toast.LENGTH_SHORT).show();
+        });
+
+        // Nút "Tin tức" -> quay lại danh sách tin tức
+        findViewById(R.id.btnNews).setOnClickListener(v -> {
+            finish();
+            overridePendingTransition(0, 0);
+        });
+    }
+
+    /**
+     * Cấu hình sự kiện cho cụm nút tương tác Chia sẻ / Lưu / Thích dưới cùng
+     */
+    private void setupInteractionButtons() {
+        findViewById(R.id.btnShare).setOnClickListener(v -> {
+            Toast.makeText(this, "Đã sao chép liên kết bài viết!", Toast.LENGTH_SHORT).show();
+        });
+
+        findViewById(R.id.btnBookmark).setOnClickListener(v -> {
+            Toast.makeText(this, "Đã lưu bài viết vào mục đọc sau!", Toast.LENGTH_SHORT).show();
+        });
+
+        findViewById(R.id.btnLike).setOnClickListener(v -> {
+            Toast.makeText(this, "Đã thêm bài viết vào danh sách yêu thích!", Toast.LENGTH_SHORT).show();
+        });
     }
 }

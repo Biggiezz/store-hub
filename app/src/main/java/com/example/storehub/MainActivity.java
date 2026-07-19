@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private ProductAdapter productAdapter;
     private RecyclerView rvNews;
     private NewsAdapter newsAdapter;
+    private ArrayList<News> newsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
         // Initialize RecyclerView for news
         rvNews = findViewById(R.id.rvNews);
         newsAdapter = new NewsAdapter(this);
+        newsAdapter.setMultiTypeEnabled(false); // Ở Trang chủ chỉ dùng các dòng tin tức nằm ngang thông thường (item_news_standard)
         rvNews.setAdapter(newsAdapter);
 
         // Load products & news from server
@@ -84,9 +86,12 @@ public class MainActivity extends AppCompatActivity {
         // Setup bottom nav news button click to open NewsActivity
         findViewById(R.id.btnNews).setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, NewsActivity.class);
+            if (newsList != null) {
+                intent.putExtra("news_list", newsList);
+            }
             startActivity(intent);
             // Disable default transition to simulate tab changes
-            overridePendingTransition(0, 0);//tắt hiệu ứng chuyển màn hình giữa các màn hình
+            overridePendingTransition(0, 0); //tắt hiệu ứng chuyển màn hình giữa các màn hình
         });
     }
 
@@ -117,13 +122,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void fetchNews() {
         HttpResquest httpResquest = new HttpResquest();
-        httpResquest.callAPI().getListNews().enqueue(new Callback<Response<ArrayList<News>>>() {
+        httpResquest.callAPI().getListNews(1, 5).enqueue(new Callback<Response<ArrayList<News>>>() {
             @Override
             public void onResponse(Call<Response<ArrayList<News>>> call, retrofit2.Response<Response<ArrayList<News>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Response<ArrayList<News>> apiResponse = response.body();
                     if (apiResponse.getCode() == 200 && apiResponse.getData() != null) {
-                        ArrayList<News> newsList = apiResponse.getData();
+                        newsList = apiResponse.getData();
                         newsAdapter.updateData(newsList);
                     } else {
                         Log.e("MainActivity", "Server news response error: " + apiResponse.getMessage());
