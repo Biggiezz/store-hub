@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String TAB_HOME = "home";
     public static final String TAB_PRODUCTS = "products";
     public static final String TAB_NEWS = "news";
+    public static final String TAB_ORDERS = "orders";
     private static final String STATE_TAB = "selected_tab";
     public static ArrayList<Product> preloadedProducts = null;
     public static ArrayList<News> preloadedNews = null;
@@ -117,8 +118,7 @@ public class MainActivity extends AppCompatActivity {
 
         btnHome.setOnClickListener(v -> showHome());
         btnProducts.setOnClickListener(v -> showProducts());
-        btnCart.setOnClickListener(v ->
-                Toast.makeText(this, "Chức năng Giỏ hàng đang được phát triển!", Toast.LENGTH_SHORT).show());
+        btnCart.setOnClickListener(v -> showOrders());
         btnNews.setOnClickListener(v -> showNews());
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
@@ -182,7 +182,18 @@ public class MainActivity extends AppCompatActivity {
     private void openTab(String tab) {
         if (TAB_PRODUCTS.equals(tab)) showProducts();
         else if (TAB_NEWS.equals(tab)) showNews();
+        else if (TAB_ORDERS.equals(tab)) showOrders();
         else if (TAB_HOME.equals(tab)) showHome();
+    }
+
+    private void showOrders() {
+        selectedTab = TAB_ORDERS;
+        findViewById(R.id.mainScrollView).setVisibility(View.GONE);
+        findViewById(R.id.fragmentContainer).setVisibility(View.VISIBLE);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContainer, new OrdersFragment(), "orders")
+                .commit();
+        updateBottomNavigation(btnCart);
     }
 
     @Override
