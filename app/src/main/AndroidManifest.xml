@@ -15,6 +15,9 @@
         android:theme="@style/Theme.StoreHub"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity android:name=".ShippingOrderDetailActivity" android:exported="false" />
+        <activity android:name=".CancelledOrderDetailActivity" android:exported="false" />
+        <activity android:name=".CompletedOrderDetailActivity" android:exported="false" />
         <activity
             android:name=".ProductDetailActivity"
             android:exported="false" />

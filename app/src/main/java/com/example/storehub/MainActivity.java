@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
@@ -39,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_OPEN_TAB = "open_tab";
     public static final String TAB_HOME = "home";
     public static final String TAB_PRODUCTS = "products";
+    public static final String TAB_CART = "cart";
     public static final String TAB_NEWS = "news";
     private static final String STATE_TAB = "selected_tab";
     public static ArrayList<Product> preloadedProducts = null;
@@ -117,8 +117,7 @@ public class MainActivity extends AppCompatActivity {
 
         btnHome.setOnClickListener(v -> showHome());
         btnProducts.setOnClickListener(v -> showProducts());
-        btnCart.setOnClickListener(v ->
-                Toast.makeText(this, "Chức năng Giỏ hàng đang được phát triển!", Toast.LENGTH_SHORT).show());
+        btnCart.setOnClickListener(v -> showCart());
         btnNews.setOnClickListener(v -> showNews());
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
@@ -181,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void openTab(String tab) {
         if (TAB_PRODUCTS.equals(tab)) showProducts();
+        else if (TAB_CART.equals(tab)) showCart();
         else if (TAB_NEWS.equals(tab)) showNews();
         else if (TAB_HOME.equals(tab)) showHome();
     }
@@ -220,6 +220,18 @@ public class MainActivity extends AppCompatActivity {
                     .commit();
         }
         updateBottomNavigation(btnNews);
+    }
+
+    private void showCart() {
+        selectedTab = TAB_CART;
+        findViewById(R.id.mainScrollView).setVisibility(View.GONE);
+        findViewById(R.id.fragmentContainer).setVisibility(View.VISIBLE);
+        if (getSupportFragmentManager().findFragmentByTag("cart") == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentContainer, new CartFragment(), "cart")
+                    .commit();
+        }
+        updateBottomNavigation(btnCart);
     }
 
     private void updateBottomNavigation(MaterialButton activeButton) {

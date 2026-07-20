@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/orderDetailRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical"
+>
+    <include layout="@layout/include_order_detail_header" />
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:overScrollMode="never"
+    >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="32dp"
+        >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="168dp"
+                android:background="@drawable/bg_cancelled_status_figma"
+                android:orientation="vertical"
+                android:padding="25dp"
+            >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                >
+                    <TextView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:background="@drawable/bg_order_status_cancelled"
+                        android:gravity="center"
+                        android:text="×"
+                        android:textColor="#BA1A1A"
+                        android:textSize="23sp"
+                    />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="8dp"
+                        android:text="Đã hủy"
+                        android:textColor="#1A2821"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                    />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="28dp"
+                        android:background="@drawable/bg_order_filter_selected"
+                        android:gravity="center"
+                        android:paddingHorizontal="14dp"
+                        android:text="Đã hoàn tiền"
+                        android:textColor="#675C53"
+                        android:textSize="12sp"
+                    />
+                </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="MÃ ĐƠN: #SH-863110"
+                    android:textColor="#434844"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="24dp"
+                    android:background="#E5E7E4"
+                />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:drawableStart="@drawable/ic_detail_clock"
+                    android:drawablePadding="8dp"
+                    android:text="Lý do hủy: Thay đổi ý định"
+                    android:textColor="#434844"
+                    android:textSize="14sp"
+                />
+            </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="16dp"
+                android:text="│  Sản phẩm đã chọn"
+                android:textColor="#1A2821"
+                android:textSize="20sp"
+                android:textStyle="bold"
+            />
+            <include layout="@layout/include_detail_product_candle" />
+            <include
+                android:layout_marginTop="24dp"
+                layout="@layout/include_detail_summary_cancelled"
+            />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="40dp"
+                android:background="@drawable/bg_detail_primary_button"
+                android:gravity="center"
+                android:fontFamily="serif"
+                android:text="Mua lại sản phẩm"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+            />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_detail_secondary_button"
+                android:gravity="center"
+                android:text="Liên hệ hỗ trợ"
+                android:textColor="#434844"
+                android:textSize="16sp"
+                android:textStyle="bold"
+            />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+    <include layout="@layout/include_order_detail_bottom_nav" />
+</LinearLayout>
