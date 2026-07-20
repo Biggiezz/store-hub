@@ -16,6 +16,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".ProductDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".splash.SplashActivity"
             android:exported="true">
             <intent-filter>
@@ -26,16 +29,13 @@
         </activity>
         <activity
             android:name=".auth.RegisterActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".auth.LoginActivity"
             android:exported="false" />
         <activity
             android:name=".NewsDetailActivity"
-            android:exported="false" />
-        <activity
-            android:name=".NewsActivity"
             android:exported="false" />
 
         <service
@@ -49,9 +49,8 @@
 
         <activity
             android:name=".MainActivity"
-            android:exported="false">
+            android:exported="false"></activity>
 
-        </activity>
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

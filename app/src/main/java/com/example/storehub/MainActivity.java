@@ -1,15 +1,20 @@
 package com.example.storehub;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,6 +36,11 @@ import retrofit2.Callback;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String EXTRA_OPEN_TAB = "open_tab";
+    public static final String TAB_HOME = "home";
+    public static final String TAB_PRODUCTS = "products";
+    public static final String TAB_NEWS = "news";
+    private static final String STATE_TAB = "selected_tab";
     public static ArrayList<Product> preloadedProducts = null;
     public static ArrayList<News> preloadedNews = null;
 
@@ -41,13 +51,17 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView rvNews;
     private NewsAdapter newsAdapter;
     private MaterialButton btnViewAllProducts;
+    private MaterialButton btnHome;
     private MaterialButton btnProducts;
+    private MaterialButton btnCart;
+    private MaterialButton btnNews;
 
     private MaterialButton btnPhone;
     private MaterialButton btnComputer;
     private MaterialButton btnHeadphone;
     private ArrayList<Product> allProductsList = new ArrayList<>();
     private ArrayList<News> newsList;
+    private String selectedTab = TAB_HOME;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,21 +106,32 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialize navigation buttons
         btnViewAllProducts = findViewById(R.id.btnViewAllProducts);
+        btnHome = findViewById(R.id.btnHome);
         btnProducts = findViewById(R.id.btnProducts);
+        btnCart = findViewById(R.id.btnCart);
+        btnNews = findViewById(R.id.btnNews);
 
         if (btnViewAllProducts != null) {
-            btnViewAllProducts.setOnClickListener(v -> {
-                Intent intent = new Intent(MainActivity.this, ProductsActivity.class);
-                startActivity(intent);
-            });
+            btnViewAllProducts.setOnClickListener(v -> showProducts());
         }
 
-        if (btnProducts != null) {
-            btnProducts.setOnClickListener(v -> {
-                Intent intent = new Intent(MainActivity.this, ProductsActivity.class);
-                startActivity(intent);
-            });
-        }
+        btnHome.setOnClickListener(v -> showHome());
+        btnProducts.setOnClickListener(v -> showProducts());
+        btnCart.setOnClickListener(v ->
+                Toast.makeText(this, "Chức năng Giỏ hàng đang được phát triển!", Toast.LENGTH_SHORT).show());
+        btnNews.setOnClickListener(v -> showNews());
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (findViewById(R.id.fragmentContainer).getVisibility() == View.VISIBLE) {
+                    showHome();
+                } else {
+                    setEnabled(false);
+                    getOnBackPressedDispatcher().onBackPressed();
+                }
+            }
+        });
 
         // Initialize category buttons
         btnPhone = findViewById(R.id.btnPhone);
@@ -137,6 +162,77 @@ public class MainActivity extends AppCompatActivity {
             preloadedNews = null;
         } else {
             fetchNews();
+        }
+
+        if (savedInstanceState != null) openTab(savedInstanceState.getString(STATE_TAB, TAB_HOME));
+        else handleRequestedTab(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(@NonNull Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleRequestedTab(intent);
+    }
+
+    private void handleRequestedTab(Intent intent) {
+        openTab(intent.getStringExtra(EXTRA_OPEN_TAB));
+    }
+
+    private void openTab(String tab) {
+        if (TAB_PRODUCTS.equals(tab)) showProducts();
+        else if (TAB_NEWS.equals(tab)) showNews();
+        else if (TAB_HOME.equals(tab)) showHome();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString(STATE_TAB, selectedTab);
+        super.onSaveInstanceState(outState);
+    }
+
+    public void showHome() {
+        selectedTab = TAB_HOME;
+        findViewById(R.id.mainScrollView).setVisibility(View.VISIBLE);
+        findViewById(R.id.fragmentContainer).setVisibility(View.GONE);
+        updateBottomNavigation(btnHome);
+    }
+
+    private void showProducts() {
+        selectedTab = TAB_PRODUCTS;
+        findViewById(R.id.mainScrollView).setVisibility(View.GONE);
+        findViewById(R.id.fragmentContainer).setVisibility(View.VISIBLE);
+        if (getSupportFragmentManager().findFragmentByTag("products") == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentContainer, new ProductsFragment(), "products")
+                    .commit();
+        }
+        updateBottomNavigation(btnProducts);
+    }
+
+    private void showNews() {
+        selectedTab = TAB_NEWS;
+        findViewById(R.id.mainScrollView).setVisibility(View.GONE);
+        findViewById(R.id.fragmentContainer).setVisibility(View.VISIBLE);
+        if (getSupportFragmentManager().findFragmentByTag("news") == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentContainer, new NewsFragment(), "news")
+                    .commit();
+        }
+        updateBottomNavigation(btnNews);
+    }
+
+    private void updateBottomNavigation(MaterialButton activeButton) {
+        int inactiveColor = ContextCompat.getColor(this, android.R.color.transparent);
+        int activeColor = ContextCompat.getColor(this, R.color.bottom_nav_active);
+        int inactiveContentColor = Color.parseColor("#AAA49D");
+        int activeContentColor = Color.parseColor("#756E67");
+
+        for (MaterialButton button : new MaterialButton[]{btnHome, btnProducts, btnCart, btnNews}) {
+            boolean isActive = button == activeButton;
+            button.setBackgroundTintList(ColorStateList.valueOf(isActive ? activeColor : inactiveColor));
+            button.setTextColor(isActive ? activeContentColor : inactiveContentColor);
+            button.setIconTint(ColorStateList.valueOf(isActive ? activeContentColor : inactiveContentColor));
         }
     }
 

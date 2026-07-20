@@ -1,12 +1,15 @@
 package com.example.storehub.services;
 
-import com.example.storehub.model.News;
-import com.example.storehub.model.Product;
-import com.example.storehub.model.Response;
-import com.example.storehub.model.User;
+import com.example.storehub.model.AddToCartRequest;
+import com.example.storehub.model.ApiMessageResponse;
 import com.example.storehub.model.LoginRequest;
 import com.example.storehub.model.LoginResponse;
+import com.example.storehub.model.News;
+import com.example.storehub.model.Product;
+import com.example.storehub.model.ProductDetailResponse;
 import com.example.storehub.model.RegisterRequest;
+import com.example.storehub.model.Response;
+import com.example.storehub.model.User;
 
 import java.util.ArrayList;
 
@@ -20,19 +23,36 @@ import retrofit2.http.Query;
 public interface ApiServices {
     @GET("api/productsRouter/get-all-product")
     Call<Response<ArrayList<Product>>> getListProduct(
-        @Query("page") int page,
-        @Query("limit") int limit
+            @Query("page") int page,
+            @Query("limit") int limit
+    );
+
+    @GET("api/productsRouter/search-product")
+    Call<Response<ArrayList<Product>>> searchProduct(
+            @Query("page") int page,
+            @Query("limit") int limit,
+            @Query("keyword") String keyword
     );
 
     @GET("api/productsRouter/get-latest-product")
     Call<Response<ArrayList<Product>>> getLatestProduct();
 
+    @GET("api/productsRouter/get-product-by-id/{id}")
+    Call<Response<ProductDetailResponse>> getProductDetail(@Path("id") String id);
+
     @POST("api/productsRouter/add-product")
     Call<Response<Product>> addProduct(@Body Product product);
 
+    @POST("api/productsRouter/add-to-cart")
+    Call<ApiMessageResponse> addToCart(@Body AddToCartRequest request);
+
+    @POST("api/productsRouter/add-review")
+    Call<Response<ProductDetailResponse>> addReview(@Body com.example.storehub.model.AddReviewRequest request);
+
     // Lấy danh sách toàn bộ tin tức đã xuất bản
     @GET("api/newsRouter/get-all-news")
-    Call<Response<ArrayList<News>>> getListNews();
+    Call<Response<ArrayList<News>>> getListNews(@Query("page") int page,
+                                                @Query("limit") int limit);
 
     // Lấy chi tiết một bài viết tin tức dựa vào ID
     @GET("api/newsRouter/get-news-by-id/{id}")

@@ -1,5 +1,6 @@
 package com.example.storehub.auth;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
@@ -10,13 +11,12 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.ProgressDialog;
 import com.example.storehub.MainActivity;
 import com.example.storehub.R;
 import com.example.storehub.model.LoginRequest;
 import com.example.storehub.model.LoginResponse;
-import com.example.storehub.model.Product;
 import com.example.storehub.model.News;
+import com.example.storehub.model.Product;
 import com.example.storehub.model.Response;
 import com.example.storehub.services.HttpResquest;
 import com.example.storehub.utils.SharedPreferencesManager;
@@ -105,7 +105,7 @@ public class LoginActivity extends AppCompatActivity {
 
                         // Cập nhật thông báo tải dữ liệu
                         progressDialog.setMessage("Đang tải dữ liệu sản phẩm...");
-                        
+
                         // Tải trước dữ liệu
                         preloadData(progressDialog);
                     } else {
@@ -128,7 +128,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void preloadData(ProgressDialog progressDialog) {
         HttpResquest httpResquest = new HttpResquest();
-        
+
         isProductsCallDone = false;
         isNewsCallDone = false;
         preloadedProducts = null;
@@ -156,7 +156,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         // Tải danh sách tin tức
-        httpResquest.callAPI().getListNews().enqueue(new Callback<Response<ArrayList<News>>>() {
+        httpResquest.callAPI().getListNews(1, 5).enqueue(new Callback<Response<ArrayList<News>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<News>>> call, @NonNull retrofit2.Response<Response<ArrayList<News>>> response) {
                 isNewsCallDone = true;

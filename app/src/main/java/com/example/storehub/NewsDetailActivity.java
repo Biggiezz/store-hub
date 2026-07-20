@@ -119,28 +119,24 @@ public class NewsDetailActivity extends AppCompatActivity {
      */
     private void setupBottomNavigation() {
         // Nút "Trang chủ" -> quay lại MainActivity và xóa các activity khác khỏi stack
-        findViewById(R.id.btnHome).setOnClickListener(v -> {
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            overridePendingTransition(0, 0);
-            finish();
-        });
+        findViewById(R.id.btnHome).setOnClickListener(v -> openMainTab(MainActivity.TAB_HOME));
 
-        // Các nút khác (Sản phẩm, Giỏ hàng) -> báo tính năng đang phát triển
-        findViewById(R.id.btnProducts).setOnClickListener(v -> {
-            Toast.makeText(this, "Chức năng Sản phẩm đang được phát triển!", Toast.LENGTH_SHORT).show();
-        });
+        findViewById(R.id.btnProducts).setOnClickListener(v -> openMainTab(MainActivity.TAB_PRODUCTS));
 
         findViewById(R.id.btnCart).setOnClickListener(v -> {
             Toast.makeText(this, "Chức năng Giỏ hàng đang được phát triển!", Toast.LENGTH_SHORT).show();
         });
 
-        // Nút "Tin tức" -> quay lại danh sách tin tức
-        findViewById(R.id.btnNews).setOnClickListener(v -> {
-            finish();
-            overridePendingTransition(0, 0);
-        });
+        findViewById(R.id.btnNews).setOnClickListener(v -> openMainTab(MainActivity.TAB_NEWS));
+    }
+
+    private void openMainTab(String tab) {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra(MainActivity.EXTRA_OPEN_TAB, tab);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
+        finish();
     }
 
     /**

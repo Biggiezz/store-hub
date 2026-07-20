@@ -252,6 +252,13 @@
 
     </androidx.core.widget.NestedScrollView>
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone" />
+
     <!-- Thanh điều hướng dưới -->
     <LinearLayout
         android:id="@+id/bottomNavigation"
@@ -271,6 +278,7 @@
             style="@style/Widget.StoreHub.BottomNavButton"
             android:text="Trang chủ"
             android:textColor="#756E67"
+            app:backgroundTint="@color/bottom_nav_active"
             app:icon="@drawable/ic_home"
             app:iconTint="#756E67" />
 

@@ -256,6 +256,7 @@
             style="@style/Widget.StoreHub.BottomNavButton"
             android:text="Tin tức"
             android:textColor="#756E67"
+            app:backgroundTint="@color/bottom_nav_active"
             app:icon="@drawable/ic_new"
             app:iconTint="#756E67" />
 

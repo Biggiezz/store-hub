@@ -1,6 +1,7 @@
 package com.example.storehub.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.storehub.ProductDetailActivity;
 import com.example.storehub.R;
 import com.example.storehub.model.Product;
 
@@ -37,7 +39,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         return new ViewHolder(view);
     }
 
-
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Product product = listProduct.get(position);
@@ -55,6 +56,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
                 .placeholder(R.drawable.ic_product)
                 .error(R.drawable.ic_product)
                 .into(holder.imgProduct);
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ProductDetailActivity.class);
+            intent.putExtra(ProductDetailActivity.EXTRA_PRODUCT_ID, product.get_id());
+            context.startActivity(intent);
+        });
     }
 
     @Override
