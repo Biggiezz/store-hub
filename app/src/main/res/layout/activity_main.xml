@@ -36,7 +36,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:fontFamily="serif"
+                    android:fontFamily="@font/libre_caslon_text"
                     android:text="StoreHub"
                     android:textColor="@color/dark_green"
                     android:textSize="38sp"
@@ -190,7 +190,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:fontFamily="serif"
+                        android:fontFamily="@font/libre_caslon_text"
                         android:text="Sản phẩm nổi bật"
                         android:textColor="@color/dark_green"
                         android:textSize="24sp"
@@ -212,6 +212,8 @@
                 </LinearLayout>
 
                 <!-- Danh sách sản phẩm từ server -->
+
+                <!-- Tin tức -->
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvProducts"
                     android:layout_width="match_parent"
@@ -224,12 +226,11 @@
                     app:spanCount="2"
                     tools:listitem="@layout/item_product" />
 
-                <!-- Tin tức -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="28dp"
-                    android:fontFamily="serif"
+                    android:fontFamily="@font/libre_caslon_text"
                     android:text="Tin tức"
                     android:textColor="@color/dark_green"
                     android:textSize="28sp"
@@ -251,6 +252,13 @@
 
     </androidx.core.widget.NestedScrollView>
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone" />
+
     <!-- Thanh điều hướng dưới -->
     <LinearLayout
         android:id="@+id/bottomNavigation"
@@ -270,6 +278,7 @@
             style="@style/Widget.StoreHub.BottomNavButton"
             android:text="Trang chủ"
             android:textColor="#756E67"
+            app:backgroundTint="@color/bottom_nav_active"
             app:icon="@drawable/ic_home"
             app:iconTint="#756E67" />
 

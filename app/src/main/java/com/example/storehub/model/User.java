@@ -13,7 +13,10 @@ public class User {
     private String address;
     private String changePasswordDate;
 
-    public User(String id, String name, String email, String phone, String role, String image, String address, String changePasswordDate) {
+    public User() {
+    }
+
+    public User(String id, String name, String email, String phone, String role, String image, String address) {
         this.id = id;
         this.name = name;
         this.email = email;
