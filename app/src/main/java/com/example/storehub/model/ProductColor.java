@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class ProductColor {
     @SerializedName("id")
-    public Long id;
+    public Object id;
 
     @SerializedName("_id")
     public String mongoId;
@@ -21,18 +21,20 @@ public class ProductColor {
     public ProductColor() {
     }
 
-    public ProductColor(Long id, String name, String hex, boolean isDefault) {
+    public ProductColor(Object id, String name, String hex, boolean isDefault) {
         this.id = id;
         this.name = name;
         this.hex = hex;
         this.isDefault = isDefault;
     }
 
-    public Long getId() {
-        return id;
+    public String getId() {
+        if (id != null) return String.valueOf(id);
+        if (mongoId != null) return mongoId;
+        return "";
     }
 
-    public void setId(Long id) {
+    public void setId(Object id) {
         this.id = id;
     }
 

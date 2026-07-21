@@ -39,31 +39,16 @@ import retrofit2.Callback;
 public class ProductDetailActivity extends AppCompatActivity {
 
     public static final String EXTRA_PRODUCT_ID = "product_id";
-
     private ImageView ivProduct;
     private ImageButton btnBack;
-
-    private TextView tvCategory;
-    private TextView tvProductName;
-    private TextView tvPrice;
-    private TextView tvRatingSummary;
-    private TextView tvDescription;
-    private TextView tvEmptyReview;
-    private TextView tvError;
-    private TextView tvQuantity;
-    private TextView btnMinus;
-    private TextView btnPlus;
-    private TextView tvColorLabel;
-
+    private TextView tvCategory, tvProductName, tvPrice, tvRatingSummary, tvDescription, tvEmptyReview, tvError, tvQuantity, btnMinus, btnPlus, tvColorLabel;
     private RatingBar ratingProduct;
     private LinearLayout colorContainer;
     private ProgressBar progressBar;
     private MaterialButton btnAddToCart;
-
     private ApiServices apiService;
     private Call<Response<ProductDetailResponse>> productCall;
     private Call<ApiMessageResponse> cartCall;
-
     private ProductDetailResponse currentProduct;
     private String productId;
     private Object selectedColorId;
@@ -79,7 +64,7 @@ public class ProductDetailActivity extends AppCompatActivity {
             return insets;
         });
 
-        bindViews();
+        initUi();
 
         apiService = new HttpResquest().callAPI();
 
@@ -94,12 +79,12 @@ public class ProductDetailActivity extends AppCompatActivity {
             return;
         }
 
-        setupEvents();
+        setUpListener();
         updateQuantity();
         loadProduct();
     }
 
-    private void bindViews() {
+    private void initUi() {
         ivProduct = findViewById(R.id.ivProduct);
         btnBack = findViewById(R.id.btnBack);
 
@@ -121,7 +106,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         btnAddToCart = findViewById(R.id.btnAddToCart);
     }
 
-    private void setupEvents() {
+    private void setUpListener() {
         btnBack.setOnClickListener(view -> finish());
 
         tvError.setOnClickListener(view -> loadProduct());

@@ -13,11 +13,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.storehub.MainActivity;
 import com.example.storehub.R;
+import com.example.storehub.admin.HomePageManagement;
 import com.example.storehub.model.LoginRequest;
 import com.example.storehub.model.LoginResponse;
 import com.example.storehub.model.News;
 import com.example.storehub.model.Product;
 import com.example.storehub.model.Response;
+import com.example.storehub.model.User;
 import com.example.storehub.services.HttpResquest;
 import com.example.storehub.utils.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
@@ -48,13 +50,18 @@ public class LoginActivity extends AppCompatActivity {
 
         prefManager = new SharedPreferencesManager(this);
 
-        // Ánh xạ các view
+        initUi();
+        setUpListener();
+    }
+
+    private void initUi() {
         edtEmail = findViewById(R.id.edtEmail);
         edtPassword = findViewById(R.id.edtPassword);
         btnLogin = findViewById(R.id.btnLogin);
         tvRegisterNow = findViewById(R.id.tvRegisterNow);
+    }
 
-        // Chuyển sang màn hình Đăng ký
+    private void setUpListener() {
         if (tvRegisterNow != null) {
             tvRegisterNow.setOnClickListener(v -> {
                 Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
@@ -62,7 +69,6 @@ public class LoginActivity extends AppCompatActivity {
             });
         }
 
-        // Thực hiện Đăng nhập
         if (btnLogin != null) {
             btnLogin.setOnClickListener(v -> performLogin());
         }
@@ -189,8 +195,17 @@ public class LoginActivity extends AppCompatActivity {
 
             Toast.makeText(LoginActivity.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
 
-            // Chuyển sang MainActivity
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            /// Kiểm tra role để chuyển đến màn hình Quản trị (HomePageManagement) hoặc Trang người dùng (MainActivity)
+            User user = prefManager.getUser();
+            String role = user != null && user.getRole() != null ? user.getRole().trim().toLowerCase() : "";
+
+            Intent intent;
+            if (role.equals("admin") || role.equals("super admin") || role.equals("superadmin")) {
+                intent = new Intent(LoginActivity.this, HomePageManagement.class);
+            } else {
+                intent = new Intent(LoginActivity.this, MainActivity.class);
+            }
+
             startActivity(intent);
             finish();
         }

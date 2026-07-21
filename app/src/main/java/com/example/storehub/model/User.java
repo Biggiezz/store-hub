@@ -10,14 +10,19 @@ public class User {
     private String phone;
     private String role;
     private String image;
+    private String address;
 
-    public User(String id, String name, String email, String phone, String role, String image) {
+    public User() {
+    }
+
+    public User(String id, String name, String email, String phone, String role, String image, String address) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.phone = phone;
         this.role = role;
         this.image = image;
+        this.address = address;
     }
 
     public String getId() {
@@ -66,5 +71,13 @@ public class User {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

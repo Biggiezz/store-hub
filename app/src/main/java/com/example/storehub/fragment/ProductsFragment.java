@@ -1,4 +1,4 @@
-package com.example.storehub;
+package com.example.storehub.fragment;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +16,8 @@ import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.storehub.MainActivity;
+import com.example.storehub.R;
 import com.example.storehub.adapter.ProductAdapter;
 import com.example.storehub.model.Product;
 import com.example.storehub.model.Response;
@@ -29,8 +31,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 
 public class ProductsFragment extends Fragment {
+    private RecyclerView rvProducts;
+    private MaterialToolbar toolbar;
+    private NestedScrollView nestedScrollView;
     private ProductAdapter productAdapter;
     private TextInputEditText edtSearch;
+
     private final ArrayList<Product> allProducts = new ArrayList<>();
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
     private static final int LIMIT = 6;
@@ -53,42 +59,61 @@ public class ProductsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        RecyclerView rvProducts = view.findViewById(R.id.rvProducts);
-        productAdapter = new ProductAdapter(requireContext());
-        rvProducts.setAdapter(productAdapter);
-
-        MaterialToolbar toolbar = view.findViewById(R.id.toolbar);
-        toolbar.setNavigationOnClickListener(v -> ((MainActivity) requireActivity()).showHome());
-
-        edtSearch = view.findViewById(R.id.edtSearch);
-        edtSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (searchRunnable != null) searchHandler.removeCallbacks(searchRunnable);
-                searchRunnable = () -> {
-                    String keyword = s.toString().trim();
-                    if (!keyword.equals(currentSearchKeyword)) searchFromServer(keyword);
-                };
-                searchHandler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_MS);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
-        });
-
-        NestedScrollView nestedScrollView = view.findViewById(R.id.nestedScrollView);
-        nestedScrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener)
-                (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
-                    if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()
-                            && !isLoading && !isLastPage) {
-                        loadMoreProducts();
-                    }
-                });
+        initUi(view);
+        setUpAdapter();
+        setUpListener();
 
         loadFirstPage();
+    }
+
+    private void initUi(View view) {
+        rvProducts = view.findViewById(R.id.rvProducts);
+        toolbar = view.findViewById(R.id.toolbar);
+        edtSearch = view.findViewById(R.id.edtSearch);
+        nestedScrollView = view.findViewById(R.id.nestedScrollView);
+    }
+
+    private void setUpAdapter() {
+        productAdapter = new ProductAdapter(requireContext());
+        if (rvProducts != null) {
+            rvProducts.setAdapter(productAdapter);
+        }
+    }
+
+    private void setUpListener() {
+        if (toolbar != null) {
+            toolbar.setNavigationOnClickListener(v -> ((MainActivity) requireActivity()).showHome());
+        }
+
+        if (edtSearch != null) {
+            edtSearch.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if (searchRunnable != null) searchHandler.removeCallbacks(searchRunnable);
+                    searchRunnable = () -> {
+                        String keyword = s.toString().trim();
+                        if (!keyword.equals(currentSearchKeyword)) searchFromServer(keyword);
+                    };
+                    searchHandler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_MS);
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {}
+            });
+        }
+
+        if (nestedScrollView != null) {
+            nestedScrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener)
+                    (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+                        if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()
+                                && !isLoading && !isLastPage) {
+                            loadMoreProducts();
+                        }
+                    });
+        }
     }
 
     private void searchFromServer(String keyword) {

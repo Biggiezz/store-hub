@@ -31,7 +31,11 @@ public class RegisterActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_register);
 
-        // Ánh xạ các trường
+        initUi();
+        setUpListener();
+    }
+
+    private void initUi() {
         edtFullName = findViewById(R.id.edtFullName);
         edtEmail = findViewById(R.id.edtEmail);
         edtPhone = findViewById(R.id.edtPhone);
@@ -39,8 +43,9 @@ public class RegisterActivity extends AppCompatActivity {
         edtConfirmPassword = findViewById(R.id.edtConfirmPassword);
         btnRegister = findViewById(R.id.btnRegister);
         btnBack = findViewById(R.id.btnBack);
+    }
 
-        // Bắt sự kiện quay lại
+    private void setUpListener() {
         if (btnBack != null) {
             btnBack.setOnClickListener(v -> finish());
         }

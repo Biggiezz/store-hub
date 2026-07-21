@@ -39,7 +39,7 @@
             android:id="@+id/tvNewsTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="serif"
+            android:fontFamily="@font/libre_caslon_text"
             android:text="Tiêu đề bài viết thông thường"
             android:textColor="@color/dark_green"
             android:textSize="15sp"

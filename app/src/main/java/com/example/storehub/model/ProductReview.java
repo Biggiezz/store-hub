@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class ProductReview {
     @SerializedName("id")
-    public Long id;
+    public Object id;
 
     @SerializedName("_id")
     public String mongoId;
@@ -28,6 +28,12 @@ public class ProductReview {
     public String content;
 
     public ProductReview() {
+    }
+
+    public String getId() {
+        if (id != null) return String.valueOf(id);
+        if (mongoId != null) return mongoId;
+        return "";
     }
 
     public String getCustomerName() {
