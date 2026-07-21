@@ -24,7 +24,6 @@ import com.example.storehub.R;
 import com.example.storehub.adapter.CartAdapter;
 import com.example.storehub.model.CartItem;
 import com.example.storehub.model.Response;
-import com.example.storehub.model.UpdateCartQuantityRequest;
 import com.example.storehub.model.User;
 import com.example.storehub.services.ApiServices;
 import com.example.storehub.services.HttpResquest;
@@ -152,13 +151,36 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartChangeLi
 
         if (btnCheckout != null) {
             btnCheckout.setOnClickListener(v -> {
-                if (cartAdapter.getItemCount() == 0) {
+                if (cartAdapter == null || cartAdapter.getItemCount() == 0) {
                     Toast.makeText(requireContext(), "Giỏ hàng đang trống", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                Toast.makeText(requireContext(), "Tiến hành thanh toán đơn hàng", Toast.LENGTH_SHORT).show();
+                performCheckout();
             });
         }
+    }
+
+    private void performCheckout() {
+        setLoading(true);
+        apiService.checkout().enqueue(new Callback<Response<Object>>() {
+            @Override
+            public void onResponse(@NonNull Call<Response<Object>> call,
+                                   @NonNull retrofit2.Response<Response<Object>> response) {
+                setLoading(false);
+                if (response.isSuccessful() && response.body() != null && response.body().getCode() == 200) {
+                    Toast.makeText(requireContext(), "Thanh toán đơn hàng thành công!", Toast.LENGTH_SHORT).show();
+                    loadCartFromServer();
+                } else {
+                    Toast.makeText(requireContext(), "Thanh toán thất bại, vui lòng thử lại!", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Response<Object>> call, @NonNull Throwable t) {
+                setLoading(false);
+                Toast.makeText(requireContext(), "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void loadCartFromServer() {
@@ -238,7 +260,7 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartChangeLi
     @Override
     public void onQuantityChange(CartItem cartItem, int newQuantity) {
         setLoading(true);
-        UpdateCartQuantityRequest request = new UpdateCartQuantityRequest(cartItem.getId(), newQuantity);
+        CartItem.UpdateQuantityRequest request = new CartItem.UpdateQuantityRequest(cartItem.getId(), newQuantity);
         apiService.updateCartQuantity(request).enqueue(new Callback<Response<ArrayList<CartItem>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<CartItem>>> call,
