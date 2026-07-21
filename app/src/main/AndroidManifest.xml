@@ -19,6 +19,10 @@
             android:name=".admin.HomePageManagement"
             android:exported="false" />
         <activity
+            android:name=".admin.AddNewsActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
             android:name=".ProductDetailActivity"
             android:exported="false" />
         <activity
@@ -40,6 +44,17 @@
         <activity
             android:name=".NewsDetailActivity"
             android:exported="false" />
+        <activity
+            android:name=".ProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".EditProfileActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ChangePasswordActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
 
         <service
             android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"

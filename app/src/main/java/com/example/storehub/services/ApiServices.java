@@ -70,9 +70,24 @@ public interface ApiServices {
     @GET("api/newsRouter/get-news-by-id/{id}")
     Call<Response<News>> getNewsById(@Path("id") String id);
 
+    @POST("api/newsRouter/add-news")
+    Call<Response<News>> addNews(@Body News news);
+
+    @DELETE("api/newsRouter/delete-news/{id}")
+    Call<ApiMessageResponse> deleteNews(@Path("id") String id);
+
     @POST("users/register")
     Call<Response<User>> register(@Body RegisterRequest request);
 
     @POST("users/login")
     Call<LoginResponse> login(@Body LoginRequest request);
+
+    @POST("users/logout")
+    Call<Response<Void>> logout(@retrofit2.http.Header("Authorization") String token);
+
+    @POST("users/update-profile")
+    Call<Response<User>> updateProfile(@retrofit2.http.Header("Authorization") String token, @Body java.util.Map<String, String> body);
+
+    @POST("users/change-password")
+    Call<Response<Void>> changePassword(@retrofit2.http.Header("Authorization") String token, @Body java.util.Map<String, String> body);
 }

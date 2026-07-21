@@ -11,12 +11,20 @@ public class SharedPreferencesManager {
     private static final String KEY_TOKEN = "auth_token";
     private static final String KEY_USER = "auth_user";
 
+    private static SharedPreferencesManager instance;
     private final SharedPreferences sharedPreferences;
     private final Gson gson;
 
     public SharedPreferencesManager(Context context) {
         this.sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         this.gson = new Gson();
+    }
+
+    public static synchronized SharedPreferencesManager getInstance(Context context) {
+        if (instance == null) {
+            instance = new SharedPreferencesManager(context.getApplicationContext());
+        }
+        return instance;
     }
 
     // Lưu Token
@@ -33,6 +41,11 @@ public class SharedPreferencesManager {
     public void saveUser(User user) {
         String userJson = gson.toJson(user);
         sharedPreferences.edit().putString(KEY_USER, userJson).apply();
+    }
+
+    // Cập nhật User
+    public void updateUser(User user) {
+        saveUser(user);
     }
 
     // Lấy User

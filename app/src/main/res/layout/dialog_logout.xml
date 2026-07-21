@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_margin="32dp"
+    android:background="@drawable/bg_dialog"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <!-- Title -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="serif"
+        android:gravity="center"
+        android:text="@string/logout_dialog_title"
+        android:textColor="@color/dark_green"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
+    <!-- Message -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="24dp"
+        android:gravity="center"
+        android:lineSpacingExtra="4dp"
+        android:text="@string/logout_dialog_message"
+        android:textColor="@color/text_secondary"
+        android:textSize="15sp" />
+
+    <!-- "Đăng xuất" button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnConfirmLogout"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginBottom="12dp"
+        android:text="@string/logout"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:backgroundTint="@color/dark_green"
+        app:cornerRadius="26dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp" />
+
+    <!-- "Không" button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnCancelLogout"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:text="@string/no"
+        android:textAllCaps="false"
+        android:textColor="#41413F"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:cornerRadius="26dp"
+        app:strokeColor="#DDD8D2"
+        app:strokeWidth="1.5dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp" />
+
+</LinearLayout>
