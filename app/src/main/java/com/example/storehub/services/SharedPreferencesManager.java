@@ -5,8 +5,8 @@ import android.content.SharedPreferences;
 
 import com.example.storehub.model.User;
 
-public class SessionManager {
-    private static final String PREF_NAME = "StoreHubSession";
+public class SharedPreferencesManager {
+    private static final String PREF_NAME = "StoreHubPrefs";
     private static final String KEY_TOKEN = "jwt_token";
     private static final String KEY_ID = "user_id";
     private static final String KEY_NAME = "user_name";
@@ -17,12 +17,20 @@ public class SessionManager {
     private static final String KEY_ADDRESS = "user_address";
     private static final String KEY_PASS_DATE = "user_pass_date";
 
+    private static SharedPreferencesManager instance;
     private final SharedPreferences pref;
     private final SharedPreferences.Editor editor;
 
-    public SessionManager(Context context) {
+    private SharedPreferencesManager(Context context) {
         pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         editor = pref.edit();
+    }
+
+    public static synchronized SharedPreferencesManager getInstance(Context context) {
+        if (instance == null) {
+            instance = new SharedPreferencesManager(context.getApplicationContext());
+        }
+        return instance;
     }
 
     public void saveUserSession(String token, User user) {

@@ -13,7 +13,7 @@ import com.bumptech.glide.Glide;
 import com.example.storehub.model.Response;
 import com.example.storehub.model.User;
 import com.example.storehub.services.HttpResquest;
-import com.example.storehub.services.SessionManager;
+import com.example.storehub.services.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.HashMap;
@@ -33,7 +33,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private ImageView imgLargeAvatar;
     private MaterialButton btnSaveChanges;
     
-    private SessionManager sessionManager;
+    private SharedPreferencesManager sharedPreferencesManager;
     private User currentUser;
 
     @Override
@@ -42,8 +42,8 @@ public class EditProfileActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_edit_profile);
 
-        sessionManager = new SessionManager(this);
-        currentUser = sessionManager.getUser();
+        sharedPreferencesManager = SharedPreferencesManager.getInstance(this);
+        currentUser = sharedPreferencesManager.getUser();
 
         if (currentUser == null) {
             Toast.makeText(this, "Vui lòng đăng nhập", Toast.LENGTH_SHORT).show();
@@ -105,7 +105,7 @@ public class EditProfileActivity extends AppCompatActivity {
         body.put("phone", phone);
         body.put("address", address);
 
-        String tokenHeader = "Bearer " + sessionManager.getToken();
+        String tokenHeader = "Bearer " + sharedPreferencesManager.getToken();
 
         HttpResquest httpResquest = new HttpResquest();
         httpResquest.callAPI().updateProfile(tokenHeader, body).enqueue(new Callback<Response<User>>() {
@@ -114,7 +114,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     Response<User> res = response.body();
                     if (res.getCode() == 200 && res.getData() != null) {
-                        sessionManager.updateUser(res.getData());
+                        sharedPreferencesManager.updateUser(res.getData());
                         Toast.makeText(EditProfileActivity.this, "Cập nhật thông tin thành công!", Toast.LENGTH_SHORT).show();
                         setResult(RESULT_OK);
                         finish();

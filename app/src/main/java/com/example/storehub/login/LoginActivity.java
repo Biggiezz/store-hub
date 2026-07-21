@@ -13,7 +13,7 @@ import com.example.storehub.R;
 import com.example.storehub.model.LoginResponse;
 import com.example.storehub.register.RegisterActivity;
 import com.example.storehub.services.HttpResquest;
-import com.example.storehub.services.SessionManager;
+import com.example.storehub.services.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -30,7 +30,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputEditText edtPassword;
     private MaterialButton btnLogin;
     private TextView tvRegisterNow;
-    private SessionManager sessionManager;
+    private SharedPreferencesManager sharedPreferencesManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +38,8 @@ public class LoginActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
 
-        sessionManager = new SessionManager(this);
-        if (sessionManager.isLoggedIn()) {
+        sharedPreferencesManager = SharedPreferencesManager.getInstance(this);
+        if (sharedPreferencesManager.isLoggedIn()) {
             startActivity(new Intent(this, MainActivity.class));
             finish();
             return;
@@ -83,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     LoginResponse loginRes = response.body();
                     if (loginRes.getCode() == 200 && loginRes.getData() != null) {
-                        sessionManager.saveUserSession(loginRes.getToken(), loginRes.getData());
+                        sharedPreferencesManager.saveUserSession(loginRes.getToken(), loginRes.getData());
                         Toast.makeText(LoginActivity.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                         finish();

@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.storehub.model.Post;
 import com.example.storehub.model.Response;
 import com.example.storehub.services.HttpResquest;
-import com.example.storehub.services.SessionManager;
+import com.example.storehub.services.SharedPreferencesManager;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -25,14 +25,14 @@ public class AddPostActivity extends AppCompatActivity {
     private TextView txtAuthorName;
     private ImageView btnBack;
     private HttpResquest httpRequest;
-    private SessionManager sessionManager;
+    private SharedPreferencesManager sharedPreferencesManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_post);
 
-        sessionManager = new SessionManager(this);
+        sharedPreferencesManager = SharedPreferencesManager.getInstance(this);
         initViews();
         setupSpinner();
         setAuthorInfo();
@@ -79,8 +79,8 @@ public class AddPostActivity extends AppCompatActivity {
     }
 
     private void setAuthorInfo() {
-        if (sessionManager.isLoggedIn()) {
-            txtAuthorName.setText(sessionManager.getUser().getName());
+        if (sharedPreferencesManager.isLoggedIn()) {
+            txtAuthorName.setText(sharedPreferencesManager.getUser().getName());
         } else {
             txtAuthorName.setText("Guest");
         }

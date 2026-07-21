@@ -24,7 +24,7 @@ import com.example.storehub.login.LoginActivity;
 import com.example.storehub.model.Response;
 import com.example.storehub.model.User;
 import com.example.storehub.services.HttpResquest;
-import com.example.storehub.services.SessionManager;
+import com.example.storehub.services.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
 
 import java.text.SimpleDateFormat;
@@ -47,7 +47,7 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView btnLangEN;
     private ImageView imgProfileAvatar;
 
-    private SessionManager sessionManager;
+    private SharedPreferencesManager sharedPreferencesManager;
 
     // Activity launchers for callbacks
     private final ActivityResultLauncher<Intent> editProfileLauncher = registerForActivityResult(
@@ -74,7 +74,7 @@ public class ProfileActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_profile);
 
-        sessionManager = new SessionManager(this);
+        sharedPreferencesManager = SharedPreferencesManager.getInstance(this);
 
         // Apply Window Insets
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.profile_activity), (v, insets) -> {
@@ -101,7 +101,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void bindUserData() {
-        User user = sessionManager.getUser();
+        User user = sharedPreferencesManager.getUser();
         if (user == null) {
             Toast.makeText(this, "Không có thông tin người dùng", Toast.LENGTH_SHORT).show();
             finish();
@@ -270,14 +270,14 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void performServerLogout() {
-        String tokenHeader = "Bearer " + sessionManager.getToken();
+        String tokenHeader = "Bearer " + sharedPreferencesManager.getToken();
         
         HttpResquest httpResquest = new HttpResquest();
         httpResquest.callAPI().logout(tokenHeader).enqueue(new Callback<Response<Void>>() {
             @Override
             public void onResponse(Call<Response<Void>> call, retrofit2.Response<Response<Void>> response) {
                 // Wipe local preferences anyway
-                sessionManager.logout();
+                sharedPreferencesManager.logout();
                 Toast.makeText(ProfileActivity.this, "Đã đăng xuất thành công", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -288,7 +288,7 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<Response<Void>> call, Throwable t) {
                 // If offline, still allow logout locally
-                sessionManager.logout();
+                sharedPreferencesManager.logout();
                 Toast.makeText(ProfileActivity.this, "Đã đăng xuất", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

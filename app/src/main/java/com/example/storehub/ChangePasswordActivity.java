@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.storehub.model.Response;
 import com.example.storehub.model.User;
 import com.example.storehub.services.HttpResquest;
-import com.example.storehub.services.SessionManager;
+import com.example.storehub.services.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
 
 import java.text.SimpleDateFormat;
@@ -40,7 +40,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
     private boolean isNewPasswordVisible = false;
     private boolean isConfirmPasswordVisible = false;
 
-    private SessionManager sessionManager;
+    private SharedPreferencesManager sharedPreferencesManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +48,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_change_password);
 
-        sessionManager = new SessionManager(this);
+        sharedPreferencesManager = SharedPreferencesManager.getInstance(this);
 
         initViews();
         setupClickListeners();
@@ -124,7 +124,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         body.put("oldPassword", oldPass);
         body.put("newPassword", newPass);
 
-        String tokenHeader = "Bearer " + sessionManager.getToken();
+        String tokenHeader = "Bearer " + sharedPreferencesManager.getToken();
 
         HttpResquest httpResquest = new HttpResquest();
         httpResquest.callAPI().changePassword(tokenHeader, body).enqueue(new Callback<Response<Void>>() {
@@ -136,12 +136,12 @@ public class ChangePasswordActivity extends AppCompatActivity {
                         Toast.makeText(ChangePasswordActivity.this, "Đổi mật khẩu thành công!", Toast.LENGTH_SHORT).show();
                         
                         // Update change password date locally to now in ISO format
-                        User user = sessionManager.getUser();
+                        User user = sharedPreferencesManager.getUser();
                         if (user != null) {
                             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
                             sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
                             user.setChangePasswordDate(sdf.format(new Date()));
-                            sessionManager.updateUser(user);
+                            sharedPreferencesManager.updateUser(user);
                         }
                         
                         setResult(RESULT_OK);
