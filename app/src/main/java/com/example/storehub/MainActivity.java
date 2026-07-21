@@ -328,7 +328,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void fetchProducts() {
         HttpResquest httpResquest = new HttpResquest();
-        httpResquest.callAPI().getListProduct(1, 50).enqueue(new Callback<Response<ArrayList<Product>>>() {
+        httpResquest.callAPI().getListProduct(1, 50, "").enqueue(new Callback<Response<ArrayList<Product>>>() {
             @Override
             public void onResponse(Call<Response<ArrayList<Product>>> call, retrofit2.Response<Response<ArrayList<Product>>> response) {
                 if (response.isSuccessful() && response.body() != null) {

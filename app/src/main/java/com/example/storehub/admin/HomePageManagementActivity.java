@@ -15,8 +15,8 @@ import androidx.fragment.app.Fragment;
 import com.example.storehub.R;
 import com.example.storehub.admin.fragment.AdminHomeFragment;
 import com.example.storehub.admin.fragment.NewsFragmentManagement;
+import com.example.storehub.admin.fragment.ProductsFragmentManagement;
 import com.example.storehub.admin.fragment.StatsManagerFragment;
-import com.example.storehub.fragment.ProductsFragment;
 import com.google.android.material.button.MaterialButton;
 
 public class HomePageManagementActivity extends AppCompatActivity {
@@ -77,7 +77,7 @@ public class HomePageManagementActivity extends AppCompatActivity {
                 if (TAB_PRODUCTS.equals(currentTabTag)) {
                     return;
                 }
-                showTab(TAB_PRODUCTS, new ProductsFragment());
+                showTab(TAB_PRODUCTS, new ProductsFragmentManagement());
             });
         }
 
