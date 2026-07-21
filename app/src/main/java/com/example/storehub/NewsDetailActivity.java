@@ -22,34 +22,16 @@ import java.util.TimeZone;
  */
 public class NewsDetailActivity extends AppCompatActivity {
 
-    private ImageView btnBack;
-    private ImageView ivDetailNewsImage;
-    private TextView tvDetailNewsTitle;
-    private TextView tvDetailNewsAuthor;
-    private TextView tvDetailNewsTime;
-    private TextView tvDetailNewsContent;
-
-
+    private ImageView btnBack, ivDetailNewsImage;
+    private TextView tvDetailNewsTitle, tvDetailNewsAuthor, tvDetailNewsTime, tvDetailNewsContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_detail);
 
-        // Ánh xạ các thành phần giao diện
-        btnBack = findViewById(R.id.btnBack);
-        ivDetailNewsImage = findViewById(R.id.ivDetailNewsImage);
-        tvDetailNewsTitle = findViewById(R.id.tvDetailNewsTitle);
-        tvDetailNewsAuthor = findViewById(R.id.tvDetailNewsAuthor);
-        tvDetailNewsTime = findViewById(R.id.tvDetailNewsTime);
-        tvDetailNewsContent = findViewById(R.id.tvDetailNewsContent);
-
-        // Bắt sự kiện nút Quay lại (Back)
-        btnBack.setOnClickListener(v -> finish());
-
-        // Thiết lập sự kiện click cho Bottom Navigation và các nút tương tác
-        setupBottomNavigation();
-        setupInteractionButtons();
+        initUi();
+        setUpListener();
 
         // Lấy dữ liệu đối tượng News được truyền từ Adapter
         News news = (News) getIntent().getSerializableExtra("news_item");
@@ -60,6 +42,24 @@ public class NewsDetailActivity extends AppCompatActivity {
             Toast.makeText(this, "Không thể tải chi tiết bài viết!", Toast.LENGTH_SHORT).show();
             finish();
         }
+    }
+
+    private void initUi() {
+        btnBack = findViewById(R.id.btnBack);
+        ivDetailNewsImage = findViewById(R.id.ivDetailNewsImage);
+        tvDetailNewsTitle = findViewById(R.id.tvDetailNewsTitle);
+        tvDetailNewsAuthor = findViewById(R.id.tvDetailNewsAuthor);
+        tvDetailNewsTime = findViewById(R.id.tvDetailNewsTime);
+        tvDetailNewsContent = findViewById(R.id.tvDetailNewsContent);
+    }
+
+    private void setUpListener() {
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> finish());
+        }
+
+        setupBottomNavigation();
+        setupInteractionButtons();
     }
 
     /**
@@ -98,7 +98,7 @@ public class NewsDetailActivity extends AppCompatActivity {
             // Định dạng hiển thị mong muốn
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
             formatter.setTimeZone(TimeZone.getDefault());
-            
+
             return formatter.format(date);
         } catch (Exception e) {
             try {

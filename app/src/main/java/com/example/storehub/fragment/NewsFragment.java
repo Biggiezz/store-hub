@@ -1,4 +1,4 @@
-package com.example.storehub;
+package com.example.storehub.fragment;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +13,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.storehub.MainActivity;
+import com.example.storehub.R;
 import com.example.storehub.adapter.NewsAdapter;
 import com.example.storehub.model.News;
 import com.example.storehub.model.Response;
@@ -25,6 +27,8 @@ import retrofit2.Callback;
 
 public class NewsFragment extends Fragment {
     private static final int LIMIT = 5;
+    private RecyclerView rvAllNews;
+    private View btnBackNews;
     private NewsAdapter newsAdapter;
     private Call<Response<ArrayList<News>>> currentCall;
     private int currentPage = 1;
@@ -42,25 +46,43 @@ public class NewsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        RecyclerView rvAllNews = view.findViewById(R.id.rvAllNews);
-        newsAdapter = new NewsAdapter(requireContext());
-        rvAllNews.setAdapter(newsAdapter);
-        view.findViewById(R.id.btnBackNews)
-                .setOnClickListener(v -> ((MainActivity) requireActivity()).showHome());
-
-        LinearLayoutManager layoutManager = (LinearLayoutManager) rvAllNews.getLayoutManager();
-        rvAllNews.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                if (dy <= 0 || isLoading || isLastPage || layoutManager == null) return;
-                if (layoutManager.getChildCount() + layoutManager.findFirstVisibleItemPosition()
-                        >= layoutManager.getItemCount()) {
-                    loadNews(++currentPage, true);
-                }
-            }
-        });
+        initUi(view);
+        setUpAdapter();
+        setUpListener();
 
         loadNews(1, false);
+    }
+
+    private void initUi(View view) {
+        rvAllNews = view.findViewById(R.id.rvAllNews);
+        btnBackNews = view.findViewById(R.id.btnBackNews);
+    }
+
+    private void setUpAdapter() {
+        newsAdapter = new NewsAdapter(requireContext());
+        if (rvAllNews != null) {
+            rvAllNews.setAdapter(newsAdapter);
+        }
+    }
+
+    private void setUpListener() {
+        if (btnBackNews != null) {
+            btnBackNews.setOnClickListener(v -> ((MainActivity) requireActivity()).showHome());
+        }
+
+        if (rvAllNews != null) {
+            LinearLayoutManager layoutManager = (LinearLayoutManager) rvAllNews.getLayoutManager();
+            rvAllNews.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                    if (dy <= 0 || isLoading || isLastPage || layoutManager == null) return;
+                    if (layoutManager.getChildCount() + layoutManager.findFirstVisibleItemPosition()
+                            >= layoutManager.getItemCount()) {
+                        loadNews(++currentPage, true);
+                    }
+                }
+            });
+        }
     }
 
     private void loadNews(int page, boolean append) {

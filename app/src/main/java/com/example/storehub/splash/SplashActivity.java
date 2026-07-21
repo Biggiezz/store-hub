@@ -26,7 +26,14 @@ public class SplashActivity extends AppCompatActivity {
         new Handler().postDelayed(() -> {
             Intent intent;
             if (prefManager.isLoggedIn()) {
-                intent = new Intent(this, MainActivity.class);
+                com.example.storehub.model.User user = prefManager.getUser();
+                String role = user != null && user.getRole() != null ? user.getRole().trim().toLowerCase() : "";
+
+                if (role.equals("admin") || role.equals("super admin") || role.equals("superadmin")) {
+                    intent = new Intent(this, com.example.storehub.admin.HomePageManagement.class);
+                } else {
+                    intent = new Intent(this, MainActivity.class);
+                }
             } else {
                 intent = new Intent(this, LoginActivity.class);
             }
