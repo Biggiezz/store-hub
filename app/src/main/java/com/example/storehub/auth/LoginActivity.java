@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.storehub.MainActivity;
 import com.example.storehub.R;
-import com.example.storehub.admin.HomePageManagement;
+// import com.example.storehub.admin.HomePageManagement;
 import com.example.storehub.model.LoginRequest;
 import com.example.storehub.model.LoginResponse;
 import com.example.storehub.model.News;
@@ -200,7 +200,8 @@ public class LoginActivity extends AppCompatActivity {
 
             Intent intent;
             if (role.equals("admin") || role.equals("super admin") || role.equals("superadmin")) {
-                intent = new Intent(LoginActivity.this, HomePageManagement.class);
+                // intent = new Intent(LoginActivity.this, HomePageManagement.class);
+                intent = new Intent(LoginActivity.this, MainActivity.class);
             } else {
                 intent = new Intent(LoginActivity.this, MainActivity.class);
             }

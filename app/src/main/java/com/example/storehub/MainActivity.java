@@ -24,6 +24,7 @@ import com.example.storehub.adapter.ProductAdapter;
 import com.example.storehub.adapter.SlideShowAdapter;
 import com.example.storehub.fragment.CartFragment;
 import com.example.storehub.fragment.NewsFragment;
+import com.example.storehub.fragment.OderFragment;
 import com.example.storehub.fragment.ProductsFragment;
 import com.example.storehub.model.News;
 import com.example.storehub.model.Product;
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String TAB_CART = "cart";
     private static final String STATE_TAB = "selected_tab";
     public static ArrayList<Product> preloadedProducts = null;
+    public static boolean shouldOpenCartOnResume = false;
     public static ArrayList<News> preloadedNews = null;
     private ViewPager2 sliderBanner;
     private TextView dotOne, dotTwo, dotThree;
@@ -89,6 +91,11 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) openTab(savedInstanceState.getString(STATE_TAB, TAB_HOME));
         else handleRequestedTab(getIntent());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     private void initUi() {
@@ -154,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
 
         btnHome.setOnClickListener(v -> showHome());
         btnProducts.setOnClickListener(v -> showProducts());
-        btnCart.setOnClickListener(v -> showCart());
+        btnCart.setOnClickListener(v -> showOder());
         btnNews.setOnClickListener(v -> showNews());
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
@@ -227,11 +234,19 @@ public class MainActivity extends AppCompatActivity {
         selectedTab = TAB_CART;
         findViewById(R.id.mainScrollView).setVisibility(View.GONE);
         findViewById(R.id.fragmentContainer).setVisibility(View.VISIBLE);
-        if (getSupportFragmentManager().findFragmentByTag("cart") == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragmentContainer, new CartFragment(), "cart")
-                    .commit();
-        }
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContainer, new CartFragment(), "cart")
+                .commit();
+        updateBottomNavigation(btnCart);
+    }
+
+    public void showOder() {
+        selectedTab = TAB_CART;
+        findViewById(R.id.mainScrollView).setVisibility(View.GONE);
+        findViewById(R.id.fragmentContainer).setVisibility(View.VISIBLE);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContainer, new OderFragment(), "oder")
+                .commit();
         updateBottomNavigation(btnCart);
     }
 

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/orderDetailRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical"
+>
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/background"
+        app:navigationIcon="@drawable/ic_back"
+        app:title="Chi tiết đơn hàng"
+        app:titleTextColor="#1A2821"
+        app:navigationIconTint="#1A2821" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:overScrollMode="never"
+    >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="32dp"
+        >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="142dp"
+                android:background="@drawable/bg_cancelled_status_figma"
+                android:orientation="vertical"
+                android:padding="25dp"
+            >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                >
+                    <TextView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_timeline_active"
+                        android:gravity="center"
+                        android:text="✓"
+                        android:textColor="#FFFFFF"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                    />
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="12dp"
+                        android:orientation="vertical"
+                    >
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Đã hoàn thành"
+                            android:textColor="#1A2821"
+                            android:textSize="14sp"
+                        />
+                        <TextView
+                            android:id="@+id/tvOrderDetailCode"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="Mã đơn: #SH-875022"
+                            android:textColor="#434844"
+                            android:textSize="14sp"
+                        />
+                    </LinearLayout>
+                </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:drawableStart="@drawable/ic_detail_clock"
+                    android:drawablePadding="8dp"
+                    android:text="Hoàn thành lúc 10:30, 20/05/2024"
+                    android:textColor="#434844"
+                    android:textSize="14sp"
+                />
+            </LinearLayout>
+            <include android:layout_marginTop="16dp" layout="@layout/include_shipping_info" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="12dp"
+                android:fontFamily="serif"
+                android:text="Sản phẩm"
+                android:textColor="#1A2821"
+                android:textSize="22sp"
+                android:textStyle="bold"
+            />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvOrderProducts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                android:padding="8dp" />
+            <include
+                android:layout_marginTop="16dp"
+                layout="@layout/include_detail_summary"
+            />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:layout_marginTop="32dp"
+                android:background="@drawable/bg_detail_primary_button"
+                android:gravity="center"
+                android:fontFamily="serif"
+                android:text="Đánh giá"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+            />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_detail_secondary_button"
+                android:gravity="center"
+                android:text="Mua lại"
+                android:textColor="#434844"
+                android:textSize="16sp"
+                android:textStyle="bold"
+            />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

@@ -2,7 +2,7 @@ package com.example.storehub.model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class CartItem {
+public class CartItem implements java.io.Serializable {
     @SerializedName("_id")
     private String mongoId;
 

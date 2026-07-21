@@ -83,6 +83,13 @@ public class ProductsFragment extends Fragment {
     private void setUpListener() {
         if (toolbar != null) {
             toolbar.setNavigationOnClickListener(v -> ((MainActivity) requireActivity()).showHome());
+            toolbar.setOnMenuItemClickListener(item -> {
+                if (item.getItemId() == R.id.action_receipt) {
+                    ((MainActivity) requireActivity()).showCart();
+                    return true;
+                }
+                return false;
+            });
         }
 
         if (edtSearch != null) {

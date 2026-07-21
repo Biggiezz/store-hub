@@ -30,7 +30,8 @@ public class SplashActivity extends AppCompatActivity {
                 String role = user != null && user.getRole() != null ? user.getRole().trim().toLowerCase() : "";
 
                 if (role.equals("admin") || role.equals("super admin") || role.equals("superadmin")) {
-                    intent = new Intent(this, com.example.storehub.admin.HomePageManagement.class);
+                    // intent = new Intent(this, com.example.storehub.admin.HomePageManagement.class);
+                    intent = new Intent(this, MainActivity.class);
                 } else {
                     intent = new Intent(this, MainActivity.class);
                 }

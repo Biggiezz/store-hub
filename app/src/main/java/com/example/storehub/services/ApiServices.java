@@ -13,6 +13,8 @@ import com.example.storehub.model.RegisterRequest;
 import com.example.storehub.model.Response;
 import com.example.storehub.model.UpdateCartQuantityRequest;
 import com.example.storehub.model.User;
+import com.example.storehub.model.Order;
+import com.example.storehub.model.CancelOrderRequest;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -65,6 +67,18 @@ public interface ApiServices {
 
     @POST("api/productsRouter/add-review")
     Call<Response<ProductDetailResponse>> addReview(@Body com.example.storehub.model.AddReviewRequest request);
+
+    @POST("api/oderRouter/create-order")
+    Call<Response<Order>> createOrder();
+
+    @GET("api/oderRouter/get-orders")
+    Call<Response<ArrayList<Order>>> getOrders();
+
+    @POST("api/oderRouter/cancel-order")
+    Call<Response<Order>> cancelOrder(@Body CancelOrderRequest request);
+
+    @POST("api/oderRouter/clear-cart")
+    Call<Response<Object>> clearCart();
 
     // Lấy danh sách toàn bộ tin tức đã xuất bản
     @GET("api/newsRouter/get-all-news")

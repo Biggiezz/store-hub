@@ -1,5 +1,6 @@
 package com.example.storehub.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -137,7 +138,7 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartChangeLi
         if (btnBack != null) {
             btnBack.setOnClickListener(v -> {
                 if (getActivity() instanceof MainActivity) {
-                    ((MainActivity) getActivity()).showHome();
+                    ((MainActivity) getActivity()).showOder();
                 } else if (getActivity() != null) {
                     getActivity().getOnBackPressedDispatcher().onBackPressed();
                 }
@@ -156,7 +157,30 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartChangeLi
                     Toast.makeText(requireContext(), "Giỏ hàng đang trống", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                Toast.makeText(requireContext(), "Tiến hành thanh toán đơn hàng", Toast.LENGTH_SHORT).show();
+                btnCheckout.setEnabled(false);
+                apiService.createOrder().enqueue(new retrofit2.Callback<Response<com.example.storehub.model.Order>>() {
+                    @Override
+                    public void onResponse(@NonNull retrofit2.Call<Response<com.example.storehub.model.Order>> call,
+                                           @NonNull retrofit2.Response<Response<com.example.storehub.model.Order>> response) {
+                        btnCheckout.setEnabled(true);
+                        if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                            com.example.storehub.model.Order createdOrder = response.body().getData();
+                            Toast.makeText(requireContext(), "Đặt hàng thành công!", Toast.LENGTH_SHORT).show();
+                            android.content.Intent intent = new android.content.Intent(requireContext(), com.example.storehub.ShippingOrderDetailActivity.class);
+                            intent.putExtra("order_data", createdOrder);
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(requireContext(), "Đặt hàng thất bại. Vui lòng thử lại", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull retrofit2.Call<Response<com.example.storehub.model.Order>> call, @NonNull Throwable t) {
+                        btnCheckout.setEnabled(true);
+                        Log.e("CartFragment", "Error creating order", t);
+                        Toast.makeText(requireContext(), "Không thể kết nối đến máy chủ", Toast.LENGTH_SHORT).show();
+                    }
+                });
             });
         }
     }
