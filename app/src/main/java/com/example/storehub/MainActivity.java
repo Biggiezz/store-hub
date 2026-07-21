@@ -94,6 +94,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void initUi() {
         // Initialize SlideShow ViewPager2
+        // Set click listener on avatar to open profile screen
+        findViewById(R.id.imgAvatar).setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+            startActivity(intent);
+        });
+
+        // Initialize SlideShow ViewPager2 & Adapter
         sliderBanner = findViewById(R.id.sliderBanner);
 
         // Initialize Indicator dots

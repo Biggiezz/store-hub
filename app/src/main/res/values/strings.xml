@@ -45,4 +45,35 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <!-- Hồ sơ -->
+    <string name="profile_title">Hồ sơ</string>
+    <string name="personal_info">Thông tin cá nhân</string>
+    <string name="edit">Sửa</string>
+    <string name="address">Địa chỉ</string>
+    <string name="security">Bảo mật</string>
+    <string name="change_password">Đổi mật khẩu</string>
+    <string name="password_changed_sub">Đã thay đổi 3 tháng trước</string>
+    <string name="change_language">Đổi ngôn ngữ</string>
+    <string name="change_language_en">Change Language</string>
+    <string name="logout">Đăng xuất</string>
+
+    <!-- Sửa Hồ Sơ -->
+    <string name="edit_profile_title">Sửa thông tin</string>
+    <string name="change_avatar">THAY ĐỔI ẢNH ĐẠI DIỆN</string>
+    <string name="store_address">Địa chỉ cửa hàng</string>
+    <string name="save_changes">Lưu thay đổi</string>
+
+    <!-- Đổi mật khẩu -->
+    <string name="change_password_description">Vui lòng nhập mật khẩu hiện tại và mật khẩu mới để cập nhật thông tin đăng nhập của bạn.</string>
+    <string name="current_password">MẬT KHẨU HIỆN TẠI</string>
+    <string name="new_password">MẬT KHẨU MỚI</string>
+    <string name="new_password_hint">* Tối thiểu 8 ký tự, bao gồm chữ cái và số.</string>
+    <string name="confirm_new_password">XÁC NHẬN MẬT KHẨU MỚI</string>
+    <string name="password_shield_text">Đảm bảo mật khẩu của bạn là duy nhất và khó đoán.</string>
+    <string name="update_password">Cập nhật mật khẩu</string>
+
+    <!-- Hộp thoại Đăng xuất -->
+    <string name="logout_dialog_title">Đăng xuất?</string>
+    <string name="logout_dialog_message">Bạn có chắc chắn muốn đăng xuất khỏi tài khoản không?</string>
+    <string name="no">Không</string>
 </resources>

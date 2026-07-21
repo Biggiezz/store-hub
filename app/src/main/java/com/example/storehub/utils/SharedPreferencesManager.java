@@ -19,9 +19,11 @@ public class SharedPreferencesManager {
         this.gson = new Gson();
     }
 
-    // Lưu Token
-    public void saveToken(String token) {
-        sharedPreferences.edit().putString(KEY_TOKEN, token).apply();
+    public void saveUserSession(String token, User user) {
+        sharedPreferences.edit()
+                .putString(KEY_TOKEN, token)
+                .putString(KEY_USER, gson.toJson(user))
+                .apply();
     }
 
     // Lấy Token
@@ -30,7 +32,7 @@ public class SharedPreferencesManager {
     }
 
     // Lưu User
-    public void saveUser(User user) {
+    public void updateUser(User user) {
         String userJson = gson.toJson(user);
         sharedPreferences.edit().putString(KEY_USER, userJson).apply();
     }

@@ -11,6 +11,7 @@ public class User {
     private String role;
     private String image;
     private String address;
+    private String changePasswordDate;
     private String lastActive;
 
     public User() {
@@ -24,6 +25,7 @@ public class User {
         this.role = role;
         this.image = image;
         this.address = address;
+        this.changePasswordDate = changePasswordDate;
     }
 
     public User(String id, String name, String email, String phone, String role, String image, String address, String lastActive) {
@@ -91,6 +93,75 @@ public class User {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getChangePasswordDate() {
+        return changePasswordDate;
+    }
+
+    public void setChangePasswordDate(String changePasswordDate) {
+        this.changePasswordDate = changePasswordDate;
+    }
+
+    public static class LoginRequest {
+        @SerializedName("email")
+        private String email;
+
+        @SerializedName("password")
+        private String password;
+
+        public LoginRequest(String email, String password) {
+            this.email = email;
+            this.password = password;
+        }
+
+        public String getEmail() { return email; }
+        public String getPassword() { return password; }
+    }
+
+    public static class RegisterRequest {
+        @SerializedName("name")
+        private String name;
+
+        @SerializedName("email")
+        private String email;
+
+        @SerializedName("phone")
+        private String phone;
+
+        @SerializedName("password")
+        private String password;
+
+        public RegisterRequest(String name, String email, String phone, String password) {
+            this.name = name;
+            this.email = email;
+            this.phone = phone;
+            this.password = password;
+        }
+
+        public String getName() { return name; }
+        public String getEmail() { return email; }
+        public String getPhone() { return phone; }
+        public String getPassword() { return password; }
+    }
+
+    public static class LoginResponse {
+        @SerializedName("code")
+        private int code;
+
+        @SerializedName("message")
+        private String message;
+
+        @SerializedName("token")
+        private String token;
+
+        @SerializedName("data")
+        private User data;
+
+        public int getCode() { return code; }
+        public String getMessage() { return message; }
+        public String getToken() { return token; }
+        public User getData() { return data; }
     }
 
     public String getLastActive() {
