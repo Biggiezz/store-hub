@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Header Bar -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:fontFamily="@font/hanken_grotesk_semibold"
+            android:text="Quản trị Người dùng"
+            android:textColor="@color/dark_green"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/ivHeaderAction"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="Bookmark Action"
+            android:src="@drawable/ic_bookmark"
+            app:tint="@color/dark_green" />
+    </RelativeLayout>
+
+    <!-- Add New User Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnAddNewUser"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="@color/dark_green"
+        android:fontFamily="@font/hanken_grotesk_semibold"
+        android:text="+  THÊM NGƯỜI DÙNG MỚI"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        app:cornerRadius="10dp"
+        app:icon="@drawable/ic_user_add"
+        app:iconGravity="textStart"
+        app:iconPadding="8dp"
+        app:iconTint="@color/white" />
+
+    <!-- Staff / Customer Tabs Filter Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <!-- Staff Tab -->
+        <LinearLayout
+            android:id="@+id/btnTabStaff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingEnd="20dp">
+
+            <TextView
+                android:id="@+id/tvStaffTabTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/hanken_grotesk_semibold"
+                android:text="Nhân viên"
+                android:textColor="@color/text_primary"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvStaffCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_tab_badge_selected"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="2dp"
+                android:text="12"
+                android:textColor="#50504D"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Customer Tab -->
+        <LinearLayout
+            android:id="@+id/btnTabCustomer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvCustomerTabTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/hanken_grotesk_semibold"
+                android:text="Khách hàng"
+                android:textColor="#8A8077"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/tvCustomerCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_tab_badge_unselected"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="2dp"
+                android:text="1,492"
+                android:textColor="#8A8077"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Search Box and Filter Button Row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <!-- Search Bar -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_search_input"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="12dp">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:contentDescription="Search Icon"
+                android:src="@drawable/ic_search"
+                app:tint="@color/hint" />
+
+            <EditText
+                android:id="@+id/etSearchUser"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
+                android:background="@null"
+                android:hint="Tìm kiếm theo tên hoặc email..."
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/hint"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Filter Button -->
+        <FrameLayout
+            android:id="@+id/btnFilterUser"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/bg_search_input"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:contentDescription="Filter Icon"
+                android:src="@drawable/ic_sort"
+                app:tint="@color/text_primary" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <!-- Loading ProgressBar -->
+    <ProgressBar
+        android:id="@+id/pbLoadingUsers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginVertical="20dp"
+        android:indeterminateTint="@color/dark_green"
+        android:visibility="gone" />
+
+    <!-- Empty State Text -->
+    <TextView
+        android:id="@+id/tvEmptyState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginVertical="30dp"
+        android:text="Không tìm thấy người dùng phù hợp"
+        android:textColor="@color/subtext_primary"
+        android:textSize="14sp"
+        android:visibility="gone" />
+
+    <!-- Users List RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvUsers"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        tools:listitem="@layout/item_user" />
+
+    <!-- Pagination Controls Bar -->
+    <LinearLayout
+        android:id="@+id/llPagination"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <!-- Prev Page -->
+        <TextView
+            android:id="@+id/btnPrevPage"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/bg_pagination_inactive"
+            android:gravity="center"
+            android:text="&lt;"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp" />
+
+        <!-- Page 1 (Active) -->
+        <TextView
+            android:id="@+id/btnPage1"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/bg_pagination_active"
+            android:gravity="center"
+            android:text="1"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <!-- Page 2 -->
+        <TextView
+            android:id="@+id/btnPage2"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/bg_pagination_inactive"
+            android:gravity="center"
+            android:text="2"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp" />
+
+        <!-- Page 3 -->
+        <TextView
+            android:id="@+id/btnPage3"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/bg_pagination_inactive"
+            android:gravity="center"
+            android:text="3"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp" />
+
+        <!-- Ellipsis -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginEnd="6dp"
+            android:gravity="center"
+            android:text="..."
+            android:textColor="@color/subtext_primary"
+            android:textSize="14sp" />
+
+        <!-- Next Page -->
+        <TextView
+            android:id="@+id/btnNextPage"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/bg_pagination_inactive"
+            android:gravity="center"
+            android:text="&gt;"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+</LinearLayout>

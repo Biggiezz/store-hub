@@ -75,4 +75,10 @@ public interface ApiServices {
 
     @POST("users/login")
     Call<LoginResponse> login(@Body LoginRequest request);
+
+    @GET("users/get-all-users")
+    Call<Response<ArrayList<User>>> getListUsers();
+
+    @POST("users/add-user")
+    Call<Response<User>> addUser(@Body User user);
 }

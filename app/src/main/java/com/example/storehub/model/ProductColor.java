@@ -29,8 +29,6 @@ public class ProductColor {
     }
 
     public String getId() {
-        return id != null ? String.valueOf(id) : (mongoId != null ? mongoId : "");
-    public String getId() {
         if (id != null) return String.valueOf(id);
         if (mongoId != null) return mongoId;
         return "";

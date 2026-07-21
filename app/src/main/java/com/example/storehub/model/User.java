@@ -11,6 +11,7 @@ public class User {
     private String role;
     private String image;
     private String address;
+    private String lastActive;
 
     public User() {
     }
@@ -23,6 +24,17 @@ public class User {
         this.role = role;
         this.image = image;
         this.address = address;
+    }
+
+    public User(String id, String name, String email, String phone, String role, String image, String address, String lastActive) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
+        this.role = role;
+        this.image = image;
+        this.address = address;
+        this.lastActive = lastActive;
     }
 
     public String getId() {
@@ -79,5 +91,13 @@ public class User {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getLastActive() {
+        return lastActive != null ? lastActive : "Vừa xong";
+    }
+
+    public void setLastActive(String lastActive) {
+        this.lastActive = lastActive;
     }
 }
