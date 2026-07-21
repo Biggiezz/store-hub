@@ -20,7 +20,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
-import com.example.storehub.login.LoginActivity;
+import com.example.storehub.auth.LoginActivity;
 import com.example.storehub.model.Response;
 import com.example.storehub.model.User;
 import com.example.storehub.services.HttpResquest;
@@ -37,19 +37,10 @@ import retrofit2.Callback;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private TextView txtProfileName;
-    private TextView txtEmailValue;
-    private TextView txtPhoneValue;
-    private TextView txtAddressValue;
-    private TextView txtPasswordChangedSub;
-
-    private TextView btnLangVI;
-    private TextView btnLangEN;
+    private TextView txtProfileName, txtEmailValue, txtPhoneValue, txtAddressValue, txtPasswordChangedSub, btnLangVI, btnLangEN;
     private ImageView imgProfileAvatar;
 
     private SharedPreferencesManager sharedPreferencesManager;
-
-    // Activity launchers for callbacks
     private final ActivityResultLauncher<Intent> editProfileLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -73,15 +64,12 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_profile);
-
-        sharedPreferencesManager = new SharedPreferencesManager(this);
-
-        // Apply Window Insets
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.profile_activity), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        sharedPreferencesManager = new SharedPreferencesManager(this);
 
         initUi();
         bindUserData();
@@ -93,7 +81,7 @@ public class ProfileActivity extends AppCompatActivity {
         txtEmailValue = findViewById(R.id.txtEmailValue);
         txtPhoneValue = findViewById(R.id.txtPhoneValue);
         txtAddressValue = findViewById(R.id.txtAddressValue);
-        txtPasswordChangedSub = findViewById(R.id.txtPasswordChangedSub); // Let's make sure ID exists or bind it
+        txtPasswordChangedSub = findViewById(R.id.txtPasswordChangedSub);
 
         btnLangVI = findViewById(R.id.btnLangVI);
         btnLangEN = findViewById(R.id.btnLangEN);
@@ -265,6 +253,7 @@ public class ProfileActivity extends AppCompatActivity {
                 sharedPreferencesManager.logout();
                 Toast.makeText(ProfileActivity.this, "Đã đăng xuất thành công", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 finish();
             }
@@ -274,6 +263,7 @@ public class ProfileActivity extends AppCompatActivity {
                 sharedPreferencesManager.logout();
                 Toast.makeText(ProfileActivity.this, "Đã đăng xuất", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 finish();
             }

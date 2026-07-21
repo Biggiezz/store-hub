@@ -12,24 +12,24 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.storehub.R;
-import com.example.storehub.model.Post;
+import com.example.storehub.model.News;
 
 import java.util.List;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
 
     private Context context;
-    private List<Post> postList;
+    private List<News> newsList;
     private PostItemListener listener;
 
     public interface PostItemListener {
-        void onDeleteClick(Post post);
-        void onItemClick(Post post);
+        void onDeleteClick(News news);
+        void onItemClick(News news);
     }
 
-    public PostAdapter(Context context, List<Post> postList, PostItemListener listener) {
+    public PostAdapter(Context context, List<News> newsList, PostItemListener listener) {
         this.context = context;
-        this.postList = postList;
+        this.newsList = newsList;
         this.listener = listener;
     }
 
@@ -42,26 +42,26 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
-        Post post = postList.get(position);
-        holder.txtTitle.setText(post.getTitle());
-        holder.txtContent.setText(post.getContent());
+        News news = newsList.get(position);
+        holder.txtTitle.setText(news.getTitle());
+        holder.txtContent.setText(news.getContent());
 
         Glide.with(context)
-                .load(post.getImage())
-                .placeholder(R.drawable.ic_avatar)
+                .load(news.getImage())
+                .placeholder(R.drawable.ic_product)
                 .into(holder.imgPost);
 
-        holder.btnDelete.setOnClickListener(v -> listener.onDeleteClick(post));
-        holder.itemView.setOnClickListener(v -> listener.onItemClick(post));
+        holder.btnDelete.setOnClickListener(v -> listener.onDeleteClick(news));
+        holder.itemView.setOnClickListener(v -> listener.onItemClick(news));
     }
 
     @Override
     public int getItemCount() {
-        return postList.size();
+        return newsList != null ? newsList.size() : 0;
     }
 
-    public void updateData(List<Post> newList) {
-        this.postList = newList;
+    public void updateData(List<News> newList) {
+        this.newsList = newList;
         notifyDataSetChanged();
     }
 
