@@ -13,7 +13,7 @@ import com.example.storehub.R;
 import com.example.storehub.model.LoginResponse;
 import com.example.storehub.register.RegisterActivity;
 import com.example.storehub.services.HttpResquest;
-import com.example.storehub.services.SharedPreferencesManager;
+import com.example.storehub.utils.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -38,7 +38,7 @@ public class LoginActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
 
-        sharedPreferencesManager = SharedPreferencesManager.getInstance(this);
+        sharedPreferencesManager = new SharedPreferencesManager(this);
         if (sharedPreferencesManager.isLoggedIn()) {
             startActivity(new Intent(this, MainActivity.class));
             finish();
@@ -58,9 +58,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void setupClickListeners() {
         btnLogin.setOnClickListener(v -> handleLogin());
-        tvRegisterNow.setOnClickListener(v -> {
-            startActivity(new Intent(this, RegisterActivity.class));
-        });
+        tvRegisterNow.setOnClickListener(v -> startActivity(new Intent(this, RegisterActivity.class)));
     }
 
     private void handleLogin() {

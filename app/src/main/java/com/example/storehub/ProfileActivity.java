@@ -24,7 +24,7 @@ import com.example.storehub.login.LoginActivity;
 import com.example.storehub.model.Response;
 import com.example.storehub.model.User;
 import com.example.storehub.services.HttpResquest;
-import com.example.storehub.services.SharedPreferencesManager;
+import com.example.storehub.utils.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
 
 import java.text.SimpleDateFormat;
@@ -74,7 +74,7 @@ public class ProfileActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_profile);
 
-        sharedPreferencesManager = SharedPreferencesManager.getInstance(this);
+        sharedPreferencesManager = new SharedPreferencesManager(this);
 
         // Apply Window Insets
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.profile_activity), (v, insets) -> {
@@ -83,18 +83,18 @@ public class ProfileActivity extends AppCompatActivity {
             return insets;
         });
 
-        initViews();
+        initUi();
         bindUserData();
         setupClickListeners();
     }
 
-    private void initViews() {
+    private void initUi() {
         txtProfileName = findViewById(R.id.txtProfileName);
         txtEmailValue = findViewById(R.id.txtEmailValue);
         txtPhoneValue = findViewById(R.id.txtPhoneValue);
         txtAddressValue = findViewById(R.id.txtAddressValue);
         txtPasswordChangedSub = findViewById(R.id.txtPasswordChangedSub); // Let's make sure ID exists or bind it
-        
+
         btnLangVI = findViewById(R.id.btnLangVI);
         btnLangEN = findViewById(R.id.btnLangEN);
         imgProfileAvatar = findViewById(R.id.imgProfileAvatar);
@@ -113,10 +113,8 @@ public class ProfileActivity extends AppCompatActivity {
         txtPhoneValue.setText(user.getPhone());
         txtAddressValue.setText(user.getAddress() == null || user.getAddress().isEmpty() ? "Chưa cập nhật địa chỉ" : user.getAddress());
 
-        // Update relative password changed date
         updatePasswordChangeSubtext(user.getChangePasswordDate());
 
-        // Load Avatar
         if (user.getImage() != null && !user.getImage().isEmpty()) {
             Glide.with(this)
                     .load(user.getImage())
@@ -127,14 +125,12 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void updatePasswordChangeSubtext(String changeDateStr) {
         if (changeDateStr == null || changeDateStr.isEmpty()) {
-            // Find password label subtitle layout text view
             TextView txtSub = findViewById(R.id.profile_activity).findViewWithTag("password_sub");
             if (txtSub != null) txtSub.setText("Chưa đổi mật khẩu");
             return;
         }
 
         try {
-            // Parse ISO date string
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
             sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
             Date changeDate = sdf.parse(changeDateStr);
@@ -154,12 +150,6 @@ public class ProfileActivity extends AppCompatActivity {
                     relativeText = "Đã thay đổi " + diffMonths + " tháng trước";
                 }
 
-                // If XML layout has a text view for this subtext, bind it. Let's make sure it is updated.
-                // In activity_profile.xml: we had android:text="@string/password_changed_sub". We can find it or set the ID.
-                // Wait! In activity_profile.xml, the subtitle text inside btnChangePassword layout didn't have an ID.
-                // Let's modify activity_profile.xml to add `android:id="@+id/txtPasswordChangedSub"` to the subtext of Đổi mật khẩu!
-                // Yes, I defined private TextView txtPasswordChangedSub in initViews.
-                // Let's bind it. I will write a quick change to activity_profile.xml to make sure R.id.txtPasswordChangedSub is present!
                 if (txtPasswordChangedSub != null) {
                     txtPasswordChangedSub.setText(relativeText);
                 }
@@ -176,43 +166,38 @@ public class ProfileActivity extends AppCompatActivity {
         // Back Button
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
 
-        // Avatar Camera overlay edit click -> open EditProfileActivity
         findViewById(R.id.btnEditAvatar).setOnClickListener(v -> {
             Intent intent = new Intent(this, EditProfileActivity.class);
             editProfileLauncher.launch(intent);
         });
 
-        // Edit personal info click -> open EditProfileActivity
         findViewById(R.id.btnEditPersonalInfo).setOnClickListener(v -> {
             Intent intent = new Intent(this, EditProfileActivity.class);
             editProfileLauncher.launch(intent);
         });
 
-        // Change password row -> open ChangePasswordActivity
         findViewById(R.id.btnChangePassword).setOnClickListener(v -> {
             Intent intent = new Intent(this, ChangePasswordActivity.class);
             changePasswordLauncher.launch(intent);
         });
 
-        // Language toggle VI
         btnLangVI.setOnClickListener(v -> selectLanguage(true));
 
-        // Language toggle EN
         btnLangEN.setOnClickListener(v -> selectLanguage(false));
 
-        // Logout button
         findViewById(R.id.btnLogout).setOnClickListener(v -> showCustomLogoutDialog());
 
-        // Bottom Navigation
         findViewById(R.id.btnHome).setOnClickListener(v -> finish());
         findViewById(R.id.btnProducts).setOnClickListener(v -> {
             Toast.makeText(this, "Màn hình Sản phẩm", Toast.LENGTH_SHORT).show();
             finish();
         });
+
         findViewById(R.id.btnCart).setOnClickListener(v -> {
             Toast.makeText(this, "Giỏ hàng", Toast.LENGTH_SHORT).show();
             finish();
         });
+
         findViewById(R.id.btnNews).setOnClickListener(v -> {
             Toast.makeText(this, "Tin tức", Toast.LENGTH_SHORT).show();
             finish();
@@ -271,7 +256,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void performServerLogout() {
         String tokenHeader = "Bearer " + sharedPreferencesManager.getToken();
-        
+
         HttpResquest httpResquest = new HttpResquest();
         httpResquest.callAPI().logout(tokenHeader).enqueue(new Callback<Response<Void>>() {
             @Override
@@ -280,18 +265,15 @@ public class ProfileActivity extends AppCompatActivity {
                 sharedPreferencesManager.logout();
                 Toast.makeText(ProfileActivity.this, "Đã đăng xuất thành công", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 finish();
             }
 
             @Override
             public void onFailure(Call<Response<Void>> call, Throwable t) {
-                // If offline, still allow logout locally
                 sharedPreferencesManager.logout();
                 Toast.makeText(ProfileActivity.this, "Đã đăng xuất", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 finish();
             }

@@ -37,11 +37,11 @@ public class PostFragment extends Fragment implements PostAdapter.PostItemListen
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_post, container, false);
-        initViews(view);
+        initUi(view);
         return view;
     }
 
-    private void initViews(View view) {
+    private void initUi(View view) {
         rvPosts = view.findViewById(R.id.rvPosts);
         FloatingActionButton fabAddPost = view.findViewById(R.id.fabAddPost);
 

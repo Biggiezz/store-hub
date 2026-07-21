@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.storehub.model.Response;
 import com.example.storehub.model.User;
 import com.example.storehub.services.HttpResquest;
-import com.example.storehub.services.SharedPreferencesManager;
+import com.example.storehub.utils.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
 
 import java.text.SimpleDateFormat;
@@ -48,13 +48,13 @@ public class ChangePasswordActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_change_password);
 
-        sharedPreferencesManager = SharedPreferencesManager.getInstance(this);
+        sharedPreferencesManager = new SharedPreferencesManager(this);
 
-        initViews();
+        initUi();
         setupClickListeners();
     }
 
-    private void initViews() {
+    private void initUi() {
         edtCurrentPassword = findViewById(R.id.edtCurrentPassword);
         edtNewPassword = findViewById(R.id.edtNewPassword);
         edtConfirmNewPassword = findViewById(R.id.edtConfirmNewPassword);
@@ -68,7 +68,6 @@ public class ChangePasswordActivity extends AppCompatActivity {
     private void setupClickListeners() {
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
 
-        // Toggle Visibility Listeners
         btnToggleCurrentPassword.setOnClickListener(v -> {
             isCurrentPasswordVisible = !isCurrentPasswordVisible;
             togglePasswordVisibility(edtCurrentPassword, btnToggleCurrentPassword, isCurrentPasswordVisible);
@@ -95,7 +94,6 @@ public class ChangePasswordActivity extends AppCompatActivity {
             editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
             toggleIcon.setImageResource(R.drawable.ic_visibility_off);
         }
-        // Move selection to the end
         editText.setSelection(editText.getText().length());
     }
 
@@ -109,7 +107,6 @@ public class ChangePasswordActivity extends AppCompatActivity {
             return;
         }
 
-        // Validate criteria: minimum 8 characters, containing both letters and numbers
         if (newPass.length() < 8 || !newPass.matches(".*[a-zA-Z].*") || !newPass.matches(".*\\d.*")) {
             Toast.makeText(this, "Mật khẩu mới phải tối thiểu 8 ký tự, bao gồm cả chữ cái và số", Toast.LENGTH_LONG).show();
             return;
@@ -134,8 +131,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                     Response<Void> res = response.body();
                     if (res.getCode() == 200) {
                         Toast.makeText(ChangePasswordActivity.this, "Đổi mật khẩu thành công!", Toast.LENGTH_SHORT).show();
-                        
-                        // Update change password date locally to now in ISO format
+
                         User user = sharedPreferencesManager.getUser();
                         if (user != null) {
                             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
@@ -143,7 +139,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                             user.setChangePasswordDate(sdf.format(new Date()));
                             sharedPreferencesManager.updateUser(user);
                         }
-                        
+
                         setResult(RESULT_OK);
                         finish();
                     } else {

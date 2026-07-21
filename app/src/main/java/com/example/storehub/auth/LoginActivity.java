@@ -106,8 +106,7 @@ public class LoginActivity extends AppCompatActivity {
                     LoginResponse apiResponse = response.body();
                     if (apiResponse.getCode() == 200) {
                         // Lưu Token & thông tin User
-                        prefManager.saveToken(apiResponse.getToken());
-                        prefManager.saveUser(apiResponse.getData());
+                        prefManager.saveUserSession(apiResponse.getToken(), apiResponse.getData());
 
                         // Cập nhật thông báo tải dữ liệu
                         progressDialog.setMessage("Đang tải dữ liệu sản phẩm...");

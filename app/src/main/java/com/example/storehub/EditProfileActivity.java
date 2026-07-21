@@ -1,6 +1,5 @@
 package com.example.storehub;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -13,7 +12,7 @@ import com.bumptech.glide.Glide;
 import com.example.storehub.model.Response;
 import com.example.storehub.model.User;
 import com.example.storehub.services.HttpResquest;
-import com.example.storehub.services.SharedPreferencesManager;
+import com.example.storehub.utils.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.HashMap;
@@ -42,7 +41,7 @@ public class EditProfileActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_edit_profile);
 
-        sharedPreferencesManager = SharedPreferencesManager.getInstance(this);
+        sharedPreferencesManager = new SharedPreferencesManager(this);
         currentUser = sharedPreferencesManager.getUser();
 
         if (currentUser == null) {
@@ -51,12 +50,12 @@ public class EditProfileActivity extends AppCompatActivity {
             return;
         }
 
-        initViews();
+        initUi();
         bindUserData();
         setupClickListeners();
     }
 
-    private void initViews() {
+    private void initUi() {
         edtProfileName = findViewById(R.id.edtProfileName);
         edtProfileEmail = findViewById(R.id.edtProfileEmail);
         edtProfilePhone = findViewById(R.id.edtProfilePhone);

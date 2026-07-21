@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.storehub.model.Post;
 import com.example.storehub.model.Response;
 import com.example.storehub.services.HttpResquest;
-import com.example.storehub.services.SharedPreferencesManager;
+import com.example.storehub.utils.SharedPreferencesManager;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -32,19 +32,19 @@ public class AddPostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_post);
 
-        sharedPreferencesManager = SharedPreferencesManager.getInstance(this);
-        initViews();
+        sharedPreferencesManager = new SharedPreferencesManager(this);
+        initUi();
+        httpRequest = new HttpResquest();
         setupSpinner();
         setAuthorInfo();
     }
 
-    private void initViews() {
+    private void initUi() {
         edtTitle = findViewById(R.id.edtPostTitle);
         edtContent = findViewById(R.id.edtPostContent);
         spinnerStatus = findViewById(R.id.spinnerStatus);
         txtAuthorName = findViewById(R.id.txtAuthorName);
         btnBack = findViewById(R.id.btnBack);
-        httpRequest = new HttpResquest();
 
         btnBack.setOnClickListener(v -> finish());
         findViewById(R.id.btnCancel).setOnClickListener(v -> finish());
@@ -66,7 +66,7 @@ public class AddPostActivity extends AppCompatActivity {
             Post post = new Post(title, content, ""); // Link ảnh rỗng cho mock
             post.setAuthor(txtAuthorName.getText().toString());
             // Bạn có thể thêm trường status vào model Post nếu cần
-            
+
             savePost(post);
         });
     }
