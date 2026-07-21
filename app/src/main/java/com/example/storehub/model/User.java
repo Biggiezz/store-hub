@@ -12,11 +12,12 @@ public class User {
     private String image;
     private String address;
     private String changePasswordDate;
+    private String lastActive;
 
     public User() {
     }
 
-    public User(String id, String name, String email, String phone, String role, String image, String address) {
+    public User(String id, String name, String email, String phone, String role, String image, String address,String lastActive) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -25,6 +26,7 @@ public class User {
         this.image = image;
         this.address = address;
         this.changePasswordDate = changePasswordDate;
+        this.lastActive = lastActive;
     }
 
     public String getId() {
@@ -81,6 +83,14 @@ public class User {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getLastActive() {
+        return lastActive != null ? lastActive : "Vừa xong";
+    }
+
+    public void setLastActive(String lastActive) {
+        this.lastActive = lastActive;
     }
 
     public String getChangePasswordDate() {

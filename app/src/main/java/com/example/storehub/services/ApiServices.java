@@ -115,4 +115,11 @@ public interface ApiServices {
 
     @GET("users/admin/revenue-stats")
     Call<Response<AdminStats.RevenueData>> getRevenueStats(@Query("period") int period);
+    Call<LoginResponse> login(@Body LoginRequest request);
+
+    @GET("users/get-all-users")
+    Call<Response<ArrayList<User>>> getListUsers();
+
+    @POST("users/add-user")
+    Call<Response<User>> addUser(@Body User user);
 }
