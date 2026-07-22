@@ -23,7 +23,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Trang chủ Quản Trị"
+                android:text="@string/admin_home"
                 android:textColor="#1E2A24"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:padding="8dp"
                 android:src="@drawable/ic_product_review"
-                android:contentDescription="Đánh giá sản phẩm" />
+                android:contentDescription="@string/product_review" />
 
             <ImageView
                 android:id="@+id/btnLogout"
@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:padding="8dp"
                 android:src="@drawable/ic_logout"
-                android:contentDescription="Đăng xuất"
+                android:contentDescription="@string/logout"
                 android:clickable="true"
                 android:focusable="true"
                 android:background="?attr/selectableItemBackgroundBorderless" />

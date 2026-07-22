@@ -141,7 +141,7 @@
                         android:id="@+id/btnPhone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Điện thoại"
+                        android:text="@string/phone"
                         android:textAllCaps="false"
                         android:textColor="@color/white"
                         android:textSize="12sp"
@@ -156,7 +156,7 @@
                         android:id="@+id/btnComputer"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Máy tính"
+                        android:text="@string/laptop"
                         android:textColor="@color/text_primary"
                         android:textSize="12sp"
                         app:backgroundTint="#F1E3D7"
@@ -170,7 +170,7 @@
                         android:id="@+id/btnHeadphone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Tai nghe"
+                        android:text="@string/headphone"
                         android:textColor="@color/text_primary"
                         android:textSize="13sp"
                         app:backgroundTint="#F1E3D7"
@@ -191,7 +191,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/libre_caslon_text"
-                        android:text="Sản phẩm nổi bật"
+                        android:text="@string/featured_products"
                         android:textColor="@color/dark_green"
                         android:textSize="24sp"
                         android:textStyle="bold" />
@@ -201,7 +201,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom|end"
-                        android:text="Xem tất cả"
+                        android:text="@string/view_all"
                         android:textColor="@color/text_secondary"
                         android:textSize="13sp"
                         app:backgroundTint="@android:color/transparent"
@@ -273,7 +273,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnHome"
             style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="Trang chủ"
+            android:text="@string/nav_home"
             android:textColor="#756E67"
             app:backgroundTint="@color/bottom_nav_active"
             app:icon="@drawable/ic_home"
@@ -282,7 +282,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnProducts"
             style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="Sản phẩm"
+            android:text="@string/nav_products"
             android:textColor="#AAA49D"
             app:icon="@drawable/ic_product"
             app:iconTint="#AAA49D" />
@@ -290,7 +290,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCart"
             style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="Giỏ hàng"
+            android:text="@string/nav_cart"
             android:textColor="#AAA49D"
             app:icon="@drawable/ic_cart"
             app:iconTint="#AAA49D" />
@@ -298,9 +298,17 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnNews"
             style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="Tin tức"
+            android:text="@string/nav_news"
             android:textColor="#AAA49D"
             app:icon="@drawable/ic_new"
+            app:iconTint="#AAA49D" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnProfile"
+            style="@style/Widget.StoreHub.BottomNavButton"
+            android:text="@string/nav_profile"
+            android:textColor="#AAA49D"
+            app:icon="@drawable/ic_user"
             app:iconTint="#AAA49D" />
 
     </LinearLayout>

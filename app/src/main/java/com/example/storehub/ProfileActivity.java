@@ -113,15 +113,16 @@ public class ProfileActivity extends BaseActivity {
     private void bindUserData() {
         User user = sharedPreferencesManager.getUser();
         if (user == null) {
-            Toast.makeText(this, "Không có thông tin người dùng", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.no_user_info, Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
-        txtProfileName.setText(user.getName() + " • " + (user.getRole().equalsIgnoreCase("admin") ? "Người quản lý" : "Khách hàng"));
+        String role = user.getRole().equalsIgnoreCase("admin") ? getString(R.string.role_admin) : getString(R.string.role_customer);
+        txtProfileName.setText(user.getName() + " • " + role);
         txtEmailValue.setText(user.getEmail());
         txtPhoneValue.setText(user.getPhone());
-        txtAddressValue.setText(user.getAddress() == null || user.getAddress().isEmpty() ? "Chưa cập nhật địa chỉ" : user.getAddress());
+        txtAddressValue.setText(user.getAddress() == null || user.getAddress().isEmpty() ? getString(R.string.no_address_update) : user.getAddress());
 
         updatePasswordChangeSubtext(user.getChangePasswordDate());
 
@@ -136,7 +137,7 @@ public class ProfileActivity extends BaseActivity {
     private void updatePasswordChangeSubtext(String changeDateStr) {
         if (changeDateStr == null || changeDateStr.isEmpty()) {
             TextView txtSub = findViewById(R.id.profile_activity).findViewWithTag("password_sub");
-            if (txtSub != null) txtSub.setText("Chưa đổi mật khẩu");
+            if (txtSub != null) txtSub.setText(getString(R.string.no_password_change));
             return;
         }
 
@@ -150,12 +151,12 @@ public class ProfileActivity extends BaseActivity {
 
                 String relativeText;
                 if (diffDays < 1) {
-                    relativeText = "Đã thay đổi hôm nay";
+                    relativeText = getString(R.string.password_changed_today);
                 } else if (diffDays < 30) {
-                    relativeText = "Đã thay đổi " + diffDays + " ngày trước";
+                    relativeText = String.format(getString(R.string.password_changed_days_ago), diffDays);
                 } else {
                     long diffMonths = diffDays / 30;
-                    relativeText = "Đã thay đổi " + diffMonths + " tháng trước";
+                    relativeText = String.format(getString(R.string.password_changed_months_ago), diffMonths);
                 }
 
                 if (txtPasswordChangedSub != null) {
@@ -165,7 +166,7 @@ public class ProfileActivity extends BaseActivity {
         } catch (Exception e) {
             e.printStackTrace();
             if (txtPasswordChangedSub != null) {
-                txtPasswordChangedSub.setText("Đã thay đổi 3 tháng trước");
+                txtPasswordChangedSub.setText(getString(R.string.password_changed_sub));
             }
         }
     }
@@ -195,19 +196,34 @@ public class ProfileActivity extends BaseActivity {
 
         findViewById(R.id.btnLogout).setOnClickListener(v -> showCustomLogoutDialog());
 
-        findViewById(R.id.btnHome).setOnClickListener(v -> finish());
+        findViewById(R.id.btnHome).setOnClickListener(v -> {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra(MainActivity.EXTRA_OPEN_TAB, MainActivity.TAB_HOME);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+            finish();
+        });
         findViewById(R.id.btnProducts).setOnClickListener(v -> {
-            Toast.makeText(this, "Màn hình Sản phẩm", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra(MainActivity.EXTRA_OPEN_TAB, MainActivity.TAB_PRODUCTS);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
             finish();
         });
 
         findViewById(R.id.btnCart).setOnClickListener(v -> {
-            Toast.makeText(this, "Giỏ hàng", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra(MainActivity.EXTRA_OPEN_TAB, MainActivity.TAB_CART);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
             finish();
         });
 
         findViewById(R.id.btnNews).setOnClickListener(v -> {
-            Toast.makeText(this, "Tin tức", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra(MainActivity.EXTRA_OPEN_TAB, MainActivity.TAB_NEWS);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
             finish();
         });
     }
@@ -219,7 +235,9 @@ public class ProfileActivity extends BaseActivity {
         // Cập nhật UI ngay lập tức bằng cách khởi động lại activity
         Intent intent = getIntent();
         finish();
+        overridePendingTransition(0, 0);
         startActivity(intent);
+        overridePendingTransition(0, 0);
     }
 
     private void showCustomLogoutDialog() {

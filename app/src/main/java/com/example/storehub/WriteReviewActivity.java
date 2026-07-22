@@ -6,14 +6,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.bumptech.glide.Glide;
 import com.example.storehub.model.Order;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.imageview.ShapeableImageView;
 
-public class WriteReviewActivity extends AppCompatActivity {
+public class WriteReviewActivity extends BaseActivity {
 
     private ImageView btnBack;
     private ShapeableImageView ivReviewProductImage;

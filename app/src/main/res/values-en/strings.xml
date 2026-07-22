@@ -6,6 +6,40 @@
     <string name="store_hub">StoreHub</string>
     <string name="back">Back</string>
 
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_products">Products</string>
+    <string name="nav_cart">Cart</string>
+    <string name="nav_news">NEWS</string>
+    <string name="nav_profile">Profile</string>
+    <string name="featured_products">Featured Products</string>
+    <string name="view_all">View all</string>
+    <string name="phone">Phone</string>
+    <string name="laptop">Laptop</string>
+    <string name="headphone">Headphone</string>
+
+    <!-- Admin -->
+    <string name="admin_home">Admin Dashboard</string>
+    <string name="product_review">Product Review</string>
+    <string name="admin_news">News Management</string>
+    <string name="admin_products">Products Management</string>
+    <string name="admin_users">Users Management</string>
+    <string name="admin_stats">Statistics</string>
+    <string name="admin_product_management">Products Management</string>
+    <string name="all">All</string>
+    <string name="search_product_hint">Search products...</string>
+    <string name="add_product">Add Product</string>
+    <string name="admin_stats_title">Admin Statistics</string>
+    <string name="revenue_chart">Revenue Chart</string>
+    <string name="top_products">Best Selling Products</string>
+    <string name="recent_activity">Recent Activity</string>
+    <string name="admin_user_management">Users Management</string>
+    <string name="add_new_user">+  ADD NEW USER</string>
+    <string name="staff">Staff</string>
+    <string name="customer">Customer</string>
+    <string name="search_user_hint">Search by name or email...</string>
+    <string name="no_user_found">No matching users found</string>
+
     <!-- Login -->
     <string name="login">Login</string>
     <string name="login_description">Manage your store elegantly and\nefficiently.</string>
@@ -54,6 +88,15 @@
     <string name="change_language">Change Language</string>
     <string name="change_language_en">Language: English</string>
     <string name="logout">Logout</string>
+    <string name="role_admin">Admin</string>
+    <string name="role_customer">Customer</string>
+    <string name="no_password_change">Password not changed yet</string>
+    <string name="password_changed_today">Changed today</string>
+    <string name="password_changed_days_ago">Changed %d days ago</string>
+    <string name="password_changed_months_ago">Changed %d months ago</string>
+    <string name="no_user_info">No user information available</string>
+    <string name="current_language_label">English</string>
+    <string name="no_address_update">Address not updated yet</string>
 
     <!-- Edit Profile -->
     <string name="edit_profile_title">Edit Info</string>

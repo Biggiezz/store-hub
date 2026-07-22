@@ -10,7 +10,6 @@ import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -36,7 +35,7 @@ import retrofit2.Callback;
 /**
  * Giao diện chi tiết đơn hàng đang vận chuyển kết nối dữ liệu thật.
  */
-public class ShippingOrderDetailActivity extends AppCompatActivity {
+public class ShippingOrderDetailActivity extends BaseActivity {
 
     private Toolbar toolbar;
     private Order order;

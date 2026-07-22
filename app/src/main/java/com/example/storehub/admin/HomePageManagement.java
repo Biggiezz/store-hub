@@ -15,7 +15,7 @@ public class HomePageManagement extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new PostManagementFragment())
+                    .replace(R.id.fragmentAdminContainer, new PostManagementFragment())
                     .commit();
         }
     }

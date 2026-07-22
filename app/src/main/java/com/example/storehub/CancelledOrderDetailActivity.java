@@ -5,7 +5,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -22,7 +21,7 @@ import java.util.Locale;
 /**
  * Giao diện chi tiết đơn hàng đã hủy kết nối dữ liệu thật.
  */
-public class CancelledOrderDetailActivity extends AppCompatActivity {
+public class CancelledOrderDetailActivity extends BaseActivity {
 
     private Toolbar toolbar;
     private Order order;
