@@ -20,10 +20,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
-import com.example.storehub.model.AddToCartRequest;
 import com.example.storehub.model.ApiMessageResponse;
+import com.example.storehub.model.CartItem;
+import com.example.storehub.model.Product;
 import com.example.storehub.model.ProductColor;
-import com.example.storehub.model.ProductDetailResponse;
 import com.example.storehub.model.Response;
 import com.example.storehub.services.ApiServices;
 import com.example.storehub.services.HttpResquest;
@@ -39,32 +39,17 @@ import retrofit2.Callback;
 public class ProductDetailActivity extends AppCompatActivity {
 
     public static final String EXTRA_PRODUCT_ID = "product_id";
-
     private ImageView ivProduct;
     private ImageButton btnBack;
-
-    private TextView tvCategory;
-    private TextView tvProductName;
-    private TextView tvPrice;
-    private TextView tvRatingSummary;
-    private TextView tvDescription;
-    private TextView tvEmptyReview;
-    private TextView tvError;
-    private TextView tvQuantity;
-    private TextView btnMinus;
-    private TextView btnPlus;
-    private TextView tvColorLabel;
-
+    private TextView tvCategory, tvProductName, tvPrice, tvRatingSummary, tvDescription, tvEmptyReview, tvError, tvQuantity, btnMinus, btnPlus, tvColorLabel;
     private RatingBar ratingProduct;
     private LinearLayout colorContainer;
     private ProgressBar progressBar;
     private MaterialButton btnAddToCart;
-
     private ApiServices apiService;
-    private Call<Response<ProductDetailResponse>> productCall;
+    private Call<Response<Product>> productCall;
     private Call<ApiMessageResponse> cartCall;
-
-    private ProductDetailResponse currentProduct;
+    private Product currentProduct;
     private String productId;
     private Object selectedColorId;
     private int quantity = 1;
@@ -79,7 +64,7 @@ public class ProductDetailActivity extends AppCompatActivity {
             return insets;
         });
 
-        bindViews();
+        initUi();
 
         apiService = new HttpResquest().callAPI();
 
@@ -94,12 +79,12 @@ public class ProductDetailActivity extends AppCompatActivity {
             return;
         }
 
-        setupEvents();
+        setUpListener();
         updateQuantity();
         loadProduct();
     }
 
-    private void bindViews() {
+    private void initUi() {
         ivProduct = findViewById(R.id.ivProduct);
         btnBack = findViewById(R.id.btnBack);
 
@@ -121,7 +106,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         btnAddToCart = findViewById(R.id.btnAddToCart);
     }
 
-    private void setupEvents() {
+    private void setUpListener() {
         btnBack.setOnClickListener(view -> finish());
 
         tvError.setOnClickListener(view -> loadProduct());
@@ -161,11 +146,11 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         productCall = apiService.getProductDetail(productId);
 
-        productCall.enqueue(new Callback<Response<ProductDetailResponse>>() {
+        productCall.enqueue(new Callback<Response<Product>>() {
             @Override
             public void onResponse(
-                    @NonNull Call<Response<ProductDetailResponse>> call,
-                    @NonNull retrofit2.Response<Response<ProductDetailResponse>> response
+                    @NonNull Call<Response<Product>> call,
+                    @NonNull retrofit2.Response<Response<Product>> response
             ) {
                 setLoading(false);
 
@@ -181,7 +166,7 @@ public class ProductDetailActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(
-                    @NonNull Call<Response<ProductDetailResponse>> call,
+                    @NonNull Call<Response<Product>> call,
                     @NonNull Throwable throwable
             ) {
                 if (call.isCanceled()) {
@@ -194,7 +179,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         });
     }
 
-    private void bindProduct(ProductDetailResponse product) {
+    private void bindProduct(Product product) {
         tvProductName.setText(nonNullText(product.getName()));
         tvPrice.setText(formatPrice(product.getPriceAsLong()));
         tvDescription.setText(nonNullText(product.getDescription()));
@@ -339,7 +324,7 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         setCartLoading(true);
 
-        AddToCartRequest request = new AddToCartRequest(
+        CartItem.AddToCartRequest request = new CartItem.AddToCartRequest(
                 currentProduct.get_id(),
                 selectedColorId,
                 quantity
@@ -369,6 +354,8 @@ public class ProductDetailActivity extends AppCompatActivity {
                 String message = TextUtils.isEmpty(result.getMessage())
                         ? "Đã thêm sản phẩm vào giỏ"
                         : result.getMessage();
+
+                MainActivity.shouldOpenCartOnResume = true;
 
                 Toast.makeText(
                         ProductDetailActivity.this,

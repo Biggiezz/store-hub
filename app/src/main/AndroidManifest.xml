@@ -19,10 +19,17 @@
         <activity android:name=".CancelledOrderDetailActivity" android:exported="false" />
         <activity android:name=".CompletedOrderDetailActivity" android:exported="false" />
         <activity
+            android:name=".admin.HomePageManagementActivity"
+            android:exported="false" />
+        <activity
+            android:name=".admin.ProductFormManagementActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
             android:name=".ProductDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".splash.SplashActivity"
+            android:name=".SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,6 +47,22 @@
         <activity
             android:name=".NewsDetailActivity"
             android:exported="false" />
+        <activity
+            android:name=".ProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".admin.AddNewsManagementActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".EditProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ChangePasswordActivity"
+            android:exported="false" />
+        <activity android:name=".ShippingOrderDetailActivity" android:exported="false" />
+        <activity android:name=".CancelledOrderDetailActivity" android:exported="false" />
+        <activity android:name=".CompletedOrderDetailActivity" android:exported="false" />
 
         <service
             android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
@@ -52,7 +75,7 @@
 
         <activity
             android:name=".MainActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
 
         <meta-data
             android:name="preloaded_fonts"

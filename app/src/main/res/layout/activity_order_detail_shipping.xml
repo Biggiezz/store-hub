@@ -1,20 +1,29 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/orderDetailRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    android:orientation="vertical"
->
-    <include layout="@layout/include_order_detail_header" />
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/background"
+        app:navigationIcon="@drawable/ic_back"
+        app:navigationIconTint="#1A2821"
+        app:title="Chi tiết đơn hàng"
+        app:titleTextColor="#1A2821" />
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:fillViewport="true"
-        android:overScrollMode="never"
-    >
+        android:overScrollMode="never">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -22,21 +31,21 @@
             android:paddingStart="20dp"
             android:paddingTop="16dp"
             android:paddingEnd="20dp"
-            android:paddingBottom="16dp"
-        >
+            android:paddingBottom="16dp">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_detail_section_warm"
                 android:orientation="vertical"
-                android:padding="25dp"
-            >
+                android:padding="25dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                >
+                    android:orientation="horizontal">
+
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -44,8 +53,8 @@
                         android:text="▰  Đang giao hàng"
                         android:textColor="#1A2821"
                         android:textSize="20sp"
-                        android:textStyle="bold"
-                    />
+                        android:textStyle="bold" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="24dp"
@@ -54,17 +63,18 @@
                         android:paddingHorizontal="12dp"
                         android:text="Đang giao hàng"
                         android:textColor="#FFFFFF"
-                        android:textSize="12sp"
-                    />
+                        android:textSize="12sp" />
                 </LinearLayout>
+
                 <TextView
+                    android:id="@+id/tvOrderDetailCode"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="Mã đơn: #SH-882941"
                     android:textColor="#434844"
-                    android:textSize="14sp"
-                />
+                    android:textSize="14sp" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -72,143 +82,146 @@
                     android:text="Dự kiến giao: 24 Tháng 5,\n2024"
                     android:textColor="#675C53"
                     android:textSize="14sp"
-                    android:textStyle="italic"
-                />
+                    android:textStyle="italic" />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:background="@drawable/bg_detail_section"
                 android:orientation="vertical"
-                android:padding="25dp"
-            >
+                android:padding="25dp">
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Lộ trình vận chuyển"
                     android:textColor="#1A2821"
                     android:textSize="20sp"
-                    android:textStyle="bold"
-                />
+                    android:textStyle="bold" />
+
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="260dp"
-                    android:layout_marginTop="28dp"
-                >
+                    android:layout_marginTop="28dp">
+
                     <View
                         android:layout_width="2dp"
                         android:layout_height="220dp"
                         android:layout_marginStart="11dp"
                         android:layout_marginTop="8dp"
-                        android:background="#C3C8C3"
-                    />
+                        android:background="#C3C8C3" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                    >
+                        android:orientation="vertical">
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="56dp"
-                            android:orientation="horizontal"
-                        >
+                            android:orientation="horizontal">
+
                             <ImageView
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:background="@drawable/bg_timeline_done"
                                 android:padding="6dp"
-                                android:src="@drawable/ic_order_done"
-                            />
+                                android:src="@drawable/ic_order_done" />
+
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
                                 android:layout_marginStart="16dp"
+                                android:layout_weight="1"
                                 android:text="Đã xác nhận\n20/05/2024 • 09:15"
                                 android:textColor="#1B1C1A"
                                 android:textSize="14sp"
-                                android:textStyle="bold"
-                            />
+                                android:textStyle="bold" />
                         </LinearLayout>
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="56dp"
-                            android:orientation="horizontal"
-                        >
+                            android:orientation="horizontal">
+
                             <ImageView
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:background="@drawable/bg_timeline_done"
                                 android:padding="6dp"
-                                android:src="@drawable/ic_order_done"
-                            />
+                                android:src="@drawable/ic_order_done" />
+
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
                                 android:layout_marginStart="16dp"
+                                android:layout_weight="1"
                                 android:text="Đã rời kho\n21/05/2024 • 14:30"
                                 android:textColor="#1B1C1A"
                                 android:textSize="14sp"
-                                android:textStyle="bold"
-                            />
+                                android:textStyle="bold" />
                         </LinearLayout>
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="92dp"
-                            android:orientation="horizontal"
-                        >
+                            android:orientation="horizontal">
+
                             <ImageView
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:background="@drawable/bg_timeline_active"
                                 android:padding="5dp"
-                                android:src="@drawable/ic_order_shipping"
-                            />
+                                android:src="@drawable/ic_order_shipping" />
+
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
                                 android:layout_marginStart="16dp"
+                                android:layout_weight="1"
                                 android:text="Đang giao hàng\n22/05/2024 • 08:00\nĐơn hàng đang được shipper vận chuyển\nđến bạn."
                                 android:textColor="#1A2821"
                                 android:textSize="14sp"
-                                android:textStyle="bold"
-                            />
+                                android:textStyle="bold" />
                         </LinearLayout>
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="56dp"
                             android:alpha="0.4"
-                            android:orientation="horizontal"
-                        >
+                            android:orientation="horizontal">
+
                             <View
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
-                                android:background="@drawable/bg_timeline_pending"
-                            />
+                                android:background="@drawable/bg_timeline_pending" />
+
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
                                 android:layout_marginStart="16dp"
+                                android:layout_weight="1"
                                 android:text="Đã giao hàng\nDự kiến: 24/05/2024"
                                 android:textColor="#434844"
-                                android:textSize="14sp"
-                            />
+                                android:textSize="14sp" />
                         </LinearLayout>
                     </LinearLayout>
                 </FrameLayout>
             </LinearLayout>
-            <include android:layout_marginTop="16dp" layout="@layout/include_shipping_info" />
+
+            <include
+                layout="@layout/include_shipping_info"
+                android:layout_marginTop="16dp" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:background="@drawable/bg_detail_section"
-                android:orientation="vertical"
-            >
+                android:orientation="vertical">
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
@@ -218,27 +231,31 @@
                     android:text="Sản phẩm"
                     android:textColor="#1A2821"
                     android:textSize="20sp"
-                    android:textStyle="bold"
-                />
-                <include layout="@layout/include_detail_product_sage" />
+                    android:textStyle="bold" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvOrderProducts"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:overScrollMode="never"
+                    android:padding="8dp" />
             </LinearLayout>
-            <include
-                android:layout_marginTop="16dp"
-                layout="@layout/include_detail_summary_shipping"
-            />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginTop="24dp"
                 android:background="@drawable/bg_detail_primary_button"
-                android:gravity="center"
                 android:fontFamily="serif"
+                android:gravity="center"
                 android:text="Liên hệ hỗ trợ"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
-                android:textStyle="bold"
-            />
+                android:textStyle="bold" />
+
             <TextView
+                android:id="@+id/btnCancelOrder"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginTop="12dp"
@@ -247,9 +264,7 @@
                 android:text="Hủy đơn hàng"
                 android:textColor="#434844"
                 android:textSize="16sp"
-                android:textStyle="bold"
-            />
+                android:textStyle="bold" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-    <include layout="@layout/include_order_detail_bottom_nav" />
 </LinearLayout>

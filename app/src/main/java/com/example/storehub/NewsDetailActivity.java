@@ -22,34 +22,16 @@ import java.util.TimeZone;
  */
 public class NewsDetailActivity extends AppCompatActivity {
 
-    private ImageView btnBack;
-    private ImageView ivDetailNewsImage;
-    private TextView tvDetailNewsTitle;
-    private TextView tvDetailNewsAuthor;
-    private TextView tvDetailNewsTime;
-    private TextView tvDetailNewsContent;
-
-
+    private ImageView btnBack, ivDetailNewsImage;
+    private TextView tvDetailNewsTitle, tvDetailNewsAuthor, tvDetailNewsTime, tvDetailNewsContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_detail);
 
-        // Ánh xạ các thành phần giao diện
-        btnBack = findViewById(R.id.btnBack);
-        ivDetailNewsImage = findViewById(R.id.ivDetailNewsImage);
-        tvDetailNewsTitle = findViewById(R.id.tvDetailNewsTitle);
-        tvDetailNewsAuthor = findViewById(R.id.tvDetailNewsAuthor);
-        tvDetailNewsTime = findViewById(R.id.tvDetailNewsTime);
-        tvDetailNewsContent = findViewById(R.id.tvDetailNewsContent);
-
-        // Bắt sự kiện nút Quay lại (Back)
-        btnBack.setOnClickListener(v -> finish());
-
-        // Thiết lập sự kiện click cho Bottom Navigation và các nút tương tác
-        setupBottomNavigation();
-        setupInteractionButtons();
+        initUi();
+        setUpListener();
 
         // Lấy dữ liệu đối tượng News được truyền từ Adapter
         News news = (News) getIntent().getSerializableExtra("news_item");
@@ -60,6 +42,24 @@ public class NewsDetailActivity extends AppCompatActivity {
             Toast.makeText(this, "Không thể tải chi tiết bài viết!", Toast.LENGTH_SHORT).show();
             finish();
         }
+    }
+
+    private void initUi() {
+        btnBack = findViewById(R.id.btnBack);
+        ivDetailNewsImage = findViewById(R.id.ivDetailNewsImage);
+        tvDetailNewsTitle = findViewById(R.id.tvDetailNewsTitle);
+        tvDetailNewsAuthor = findViewById(R.id.tvDetailNewsAuthor);
+        tvDetailNewsTime = findViewById(R.id.tvDetailNewsTime);
+        tvDetailNewsContent = findViewById(R.id.tvDetailNewsContent);
+    }
+
+    private void setUpListener() {
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> finish());
+        }
+
+        setupBottomNavigation();
+        setupInteractionButtons();
     }
 
     /**
@@ -77,8 +77,8 @@ public class NewsDetailActivity extends AppCompatActivity {
         // Sử dụng Glide để tải hình ảnh từ URL server vào ImageView
         Glide.with(this)
                 .load(news.getImage())
-                .placeholder(R.drawable.ic_new) // Ảnh mặc định khi đang tải
-                .error(R.drawable.ic_new)       // Ảnh khi tải lỗi
+                .placeholder(R.drawable.ic_new)
+                .error(R.drawable.ic_new)
                 .into(ivDetailNewsImage);
     }
 
@@ -98,7 +98,7 @@ public class NewsDetailActivity extends AppCompatActivity {
             // Định dạng hiển thị mong muốn
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
             formatter.setTimeZone(TimeZone.getDefault());
-            
+
             return formatter.format(date);
         } catch (Exception e) {
             try {
@@ -118,7 +118,6 @@ public class NewsDetailActivity extends AppCompatActivity {
      * Cấu hình điều hướng cho thanh Bottom Navigation ở góc dưới màn hình chi tiết
      */
     private void setupBottomNavigation() {
-        // Nút "Trang chủ" -> quay lại MainActivity và xóa các activity khác khỏi stack
         findViewById(R.id.btnHome).setOnClickListener(v -> openMainTab(MainActivity.TAB_HOME));
 
         findViewById(R.id.btnProducts).setOnClickListener(v -> openMainTab(MainActivity.TAB_PRODUCTS));
@@ -143,16 +142,10 @@ public class NewsDetailActivity extends AppCompatActivity {
      * Cấu hình sự kiện cho cụm nút tương tác Chia sẻ / Lưu / Thích dưới cùng
      */
     private void setupInteractionButtons() {
-        findViewById(R.id.btnShare).setOnClickListener(v -> {
-            Toast.makeText(this, "Đã sao chép liên kết bài viết!", Toast.LENGTH_SHORT).show();
-        });
+        findViewById(R.id.btnShare).setOnClickListener(v -> Toast.makeText(this, "Đã sao chép liên kết bài viết!", Toast.LENGTH_SHORT).show());
 
-        findViewById(R.id.btnBookmark).setOnClickListener(v -> {
-            Toast.makeText(this, "Đã lưu bài viết vào mục đọc sau!", Toast.LENGTH_SHORT).show();
-        });
+        findViewById(R.id.btnBookmark).setOnClickListener(v -> Toast.makeText(this, "Đã lưu bài viết vào mục đọc sau!", Toast.LENGTH_SHORT).show());
 
-        findViewById(R.id.btnLike).setOnClickListener(v -> {
-            Toast.makeText(this, "Đã thêm bài viết vào danh sách yêu thích!", Toast.LENGTH_SHORT).show();
-        });
+        findViewById(R.id.btnLike).setOnClickListener(v -> Toast.makeText(this, "Đã thêm bài viết vào danh sách yêu thích!", Toast.LENGTH_SHORT).show());
     }
 }

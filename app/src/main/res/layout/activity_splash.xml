@@ -7,7 +7,7 @@
     android:background="@color/background"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".splash.SplashActivity">
+    tools:context=".SplashActivity">
 
     <ImageView
         android:layout_width="wrap_content"

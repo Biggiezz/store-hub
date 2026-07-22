@@ -34,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:fontFamily="serif"
+            android:fontFamily="@font/libre_caslon_text"
             android:text="Chi tiết tin tức"
             android:textColor="@color/dark_green"
             android:textSize="20sp"
@@ -89,7 +89,7 @@
                 android:textColor="@color/dark_green"
                 android:textSize="22sp"
                 android:textStyle="bold"
-                android:fontFamily="serif"
+                android:fontFamily="@font/libre_caslon_text"
                 tools:text="Tiêu đề bài viết tin tức mẫu cực kỳ hấp dẫn tại StoreHub" />
 
             <!-- News Metadata (Author & Time) -->

@@ -1,20 +1,31 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/orderDetailRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    android:orientation="vertical"
->
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/background"
+        app:navigationIcon="@drawable/ic_back"
+        app:navigationIconTint="#1A2821"
+        app:title="Chi tiết đơn hàng"
+        app:titleTextColor="#1A2821" />
+
     <include layout="@layout/include_order_detail_header" />
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:fillViewport="true"
-        android:overScrollMode="never"
-    >
+        android:overScrollMode="never">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -22,21 +33,21 @@
             android:paddingStart="20dp"
             android:paddingTop="16dp"
             android:paddingEnd="20dp"
-            android:paddingBottom="32dp"
-        >
+            android:paddingBottom="32dp">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="168dp"
                 android:background="@drawable/bg_cancelled_status_figma"
                 android:orientation="vertical"
-                android:padding="25dp"
-            >
+                android:padding="25dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                >
+                    android:orientation="horizontal">
+
                     <TextView
                         android:layout_width="32dp"
                         android:layout_height="32dp"
@@ -44,18 +55,18 @@
                         android:gravity="center"
                         android:text="×"
                         android:textColor="#BA1A1A"
-                        android:textSize="23sp"
-                    />
+                        android:textSize="23sp" />
+
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:layout_marginStart="8dp"
+                        android:layout_weight="1"
                         android:text="Đã hủy"
                         android:textColor="#1A2821"
                         android:textSize="20sp"
-                        android:textStyle="bold"
-                    />
+                        android:textStyle="bold" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="28dp"
@@ -64,24 +75,25 @@
                         android:paddingHorizontal="14dp"
                         android:text="Đã hoàn tiền"
                         android:textColor="#675C53"
-                        android:textSize="12sp"
-                    />
+                        android:textSize="12sp" />
                 </LinearLayout>
+
                 <TextView
+                    android:id="@+id/tvOrderDetailCode"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="MÃ ĐƠN: #SH-863110"
                     android:textColor="#434844"
                     android:textSize="12sp"
-                    android:textStyle="bold"
-                />
+                    android:textStyle="bold" />
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="24dp"
-                    android:background="#E5E7E4"
-                />
+                    android:background="#E5E7E4" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -90,9 +102,9 @@
                     android:drawablePadding="8dp"
                     android:text="Lý do hủy: Thay đổi ý định"
                     android:textColor="#434844"
-                    android:textSize="14sp"
-                />
+                    android:textSize="14sp" />
             </LinearLayout>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -101,25 +113,28 @@
                 android:text="│  Sản phẩm đã chọn"
                 android:textColor="#1A2821"
                 android:textSize="20sp"
-                android:textStyle="bold"
-            />
-            <include layout="@layout/include_detail_product_candle" />
-            <include
-                android:layout_marginTop="24dp"
-                layout="@layout/include_detail_summary_cancelled"
-            />
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvOrderProducts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                android:padding="8dp" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginTop="40dp"
                 android:background="@drawable/bg_detail_primary_button"
-                android:gravity="center"
                 android:fontFamily="serif"
+                android:gravity="center"
                 android:text="Mua lại sản phẩm"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
-                android:textStyle="bold"
-            />
+                android:textStyle="bold" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
@@ -129,9 +144,7 @@
                 android:text="Liên hệ hỗ trợ"
                 android:textColor="#434844"
                 android:textSize="16sp"
-                android:textStyle="bold"
-            />
+                android:textStyle="bold" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-    <include layout="@layout/include_order_detail_bottom_nav" />
 </LinearLayout>

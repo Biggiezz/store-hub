@@ -2,20 +2,89 @@ package com.example.storehub;
 
 import android.os.Bundle;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-/** Giao diện mẫu chi tiết đơn hàng đã hoàn thành. */
+import com.example.storehub.adapter.OrderProductAdapter;
+import com.example.storehub.model.CartItem;
+import com.example.storehub.model.Order;
+
+import java.text.NumberFormat;
+import java.util.Locale;
+
+/** Giao diện chi tiết đơn hàng đã hoàn thành kết nối dữ liệu thật. */
 public class CompletedOrderDetailActivity extends AppCompatActivity {
-    @Override protected void onCreate(Bundle savedInstanceState) {
+
+    private RecyclerView rvOrderProducts;
+    private OrderProductAdapter adapter;
+    private TextView tvSubtotal, tvShippingFee, tvTotal, tvOrderDetailCode;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_detail_completed);
-        applySystemBarInsets();
-        ((ImageView) findViewById(R.id.imgOrderAvatar)).setImageResource(R.drawable.figma_completed_2_mockup);
 
-        findViewById(R.id.btnBackOrderDetail).setOnClickListener(view -> finish());
+        applySystemBarInsets();
+
+        androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            toolbar.setNavigationOnClickListener(v -> finish());
+        }
+
+        // Bind views
+        tvSubtotal = findViewById(R.id.tvSubtotal);
+        tvShippingFee = findViewById(R.id.tvShippingFee);
+        tvTotal = findViewById(R.id.tvTotal);
+        tvOrderDetailCode = findViewById(R.id.tvOrderDetailCode);
+
+        rvOrderProducts = findViewById(R.id.rvOrderProducts);
+        rvOrderProducts.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new OrderProductAdapter(this);
+        rvOrderProducts.setAdapter(adapter);
+
+        // Nhận dữ liệu Order từ Intent
+        Order order = (Order) getIntent().getSerializableExtra("order_data");
+        if (order != null) {
+            bindOrderData(order);
+        } else {
+            Toast.makeText(this, "Không tìm thấy dữ liệu đơn hàng", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+    }
+
+    private void bindOrderData(Order order) {
+        if (tvOrderDetailCode != null) {
+            tvOrderDetailCode.setText("Mã đơn: " + order.getOrderCode());
+        }
+
+        adapter.updateData(order.getItems());
+
+        long subtotal = 0;
+        for (CartItem item : order.getItems()) {
+            subtotal += item.getTotalItemPrice();
+        }
+
+        long shippingFee = order.getShippingFee();
+        long total = subtotal + shippingFee;
+
+        if (tvSubtotal != null) tvSubtotal.setText(formatPrice(subtotal));
+        if (tvShippingFee != null) tvShippingFee.setText(formatPrice(shippingFee));
+        if (tvTotal != null) tvTotal.setText(formatPrice(total));
+
+        TextView tvVoucher = findViewById(R.id.tvVoucher);
+        if (tvVoucher != null) tvVoucher.setText("-" + formatPrice(0));
+    }
+
+    private String formatPrice(long price) {
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+        return formatter.format(price);
     }
 
     private void applySystemBarInsets() {

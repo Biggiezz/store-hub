@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.storehub.R;
-import com.example.storehub.model.RegisterRequest;
 import com.example.storehub.model.Response;
 import com.example.storehub.model.User;
 import com.example.storehub.services.HttpResquest;
@@ -31,7 +30,11 @@ public class RegisterActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_register);
 
-        // Ánh xạ các trường
+        initUi();
+        setUpListener();
+    }
+
+    private void initUi() {
         edtFullName = findViewById(R.id.edtFullName);
         edtEmail = findViewById(R.id.edtEmail);
         edtPhone = findViewById(R.id.edtPhone);
@@ -39,38 +42,32 @@ public class RegisterActivity extends AppCompatActivity {
         edtConfirmPassword = findViewById(R.id.edtConfirmPassword);
         btnRegister = findViewById(R.id.btnRegister);
         btnBack = findViewById(R.id.btnBack);
+    }
 
-        // Bắt sự kiện quay lại
+    private void setUpListener() {
         if (btnBack != null) {
             btnBack.setOnClickListener(v -> finish());
         }
 
-        // Bắt sự kiện đăng ký
         if (btnRegister != null) {
-            btnRegister.setOnClickListener(v -> performRegister());
+            btnRegister.setOnClickListener(v -> handleRegister());
         }
     }
 
-    private void performRegister() {
-        String name = edtFullName.getText() != null ? edtFullName.getText().toString().trim() : "";
-        String email = edtEmail.getText() != null ? edtEmail.getText().toString().trim() : "";
-        String phone = edtPhone.getText() != null ? edtPhone.getText().toString().trim() : "";
-        String password = edtPassword.getText() != null ? edtPassword.getText().toString().trim() : "";
-        String confirmPassword = edtConfirmPassword.getText() != null ? edtConfirmPassword.getText().toString().trim() : "";
+    private void handleRegister() {
+        String name = edtFullName != null && edtFullName.getText() != null ? edtFullName.getText().toString().trim() : "";
+        String email = edtEmail != null && edtEmail.getText() != null ? edtEmail.getText().toString().trim() : "";
+        String phone = edtPhone != null && edtPhone.getText() != null ? edtPhone.getText().toString().trim() : "";
+        String password = edtPassword != null && edtPassword.getText() != null ? edtPassword.getText().toString().trim() : "";
+        String confirmPassword = edtConfirmPassword != null && edtConfirmPassword.getText() != null ? edtConfirmPassword.getText().toString().trim() : "";
 
-        // Kiểm tra dữ liệu hợp lệ
         if (name.isEmpty() || email.isEmpty() || phone.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
-            Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Vui lòng nhập đầy đủ các trường thông tin", Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(this, "Email không đúng định dạng", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (password.length() < 6) {
-            Toast.makeText(this, "Mật khẩu phải từ 6 ký tự trở lên", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Email không hợp lệ", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -80,7 +77,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         // Tạo đối tượng Request gửi đi
-        RegisterRequest request = new RegisterRequest(name, email, phone, password);
+        User.RegisterRequest request = new User.RegisterRequest(name, email, phone, password);
 
         // Gọi API
         HttpResquest httpResquest = new HttpResquest();

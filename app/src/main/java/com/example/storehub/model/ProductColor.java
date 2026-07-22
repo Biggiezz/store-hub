@@ -28,11 +28,13 @@ public class ProductColor {
         this.isDefault = isDefault;
     }
 
-    public Object getId() {
-        return id;
+    public String getId() {
+        if (id != null) return String.valueOf(id);
+        if (mongoId != null) return mongoId;
+        return "";
     }
 
-    public void setId(Long id) {
+    public void setId(Object id) {
         this.id = id;
     }
 
