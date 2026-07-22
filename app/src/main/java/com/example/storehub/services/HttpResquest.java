@@ -5,11 +5,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HttpResquest {
 
-    //public static final String BASE_URL = "http://10.0.2.2:3000/"; // không xóa -> comment lại
+    public static final String BASE_URL = "http://10.0.2.2:3000/"; // không xóa -> comment lại
 
-    public static final String BASE_URL_VI = "http://10.0.2.2:5000/";
-
-    public static final String BASE_URL = BASE_URL_VI;
+//    public static final String BASE_URL = "http://10.0.2.2:5000/";
 
     public ApiServices apiServices;
 

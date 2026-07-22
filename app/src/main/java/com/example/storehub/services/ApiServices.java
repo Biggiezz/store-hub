@@ -2,31 +2,31 @@ package com.example.storehub.services;
 
 import com.example.storehub.model.AdminStats;
 import com.example.storehub.model.ApiMessageResponse;
+import com.example.storehub.model.CancelOrderRequest;
 import com.example.storehub.model.CartItem;
 import com.example.storehub.model.News;
+import com.example.storehub.model.Order;
 import com.example.storehub.model.Product;
 import com.example.storehub.model.ProductReview;
 import com.example.storehub.model.Response;
 import com.example.storehub.model.User;
-import com.example.storehub.model.Order;
-import com.example.storehub.model.CancelOrderRequest;
 
 import java.util.ArrayList;
 import java.util.Map;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
-import retrofit2.http.Part;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 
 public interface ApiServices {
     @GET("api/productsRouter/get-all-product")
@@ -91,10 +91,10 @@ public interface ApiServices {
     Call<Response<Product>> addReview(@Body ProductReview.AddRequest request);
 
     @POST("api/oderRouter/create-order")
-    Call<Response<Order>> createOrder();
+    Call<Response<Order>> createOrder(@Query("userId") String userId);
 
     @GET("api/oderRouter/get-orders")
-    Call<Response<ArrayList<Order>>> getOrders();
+    Call<Response<ArrayList<Order>>> getOrders(@Query("userId") String userId);
 
     @POST("api/oderRouter/cancel-order")
     Call<Response<Order>> cancelOrder(@Body CancelOrderRequest request);
@@ -153,7 +153,6 @@ public interface ApiServices {
 
     @GET("users/admin/revenue-stats")
     Call<Response<AdminStats.RevenueData>> getRevenueStats(@Query("period") int period);
-    Call<LoginResponse> login(@Body LoginRequest request);
 
     @GET("users/get-all-users")
     Call<Response<ArrayList<User>>> getListUsers();

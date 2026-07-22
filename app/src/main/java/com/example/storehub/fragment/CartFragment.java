@@ -1,6 +1,5 @@
 package com.example.storehub.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -157,7 +156,9 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartChangeLi
                     return;
                 }
                 btnCheckout.setEnabled(false);
-                apiService.createOrder().enqueue(new retrofit2.Callback<Response<com.example.storehub.model.Order>>() {
+                SharedPreferencesManager prefManager = new SharedPreferencesManager(requireContext());
+                String userId = (prefManager.getUser() != null) ? prefManager.getUser().getId() : "";
+                apiService.createOrder(userId).enqueue(new retrofit2.Callback<Response<com.example.storehub.model.Order>>() {
                     @Override
                     public void onResponse(@NonNull retrofit2.Call<Response<com.example.storehub.model.Order>> call,
                                            @NonNull retrofit2.Response<Response<com.example.storehub.model.Order>> response) {

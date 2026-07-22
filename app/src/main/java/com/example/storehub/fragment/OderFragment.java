@@ -31,6 +31,7 @@ import com.example.storehub.model.Order;
 import com.example.storehub.model.Response;
 import com.example.storehub.services.ApiServices;
 import com.example.storehub.services.HttpResquest;
+import com.example.storehub.utils.SharedPreferencesManager;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -99,7 +100,7 @@ public class OderFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     cartItems.addAll(response.body().getData());
                 }
-                
+
                 // 2. Lấy danh sách Đơn hàng thật từ Server
                 fetchRealOrders(cartItems);
             }
@@ -113,7 +114,9 @@ public class OderFragment extends Fragment {
     }
 
     private void fetchRealOrders(final ArrayList<CartItem> cartItems) {
-        ordersCall = apiService.getOrders();
+        SharedPreferencesManager prefManager = new SharedPreferencesManager(requireContext());
+        String userId = (prefManager.getUser() != null) ? prefManager.getUser().getId() : "";
+        ordersCall = apiService.getOrders(userId);
 
         ordersCall.enqueue(new Callback<Response<ArrayList<Order>>>() {
             @Override
@@ -237,7 +240,7 @@ public class OderFragment extends Fragment {
             if (order.getItems() != null && !order.getItems().isEmpty()) {
                 CartItem firstItem = order.getItems().get(0);
                 tvProductName.setText(firstItem.getProductName());
-                
+
                 Glide.with(this)
                         .load(firstItem.getProductImage())
                         .placeholder(R.drawable.ic_product)
@@ -328,7 +331,7 @@ public class OderFragment extends Fragment {
                         reason = rb.getText().toString();
                     }
                 }
-                
+
                 String note = edtCancelNote != null ? edtCancelNote.getText().toString().trim() : "";
                 if (!note.isEmpty()) {
                     if (reason.isEmpty()) {
@@ -337,12 +340,12 @@ public class OderFragment extends Fragment {
                         reason += " - Ghi chú: " + note;
                     }
                 }
-                
+
                 if (reason.isEmpty()) {
                     Toast.makeText(requireContext(), "Vui lòng chọn hoặc nhập lý do hủy", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                
+
                 dialog.dismiss();
                 executeCancelOrder(order, reason);
             });
@@ -410,7 +413,9 @@ public class OderFragment extends Fragment {
 
     private void createOrderFromTempCart() {
         setLoading(true);
-        apiService.createOrder().enqueue(new Callback<Response<Order>>() {
+        SharedPreferencesManager prefManager = new SharedPreferencesManager(requireContext());
+        String userId = (prefManager.getUser() != null) ? prefManager.getUser().getId() : "";
+        apiService.createOrder(userId).enqueue(new Callback<Response<Order>>() {
             @Override
             public void onResponse(@NonNull Call<Response<Order>> call,
                                    @NonNull retrofit2.Response<Response<Order>> response) {
@@ -418,7 +423,7 @@ public class OderFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     Order createdOrder = response.body().getData();
                     Toast.makeText(requireContext(), "Đặt hàng thành công!", Toast.LENGTH_SHORT).show();
-                    
+
                     Intent intent = new Intent(requireContext(), com.example.storehub.ShippingOrderDetailActivity.class);
                     intent.putExtra("order_data", createdOrder);
                     startActivity(intent);
