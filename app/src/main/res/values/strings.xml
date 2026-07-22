@@ -118,6 +118,63 @@
     <string name="logout_dialog_message">Bạn có chắc chắn muốn đăng xuất khỏi tài khoản không?</string>
     <string name="no">Không</string>
 
+    <!-- Màn hình Sản phẩm, Giỏ hàng, Tin tức, Đơn hàng và Thông báo -->
+    <string name="product_list_title">Danh sách sản phẩm</string>
+    <string name="sort_by">Sắp xếp:</string>
+    <string name="sort_price_asc">Giá thấp đến cao</string>
+    <string name="sort_a_z">A - Z</string>
+    <string name="sort_z_a">Z - A</string>
+    <string name="cart_title">Giỏ hàng của bạn</string>
+    <string name="cart_empty_msg">Giỏ hàng của bạn đang trống</string>
+    <string name="delivery_address_title">Địa chỉ giao hàng</string>
+    <string name="change_button">Thay đổi</string>
+    <string name="order_summary_title">Tóm tắt đơn hàng</string>
+    <string name="promo_code_label">Mã khuyến mãi</string>
+    <string name="promo_code_hint">Nhập mã...</string>
+    <string name="apply_button">Áp dụng</string>
+    <string name="choose_voucher_label">Chọn mã giảm giá</string>
+    <string name="shipping_fee_label">Phí vận chuyển ⓘ</string>
+    <string name="total_label">Tổng cộng:</string>
+    <string name="vat_included_label">(Đã bao gồm VAT nếu có)</string>
+    <string name="checkout_now_button">Thanh toán ngay</string>
+    <string name="subtotal_label_template">Tạm tính (%d sản phẩm):</string>
+    <string name="tech_news_title">Tin tức công nghệ</string>
+    <string name="my_orders_title">Đơn hàng của tôi</string>
+    <string name="order_filter_all">Tất cả</string>
+    <string name="order_filter_pending">Chờ xác nhận</string>
+    <string name="order_filter_shipping">Đang giao</string>
+    <string name="order_filter_completed">Hoàn thành</string>
+    <string name="order_filter_cancelled">Đã hủy</string>
+    <string name="status_not_ordered">Chưa đặt hàng</string>
+    <string name="qty_other_products_template">Số lượng: %1$d (và %2$d sản phẩm khác)</string>
+    <string name="qty_template">Số lượng: %d</string>
+    <string name="checkout">Thanh toán</string>
+    <string name="status_completed">Đã hoàn thành</string>
+    <string name="status_cancelled">Đã hủy</string>
+    <string name="status_shipping">Đang giao hàng</string>
+    <string name="btn_cancel_order">Hủy đơn</string>
+    <string name="btn_details">Chi tiết</string>
+    <string name="no_orders_label">Không có đơn hàng nào.</string>
+    <string name="change_delivery_address_toast">Thay đổi địa chỉ giao hàng</string>
+    <string name="empty_cart_toast">Giỏ hàng đang trống</string>
+    <string name="order_success_toast">Đặt hàng thành công!</string>
+    <string name="order_failed_toast">Đặt hàng thất bại. Vui lòng thử lại</string>
+    <string name="cannot_connect_server_toast">Không thể kết nối đến máy chủ</string>
+    <string name="cannot_update_qty_toast">Không thể cập nhật số lượng</string>
+    <string name="removed_from_cart_toast">Đã xóa khỏi giỏ hàng</string>
+    <string name="cannot_delete_item_toast">Không thể xóa sản phẩm</string>
+    <string name="color_prefix">Màu: %s</string>
+    <string name="variant_prefix">Phân loại: %s</string>
+    <string name="qty_prefix">Số lượng: %d</string>
+    <string name="select_cancel_reason_toast">Vui lòng chọn hoặc nhập lý do hủy</string>
+    <string name="cancel_order_success_toast">Đã hủy đơn hàng thành công!</string>
+    <string name="cancel_order_failed_toast">Không thể hủy đơn hàng</string>
+    <string name="confirm_delete_title">Xác nhận xóa</string>
+    <string name="confirm_clear_temp_cart_msg">Bạn có chắc chắn muốn xóa tất cả sản phẩm trong giỏ hàng tạm không?</string>
+    <string name="clear_temp_cart_success_toast">Đã xóa giỏ hàng tạm!</string>
+    <string name="clear_temp_cart_failed_toast">Không thể xóa giỏ hàng tạm</string>
+    <string name="cancel">Hủy</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

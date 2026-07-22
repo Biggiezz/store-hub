@@ -36,7 +36,7 @@
             android:layout_weight="1"
             android:fontFamily="@font/hanken_grotesk_semibold"
             android:gravity="center"
-            android:text="Giỏ hàng của bạn"
+            android:text="@string/cart_title"
             android:textColor="#17271F"
             android:textSize="23sp"
             android:textStyle="bold" />
@@ -112,7 +112,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="18dp"
-                    android:text="Giỏ hàng của bạn đang trống"
+                    android:text="@string/cart_empty_msg"
                     android:textColor="#555954"
                     android:textSize="17sp" />
 
@@ -146,7 +146,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Địa chỉ giao hàng"
+                            android:text="@string/delivery_address_title"
                             android:textColor="#1E3329"
                             android:textSize="22sp"
                             android:textStyle="bold" />
@@ -159,7 +159,7 @@
                             android:gravity="center"
                             android:paddingStart="12dp"
                             android:paddingEnd="4dp"
-                            android:text="Thay đổi"
+                            android:text="@string/change_button"
                             android:textColor="#2E3D36"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -239,7 +239,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Tóm tắt đơn hàng"
+                        android:text="@string/order_summary_title"
                         android:textColor="#1E3329"
                         android:textSize="22sp"
                         android:textStyle="bold" />
@@ -254,7 +254,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
-                        android:text="Mã khuyến mãi"
+                        android:text="@string/promo_code_label"
                         android:textColor="#666864"
                         android:textSize="13sp"
                         android:textStyle="bold" />
@@ -285,7 +285,7 @@
                                 android:id="@+id/edtPromoCode"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:hint="Nhập mã..."
+                                android:hint="@string/promo_code_hint"
                                 android:inputType="textCapCharacters"
                                 android:maxLines="1"
                                 android:paddingStart="16dp"
@@ -301,7 +301,7 @@
                             android:layout_width="106dp"
                             android:layout_height="54dp"
                             android:layout_marginStart="10dp"
-                            android:text="Áp dụng"
+                            android:text="@string/apply_button"
                             android:textAllCaps="false"
                             android:textColor="#726B64"
                             android:textSize="14sp"
@@ -331,7 +331,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
-                            android:text="Chọn mã giảm giá"
+                            android:text="@string/choose_voucher_label"
                             android:textColor="#334039"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -377,7 +377,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Phí vận chuyển ⓘ"
+                            android:text="@string/shipping_fee_label"
                             android:textColor="#666864"
                             android:textSize="16sp" />
 
@@ -438,7 +438,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Tổng cộng:"
+                            android:text="@string/total_label"
                             android:textColor="#222824"
                             android:textSize="17sp"
                             android:textStyle="bold" />
@@ -462,7 +462,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="6dp"
-                                android:text="(Đã bao gồm VAT nếu có)"
+                                android:text="@string/vat_included_label"
                                 android:textColor="#666864"
                                 android:textSize="12sp" />
 
@@ -476,7 +476,7 @@
                         android:layout_height="66dp"
                         android:layout_marginTop="28dp"
                         android:fontFamily="@font/libre_caslon_text"
-                        android:text="Thanh toán ngay"
+                        android:text="@string/checkout_now_button"
                         android:textAllCaps="false"
                         android:textColor="#FFFFFF"
                         android:textSize="22sp"

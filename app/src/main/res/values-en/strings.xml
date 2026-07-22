@@ -118,6 +118,63 @@
     <string name="logout_dialog_message">Are you sure you want to log out of your account?</string>
     <string name="no">No</string>
 
+    <!-- Products, Cart, News, Orders and Toasts -->
+    <string name="product_list_title">Product List</string>
+    <string name="sort_by">Sort by:</string>
+    <string name="sort_price_asc">Price: Low to High</string>
+    <string name="sort_a_z">A - Z</string>
+    <string name="sort_z_a">Z - A</string>
+    <string name="cart_title">Your Cart</string>
+    <string name="cart_empty_msg">Your cart is empty</string>
+    <string name="delivery_address_title">Delivery Address</string>
+    <string name="change_button">Change</string>
+    <string name="order_summary_title">Order Summary</string>
+    <string name="promo_code_label">Promo Code</string>
+    <string name="promo_code_hint">Enter code...</string>
+    <string name="apply_button">Apply</string>
+    <string name="choose_voucher_label">Select discount code</string>
+    <string name="shipping_fee_label">Shipping Fee ⓘ</string>
+    <string name="total_label">Total:</string>
+    <string name="vat_included_label">(VAT included if applicable)</string>
+    <string name="checkout_now_button">Checkout Now</string>
+    <string name="subtotal_label_template">Subtotal (%d products):</string>
+    <string name="tech_news_title">Tech News</string>
+    <string name="my_orders_title">My Orders</string>
+    <string name="order_filter_all">All</string>
+    <string name="order_filter_pending">Pending</string>
+    <string name="order_filter_shipping">Shipping</string>
+    <string name="order_filter_completed">Completed</string>
+    <string name="order_filter_cancelled">Cancelled</string>
+    <string name="status_not_ordered">Not ordered yet</string>
+    <string name="qty_other_products_template">Qty: %1$d (and %2$d other products)</string>
+    <string name="qty_template">Qty: %d</string>
+    <string name="checkout">Checkout</string>
+    <string name="status_completed">Completed</string>
+    <string name="status_cancelled">Cancelled</string>
+    <string name="status_shipping">Shipping</string>
+    <string name="btn_cancel_order">Cancel Order</string>
+    <string name="btn_details">Details</string>
+    <string name="no_orders_label">No orders found.</string>
+    <string name="change_delivery_address_toast">Change delivery address</string>
+    <string name="empty_cart_toast">Your cart is empty</string>
+    <string name="order_success_toast">Order placed successfully!</string>
+    <string name="order_failed_toast">Order failed. Please try again</string>
+    <string name="cannot_connect_server_toast">Cannot connect to server</string>
+    <string name="cannot_update_qty_toast">Cannot update quantity</string>
+    <string name="removed_from_cart_toast">Removed from cart</string>
+    <string name="cannot_delete_item_toast">Cannot delete product</string>
+    <string name="color_prefix">Color: %s</string>
+    <string name="variant_prefix">Variant: %s</string>
+    <string name="qty_prefix">Quantity: %d</string>
+    <string name="select_cancel_reason_toast">Please select or enter a cancellation reason</string>
+    <string name="cancel_order_success_toast">Order cancelled successfully!</string>
+    <string name="cancel_order_failed_toast">Failed to cancel order</string>
+    <string name="confirm_delete_title">Confirm Delete</string>
+    <string name="confirm_clear_temp_cart_msg">Are you sure you want to clear all products from the temporary cart?</string>
+    <string name="clear_temp_cart_success_toast">Temporary cart cleared!</string>
+    <string name="clear_temp_cart_failed_toast">Failed to clear temporary cart</string>
+    <string name="cancel">Cancel</string>
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

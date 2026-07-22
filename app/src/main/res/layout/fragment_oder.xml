@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="serif"
-                android:text="Đơn hàng của tôi"
+                android:text="@string/my_orders_title"
                 android:textColor="@color/dark_green"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -82,27 +82,27 @@
                 <TextView
                     style="@style/Widget.StoreHub.OrderFilter"
                     android:background="@drawable/bg_order_filter_selected"
-                    android:text="Tất cả" />
+                    android:text="@string/order_filter_all" />
 
                 <TextView
                     style="@style/Widget.StoreHub.OrderFilter"
                     android:layout_marginStart="10dp"
-                    android:text="Chờ xác nhận" />
+                    android:text="@string/order_filter_pending" />
 
                 <TextView
                     style="@style/Widget.StoreHub.OrderFilter"
                     android:layout_marginStart="10dp"
-                    android:text="Đang giao" />
+                    android:text="@string/order_filter_shipping" />
 
                 <TextView
                     style="@style/Widget.StoreHub.OrderFilter"
                     android:layout_marginStart="10dp"
-                    android:text="Hoàn thành" />
+                    android:text="@string/order_filter_completed" />
 
                 <TextView
                     style="@style/Widget.StoreHub.OrderFilter"
                     android:layout_marginStart="10dp"
-                    android:text="Đã hủy" />
+                    android:text="@string/order_filter_cancelled" />
             </LinearLayout>
         </HorizontalScrollView>
 
