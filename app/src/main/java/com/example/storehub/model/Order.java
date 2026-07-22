@@ -1,19 +1,40 @@
 package com.example.storehub.model;
 
+import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Order implements Serializable {
+    @SerializedName("_id")
+    private String orderId;
+
+    @SerializedName("orderCode")
+    private String orderCode;
+
+    @SerializedName("items")
+    private ArrayList<CartItem> items;
+
+    @SerializedName("status")
+    private String status;
+
+    @SerializedName("totalPrice")
+    private long totalPrice;
+
+    @SerializedName("shippingFee")
+    private long shippingFee;
+
+    @SerializedName("createdAt")
+    private String createdAt;
+
+    // Restored mock fields for compatibility with mock activities/fragments/adapters
     private String id;
-    private String status; // "processing", "shipping", "completed", "cancelled"
-    private String statusText; // "Chờ xác nhận", "Đang giao hàng", "Đã hoàn thành", "Đã hủy"
+    private String statusText;
     private String productName;
     private String productImage;
     private String productVariant;
     private int quantity;
     private double unitPrice;
     private double subtotal;
-    private double shippingFee;
     private double discount;
     private double totalAmount;
     private String recipientName;
@@ -26,7 +47,8 @@ public class Order implements Serializable {
     private ArrayList<TimelineStep> timeline;
 
     public Order() {
-        this.timeline = new ArrayList<>();
+        items = new ArrayList<>();
+        timeline = new ArrayList<>();
     }
 
     public Order(String id, String status, String statusText, String productName, String productImage,
@@ -42,7 +64,7 @@ public class Order implements Serializable {
         this.quantity = quantity;
         this.unitPrice = unitPrice;
         this.subtotal = unitPrice * quantity;
-        this.shippingFee = shippingFee;
+        this.shippingFee = (long) shippingFee;
         this.discount = discount;
         this.totalAmount = this.subtotal + shippingFee - discount;
         this.recipientName = recipientName;
@@ -51,67 +73,209 @@ public class Order implements Serializable {
         this.createdDate = createdDate;
         this.estimatedDeliveryDate = estimatedDeliveryDate;
         this.timeline = new ArrayList<>();
+        this.items = new ArrayList<>();
     }
 
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public String getOrderId() {
+        return orderId != null ? orderId : "";
+    }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
 
-    public String getStatusText() { return statusText; }
-    public void setStatusText(String statusText) { this.statusText = statusText; }
+    public String getOrderCode() {
+        return orderCode != null ? orderCode : "";
+    }
 
-    public String getProductName() { return productName; }
-    public void setProductName(String productName) { this.productName = productName; }
+    public void setOrderCode(String orderCode) {
+        this.orderCode = orderCode;
+    }
 
-    public String getProductImage() { return productImage; }
-    public void setProductImage(String productImage) { this.productImage = productImage; }
+    public ArrayList<CartItem> getItems() {
+        return items != null ? items : new ArrayList<>();
+    }
 
-    public String getProductVariant() { return productVariant; }
-    public void setProductVariant(String productVariant) { this.productVariant = productVariant; }
+    public void setItems(ArrayList<CartItem> items) {
+        this.items = items;
+    }
 
-    public int getQuantity() { return quantity; }
-    public void setQuantity(int quantity) { this.quantity = quantity; }
+    public String getStatus() {
+        return status != null ? status : "Đang giao hàng";
+    }
 
-    public double getUnitPrice() { return unitPrice; }
-    public void setUnitPrice(double unitPrice) { this.unitPrice = unitPrice; }
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-    public double getSubtotal() { return subtotal; }
-    public void setSubtotal(double subtotal) { this.subtotal = subtotal; }
+    public long getTotalPrice() {
+        return totalPrice;
+    }
 
-    public double getShippingFee() { return shippingFee; }
-    public void setShippingFee(double shippingFee) { this.shippingFee = shippingFee; }
+    public void setTotalPrice(long totalPrice) {
+        this.totalPrice = totalPrice;
+    }
 
-    public double getDiscount() { return discount; }
-    public void setDiscount(double discount) { this.discount = discount; }
+    public long getShippingFee() {
+        return shippingFee;
+    }
 
-    public double getTotalAmount() { return totalAmount; }
-    public void setTotalAmount(double totalAmount) { this.totalAmount = totalAmount; }
+    public void setShippingFee(long shippingFee) {
+        this.shippingFee = shippingFee;
+    }
 
-    public String getRecipientName() { return recipientName; }
-    public void setRecipientName(String recipientName) { this.recipientName = recipientName; }
+    public String getCreatedAt() {
+        return createdAt != null ? createdAt : "";
+    }
 
-    public String getRecipientPhone() { return recipientPhone; }
-    public void setRecipientPhone(String recipientPhone) { this.recipientPhone = recipientPhone; }
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
 
-    public String getRecipientAddress() { return recipientAddress; }
-    public void setRecipientAddress(String recipientAddress) { this.recipientAddress = recipientAddress; }
+    // Getters and Setters for mock fields
+    public String getId() {
+        return id != null ? id : (orderId != null ? orderId : "");
+    }
 
-    public String getCreatedDate() { return createdDate; }
-    public void setCreatedDate(String createdDate) { this.createdDate = createdDate; }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-    public String getEstimatedDeliveryDate() { return estimatedDeliveryDate; }
-    public void setEstimatedDeliveryDate(String estimatedDeliveryDate) { this.estimatedDeliveryDate = estimatedDeliveryDate; }
+    public String getStatusText() {
+        return statusText != null ? statusText : "";
+    }
 
-    public String getCompletedDate() { return completedDate; }
-    public void setCompletedDate(String completedDate) { this.completedDate = completedDate; }
+    public void setStatusText(String statusText) {
+        this.statusText = statusText;
+    }
 
-    public String getCancelReason() { return cancelReason; }
-    public void setCancelReason(String cancelReason) { this.cancelReason = cancelReason; }
+    public String getProductName() {
+        return productName != null ? productName : "";
+    }
 
-    public ArrayList<TimelineStep> getTimeline() { return timeline; }
-    public void setTimeline(ArrayList<TimelineStep> timeline) { this.timeline = timeline; }
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getProductImage() {
+        return productImage != null ? productImage : "";
+    }
+
+    public void setProductImage(String productImage) {
+        this.productImage = productImage;
+    }
+
+    public String getProductVariant() {
+        return productVariant != null ? productVariant : "";
+    }
+
+    public void setProductVariant(String productVariant) {
+        this.productVariant = productVariant;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public double getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(double unitPrice) {
+        this.unitPrice = unitPrice;
+    }
+
+    public double getSubtotal() {
+        return subtotal;
+    }
+
+    public void setSubtotal(double subtotal) {
+        this.subtotal = subtotal;
+    }
+
+    public double getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(double discount) {
+        this.discount = discount;
+    }
+
+    public double getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(double totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public String getRecipientName() {
+        return recipientName != null ? recipientName : "";
+    }
+
+    public void setRecipientName(String recipientName) {
+        this.recipientName = recipientName;
+    }
+
+    public String getRecipientPhone() {
+        return recipientPhone != null ? recipientPhone : "";
+    }
+
+    public void setRecipientPhone(String recipientPhone) {
+        this.recipientPhone = recipientPhone;
+    }
+
+    public String getRecipientAddress() {
+        return recipientAddress != null ? recipientAddress : "";
+    }
+
+    public void setRecipientAddress(String recipientAddress) {
+        this.recipientAddress = recipientAddress;
+    }
+
+    public String getCreatedDate() {
+        return createdDate != null ? createdDate : "";
+    }
+
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public String getEstimatedDeliveryDate() {
+        return estimatedDeliveryDate != null ? estimatedDeliveryDate : "";
+    }
+
+    public void setEstimatedDeliveryDate(String estimatedDeliveryDate) {
+        this.estimatedDeliveryDate = estimatedDeliveryDate;
+    }
+
+    public String getCompletedDate() {
+        return completedDate != null ? completedDate : "";
+    }
+
+    public void setCompletedDate(String completedDate) {
+        this.completedDate = completedDate;
+    }
+
+    public String getCancelReason() {
+        return cancelReason != null ? cancelReason : "";
+    }
+
+    public void setCancelReason(String cancelReason) {
+        this.cancelReason = cancelReason;
+    }
+
+    public ArrayList<TimelineStep> getTimeline() {
+        return timeline != null ? timeline : new ArrayList<>();
+    }
+
+    public void setTimeline(ArrayList<TimelineStep> timeline) {
+        this.timeline = timeline;
+    }
 
     public static class TimelineStep implements Serializable {
         private String title;

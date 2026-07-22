@@ -101,7 +101,8 @@ public class Product {
     }
 
     public String getImage() {
-        return image != null ? image : (imageUrl != null ? imageUrl : "");
+        String rawImg = image != null ? image : (imageUrl != null ? imageUrl : "");
+        return com.example.storehub.utils.ImageUtils.getCorrectedImageUrl(rawImg, com.example.storehub.services.HttpResquest.BASE_URL);
     }
 
     public String getImageUrl() {

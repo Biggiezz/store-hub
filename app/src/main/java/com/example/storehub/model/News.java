@@ -52,7 +52,7 @@ public class News implements Serializable {
     }
 
     public String getImage() {
-        return image;
+        return com.example.storehub.utils.ImageUtils.getCorrectedImageUrl(image, com.example.storehub.services.HttpResquest.BASE_URL);
     }
 
     public void setImage(String image) {

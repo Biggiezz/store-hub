@@ -1,6 +1,7 @@
 package com.example.storehub.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,10 +28,22 @@ public class UserManagementAdapter extends RecyclerView.Adapter<UserManagementAd
     private final Context context;
     private List<User> userList;
     private OnUserClickListener listener;
+    private User currentUser;
 
     public UserManagementAdapter(Context context) {
         this.context = context;
         this.userList = new ArrayList<>();
+    }
+
+    public UserManagementAdapter(Context context, User currentUser) {
+        this.context = context;
+        this.currentUser = currentUser;
+        this.userList = new ArrayList<>();
+    }
+
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
+        notifyDataSetChanged();
     }
 
     public void setOnUserClickListener(OnUserClickListener listener) {
@@ -57,6 +70,15 @@ public class UserManagementAdapter extends RecyclerView.Adapter<UserManagementAd
 
         String role = !TextUtils.isEmpty(user.getRole()) ? user.getRole() : "Khách hàng";
         holder.tvUserRole.setText(role);
+
+        // Đánh dấu huy hiệu nổi bật cho Super Admin
+        if (user.isSuperAdmin()) {
+            holder.tvUserRole.setBackgroundResource(R.drawable.bg_badge_super_admin);
+            holder.tvUserRole.setTextColor(Color.WHITE);
+        } else {
+            holder.tvUserRole.setBackgroundResource(R.drawable.bg_badge_role);
+            holder.tvUserRole.setTextColor(Color.parseColor("#675C53"));
+        }
 
         holder.tvUserEmail.setText(user.getEmail());
 

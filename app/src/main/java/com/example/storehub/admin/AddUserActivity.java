@@ -41,17 +41,15 @@ public class AddUserActivity extends AppCompatActivity {
     private boolean isPasswordVisible = false;
     private Uri selectedImageUri = null;
 
-    private final ActivityResultLauncher<Intent> imagePickerLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    selectedImageUri = result.getData().getData();
-                    if (selectedImageUri != null) {
-                        Glide.with(this)
-                                .load(selectedImageUri)
-                                .centerCrop()
-                                .into(ivAvatar);
-                    }
+    private final ActivityResultLauncher<String> imagePickerLauncher = registerForActivityResult(
+            new ActivityResultContracts.GetContent(),
+            uri -> {
+                if (uri != null) {
+                    selectedImageUri = uri;
+                    Glide.with(this)
+                            .load(selectedImageUri)
+                            .centerCrop()
+                            .into(ivAvatar);
                 }
             }
     );
@@ -89,19 +87,24 @@ public class AddUserActivity extends AppCompatActivity {
     }
 
     private void setUpAdapter() {
-        String[] roles = new String[]{
-                "Chọn vai trò",
-                "Quản lý cửa hàng",
-                "Chuyên viên kho",
-                "Nhân viên bán hàng",
-                "Hỗ trợ khách hàng",
-                "Khách hàng"
-        };
+        com.example.storehub.utils.SharedPreferencesManager prefManager = new com.example.storehub.utils.SharedPreferencesManager(this);
+        com.example.storehub.model.User currentUser = prefManager.getUser();
+
+        java.util.ArrayList<String> roleList = new java.util.ArrayList<>();
+        roleList.add("Chọn vai trò");
+        if (currentUser != null && currentUser.isSuperAdmin()) {
+            roleList.add("Super Admin");
+        }
+        roleList.add("Quản lý cửa hàng");
+        roleList.add("Chuyên viên kho");
+        roleList.add("Nhân viên bán hàng");
+        roleList.add("Hỗ trợ khách hàng");
+        roleList.add("Khách hàng");
 
         ArrayAdapter<String> roleAdapter = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_spinner_item,
-                roles
+                roleList
         );
         roleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spRole.setAdapter(roleAdapter);
@@ -119,8 +122,7 @@ public class AddUserActivity extends AppCompatActivity {
     }
 
     private void openGallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        imagePickerLauncher.launch(intent);
+        imagePickerLauncher.launch("image/*");
     }
 
     private void togglePasswordVisibility() {
@@ -176,8 +178,10 @@ public class AddUserActivity extends AppCompatActivity {
                 null, fullName, email, phone, role, selectedImageUri != null ? selectedImageUri.toString() : "", address, "Vừa xong"
         );
 
+        com.example.storehub.utils.SharedPreferencesManager prefManager = new com.example.storehub.utils.SharedPreferencesManager(this);
+        String token = "Bearer " + prefManager.getToken();
         com.example.storehub.services.HttpResquest httpResquest = new com.example.storehub.services.HttpResquest();
-        httpResquest.callAPI().addUser(newUser).enqueue(new retrofit2.Callback<com.example.storehub.model.Response<com.example.storehub.model.User>>() {
+        httpResquest.callAPI().addUser(token, newUser).enqueue(new retrofit2.Callback<com.example.storehub.model.Response<com.example.storehub.model.User>>() {
             @Override
             public void onResponse(@androidx.annotation.NonNull retrofit2.Call<com.example.storehub.model.Response<com.example.storehub.model.User>> call,
                                    @androidx.annotation.NonNull retrofit2.Response<com.example.storehub.model.Response<com.example.storehub.model.User>> response) {

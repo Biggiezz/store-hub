@@ -17,7 +17,7 @@ public class User {
     public User() {
     }
 
-    public User(String id, String name, String email, String phone, String role, String image, String address) {
+    public User(String id, String name, String email, String phone, String role, String image, String address,String lastActive) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -26,16 +26,6 @@ public class User {
         this.image = image;
         this.address = address;
         this.changePasswordDate = changePasswordDate;
-    }
-
-    public User(String id, String name, String email, String phone, String role, String image, String address, String lastActive) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.phone = phone;
-        this.role = role;
-        this.image = image;
-        this.address = address;
         this.lastActive = lastActive;
     }
 
@@ -80,7 +70,7 @@ public class User {
     }
 
     public String getImage() {
-        return image;
+        return com.example.storehub.utils.ImageUtils.getCorrectedImageUrl(image, com.example.storehub.services.HttpResquest.BASE_URL);
     }
 
     public void setImage(String image) {
@@ -93,6 +83,35 @@ public class User {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getLastActive() {
+        return lastActive != null ? lastActive : "Vừa xong";
+    }
+
+    public void setLastActive(String lastActive) {
+        this.lastActive = lastActive;
+    }
+
+    public boolean isSuperAdmin() {
+        if (role == null) return false;
+        String r = role.trim().toLowerCase();
+        return r.equals("superadmin") || r.equals("super admin") || r.equals("quản trị viên tối cao");
+    }
+
+    public boolean isAdmin() {
+        if (role == null) return false;
+        String r = role.trim().toLowerCase();
+        return r.equals("admin") || r.equals("quản lý cửa hàng") || isSuperAdmin();
+    }
+
+    public boolean canManage(User targetUser) {
+        if (targetUser == null) return true;
+        if (this.isSuperAdmin()) return true;
+        if (this.isAdmin()) {
+            return !targetUser.isSuperAdmin();
+        }
+        return false;
     }
 
     public String getChangePasswordDate() {
@@ -162,13 +181,5 @@ public class User {
         public String getMessage() { return message; }
         public String getToken() { return token; }
         public User getData() { return data; }
-    }
-
-    public String getLastActive() {
-        return lastActive != null ? lastActive : "Vừa xong";
-    }
-
-    public void setLastActive(String lastActive) {
-        this.lastActive = lastActive;
     }
 }
