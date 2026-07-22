@@ -24,7 +24,7 @@ import java.util.Map;
 import retrofit2.Call;
 import retrofit2.Callback;
 
-public class ChangePasswordActivity extends AppCompatActivity {
+public class ChangePasswordActivity extends BaseActivity {
 
     private EditText edtCurrentPassword, edtNewPassword, edtConfirmNewPassword;
     private ImageView btnToggleCurrentPassword, btnToggleNewPassword, btnToggleConfirmNewPassword;

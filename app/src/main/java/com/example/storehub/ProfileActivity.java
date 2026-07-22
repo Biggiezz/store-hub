@@ -25,6 +25,7 @@ import com.example.storehub.model.Response;
 import com.example.storehub.model.User;
 import com.example.storehub.services.HttpResquest;
 import com.example.storehub.utils.SharedPreferencesManager;
+import com.example.storehub.utils.LocaleHelper;
 import com.google.android.material.button.MaterialButton;
 
 import com.example.storehub.utils.DateTimeUtils;
@@ -34,7 +35,7 @@ import java.util.Locale;
 import retrofit2.Call;
 import retrofit2.Callback;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends BaseActivity {
 
     private TextView txtProfileName, txtEmailValue, txtPhoneValue, txtAddressValue, txtPasswordChangedSub, btnLangVI, btnLangEN;
     private ImageView imgProfileAvatar;
@@ -71,8 +72,30 @@ public class ProfileActivity extends AppCompatActivity {
         sharedPreferencesManager = new SharedPreferencesManager(this);
 
         initUi();
+        updateLanguageToggleUI();
         bindUserData();
         setupClickListeners();
+    }
+
+    private void updateLanguageToggleUI() {
+        String lang = SharedPreferencesManager.getInstance(this).getLanguage();
+        if (lang.equals("vi")) {
+            btnLangVI.setBackgroundResource(R.drawable.bg_language_selected);
+            btnLangVI.setTextColor(Color.parseColor("#41413F"));
+            btnLangVI.setTypeface(null, android.graphics.Typeface.BOLD);
+
+            btnLangEN.setBackgroundColor(Color.TRANSPARENT);
+            btnLangEN.setTextColor(Color.parseColor("#8F8E8A"));
+            btnLangEN.setTypeface(null, android.graphics.Typeface.NORMAL);
+        } else {
+            btnLangEN.setBackgroundResource(R.drawable.bg_language_selected);
+            btnLangEN.setTextColor(Color.parseColor("#41413F"));
+            btnLangEN.setTypeface(null, android.graphics.Typeface.BOLD);
+
+            btnLangVI.setBackgroundColor(Color.TRANSPARENT);
+            btnLangVI.setTextColor(Color.parseColor("#8F8E8A"));
+            btnLangVI.setTypeface(null, android.graphics.Typeface.NORMAL);
+        }
     }
 
     private void initUi() {
@@ -190,27 +213,13 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void selectLanguage(boolean isVI) {
-        if (isVI) {
-            btnLangVI.setBackgroundResource(R.drawable.bg_language_selected);
-            btnLangVI.setTextColor(Color.parseColor("#41413F"));
-            btnLangVI.setTypeface(null, android.graphics.Typeface.BOLD);
-
-            btnLangEN.setBackgroundColor(Color.TRANSPARENT);
-            btnLangEN.setTextColor(Color.parseColor("#8F8E8A"));
-            btnLangEN.setTypeface(null, android.graphics.Typeface.NORMAL);
-
-            Toast.makeText(this, "Đã chuyển ngôn ngữ sang Tiếng Việt", Toast.LENGTH_SHORT).show();
-        } else {
-            btnLangEN.setBackgroundResource(R.drawable.bg_language_selected);
-            btnLangEN.setTextColor(Color.parseColor("#41413F"));
-            btnLangEN.setTypeface(null, android.graphics.Typeface.BOLD);
-
-            btnLangVI.setBackgroundColor(Color.TRANSPARENT);
-            btnLangVI.setTextColor(Color.parseColor("#8F8E8A"));
-            btnLangVI.setTypeface(null, android.graphics.Typeface.NORMAL);
-
-            Toast.makeText(this, "Language switched to English", Toast.LENGTH_SHORT).show();
-        }
+        String lang = isVI ? "vi" : "en";
+        LocaleHelper.setLocale(this, lang);
+        
+        // Cập nhật UI ngay lập tức bằng cách khởi động lại activity
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
     }
 
     private void showCustomLogoutDialog() {

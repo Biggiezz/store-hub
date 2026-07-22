@@ -21,7 +21,7 @@ import java.util.Map;
 import retrofit2.Call;
 import retrofit2.Callback;
 
-public class EditProfileActivity extends AppCompatActivity {
+public class EditProfileActivity extends BaseActivity {
 
     private EditText edtProfileName;
     private EditText edtProfileEmail;

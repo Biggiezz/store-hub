@@ -17,7 +17,7 @@ import com.example.storehub.utils.DateTimeUtils;
  * Activity displaying the detailed view of a News Article.
  * Receives the News object via intent extra.
  */
-public class NewsDetailActivity extends AppCompatActivity {
+public class NewsDetailActivity extends BaseActivity {
 
     private ImageView btnBack, ivDetailNewsImage;
     private TextView tvDetailNewsTitle, tvDetailNewsAuthor, tvDetailNewsTime, tvDetailNewsContent;

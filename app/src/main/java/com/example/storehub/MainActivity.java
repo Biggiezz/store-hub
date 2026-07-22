@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import retrofit2.Call;
 import retrofit2.Callback;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     public static final String EXTRA_OPEN_TAB = "open_tab";
     public static final String TAB_HOME = "home";

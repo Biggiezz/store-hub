@@ -11,6 +11,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.storehub.BaseActivity;
 import com.example.storehub.MainActivity;
 import com.example.storehub.R;
 import com.example.storehub.admin.HomePageManagementActivity;
@@ -28,7 +29,7 @@ import java.util.ArrayList;
 import retrofit2.Call;
 import retrofit2.Callback;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity {
 
     private TextInputEditText edtEmail, edtPassword;
     private MaterialButton btnLogin;
