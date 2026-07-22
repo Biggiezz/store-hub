@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.InputType;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -18,6 +17,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -25,6 +25,9 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.storehub.R;
+import com.example.storehub.model.Response;
+import com.example.storehub.model.User;
+import com.example.storehub.services.HttpResquest;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.imageview.ShapeableImageView;
 
@@ -37,7 +40,6 @@ public class AddUserActivity extends AppCompatActivity {
     private Spinner spRole;
     private ImageView ivTogglePassword;
     private MaterialButton btnCancel, btnSaveUser;
-
     private boolean isPasswordVisible = false;
     private Uri selectedImageUri = null;
 
@@ -61,7 +63,6 @@ public class AddUserActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_add_user);
-
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.add_user_activity), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -172,23 +173,23 @@ public class AddUserActivity extends AppCompatActivity {
             return;
         }
 
-        com.example.storehub.model.User newUser = new com.example.storehub.model.User(
+        User newUser = new User(
                 null, fullName, email, phone, role, selectedImageUri != null ? selectedImageUri.toString() : "", address, "Vừa xong"
         );
 
-        com.example.storehub.services.HttpResquest httpResquest = new com.example.storehub.services.HttpResquest();
-        httpResquest.callAPI().addUser(newUser).enqueue(new retrofit2.Callback<com.example.storehub.model.Response<com.example.storehub.model.User>>() {
+        HttpResquest httpResquest = new HttpResquest();
+        httpResquest.callAPI().addUser(newUser).enqueue(new retrofit2.Callback<Response<User>>() {
             @Override
-            public void onResponse(@androidx.annotation.NonNull retrofit2.Call<com.example.storehub.model.Response<com.example.storehub.model.User>> call,
-                                   @androidx.annotation.NonNull retrofit2.Response<com.example.storehub.model.Response<com.example.storehub.model.User>> response) {
+            public void onResponse(@NonNull retrofit2.Call<Response<User>> call,
+                                   @NonNull retrofit2.Response<Response<User>> response) {
                 Toast.makeText(AddUserActivity.this, "Thêm người dùng '" + fullName + "' thành công!", Toast.LENGTH_LONG).show();
                 setResult(RESULT_OK);
                 finish();
             }
 
             @Override
-            public void onFailure(@androidx.annotation.NonNull retrofit2.Call<com.example.storehub.model.Response<com.example.storehub.model.User>> call,
-                                  @androidx.annotation.NonNull Throwable t) {
+            public void onFailure(@NonNull retrofit2.Call<Response<User>> call,
+                                  @NonNull Throwable t) {
                 // Return success fallback even if local server fails during offline testing
                 Toast.makeText(AddUserActivity.this, "Thêm người dùng '" + fullName + "' thành công (offline)!", Toast.LENGTH_LONG).show();
                 setResult(RESULT_OK);

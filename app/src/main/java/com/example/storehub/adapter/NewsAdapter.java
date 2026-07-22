@@ -16,11 +16,8 @@ import com.example.storehub.NewsDetailActivity;
 import com.example.storehub.R;
 import com.example.storehub.model.News;
 
-import java.text.SimpleDateFormat;
+import com.example.storehub.utils.DateTimeUtils;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 /**
  * Adapter hiển thị danh sách tin tức với 2 loại giao diện (Multi-type):
@@ -132,33 +129,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
 
     private String formatDateString(String isoDateString) {
-        if (isoDateString == null || isoDateString.isEmpty()) {
-            return "";
-        }
-        try {
-            // Định dạng chuỗi gốc từ MongoDB (ví dụ: 2026-07-18T01:51:40.000Z)
-            SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
-            parser.setTimeZone(TimeZone.getTimeZone("UTC"));
-            Date date = parser.parse(isoDateString);
-
-            // Định dạng hiển thị mong muốn
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
-            // Hiển thị theo múi giờ địa phương của thiết bị
-            formatter.setTimeZone(TimeZone.getDefault());
-            
-            return formatter.format(date);
-        } catch (Exception e) {
-            try {
-                SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault());
-                parser.setTimeZone(TimeZone.getTimeZone("UTC"));
-                Date date = parser.parse(isoDateString);
-                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
-                formatter.setTimeZone(TimeZone.getDefault());
-                return formatter.format(date);
-            } catch (Exception ex) {
-                return isoDateString;
-            }
-        }
+        return DateTimeUtils.formatISOToLocal(isoDateString, "dd/MM/yyyy HH:mm");
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

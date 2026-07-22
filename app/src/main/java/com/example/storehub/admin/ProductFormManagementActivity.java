@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.view.View;
@@ -19,6 +20,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -74,6 +76,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
                 .putExtra(EXTRA_PRODUCT_ID, productId);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,7 +88,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
             return insets;
         });
 
-        bindViews();
+        initUi();
         productId = getIntent().getStringExtra(EXTRA_PRODUCT_ID);
         boolean editMode = productId != null && !productId.isBlank();
         ((TextView) findViewById(R.id.tvProductFormTitle))
@@ -104,7 +107,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         if (editMode) loadProductDetail();
     }
 
-    private void bindViews() {
+    private void initUi() {
         nameInput = findViewById(R.id.edtAdminProductName);
         descriptionInput = findViewById(R.id.edtAdminProductDescription);
         stockInput = findViewById(R.id.edtAdminProductStock);
@@ -131,8 +134,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         currentCall = new HttpResquest().callAPI().getProductDetail(productId);
         currentCall.enqueue(new Callback<Response<Product>>() {
             @Override
-            public void onResponse(@NonNull Call<Response<Product>> call,
-                                   @NonNull retrofit2.Response<Response<Product>> response) {
+            public void onResponse(@NonNull Call<Response<Product>> call, @NonNull retrofit2.Response<Response<Product>> response) {
                 setLoading(false);
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     bindProduct(response.body().getData());
@@ -147,8 +149,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
             public void onFailure(@NonNull Call<Response<Product>> call, @NonNull Throwable throwable) {
                 if (call.isCanceled()) return;
                 setLoading(false);
-                Toast.makeText(ProductFormManagementActivity.this,
-                        "Lỗi kết nối server", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ProductFormManagementActivity.this, "Lỗi kết nối server", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -164,6 +165,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         Glide.with(this).load(product.getImage()).centerCrop().into(selectedImage);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     private void submitProduct() {
         String name = nameInput.getText().toString().trim();
         String description = descriptionInput.getText().toString().trim();
@@ -200,17 +202,14 @@ public class ProductFormManagementActivity extends AppCompatActivity {
                         text(description), text(stock), text(colorsJson), imagePart);
         currentCall.enqueue(new Callback<Response<Product>>() {
             @Override
-            public void onResponse(@NonNull Call<Response<Product>> call,
-                                   @NonNull retrofit2.Response<Response<Product>> response) {
+            public void onResponse(@NonNull Call<Response<Product>> call, @NonNull retrofit2.Response<Response<Product>> response) {
                 setLoading(false);
                 if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(ProductFormManagementActivity.this,
-                            response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ProductFormManagementActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                     setResult(RESULT_OK);
                     finish();
                 } else {
-                    Toast.makeText(ProductFormManagementActivity.this,
-                            "Không thể lưu sản phẩm", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ProductFormManagementActivity.this, "Không thể lưu sản phẩm", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -218,12 +217,12 @@ public class ProductFormManagementActivity extends AppCompatActivity {
             public void onFailure(@NonNull Call<Response<Product>> call, @NonNull Throwable throwable) {
                 if (call.isCanceled()) return;
                 setLoading(false);
-                Toast.makeText(ProductFormManagementActivity.this,
-                        "Lỗi kết nối server", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ProductFormManagementActivity.this, "Lỗi kết nối server", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     private MultipartBody.Part createImagePart(Uri uri) throws IOException {
         String mime = getContentResolver().getType(uri);
         MediaType mediaType = MediaType.get(mime == null ? "image/*" : mime);

@@ -37,8 +37,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private ArrayList<Product> preloadedProducts = null;
     private ArrayList<News> preloadedNews = null;
-    private boolean isProductsCallDone = false;
-    private boolean isNewsCallDone = false;
+    private boolean isProductsCallDone = false, isNewsCallDone = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

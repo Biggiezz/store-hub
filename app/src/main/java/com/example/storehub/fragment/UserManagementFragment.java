@@ -35,13 +35,11 @@ public class UserManagementFragment extends Fragment {
 
     private MaterialButton btnAddNewUser;
     private LinearLayout btnTabStaff, btnTabCustomer;
-    private TextView tvStaffTabTitle, tvCustomerTabTitle, tvStaffCount, tvCustomerCount;
+    private TextView tvStaffTabTitle, tvCustomerTabTitle, tvStaffCount, tvCustomerCount, tvEmptyState;
     private EditText etSearchUser;
     private FrameLayout btnFilterUser;
     private RecyclerView rvUsers;
     private ProgressBar pbLoadingUsers;
-    private TextView tvEmptyState;
-
     private UserManagementAdapter userAdapter;
     private List<User> allStaffList = new ArrayList<>();
     private List<User> allCustomerList = new ArrayList<>();
@@ -102,7 +100,8 @@ public class UserManagementFragment extends Fragment {
 
         etSearchUser.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -110,7 +109,8 @@ public class UserManagementFragment extends Fragment {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
         });
 
         btnFilterUser.setOnClickListener(v -> {

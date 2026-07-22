@@ -16,7 +16,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
@@ -32,7 +33,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:src="@drawable/ic_product_review" />
+                android:src="@drawable/ic_product_review"
+                android:contentDescription="Đánh giá sản phẩm" />
+
+            <ImageView
+                android:id="@+id/btnLogout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:src="@drawable/ic_logout"
+                android:contentDescription="Đăng xuất"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless" />
         </LinearLayout>
 
         <!-- Card Sales -->
@@ -48,6 +61,11 @@
         <!-- Card Products -->
         <include
             android:id="@+id/cardProducts"
+            layout="@layout/item_dashboard" />
+
+        <!-- Card Orders -->
+        <include
+            android:id="@+id/cardOrders"
             layout="@layout/item_dashboard" />
 
     </LinearLayout>

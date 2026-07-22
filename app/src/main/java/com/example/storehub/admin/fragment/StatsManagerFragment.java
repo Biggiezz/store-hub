@@ -28,13 +28,12 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 
+import com.example.storehub.utils.DateTimeUtils;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.TimeZone;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -43,25 +42,20 @@ public class StatsManagerFragment extends Fragment {
 
     private BarChart barChart;
     private Spinner spTime;
-    private View layoutRevenue;
-    private View layoutOrder;
-    private LinearLayout layoutTopProduct;
-    private LinearLayout layoutActivity;
+    private View layoutRevenue, layoutOrder;
+    private LinearLayout layoutTopProduct, layoutActivity;
 
     public StatsManagerFragment() {
     }
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_stats_manager, container, false);
     }
 
     @Override
-    public void onViewCreated(@NonNull View view,
-                              @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         initUi(view);
@@ -115,8 +109,7 @@ public class StatsManagerFragment extends Fragment {
         HttpResquest request = new HttpResquest();
         request.callAPI().getRevenueStats(position).enqueue(new Callback<Response<AdminStats.RevenueData>>() {
             @Override
-            public void onResponse(@NonNull Call<Response<AdminStats.RevenueData>> call,
-                                   @NonNull retrofit2.Response<Response<AdminStats.RevenueData>> response) {
+            public void onResponse(@NonNull Call<Response<AdminStats.RevenueData>> call, @NonNull retrofit2.Response<Response<AdminStats.RevenueData>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     AdminStats.RevenueData data = response.body().getData();
                     List<BarEntry> entries = new ArrayList<>();
@@ -267,15 +260,7 @@ public class StatsManagerFragment extends Fragment {
     }
 
     private String formatDate(String value) {
-        if (value == null || value.isEmpty()) return "";
-        try {
-            SimpleDateFormat input = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
-            input.setTimeZone(TimeZone.getTimeZone("UTC"));
-            Date date = input.parse(value);
-            return date == null ? value : new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(date);
-        } catch (Exception ignored) {
-            return value;
-        }
+        return DateTimeUtils.formatISOToLocal(value, "dd/MM/yyyy HH:mm");
     }
 
     private String formatPrice(long price) {

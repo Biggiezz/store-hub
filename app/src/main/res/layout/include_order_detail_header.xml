@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="64dp"
     android:background="@color/background"
     android:paddingStart="20dp"
-    android:paddingEnd="20dp"
->
+    android:paddingEnd="20dp">
+
     <ImageView
         android:id="@+id/btnBackOrderDetail"
         android:layout_width="32dp"
@@ -19,8 +18,8 @@
         android:focusable="true"
         android:foreground="?attr/selectableItemBackgroundBorderless"
         android:padding="8dp"
-        android:src="@drawable/ic_back"
-    />
+        android:src="@drawable/ic_back" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -30,8 +29,8 @@
         android:text="Chi tiết đơn hàng"
         android:textColor="#1A2821"
         android:textSize="20sp"
-        android:textStyle="bold"
-    />
+        android:textStyle="bold" />
+
     <androidx.cardview.widget.CardView
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -39,15 +38,14 @@
         android:layout_centerVertical="true"
         app:cardCornerRadius="20dp"
         app:cardElevation="0dp"
-        app:cardUseCompatPadding="false"
-    >
+        app:cardUseCompatPadding="false">
+
         <ImageView
             android:id="@+id/imgOrderAvatar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="Ảnh đại diện"
             android:scaleType="centerCrop"
-            android:src="@drawable/figma_shipping_2_mockup"
-        />
+            android:src="@drawable/figma_shipping_2_mockup" />
     </androidx.cardview.widget.CardView>
 </RelativeLayout>

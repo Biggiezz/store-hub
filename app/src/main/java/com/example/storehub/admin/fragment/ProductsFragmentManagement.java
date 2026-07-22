@@ -39,16 +39,14 @@ public class ProductsFragmentManagement extends Fragment {
     private AdminProductAdapter adapter;
     private Call<Response<ArrayList<Product>>> currentCall;
     private EditText searchInput;
-    private TextView chipAll, chipPhone, chipComputer, chipHeadphone;
-    private TextView page1, page2, page3, lastPage;
+    private TextView chipAll, chipPhone, chipComputer, chipHeadphone, page1, page2, page3, lastPage;
     private int currentPage = 1;
     private int totalPages = 1;
     private String selectedCategory = "";
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_products_management, container, false);
     }
 
@@ -135,8 +133,7 @@ public class ProductsFragmentManagement extends Fragment {
                 : request.callAPI().searchProduct(currentPage, PAGE_SIZE, keyword, selectedCategory);
         currentCall.enqueue(new Callback<Response<ArrayList<Product>>>() {
             @Override
-            public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call,
-                                   @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
+            public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
                 if (!isAdded() || call.isCanceled()) return;
                 if (response.isSuccessful() && response.body() != null) {
                     adapter.submitList(response.body().getData());
