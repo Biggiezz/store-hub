@@ -355,6 +355,8 @@ public class ProductDetailActivity extends AppCompatActivity {
                         ? "Đã thêm sản phẩm vào giỏ"
                         : result.getMessage();
 
+                MainActivity.shouldOpenCartOnResume = true;
+
                 Toast.makeText(
                         ProductDetailActivity.this,
                         message,

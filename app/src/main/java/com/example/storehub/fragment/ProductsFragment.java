@@ -83,6 +83,13 @@ public class ProductsFragment extends Fragment {
     private void setUpListener() {
         if (toolbar != null) {
             toolbar.setNavigationOnClickListener(v -> ((MainActivity) requireActivity()).showHome());
+            toolbar.setOnMenuItemClickListener(item -> {
+                if (item.getItemId() == R.id.action_receipt) {
+                    ((MainActivity) requireActivity()).showCart();
+                    return true;
+                }
+                return false;
+            });
         }
 
         if (edtSearch != null) {
@@ -143,8 +150,8 @@ public class ProductsFragment extends Fragment {
         isLoading = true;
         HttpResquest request = new HttpResquest();
         currentCall = keyword.isEmpty()
-                ? request.apiServices.getListProduct(page, LIMIT)
-                : request.apiServices.searchProduct(page, LIMIT, keyword);
+                ? request.apiServices.getListProduct(page, LIMIT, "")
+                : request.apiServices.searchProduct(page, LIMIT, keyword, "");
 
         currentCall.enqueue(new Callback<Response<ArrayList<Product>>>() {
             @Override

@@ -105,7 +105,7 @@ public class AdminHomeFragment extends Fragment {
     }
 
     private void fetchProductCount() {
-        new HttpResquest().callAPI().getListProduct(1, 1)
+        new HttpResquest().callAPI().getListProduct(1, 1, "")
                 .enqueue(new Callback<Response<ArrayList<Product>>>() {
                     @Override
                     public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call,

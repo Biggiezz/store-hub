@@ -1,14 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".admin.fragment.ProductsFragmentManagement">
+    android:background="#FCFBF8">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:paddingBottom="86dp">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="53dp"
+                android:gravity="center_vertical"
+                android:paddingStart="22dp"
+                android:paddingEnd="22dp"
+                android:text="Quản trị danh sách sản phẩm"
+                android:textColor="#1B2C24"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#DDDAD5" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="39dp"
+                android:clipToPadding="false"
+                android:paddingStart="22dp"
+                android:paddingEnd="22dp"
+                android:scrollbars="none">
+
+                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
+                    <TextView android:id="@+id/chipAllProducts" style="@style/Widget.StoreHub.AdminChip" android:background="@drawable/bg_admin_chip_active" android:text="Tất cả" android:textColor="#FFFFFF" />
+                    <TextView android:id="@+id/chipPhoneProducts" style="@style/Widget.StoreHub.AdminChip" android:text="Điện thoại" />
+                    <TextView android:id="@+id/chipComputerProducts" style="@style/Widget.StoreHub.AdminChip" android:text="Máy tính" />
+                    <TextView android:id="@+id/chipHeadphoneProducts" style="@style/Widget.StoreHub.AdminChip" android:text="Tai nghe" />
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <EditText
+                android:id="@+id/edtAdminProductSearch"
+                android:layout_width="match_parent"
+                android:layout_height="47dp"
+                android:layout_marginStart="22dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginEnd="22dp"
+                android:background="@drawable/bg_admin_search"
+                android:drawableStart="@drawable/ic_search"
+                android:drawablePadding="12dp"
+                android:hint="Tìm kiếm sản phẩm..."
+                android:paddingStart="14dp"
+                android:paddingEnd="18dp"
+                android:singleLine="true"
+                android:textColor="#25342D"
+                android:textColorHint="#A9ABA8"
+                android:textSize="15sp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvAdminProducts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginEnd="15dp"
+                android:clipToPadding="false"
+                android:paddingBottom="8dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+                <TextView android:id="@+id/btnAdminPreviousPage" style="@style/Widget.StoreHub.AdminPageButton" android:text="‹" android:textSize="28sp" />
+                <TextView android:id="@+id/btnAdminPage1" style="@style/Widget.StoreHub.AdminPageButton" android:background="@drawable/bg_admin_chip_active" android:text="1" android:textColor="#FFFFFF" />
+                <TextView android:id="@+id/btnAdminPage2" style="@style/Widget.StoreHub.AdminPageButton" android:text="2" />
+                <TextView android:id="@+id/btnAdminPage3" style="@style/Widget.StoreHub.AdminPageButton" android:text="3" />
+                <TextView android:layout_width="34dp" android:layout_height="42dp" android:gravity="center" android:text="..." android:textColor="#5D625F" />
+                <TextView android:id="@+id/tvAdminLastPage" style="@style/Widget.StoreHub.AdminPageButton" android:text="12" />
+                <TextView android:id="@+id/btnAdminNextPage" style="@style/Widget.StoreHub.AdminPageButton" android:text="›" android:textSize="28sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddProduct"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="22dp"
+        android:layout_marginBottom="18dp"
+        android:contentDescription="Thêm sản phẩm"
+        app:backgroundTint="#172C22"
+        app:cornerSize="16dp"
+        app:elevation="0dp"
+        app:srcCompat="@drawable/ic_admin_plus"
+        app:tint="#FFFFFF" />
 </FrameLayout>

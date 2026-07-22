@@ -8,6 +8,8 @@ import com.example.storehub.model.Product;
 import com.example.storehub.model.ProductReview;
 import com.example.storehub.model.Response;
 import com.example.storehub.model.User;
+import com.example.storehub.model.Order;
+import com.example.storehub.model.CancelOrderRequest;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -30,14 +32,16 @@ public interface ApiServices {
     @GET("api/productsRouter/get-all-product")
     Call<Response<ArrayList<Product>>> getListProduct(
             @Query("page") int page,
-            @Query("limit") int limit
+            @Query("limit") int limit,
+            @Query("category") String category
     );
 
     @GET("api/productsRouter/search-product")
     Call<Response<ArrayList<Product>>> searchProduct(
             @Query("page") int page,
             @Query("limit") int limit,
-            @Query("keyword") String keyword
+            @Query("keyword") String keyword,
+            @Query("category") String category
     );
 
     @GET("api/productsRouter/get-latest-product")
@@ -46,8 +50,30 @@ public interface ApiServices {
     @GET("api/productsRouter/get-product-by-id/{id}")
     Call<Response<Product>> getProductDetail(@Path("id") String id);
 
+    @Multipart
     @POST("api/productsRouter/add-product")
-    Call<Response<Product>> addProduct(@Body Product product);
+    Call<Response<Product>> addProduct(
+            @Part("name") RequestBody name,
+            @Part("price") RequestBody price,
+            @Part("category") RequestBody category,
+            @Part("description") RequestBody description,
+            @Part("stock") RequestBody stock,
+            @Part("colors") RequestBody colors,
+            @Part MultipartBody.Part image
+    );
+
+    @Multipart
+    @PUT("api/productsRouter/update-product/{id}")
+    Call<Response<Product>> updateProduct(
+            @Path("id") String id,
+            @Part("name") RequestBody name,
+            @Part("price") RequestBody price,
+            @Part("category") RequestBody category,
+            @Part("description") RequestBody description,
+            @Part("stock") RequestBody stock,
+            @Part("colors") RequestBody colors,
+            @Part MultipartBody.Part image
+    );
 
     @GET("api/productsRouter/get-cart")
     Call<Response<ArrayList<CartItem>>> getCart();
@@ -63,6 +89,18 @@ public interface ApiServices {
 
     @POST("api/productsRouter/add-review")
     Call<Response<Product>> addReview(@Body ProductReview.AddRequest request);
+
+    @POST("api/oderRouter/create-order")
+    Call<Response<Order>> createOrder();
+
+    @GET("api/oderRouter/get-orders")
+    Call<Response<ArrayList<Order>>> getOrders();
+
+    @POST("api/oderRouter/cancel-order")
+    Call<Response<Order>> cancelOrder(@Body CancelOrderRequest request);
+
+    @POST("api/oderRouter/clear-cart")
+    Call<Response<Object>> clearCart();
 
     // Lấy danh sách toàn bộ tin tức đã xuất bản
     @GET("api/newsRouter/get-all-news")

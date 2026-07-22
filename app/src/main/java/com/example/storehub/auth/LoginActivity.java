@@ -130,7 +130,7 @@ public class LoginActivity extends AppCompatActivity {
         preloadedNews = null;
 
         // Tải danh sách sản phẩm (50 sản phẩm để phục vụ lọc danh mục)
-        httpResquest.callAPI().getListProduct(1, 50).enqueue(new Callback<Response<ArrayList<Product>>>() {
+        httpResquest.callAPI().getListProduct(1, 50, "").enqueue(new Callback<Response<ArrayList<Product>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
                 isProductsCallDone = true;
