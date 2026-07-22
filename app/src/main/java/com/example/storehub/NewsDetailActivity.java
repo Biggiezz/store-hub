@@ -11,10 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.example.storehub.model.News;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
+import com.example.storehub.utils.DateTimeUtils;
 
 /**
  * Activity displaying the detailed view of a News Article.
@@ -77,8 +74,8 @@ public class NewsDetailActivity extends AppCompatActivity {
         // Sử dụng Glide để tải hình ảnh từ URL server vào ImageView
         Glide.with(this)
                 .load(news.getImage())
-                .placeholder(R.drawable.ic_new) // Ảnh mặc định khi đang tải
-                .error(R.drawable.ic_new)       // Ảnh khi tải lỗi
+                .placeholder(R.drawable.ic_new)
+                .error(R.drawable.ic_new)
                 .into(ivDetailNewsImage);
     }
 
@@ -86,39 +83,13 @@ public class NewsDetailActivity extends AppCompatActivity {
      * Chuyển đổi chuỗi ISO Date từ Server sang định dạng dd/MM/yyyy HH:mm
      */
     private String formatDateString(String isoDateString) {
-        if (isoDateString == null || isoDateString.isEmpty()) {
-            return "";
-        }
-        try {
-            // Định dạng chuỗi gốc từ MongoDB (ví dụ: 2026-07-18T01:51:40.000Z)
-            SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
-            parser.setTimeZone(TimeZone.getTimeZone("UTC"));
-            Date date = parser.parse(isoDateString);
-
-            // Định dạng hiển thị mong muốn
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
-            formatter.setTimeZone(TimeZone.getDefault());
-
-            return formatter.format(date);
-        } catch (Exception e) {
-            try {
-                SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault());
-                parser.setTimeZone(TimeZone.getTimeZone("UTC"));
-                Date date = parser.parse(isoDateString);
-                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
-                formatter.setTimeZone(TimeZone.getDefault());
-                return formatter.format(date);
-            } catch (Exception ex) {
-                return isoDateString;
-            }
-        }
+        return DateTimeUtils.formatISOToLocal(isoDateString, "dd/MM/yyyy HH:mm");
     }
 
     /**
      * Cấu hình điều hướng cho thanh Bottom Navigation ở góc dưới màn hình chi tiết
      */
     private void setupBottomNavigation() {
-        // Nút "Trang chủ" -> quay lại MainActivity và xóa các activity khác khỏi stack
         findViewById(R.id.btnHome).setOnClickListener(v -> openMainTab(MainActivity.TAB_HOME));
 
         findViewById(R.id.btnProducts).setOnClickListener(v -> openMainTab(MainActivity.TAB_PRODUCTS));
@@ -143,16 +114,10 @@ public class NewsDetailActivity extends AppCompatActivity {
      * Cấu hình sự kiện cho cụm nút tương tác Chia sẻ / Lưu / Thích dưới cùng
      */
     private void setupInteractionButtons() {
-        findViewById(R.id.btnShare).setOnClickListener(v -> {
-            Toast.makeText(this, "Đã sao chép liên kết bài viết!", Toast.LENGTH_SHORT).show();
-        });
+        findViewById(R.id.btnShare).setOnClickListener(v -> Toast.makeText(this, "Đã sao chép liên kết bài viết!", Toast.LENGTH_SHORT).show());
 
-        findViewById(R.id.btnBookmark).setOnClickListener(v -> {
-            Toast.makeText(this, "Đã lưu bài viết vào mục đọc sau!", Toast.LENGTH_SHORT).show();
-        });
+        findViewById(R.id.btnBookmark).setOnClickListener(v -> Toast.makeText(this, "Đã lưu bài viết vào mục đọc sau!", Toast.LENGTH_SHORT).show());
 
-        findViewById(R.id.btnLike).setOnClickListener(v -> {
-            Toast.makeText(this, "Đã thêm bài viết vào danh sách yêu thích!", Toast.LENGTH_SHORT).show();
-        });
+        findViewById(R.id.btnLike).setOnClickListener(v -> Toast.makeText(this, "Đã thêm bài viết vào danh sách yêu thích!", Toast.LENGTH_SHORT).show());
     }
 }

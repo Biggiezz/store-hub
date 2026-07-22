@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/productFormRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="53dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp">
+        <ImageButton
+            android:id="@+id/btnBackProductForm"
+            android:layout_width="32dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Quay lại"
+            android:padding="5dp"
+            android:src="@drawable/ic_back"
+            app:tint="#172C22" />
+        <TextView
+            android:id="@+id/tvProductFormTitle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="16dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:textColor="#1A2C23"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#DDDAD5" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:fillViewport="true">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingTop="24dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="28dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="366dp"
+                android:background="@drawable/bg_admin_form_section"
+                android:orientation="vertical"
+                android:padding="24dp">
+                <TextView style="@style/Widget.StoreHub.AdminFormLabel" android:text="HÌNH ẢNH SẢN PHẨM" />
+                <LinearLayout
+                    android:id="@+id/layoutAdminImagePicker"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_dashed_upload"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                    <ImageView
+                        android:id="@+id/ivAdminSelectedImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="Ảnh sản phẩm đã chọn"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone" />
+                    <ImageView android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Tải ảnh" android:src="@drawable/ic_admin_upload" />
+                    <TextView android:id="@+id/tvAdminUploadPrompt" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="Tải ảnh lên" android:textColor="#303D37" android:textSize="13sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="306dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/bg_admin_form_section"
+                android:orientation="vertical"
+                android:padding="24dp">
+                <TextView style="@style/Widget.StoreHub.AdminFormLabel" android:text="MÔ TẢ SẢN PHẨM" />
+                <EditText
+                    android:id="@+id/edtAdminProductDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_admin_field"
+                    android:gravity="top|start"
+                    android:hint="Viết mô tả chi tiết về sản phẩm này..."
+                    android:inputType="textMultiLine"
+                    android:padding="16dp"
+                    android:textColor="#26342D"
+                    android:textColorHint="#77808D"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/bg_admin_form_section"
+                android:orientation="vertical"
+                android:padding="24dp">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Thông tin cơ bản" android:textColor="#172C22" android:textSize="30sp" android:textStyle="bold" />
+                <TextView style="@style/Widget.StoreHub.AdminFormLabel" android:layout_marginTop="28dp" android:text="TÊN SẢN PHẨM" />
+                <EditText android:id="@+id/edtAdminProductName" style="@style/Widget.StoreHub.AdminFormField" android:hint="Ví dụ: iPhone 15 Pro Max" android:inputType="textCapSentences" />
+                <TextView style="@style/Widget.StoreHub.AdminFormLabel" android:layout_marginTop="28dp" android:text="DANH MỤC" />
+                <LinearLayout android:id="@+id/layoutAdminCategoryPicker" style="@style/Widget.StoreHub.AdminFormField" android:clickable="true" android:focusable="true" android:orientation="horizontal">
+                    <TextView android:id="@+id/tvAdminCategoryValue" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center_vertical" android:text="Chọn danh mục" android:textColor="#242C28" android:textSize="16sp" />
+                    <ImageView android:layout_width="20dp" android:layout_height="match_parent" android:contentDescription="Mở danh mục" android:src="@drawable/ic_admin_chevron_down" />
+                </LinearLayout>
+                <TextView style="@style/Widget.StoreHub.AdminFormLabel" android:layout_marginTop="28dp" android:text="SỐ LƯỢNG TỒN KHO" />
+                <EditText android:id="@+id/edtAdminProductStock" style="@style/Widget.StoreHub.AdminFormField" android:hint="0" android:inputType="number" />
+                <TextView style="@style/Widget.StoreHub.AdminFormLabel" android:layout_marginTop="28dp" android:text="GIÁ BÁN (VNĐ)" />
+                <LinearLayout style="@style/Widget.StoreHub.AdminFormField" android:orientation="horizontal">
+                    <EditText android:id="@+id/edtAdminProductPrice" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="@null" android:hint="0.000" android:inputType="number" android:padding="0dp" android:textColor="#26342D" android:textColorHint="#77808D" android:textSize="16sp" android:textStyle="bold" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="match_parent" android:gravity="center" android:text="VNĐ" android:textColor="#4B4E4B" android:textSize="14sp" android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="258dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/bg_admin_form_section"
+                android:orientation="vertical"
+                android:padding="24dp">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Biến thể màu sắc" android:textColor="#172C22" android:textSize="19sp" android:textStyle="bold" />
+                    <TextView android:layout_width="30dp" android:layout_height="30dp" android:gravity="center" android:text="⊕" android:textColor="#172C22" android:textSize="28sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="9dp" android:text="Thêm\nmàu" android:textColor="#172C22" android:textSize="14sp" android:textStyle="bold" />
+                </LinearLayout>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_marginTop="22dp" android:layout_weight="1" android:background="#FCFBF8" android:orientation="vertical" android:padding="16dp">
+                    <TextView style="@style/Widget.StoreHub.AdminFormLabel" android:text="CHỌN MÀU SẮC" />
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:orientation="horizontal">
+                        <com.google.android.material.button.MaterialButton style="@style/Widget.StoreHub.ColorSwatch" app:backgroundTint="#000000" app:strokeColor="#172C22" app:strokeWidth="3dp" />
+                        <com.google.android.material.button.MaterialButton style="@style/Widget.StoreHub.ColorSwatch" app:backgroundTint="#E2E3E3" />
+                        <com.google.android.material.button.MaterialButton style="@style/Widget.StoreHub.ColorSwatch" app:backgroundTint="#FFFFFF" />
+                        <com.google.android.material.button.MaterialButton style="@style/Widget.StoreHub.ColorSwatch" app:backgroundTint="#354A40" />
+                        <com.google.android.material.button.MaterialButton style="@style/Widget.StoreHub.ColorSwatch" app:backgroundTint="#6D665E" />
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:orientation="horizontal">
+                        <com.google.android.material.button.MaterialButton style="@style/Widget.StoreHub.ColorSwatch" app:backgroundTint="#D1160D" />
+                        <com.google.android.material.button.MaterialButton style="@style/Widget.StoreHub.ColorSwatch" android:text="◉" android:textColor="#172C22" android:textSize="14sp" app:backgroundTint="#E6E5E2" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="48dp" android:layout_marginTop="56dp" android:gravity="end" android:orientation="horizontal">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCancelProductForm"
+                    style="@style/Widget.StoreHub.AdminFormSecondaryButton"
+                    android:layout_width="100dp"
+                    android:text="Hủy" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSubmitProductForm"
+                    style="@style/Widget.StoreHub.AdminFormPrimaryButton"
+                    android:layout_width="174dp"
+                    android:layout_marginStart="16dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

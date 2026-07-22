@@ -16,17 +16,21 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".admin.HomePageManagement"
+            android:name=".admin.HomePageManagementActivity"
             android:exported="false" />
         <activity
-            android:name=".admin.AddNewsActivity"
+            android:name=".admin.ProductFormManagementActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".admin.AddUserActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ProductDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".splash.SplashActivity"
+            android:name=".SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -48,13 +52,30 @@
             android:name=".ProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".EditProfileActivity"
+            android:name=".admin.AddNewsManagementActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
+            android:name=".EditProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".ChangePasswordActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
+            android:exported="false" />
+        <activity
+            android:name=".ShippingOrderDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CancelledOrderDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CompletedOrderDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".admin.AdminOrdersActivity"
+            android:exported="false" />
+        <activity
+            android:name=".WriteReviewActivity"
+            android:exported="false" />
 
         <service
             android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"

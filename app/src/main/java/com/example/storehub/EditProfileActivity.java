@@ -1,6 +1,5 @@
 package com.example.storehub;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -42,7 +41,7 @@ public class EditProfileActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_edit_profile);
 
-        sharedPreferencesManager = SharedPreferencesManager.getInstance(this);
+        sharedPreferencesManager = new SharedPreferencesManager(this);
         currentUser = sharedPreferencesManager.getUser();
 
         if (currentUser == null) {
@@ -51,12 +50,12 @@ public class EditProfileActivity extends AppCompatActivity {
             return;
         }
 
-        initViews();
+        initUi();
         bindUserData();
         setupClickListeners();
     }
 
-    private void initViews() {
+    private void initUi() {
         edtProfileName = findViewById(R.id.edtProfileName);
         edtProfileEmail = findViewById(R.id.edtProfileEmail);
         edtProfilePhone = findViewById(R.id.edtProfilePhone);
@@ -107,7 +106,8 @@ public class EditProfileActivity extends AppCompatActivity {
 
         String tokenHeader = "Bearer " + sharedPreferencesManager.getToken();
 
-        new HttpResquest().callAPI().updateProfile(tokenHeader, body).enqueue(new Callback<Response<User>>() {
+        HttpResquest httpResquest = new HttpResquest();
+        httpResquest.callAPI().updateProfile(tokenHeader, body).enqueue(new Callback<Response<User>>() {
             @Override
             public void onResponse(Call<Response<User>> call, retrofit2.Response<Response<User>> response) {
                 if (response.isSuccessful() && response.body() != null) {

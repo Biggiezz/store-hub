@@ -1,25 +1,31 @@
 package com.example.storehub.services;
 
-import com.example.storehub.model.AddToCartRequest;
+import com.example.storehub.model.AdminStats;
 import com.example.storehub.model.ApiMessageResponse;
+import com.example.storehub.model.CancelOrderRequest;
 import com.example.storehub.model.CartItem;
-import com.example.storehub.model.LoginRequest;
-import com.example.storehub.model.LoginResponse;
 import com.example.storehub.model.News;
+import com.example.storehub.model.Order;
 import com.example.storehub.model.Product;
-import com.example.storehub.model.ProductDetailResponse;
-import com.example.storehub.model.RegisterRequest;
+import com.example.storehub.model.ProductReview;
 import com.example.storehub.model.Response;
-import com.example.storehub.model.UpdateCartQuantityRequest;
+import com.example.storehub.model.UpdateStatusRequest;
 import com.example.storehub.model.User;
 
 import java.util.ArrayList;
+import java.util.Map;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -27,39 +33,78 @@ public interface ApiServices {
     @GET("api/productsRouter/get-all-product")
     Call<Response<ArrayList<Product>>> getListProduct(
             @Query("page") int page,
-            @Query("limit") int limit
+            @Query("limit") int limit,
+            @Query("category") String category
     );
 
     @GET("api/productsRouter/search-product")
     Call<Response<ArrayList<Product>>> searchProduct(
             @Query("page") int page,
             @Query("limit") int limit,
-            @Query("keyword") String keyword
+            @Query("keyword") String keyword,
+            @Query("category") String category
     );
 
     @GET("api/productsRouter/get-latest-product")
     Call<Response<ArrayList<Product>>> getLatestProduct();
 
     @GET("api/productsRouter/get-product-by-id/{id}")
-    Call<Response<ProductDetailResponse>> getProductDetail(@Path("id") String id);
+    Call<Response<Product>> getProductDetail(@Path("id") String id);
 
+    @Multipart
     @POST("api/productsRouter/add-product")
-    Call<Response<Product>> addProduct(@Body Product product);
+    Call<Response<Product>> addProduct(
+            @Part("name") RequestBody name,
+            @Part("price") RequestBody price,
+            @Part("category") RequestBody category,
+            @Part("description") RequestBody description,
+            @Part("stock") RequestBody stock,
+            @Part("colors") RequestBody colors,
+            @Part MultipartBody.Part image
+    );
+
+    @Multipart
+    @PUT("api/productsRouter/update-product/{id}")
+    Call<Response<Product>> updateProduct(
+            @Path("id") String id,
+            @Part("name") RequestBody name,
+            @Part("price") RequestBody price,
+            @Part("category") RequestBody category,
+            @Part("description") RequestBody description,
+            @Part("stock") RequestBody stock,
+            @Part("colors") RequestBody colors,
+            @Part MultipartBody.Part image
+    );
 
     @GET("api/productsRouter/get-cart")
     Call<Response<ArrayList<CartItem>>> getCart();
 
     @POST("api/productsRouter/add-to-cart")
-    Call<ApiMessageResponse> addToCart(@Body AddToCartRequest request);
+    Call<ApiMessageResponse> addToCart(@Body CartItem.AddToCartRequest request);
 
     @POST("api/productsRouter/update-cart-quantity")
-    Call<Response<ArrayList<CartItem>>> updateCartQuantity(@Body UpdateCartQuantityRequest request);
+    Call<Response<ArrayList<CartItem>>> updateCartQuantity(@Body CartItem.UpdateQuantityRequest request);
 
     @DELETE("api/productsRouter/delete-cart-item/{id}")
     Call<Response<ArrayList<CartItem>>> deleteCartItem(@Path("id") String id);
 
     @POST("api/productsRouter/add-review")
-    Call<Response<ProductDetailResponse>> addReview(@Body com.example.storehub.model.AddReviewRequest request);
+    Call<Response<Product>> addReview(@Body ProductReview.AddRequest request);
+
+    @POST("api/oderRouter/create-order")
+    Call<Response<Order>> createOrder(@Query("userId") String userId);
+
+    @GET("api/oderRouter/get-orders")
+    Call<Response<ArrayList<Order>>> getOrders(@Query("userId") String userId);
+
+    @POST("api/oderRouter/cancel-order")
+    Call<Response<Order>> cancelOrder(@Body CancelOrderRequest request);
+
+    @POST("api/oderRouter/update-status")
+    Call<Response<Order>> updateOrderStatus(@Body UpdateStatusRequest request);
+
+    @POST("api/oderRouter/clear-cart")
+    Call<Response<Object>> clearCart();
 
     // Lấy danh sách toàn bộ tin tức đã xuất bản
     @GET("api/newsRouter/get-all-news")
@@ -70,24 +115,52 @@ public interface ApiServices {
     @GET("api/newsRouter/get-news-by-id/{id}")
     Call<Response<News>> getNewsById(@Path("id") String id);
 
-    @POST("api/newsRouter/add-news")
-    Call<Response<News>> addNews(@Body News news);
-
-    @DELETE("api/newsRouter/delete-news/{id}")
-    Call<ApiMessageResponse> deleteNews(@Path("id") String id);
-
     @POST("users/register")
-    Call<Response<User>> register(@Body RegisterRequest request);
+    Call<Response<User>> register(@Body User.RegisterRequest request);
 
     @POST("users/login")
-    Call<LoginResponse> login(@Body LoginRequest request);
+    Call<User.LoginResponse> login(@Body User.LoginRequest request);
+
+    @GET("api/newsRouter/admin/get-all-news")
+    Call<Response<ArrayList<News>>> getAdminListNews(@Header("Authorization") String token,
+                                                     @Query("page") int page,
+                                                     @Query("limit") int limit);
+
+    @Multipart
+    @POST("api/newsRouter/admin/add-news")
+    Call<Response<News>> addAdminNews(@Header("Authorization") String token,
+                                      @Part("title") RequestBody title,
+                                      @Part("content") RequestBody content,
+                                      @Part("status") RequestBody status,
+                                      @Part MultipartBody.Part image);
+
+    @PUT("api/newsRouter/admin/update-news/{id}")
+    Call<Response<News>> updateAdminNews(@Header("Authorization") String token, @Path("id") String id, @Body News news);
+
+    @DELETE("api/newsRouter/admin/delete-news/{id}")
+    Call<Response<Void>> deleteAdminNews(@Header("Authorization") String token, @Path("id") String id);
+
+    @PUT("users/update-profile")
+    Call<Response<User>> updateProfile(@Header("Authorization") String authHeader, @Body Map<String, String> body);
+
+    @PUT("users/change-password")
+    Call<Response<Void>> changePassword(@Header("Authorization") String authHeader, @Body Map<String, String> body);
 
     @POST("users/logout")
-    Call<Response<Void>> logout(@retrofit2.http.Header("Authorization") String token);
+    Call<Response<Void>> logout(@Header("Authorization") String authHeader);
 
-    @POST("users/update-profile")
-    Call<Response<User>> updateProfile(@retrofit2.http.Header("Authorization") String token, @Body java.util.Map<String, String> body);
+    @GET("users/admin/dashboard")
+    Call<Response<AdminStats.DashboardData>> getAdminDashboardStats();
 
-    @POST("users/change-password")
-    Call<Response<Void>> changePassword(@retrofit2.http.Header("Authorization") String token, @Body java.util.Map<String, String> body);
+    @POST("api/productsRouter/checkout")
+    Call<Response<Object>> checkout();
+
+    @GET("users/admin/revenue-stats")
+    Call<Response<AdminStats.RevenueData>> getRevenueStats(@Query("period") int period);
+
+    @GET("users/get-all-users")
+    Call<Response<ArrayList<User>>> getListUsers();
+
+    @POST("users/add-user")
+    Call<Response<User>> addUser(@Body User user);
 }

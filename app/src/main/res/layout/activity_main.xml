@@ -134,8 +134,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:gravity="center"
-                    android:paddingTop="16dp"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:paddingTop="16dp">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnPhone"
@@ -200,10 +200,10 @@
                         android:id="@+id/btnViewAllProducts"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|end"
                         android:text="Xem tất cả"
                         android:textColor="@color/text_secondary"
                         android:textSize="13sp"
-                        android:layout_gravity="bottom|end"
                         app:backgroundTint="@android:color/transparent"
                         app:icon="@drawable/ic_right"
                         app:iconGravity="textEnd"
@@ -263,15 +263,12 @@
     <LinearLayout
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
-        android:layout_height="78dp"
+        android:layout_height="wrap_content"
         android:background="@color/background"
         android:elevation="8dp"
         android:gravity="center"
         android:orientation="horizontal"
-        android:paddingStart="4dp"
-        android:paddingTop="8dp"
-        android:paddingEnd="4dp"
-        android:paddingBottom="8dp">
+        android:paddingTop="8dp">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnHome"

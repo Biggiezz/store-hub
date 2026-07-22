@@ -2,7 +2,7 @@ package com.example.storehub.model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class CartItem {
+public class CartItem implements java.io.Serializable {
     @SerializedName("_id")
     private String mongoId;
 
@@ -105,5 +105,42 @@ public class CartItem {
 
     public long getTotalItemPrice() {
         return getPrice() * quantity;
+    }
+
+    public static class AddToCartRequest {
+        @SerializedName("productId")
+        private Object productId;
+
+        @SerializedName("colorId")
+        private Object colorId;
+
+        @SerializedName("quantity")
+        private int quantity;
+
+        public AddToCartRequest(Object productId, Object colorId, int quantity) {
+            this.productId = productId;
+            this.colorId = colorId;
+            this.quantity = quantity;
+        }
+
+        public Object getProductId() { return productId; }
+        public Object getColorId() { return colorId; }
+        public int getQuantity() { return quantity; }
+    }
+
+    public static class UpdateQuantityRequest {
+        @SerializedName("cartItemId")
+        private String cartItemId;
+
+        @SerializedName("quantity")
+        private int quantity;
+
+        public UpdateQuantityRequest(String cartItemId, int quantity) {
+            this.cartItemId = cartItemId;
+            this.quantity = quantity;
+        }
+
+        public String getCartItemId() { return cartItemId; }
+        public int getQuantity() { return quantity; }
     }
 }

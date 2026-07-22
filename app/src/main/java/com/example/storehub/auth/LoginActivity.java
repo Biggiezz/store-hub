@@ -13,9 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.storehub.MainActivity;
 import com.example.storehub.R;
-import com.example.storehub.admin.HomePageManagement;
-import com.example.storehub.model.LoginRequest;
-import com.example.storehub.model.LoginResponse;
+import com.example.storehub.admin.HomePageManagementActivity;
 import com.example.storehub.model.News;
 import com.example.storehub.model.Product;
 import com.example.storehub.model.Response;
@@ -39,8 +37,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private ArrayList<Product> preloadedProducts = null;
     private ArrayList<News> preloadedNews = null;
-    private boolean isProductsCallDone = false;
-    private boolean isNewsCallDone = false;
+    private boolean isProductsCallDone = false, isNewsCallDone = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,24 +59,24 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void setUpListener() {
+        if (btnLogin != null) {
+            btnLogin.setOnClickListener(v -> handleLogin());
+        }
+
         if (tvRegisterNow != null) {
             tvRegisterNow.setOnClickListener(v -> {
                 Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
                 startActivity(intent);
             });
         }
-
-        if (btnLogin != null) {
-            btnLogin.setOnClickListener(v -> performLogin());
-        }
     }
 
-    private void performLogin() {
-        String email = edtEmail.getText() != null ? edtEmail.getText().toString().trim() : "";
-        String password = edtPassword.getText() != null ? edtPassword.getText().toString().trim() : "";
+    private void handleLogin() {
+        String email = edtEmail != null && edtEmail.getText() != null ? edtEmail.getText().toString().trim() : "";
+        String password = edtPassword != null && edtPassword.getText() != null ? edtPassword.getText().toString().trim() : "";
 
         if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Vui lòng nhập email và mật khẩu", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Vui lòng nhập đầy đủ Email và Mật khẩu", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -88,31 +85,22 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        // Hiển thị loading dialog
         ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Đang đăng nhập...");
         progressDialog.setCancelable(false);
         progressDialog.show();
 
-        // Khởi tạo Login Request
-        LoginRequest request = new LoginRequest(email, password);
+        User.LoginRequest request = new User.LoginRequest(email, password);
 
-        // Gọi API Đăng nhập
         HttpResquest httpResquest = new HttpResquest();
-        httpResquest.callAPI().login(request).enqueue(new Callback<LoginResponse>() {
+        httpResquest.callAPI().login(request).enqueue(new Callback<User.LoginResponse>() {
             @Override
-            public void onResponse(@NonNull Call<LoginResponse> call, @NonNull retrofit2.Response<LoginResponse> response) {
+            public void onResponse(@NonNull Call<User.LoginResponse> call, @NonNull retrofit2.Response<User.LoginResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    LoginResponse apiResponse = response.body();
+                    User.LoginResponse apiResponse = response.body();
                     if (apiResponse.getCode() == 200) {
-                        // Lưu Token & thông tin User
-                        prefManager.saveToken(apiResponse.getToken());
-                        prefManager.saveUser(apiResponse.getData());
-
-                        // Cập nhật thông báo tải dữ liệu
+                        prefManager.saveUserSession(apiResponse.getToken(), apiResponse.getData());
                         progressDialog.setMessage("Đang tải dữ liệu sản phẩm...");
-
-                        // Tải trước dữ liệu
                         preloadData(progressDialog);
                     } else {
                         progressDialog.dismiss();
@@ -125,7 +113,7 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<User.LoginResponse> call, @NonNull Throwable t) {
                 progressDialog.dismiss();
                 Toast.makeText(LoginActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -141,7 +129,7 @@ public class LoginActivity extends AppCompatActivity {
         preloadedNews = null;
 
         // Tải danh sách sản phẩm (50 sản phẩm để phục vụ lọc danh mục)
-        httpResquest.callAPI().getListProduct(1, 50).enqueue(new Callback<Response<ArrayList<Product>>>() {
+        httpResquest.callAPI().getListProduct(1, 50, "").enqueue(new Callback<Response<ArrayList<Product>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
                 isProductsCallDone = true;
@@ -201,7 +189,7 @@ public class LoginActivity extends AppCompatActivity {
 
             Intent intent;
             if (role.equals("admin") || role.equals("super admin") || role.equals("superadmin")) {
-                intent = new Intent(LoginActivity.this, HomePageManagement.class);
+                intent = new Intent(LoginActivity.this, HomePageManagementActivity.class);
             } else {
                 intent = new Intent(LoginActivity.this, MainActivity.class);
             }

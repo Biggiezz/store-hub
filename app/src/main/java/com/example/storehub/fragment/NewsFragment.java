@@ -32,13 +32,11 @@ public class NewsFragment extends Fragment {
     private NewsAdapter newsAdapter;
     private Call<Response<ArrayList<News>>> currentCall;
     private int currentPage = 1;
-    private boolean isLoading;
-    private boolean isLastPage;
+    private boolean isLoading, isLastPage;
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_news, container, false);
     }
 
@@ -90,8 +88,7 @@ public class NewsFragment extends Fragment {
         currentCall = new HttpResquest().callAPI().getListNews(page, LIMIT);
         currentCall.enqueue(new Callback<Response<ArrayList<News>>>() {
             @Override
-            public void onResponse(@NonNull Call<Response<ArrayList<News>>> call,
-                                   @NonNull retrofit2.Response<Response<ArrayList<News>>> response) {
+            public void onResponse(@NonNull Call<Response<ArrayList<News>>> call, @NonNull retrofit2.Response<Response<ArrayList<News>>> response) {
                 if (call.isCanceled() || newsAdapter == null) return;
                 isLoading = false;
                 if (response.isSuccessful() && response.body() != null

@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.storehub.model.Response;
@@ -15,27 +16,19 @@ import com.example.storehub.services.HttpResquest;
 import com.example.storehub.utils.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
 
-import java.text.SimpleDateFormat;
+import com.example.storehub.utils.DateTimeUtils;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 
 public class ChangePasswordActivity extends AppCompatActivity {
 
-    private EditText edtCurrentPassword;
-    private EditText edtNewPassword;
-    private EditText edtConfirmNewPassword;
-
-    private ImageView btnToggleCurrentPassword;
-    private ImageView btnToggleNewPassword;
-    private ImageView btnToggleConfirmNewPassword;
+    private EditText edtCurrentPassword, edtNewPassword, edtConfirmNewPassword;
+    private ImageView btnToggleCurrentPassword, btnToggleNewPassword, btnToggleConfirmNewPassword;
     private MaterialButton btnUpdatePassword;
-
     private boolean isCurrentPasswordVisible = false;
     private boolean isNewPasswordVisible = false;
     private boolean isConfirmPasswordVisible = false;
@@ -48,13 +41,13 @@ public class ChangePasswordActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_change_password);
 
-        sharedPreferencesManager = SharedPreferencesManager.getInstance(this);
+        sharedPreferencesManager = new SharedPreferencesManager(this);
 
-        initViews();
+        initUi();
         setupClickListeners();
     }
 
-    private void initViews() {
+    private void initUi() {
         edtCurrentPassword = findViewById(R.id.edtCurrentPassword);
         edtNewPassword = findViewById(R.id.edtNewPassword);
         edtConfirmNewPassword = findViewById(R.id.edtConfirmNewPassword);
@@ -68,7 +61,6 @@ public class ChangePasswordActivity extends AppCompatActivity {
     private void setupClickListeners() {
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
 
-        // Toggle Visibility Listeners
         btnToggleCurrentPassword.setOnClickListener(v -> {
             isCurrentPasswordVisible = !isCurrentPasswordVisible;
             togglePasswordVisibility(edtCurrentPassword, btnToggleCurrentPassword, isCurrentPasswordVisible);
@@ -95,7 +87,6 @@ public class ChangePasswordActivity extends AppCompatActivity {
             editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
             toggleIcon.setImageResource(R.drawable.ic_visibility_off);
         }
-        // Move selection to the end
         editText.setSelection(editText.getText().length());
     }
 
@@ -109,7 +100,6 @@ public class ChangePasswordActivity extends AppCompatActivity {
             return;
         }
 
-        // Validate criteria: minimum 8 characters, containing both letters and numbers
         if (newPass.length() < 8 || !newPass.matches(".*[a-zA-Z].*") || !newPass.matches(".*\\d.*")) {
             Toast.makeText(this, "Mật khẩu mới phải tối thiểu 8 ký tự, bao gồm cả chữ cái và số", Toast.LENGTH_LONG).show();
             return;
@@ -126,23 +116,21 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
         String tokenHeader = "Bearer " + sharedPreferencesManager.getToken();
 
-        new HttpResquest().callAPI().changePassword(tokenHeader, body).enqueue(new Callback<Response<Void>>() {
+        HttpResquest httpResquest = new HttpResquest();
+        httpResquest.callAPI().changePassword(tokenHeader, body).enqueue(new Callback<Response<Void>>() {
             @Override
-            public void onResponse(Call<Response<Void>> call, retrofit2.Response<Response<Void>> response) {
+            public void onResponse(@NonNull Call<Response<Void>> call, @NonNull retrofit2.Response<Response<Void>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Response<Void> res = response.body();
                     if (res.getCode() == 200) {
                         Toast.makeText(ChangePasswordActivity.this, "Đổi mật khẩu thành công!", Toast.LENGTH_SHORT).show();
-                        
-                        // Update change password date locally to now in ISO format
+
                         User user = sharedPreferencesManager.getUser();
                         if (user != null) {
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
-                            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-                            user.setChangePasswordDate(sdf.format(new Date()));
+                            user.setChangePasswordDate(DateTimeUtils.formatToISO(new Date()));
                             sharedPreferencesManager.updateUser(user);
                         }
-                        
+
                         setResult(RESULT_OK);
                         finish();
                     } else {
@@ -154,7 +142,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<Response<Void>> call, Throwable t) {
+            public void onFailure(@NonNull Call<Response<Void>> call, @NonNull Throwable t) {
                 Toast.makeText(ChangePasswordActivity.this, "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
             }
         });

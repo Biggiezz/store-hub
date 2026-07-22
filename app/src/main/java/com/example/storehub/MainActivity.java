@@ -24,6 +24,7 @@ import com.example.storehub.adapter.ProductAdapter;
 import com.example.storehub.adapter.SlideShowAdapter;
 import com.example.storehub.fragment.CartFragment;
 import com.example.storehub.fragment.NewsFragment;
+import com.example.storehub.fragment.OderFragment;
 import com.example.storehub.fragment.ProductsFragment;
 import com.example.storehub.model.News;
 import com.example.storehub.model.Product;
@@ -43,8 +44,10 @@ public class MainActivity extends AppCompatActivity {
     public static final String TAB_PRODUCTS = "products";
     public static final String TAB_NEWS = "news";
     public static final String TAB_CART = "cart";
+    public static final String TAB_ORDERS = "orders";
     private static final String STATE_TAB = "selected_tab";
     public static ArrayList<Product> preloadedProducts = null;
+    public static boolean shouldOpenCartOnResume = false;
     public static ArrayList<News> preloadedNews = null;
     private ViewPager2 sliderBanner;
     private TextView dotOne, dotTwo, dotThree;
@@ -93,6 +96,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void initUi() {
         // Initialize SlideShow ViewPager2
+        // Set click listener on avatar to open profile screen
+        findViewById(R.id.imgAvatar).setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+            startActivity(intent);
+        });
+
+        // Initialize SlideShow ViewPager2 & Adapter
         sliderBanner = findViewById(R.id.sliderBanner);
 
         // Initialize Indicator dots
@@ -187,6 +197,7 @@ public class MainActivity extends AppCompatActivity {
     private void openTab(String tab) {
         if (TAB_PRODUCTS.equals(tab)) showProducts();
         else if (TAB_NEWS.equals(tab)) showNews();
+        else if (TAB_ORDERS.equals(tab)) showOder();
         else if (TAB_CART.equals(tab)) showCart();
         else if (TAB_HOME.equals(tab)) showHome();
     }
@@ -220,12 +231,24 @@ public class MainActivity extends AppCompatActivity {
         selectedTab = TAB_CART;
         findViewById(R.id.mainScrollView).setVisibility(View.GONE);
         findViewById(R.id.fragmentContainer).setVisibility(View.VISIBLE);
-        if (getSupportFragmentManager().findFragmentByTag("cart") == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragmentContainer, new CartFragment(), "cart")
-                    .commit();
-        }
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContainer, new CartFragment(), "cart")
+                .commit();
         updateBottomNavigation(btnCart);
+    }
+
+    public void showOder() {
+        selectedTab = TAB_CART;
+        findViewById(R.id.mainScrollView).setVisibility(View.GONE);
+        findViewById(R.id.fragmentContainer).setVisibility(View.VISIBLE);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContainer, new OderFragment(), "oder")
+                .commit();
+        updateBottomNavigation(btnCart);
+        View bottomNav = findViewById(R.id.bottomNavigation);
+        if (bottomNav != null) {
+            bottomNav.setVisibility(View.GONE);
+        }
     }
 
     private void showNews() {
@@ -241,6 +264,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateBottomNavigation(MaterialButton activeButton) {
+        View bottomNav = findViewById(R.id.bottomNavigation);
+        if (bottomNav != null) {
+            bottomNav.setVisibility(View.VISIBLE);
+        }
         int inactiveColor = ContextCompat.getColor(this, android.R.color.transparent);
         int activeColor = ContextCompat.getColor(this, R.color.bottom_nav_active);
         int inactiveContentColor = Color.parseColor("#AAA49D");
@@ -306,7 +333,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void fetchProducts() {
         HttpResquest httpResquest = new HttpResquest();
-        httpResquest.callAPI().getListProduct(1, 50).enqueue(new Callback<Response<ArrayList<Product>>>() {
+        httpResquest.callAPI().getListProduct(1, 50, "").enqueue(new Callback<Response<ArrayList<Product>>>() {
             @Override
             public void onResponse(Call<Response<ArrayList<Product>>> call, retrofit2.Response<Response<ArrayList<Product>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
