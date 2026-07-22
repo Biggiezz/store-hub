@@ -77,14 +77,13 @@ public interface ApiServices {
     Call<Response<User>> register(@Body User.RegisterRequest request);
 
     @POST("users/login")
-    Call<LoginResponse> login(@Body LoginRequest request);
+    Call<User.LoginResponse> login(@Body User.LoginRequest request);
 
     @GET("users/get-all-users")
     Call<Response<ArrayList<User>>> getListUsers();
 
     @POST("users/add-user")
     Call<Response<User>> addUser(@Body User user);
-    Call<User.LoginResponse> login(@Body User.LoginRequest request);
 
     @GET("api/newsRouter/admin/get-all-news")
     Call<Response<ArrayList<News>>> getAdminListNews(@Header("Authorization") String token,

@@ -51,5 +51,87 @@
         android:paddingHorizontal="20dp"
         android:paddingTop="14dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_new" />
+        tools:listitem="@layout/item_news_standard" />
+
+    <!-- Pagination Bar -->
+    <LinearLayout
+        android:id="@+id/llPaginationNews"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <!-- Prev Page Button -->
+        <TextView
+            android:id="@+id/btnPrevNewsPage"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/bg_pagination_inactive"
+            android:gravity="center"
+            android:text="&lt;"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp" />
+
+        <!-- Page 1 -->
+        <TextView
+            android:id="@+id/btnNewsPage1"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/bg_pagination_active"
+            android:gravity="center"
+            android:text="1"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <!-- Page 2 -->
+        <TextView
+            android:id="@+id/btnNewsPage2"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/bg_pagination_inactive"
+            android:gravity="center"
+            android:text="2"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp" />
+
+        <!-- Page 3 -->
+        <TextView
+            android:id="@+id/btnNewsPage3"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/bg_pagination_inactive"
+            android:gravity="center"
+            android:text="3"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp" />
+
+        <!-- Ellipsis -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginEnd="6dp"
+            android:gravity="center"
+            android:text="..."
+            android:textColor="@color/subtext_primary"
+            android:textSize="14sp" />
+
+        <!-- Next Page Button -->
+        <TextView
+            android:id="@+id/btnNextNewsPage"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/bg_pagination_inactive"
+            android:gravity="center"
+            android:text="&gt;"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp" />
+    </LinearLayout>
 </LinearLayout>
