@@ -17,6 +17,7 @@ import com.example.storehub.admin.fragment.AdminHomeFragment;
 import com.example.storehub.admin.fragment.NewsFragmentManagement;
 import com.example.storehub.admin.fragment.ProductsFragmentManagement;
 import com.example.storehub.admin.fragment.StatsManagerFragment;
+import com.example.storehub.fragment.UserManagementFragment;
 import com.google.android.material.button.MaterialButton;
 
 public class HomePageManagementActivity extends BaseActivity {
@@ -24,11 +25,11 @@ public class HomePageManagementActivity extends BaseActivity {
     public static final String TAB_HOME = "home";
     public static final String TAB_PRODUCTS = "products";
     public static final String TAB_NEWS = "news";
-    //    public static final String TAB_USERS = "users";
+    public static final String TAB_USERS = "users";
     public static final String TAB_STATS = "stats";
     private static final String STATE_TAB = "selected_admin_tab";
 
-    private MaterialButton btnHome, btnProducts, btnNews, btnStats;
+    private MaterialButton btnHome, btnProducts, btnNews, btnUsers, btnStats;
     private String currentTabTag = "";
 
     @Override
@@ -62,6 +63,7 @@ public class HomePageManagementActivity extends BaseActivity {
         btnHome = findViewById(R.id.btnHome);
         btnProducts = findViewById(R.id.btnProducts);
         btnNews = findViewById(R.id.btnNews);
+        btnUsers = findViewById(R.id.btnUsers);
         btnStats = findViewById(R.id.btnStats);
     }
 
@@ -92,6 +94,14 @@ public class HomePageManagementActivity extends BaseActivity {
                 showTab(TAB_NEWS, new NewsFragmentManagement());
             });
         }
+        if (btnUsers != null) {
+            btnUsers.setOnClickListener(v -> {
+                if (TAB_USERS.equals(currentTabTag)) {
+                    return;
+                }
+                showTab(TAB_USERS, new UserManagementFragment());
+            });
+        }
 
         if (btnStats != null) {
             btnStats.setOnClickListener(v -> {
@@ -117,8 +127,8 @@ public class HomePageManagementActivity extends BaseActivity {
         int activeContent = Color.parseColor("#756E67");
         int inactiveContent = Color.parseColor("#AAA49D");
 
-        MaterialButton[] buttons = {btnHome, btnProducts, btnNews, btnStats};
-        String[] tabs = {TAB_HOME, TAB_PRODUCTS, TAB_NEWS, TAB_STATS};
+        MaterialButton[] buttons = {btnHome, btnProducts, btnNews, btnUsers, btnStats};
+        String[] tabs = {TAB_HOME, TAB_PRODUCTS, TAB_NEWS, TAB_USERS, TAB_STATS};
         for (int i = 0; i < buttons.length; i++) {
             boolean isActive = tabs[i].equals(activeTab);
             buttons[i].setBackgroundTintList(ColorStateList.valueOf(

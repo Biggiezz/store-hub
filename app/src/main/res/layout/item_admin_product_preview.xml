@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="7dp"
-    android:background="@drawable/bg_admin_card"
+    android:background="@drawable/bg_card_section"
     android:clipToOutline="true"
     android:clickable="true"
     android:focusable="true"

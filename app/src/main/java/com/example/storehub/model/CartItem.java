@@ -12,6 +12,9 @@ public class CartItem implements java.io.Serializable {
     @SerializedName("productId")
     private String productId;
 
+    @SerializedName("product")
+    private String productRefId;
+
     @SerializedName("productName")
     private String productName;
 
@@ -40,7 +43,13 @@ public class CartItem implements java.io.Serializable {
     }
 
     public String getProductId() {
-        return productId != null ? productId : "";
+        if (productId != null && !productId.isEmpty()) {
+            return productId;
+        }
+        if (productRefId != null && !productRefId.isEmpty()) {
+            return productRefId;
+        }
+        return "";
     }
 
     public void setProductId(String productId) {

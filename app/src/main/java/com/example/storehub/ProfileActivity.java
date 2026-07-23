@@ -130,7 +130,31 @@ public class ProfileActivity extends BaseActivity {
             Glide.with(this)
                     .load(user.getImage())
                     .placeholder(R.drawable.ic_avatar)
+                    .error(R.drawable.ic_avatar)
                     .into(imgProfileAvatar);
+        }
+
+        if (user.getId() != null && !user.getId().isEmpty()) {
+            new HttpResquest().callAPI().getUserById(user.getId()).enqueue(new Callback<Response<User>>() {
+                @Override
+                public void onResponse(Call<Response<User>> call, retrofit2.Response<Response<User>> response) {
+                    if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                        User freshUser = response.body().getData();
+                        sharedPreferencesManager.updateUser(freshUser);
+                        if (freshUser.getImage() != null && !freshUser.getImage().isEmpty()) {
+                            Glide.with(ProfileActivity.this)
+                                    .load(freshUser.getImage())
+                                    .placeholder(R.drawable.ic_avatar)
+                                    .error(R.drawable.ic_avatar)
+                                    .into(imgProfileAvatar);
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Response<User>> call, Throwable t) {
+                }
+            });
         }
     }
 

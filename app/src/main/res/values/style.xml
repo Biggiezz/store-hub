@@ -1,32 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="RegisterInputLabel">
+    <!-- Base style definitions to support dot-notation implicit inheritance in AAPT2 -->
+    <style name="Base" />
+    <style name="ShapeAppearanceOverlay.Shop" parent="" />
+    <style name="Widget.StoreHub" parent="" />
+
+    <!-- ========================================================= -->
+    <!-- Style cơ sở cho TextView -->
+    <!-- ========================================================= -->
+
+    <style name="Base.WrapContentText">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="Base.CenteredWrapContentText" parent="Base.WrapContentText">
+
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="Base.SingleLineText" parent="Base.CenteredWrapContentText">
+
+        <item name="android:singleLine">true</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+
+    <!-- ========================================================= -->
+    <!-- Style cơ sở cho EditText -->
+    <!-- ========================================================= -->
+
+    <style name="Base.InputField">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:maxLines">1</item>
+
+        <item name="android:paddingHorizontal">16dp</item>
+        <item name="android:paddingVertical">0dp</item>
+
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textColorHint">@color/hint</item>
+    </style>
+
+
+    <!-- ========================================================= -->
+    <!-- Style cơ sở cho MaterialButton -->
+    <!-- ========================================================= -->
+
+    <style name="Base.MaterialButton" parent="Widget.Material3.Button">
+
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+
+        <item name="android:textAllCaps">false</item>
+
+        <item name="android:insetLeft">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetRight">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+    </style>
+
+    <style name="Base.AdminFormButton" parent="Base.MaterialButton">
+
+        <item name="android:layout_height">48dp</item>
+        <item name="android:paddingHorizontal">18dp</item>
+        <item name="android:textSize">17sp</item>
+        <item name="cornerRadius">24dp</item>
+    </style>
+
+
+    <!-- ========================================================= -->
+    <!-- Style dùng chung cho Chip và Filter -->
+    <!-- ========================================================= -->
+
+    <style name="Base.StoreHubChip" parent="Base.SingleLineText">
+
+        <item name="android:paddingHorizontal">8dp</item>
+    </style>
+
+    <style name="Base.StoreHubFilter" parent="Base.SingleLineText">
+
+        <item name="android:layout_height">38dp</item>
+        <item name="android:paddingHorizontal">18dp</item>
+        <item name="android:textColor">#65615C</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+
+
+    <!-- ========================================================= -->
+    <!-- Màn hình đăng ký -->
+    <!-- ========================================================= -->
+
+    <style name="RegisterInputLabel" parent="Base.WrapContentText">
+
         <item name="android:textColor">@color/text_primary</item>
         <item name="android:textSize">15sp</item>
     </style>
 
-    <style name="RegisterEditText">
+    <style name="RegisterEditText" parent="Base.InputField">
+
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">56dp</item>
 
-        <item name="android:layout_marginStart">20dp</item>
+        <item name="android:layout_marginHorizontal">20dp</item>
         <item name="android:layout_marginTop">6dp</item>
-        <item name="android:layout_marginEnd">20dp</item>
 
         <item name="android:background">@drawable/bg_input</item>
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:maxLines">1</item>
-
-        <item name="android:paddingStart">16dp</item>
-        <item name="android:paddingEnd">16dp</item>
-        <item name="android:paddingTop">0dp</item>
-        <item name="android:paddingBottom">0dp</item>
-
-        <item name="android:textColor">@color/text_primary</item>
-        <item name="android:textColorHint">@color/hint</item>
         <item name="android:textSize">17sp</item>
 
         <item name="layout_constraintStart_toStartOf">parent</item>
@@ -34,165 +113,189 @@
     </style>
 
 
-    <style name="Widget.StoreHub.BottomNavButton" parent="Widget.Material3.Button">
+    <!-- ========================================================= -->
+    <!-- Thanh điều hướng dưới -->
+    <!-- ========================================================= -->
+
+    <style name="Widget.StoreHub.BottomNavButton" parent="Base.MaterialButton">
+
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">62dp</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:minWidth">0dp</item>
-        <item name="android:minHeight">0dp</item>
-        <item name="android:paddingStart">0dp</item>
-        <item name="android:paddingEnd">0dp</item>
+
+        <item name="android:paddingHorizontal">0dp</item>
+
         <item name="android:singleLine">true</item>
         <item name="android:maxLines">1</item>
-        <item name="android:textAllCaps">false</item>
+
         <item name="android:textSize">12sp</item>
-        <item name="android:insetLeft">0dp</item>
-        <item name="android:insetTop">0dp</item>
-        <item name="android:insetRight">0dp</item>
-        <item name="android:insetBottom">0dp</item>
+
         <item name="backgroundTint">@android:color/transparent</item>
+
         <item name="iconGravity">textTop</item>
         <item name="iconPadding">2dp</item>
         <item name="iconSize">23dp</item>
     </style>
 
-    <style name="ShapeAppearanceOverlay.Shop.Circle" parent="">
+
+    <!-- ========================================================= -->
+    <!-- Shape dùng chung -->
+    <!-- ========================================================= -->
+
+    <style name="ShapeAppearanceOverlay.Shop.Circle">
         <item name="cornerSize">50%</item>
     </style>
 
-    <style name="ShapeAppearanceOverlay.Shop.Rounded12" parent="">
+    <style name="ShapeAppearanceOverlay.Shop.Rounded12">
         <item name="cornerSize">12dp</item>
     </style>
 
-    <style name="Widget.StoreHub.AdminChip" parent="">
-        <item name="android:layout_width">wrap_content</item>
+
+    <!-- ========================================================= -->
+    <!-- Thành phần dùng trong trang quản trị -->
+    <!-- ========================================================= -->
+
+    <style name="Widget.StoreHub.AdminChip" parent="Base.CenteredWrapContentText">
+
         <item name="android:layout_height">30dp</item>
         <item name="android:layout_marginEnd">10dp</item>
-        <item name="android:background">@drawable/bg_admin_chip</item>
-        <item name="android:gravity">center</item>
+
         <item name="android:minWidth">68dp</item>
-        <item name="android:paddingStart">16dp</item>
-        <item name="android:paddingEnd">16dp</item>
+        <item name="android:paddingHorizontal">16dp</item>
+
+        <item name="android:background">@drawable/bg_admin_chip</item>
+
         <item name="android:textColor">#5D615E</item>
         <item name="android:textSize">12sp</item>
     </style>
 
-    <style name="Widget.StoreHub.AdminPageButton" parent="">
+    <style name="Widget.StoreHub.AdminPageButton" parent="Base.CenteredWrapContentText">
+
         <item name="android:layout_width">42dp</item>
         <item name="android:layout_height">42dp</item>
-        <item name="android:layout_marginStart">4dp</item>
-        <item name="android:layout_marginEnd">4dp</item>
+
+        <item name="android:layout_marginHorizontal">4dp</item>
+
         <item name="android:background">@drawable/bg_circle_button</item>
-        <item name="android:gravity">center</item>
+
         <item name="android:textColor">#3B433F</item>
         <item name="android:textSize">14sp</item>
     </style>
 
-    <style name="Widget.StoreHub.AdminFormLabel" parent="">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
+    <style name="Widget.StoreHub.AdminFormLabel" parent="Base.WrapContentText">
+
         <item name="android:textColor">#4D514E</item>
         <item name="android:textSize">13sp</item>
     </style>
 
-    <style name="Widget.StoreHub.AdminFormField" parent="">
+    <style name="Widget.StoreHub.AdminFormField" parent="Base.InputField">
+
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">51dp</item>
         <item name="android:layout_marginTop">10dp</item>
+
         <item name="android:background">@drawable/bg_admin_field</item>
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:paddingStart">16dp</item>
-        <item name="android:paddingEnd">16dp</item>
+
         <item name="android:textColor">#26342D</item>
         <item name="android:textColorHint">#77808D</item>
         <item name="android:textSize">16sp</item>
     </style>
 
-    <style name="Widget.StoreHub.ColorSwatch" parent="Widget.Material3.Button">
+
+    <!-- ========================================================= -->
+    <!-- Nút chọn màu -->
+    <!-- ========================================================= -->
+
+    <style name="Widget.StoreHub.ColorSwatch" parent="Base.MaterialButton">
+
         <item name="android:layout_width">44dp</item>
         <item name="android:layout_height">44dp</item>
         <item name="android:layout_marginEnd">8dp</item>
-        <item name="android:minWidth">0dp</item>
-        <item name="android:minHeight">0dp</item>
+
         <item name="android:padding">0dp</item>
-        <item name="android:insetTop">0dp</item>
-        <item name="android:insetBottom">0dp</item>
+
         <item name="cornerRadius">22dp</item>
+
         <item name="strokeColor">#C3C5C3</item>
         <item name="strokeWidth">1dp</item>
     </style>
 
-    <style name="Widget.StoreHub.AdminFormPrimaryButton" parent="Widget.Material3.Button">
-        <item name="android:layout_height">48dp</item>
-        <item name="android:minWidth">0dp</item>
-        <item name="android:minHeight">0dp</item>
-        <item name="android:paddingStart">18dp</item>
-        <item name="android:paddingEnd">18dp</item>
-        <item name="android:textAllCaps">false</item>
+
+    <!-- ========================================================= -->
+    <!-- Nút của form quản trị -->
+    <!-- ========================================================= -->
+
+    <style name="Widget.StoreHub.AdminFormPrimaryButton" parent="Base.AdminFormButton">
+
         <item name="android:textColor">#FFFFFF</item>
-        <item name="android:textSize">17sp</item>
-        <item name="android:insetTop">0dp</item>
-        <item name="android:insetBottom">0dp</item>
+
         <item name="backgroundTint">#172C22</item>
-        <item name="cornerRadius">24dp</item>
         <item name="rippleColor">#385044</item>
     </style>
 
-    <style name="Widget.StoreHub.AdminFormSecondaryButton" parent="Widget.Material3.Button.OutlinedButton">
-        <item name="android:layout_height">48dp</item>
-        <item name="android:minWidth">0dp</item>
-        <item name="android:minHeight">0dp</item>
-        <item name="android:paddingStart">18dp</item>
-        <item name="android:paddingEnd">18dp</item>
-        <item name="android:textAllCaps">false</item>
+    <style name="Widget.StoreHub.AdminFormSecondaryButton" parent="Base.AdminFormButton">
+
         <item name="android:textColor">#28332E</item>
-        <item name="android:textSize">17sp</item>
-        <item name="android:insetTop">0dp</item>
-        <item name="android:insetBottom">0dp</item>
+
         <item name="backgroundTint">#FFFFFF</item>
-        <item name="cornerRadius">24dp</item>
+
         <item name="strokeColor">#172C22</item>
         <item name="strokeWidth">1dp</item>
+
         <item name="rippleColor">#EEEAE5</item>
     </style>
 
-    <style name="Widget.StoreHub.OrderFilter" parent="">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">38dp</item>
-        <item name="android:gravity">center</item>
-        <item name="android:paddingStart">18dp</item>
-        <item name="android:paddingEnd">18dp</item>
-        <item name="android:textColor">#65615C</item>
-        <item name="android:textSize">11sp</item>
-        <item name="android:singleLine">true</item>
+
+    <!-- ========================================================= -->
+    <!-- Thành phần của đơn hàng -->
+    <!-- ========================================================= -->
+
+    <style name="Widget.StoreHub.OrderFilter" parent="Base.StoreHubFilter">
+
         <item name="android:background">@drawable/bg_order_filter</item>
     </style>
 
-    <style name="Widget.StoreHub.OrderStatus" parent="">
-        <item name="android:layout_width">wrap_content</item>
+    <style name="Widget.StoreHub.OrderStatus" parent="Base.StoreHubChip">
+
         <item name="android:layout_height">24dp</item>
-        <item name="android:gravity">center</item>
-        <item name="android:paddingStart">8dp</item>
-        <item name="android:paddingEnd">8dp</item>
+
         <item name="android:drawablePadding">3dp</item>
+
         <item name="android:textColor">#625E58</item>
         <item name="android:textSize">10sp</item>
-        <item name="android:singleLine">true</item>
+
         <item name="android:background">@drawable/bg_order_status</item>
     </style>
 
-    <style name="Widget.StoreHub.OrderDetailButton" parent="">
-        <item name="android:layout_width">wrap_content</item>
+    <style name="Widget.StoreHub.OrderDetailButton" parent="Base.CenteredWrapContentText">
+
         <item name="android:layout_height">40dp</item>
-        <item name="android:gravity">center</item>
+
         <item name="android:paddingStart">18dp</item>
         <item name="android:paddingEnd">14dp</item>
+
         <item name="android:drawablePadding">8dp</item>
+        <item name="android:drawableEnd">@drawable/ic_arrow_order</item>
+
         <item name="android:text">Xem chi tiết</item>
         <item name="android:textColor">#343B37</item>
         <item name="android:textSize">11sp</item>
+
         <item name="android:background">@drawable/bg_order_action</item>
-        <item name="android:drawableEnd">@drawable/ic_arrow_order</item>
     </style>
 
+    <style name="Widget.StoreHub.ReplySuggestion">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+
+        <item name="android:background">@drawable/bg_detail_section_warm</item>
+
+        <item name="android:paddingHorizontal">14dp</item>
+        <item name="android:paddingVertical">7dp</item>
+
+        <item name="android:textColor">#756E68</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="ReplySuggestionStyle" parent="Widget.StoreHub.ReplySuggestion" />
 </resources>

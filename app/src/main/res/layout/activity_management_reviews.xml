@@ -83,49 +83,32 @@
     </HorizontalScrollView>
 
     <!-- Nội dung có thể cuộn -->
-    <ScrollView
-        android:id="@+id/scrollReviews"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:clipToPadding="false"
-        android:fillViewport="true"
-        android:overScrollMode="never"
-        android:paddingStart="20dp"
-        android:paddingTop="16dp"
-        android:paddingEnd="20dp"
-        android:paddingBottom="20dp">
+        android:layout_weight="1">
 
-        <LinearLayout
-            android:id="@+id/layoutReviewContainer"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvReviews"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingStart="20dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="20dp"
+            android:overScrollMode="never" />
 
-            <!-- Review chưa trả lời -->
-            <include
-                android:id="@+id/reviewNguyenVanA"
-                layout="@layout/item_review_unanswered" />
+        <TextView
+            android:id="@+id/tvEmptyState"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="Chưa có đánh giá nào từ khách hàng"
+            android:textColor="#8C918E"
+            android:textSize="16sp"
+            android:visibility="gone" />
 
-            <!-- Review đã trả lời -->
-            <include
-                android:id="@+id/reviewTranThiB"
-                layout="@layout/item_review_answered" />
-
-            <include
-                android:id="@+id/reviewLeVanC"
-                layout="@layout/item_review_unanswered" />
-
-            <include
-                android:id="@+id/reviewPhamThiD"
-                layout="@layout/item_review_answered" />
-
-            <include
-                android:id="@+id/reviewHoangVanE"
-                layout="@layout/item_review_unanswered" />
-
-        </LinearLayout>
-
-    </ScrollView>
+    </FrameLayout>
 
 </LinearLayout>

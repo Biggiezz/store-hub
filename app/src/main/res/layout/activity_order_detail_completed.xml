@@ -36,7 +36,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="142dp"
-                android:background="@drawable/bg_cancelled_status_figma"
+                android:background="@drawable/bg_detail_section_warm"
                 android:orientation="vertical"
                 android:padding="25dp">
 
@@ -119,7 +119,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:layout_marginTop="32dp"
-                android:background="@drawable/bg_detail_primary_button"
+                android:background="@drawable/bg_button"
                 android:fontFamily="serif"
                 android:gravity="center"
                 android:text="Đánh giá"

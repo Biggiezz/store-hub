@@ -73,7 +73,9 @@ public class PostManagementFragment extends Fragment implements PostManagementAd
 
             @Override
             public void onFailure(Call<Response<ArrayList<News>>> call, Throwable t) {
-                Toast.makeText(getContext(), "Lỗi tải dữ liệu", Toast.LENGTH_SHORT).show();
+                if (isAdded() && getContext() != null) {
+                    Toast.makeText(getContext(), "Lỗi tải dữ liệu", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -84,14 +86,18 @@ public class PostManagementFragment extends Fragment implements PostManagementAd
             @Override
             public void onResponse(Call<ApiMessageResponse> call, retrofit2.Response<ApiMessageResponse> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(getContext(), "Đã xóa bài viết", Toast.LENGTH_SHORT).show();
+                    if (isAdded() && getContext() != null) {
+                        Toast.makeText(getContext(), "Đã xóa bài viết", Toast.LENGTH_SHORT).show();
+                    }
                     loadNews();
                 }
             }
 
             @Override
             public void onFailure(Call<ApiMessageResponse> call, Throwable t) {
-                Toast.makeText(getContext(), "Lỗi khi xóa", Toast.LENGTH_SHORT).show();
+                if (isAdded() && getContext() != null) {
+                    Toast.makeText(getContext(), "Lỗi khi xóa", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

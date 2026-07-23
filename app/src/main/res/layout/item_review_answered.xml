@@ -25,8 +25,7 @@
                 android:id="@+id/imgAvatar"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:scaleType="centerCrop"
-                 />
+                android:scaleType="centerCrop" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -95,10 +94,6 @@
             android:background="@drawable/bg_admin_chip"
             android:orientation="horizontal">
 
-            <View
-                android:layout_width="3dp"
-                android:layout_height="match_parent"
-                android:background="@drawable/bg_admin_chip" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -119,8 +114,7 @@
                     <ImageView
                         android:layout_width="18dp"
                         android:layout_height="18dp"
-                        android:src="@drawable/ic_store_admin"
-                        app:tint="#33483D" />
+                        android:src="@drawable/ic_store_admin" />
 
                     <TextView
                         android:id="@+id/tvAdminName"
@@ -128,7 +122,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
                         android:layout_weight="1"
-                        android:textColor="#39493F"
                         android:textSize="12sp"
                         android:textStyle="bold" />
 
@@ -136,7 +129,6 @@
                         android:id="@+id/tvReplyTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="#83837E"
                         android:textSize="11sp" />
 
                 </LinearLayout>
@@ -147,7 +139,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:lineSpacingExtra="3dp"
-                    android:textColor="#666661"
                     android:textSize="13sp" />
 
             </LinearLayout>
@@ -163,17 +154,16 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnEditReply"
                 android:layout_width="wrap_content"
-                android:layout_height="42dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:minWidth="0dp"
+                android:text="@string/str_edit"
                 android:textAllCaps="false"
                 android:textColor="#77736E"
                 android:textSize="12sp"
+                android:textStyle="bold"
                 app:backgroundTint="#F4F2EF"
                 app:cornerRadius="21dp"
                 app:icon="@drawable/ic_edit"
-                app:iconGravity="textStart"
-                app:iconPadding="5dp"
                 app:iconTint="#77736E" />
 
         </LinearLayout>

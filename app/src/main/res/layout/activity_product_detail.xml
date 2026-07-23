@@ -238,6 +238,15 @@
                             android:textSize="15sp"
                             android:visibility="visible" />
 
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rvProductReviews"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:nestedScrollingEnabled="false"
+                            android:overScrollMode="never"
+                            android:visibility="gone" />
+
                     </LinearLayout>
 
                 </LinearLayout>

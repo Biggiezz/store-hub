@@ -91,6 +91,9 @@ public interface ApiServices {
     @POST("api/productsRouter/add-review")
     Call<Response<Product>> addReview(@Body ProductReview.AddRequest request);
 
+    @POST("api/productsRouter/reply-review")
+    Call<Response<Product>> replyReview(@Body ProductReview.ReplyRequest request);
+
     @POST("api/oderRouter/create-order")
     Call<Response<Order>> createOrder(@Query("userId") String userId);
 
@@ -129,6 +132,9 @@ public interface ApiServices {
 
     @GET("users/get-all-users")
     Call<Response<ArrayList<User>>> getListUsers(@Header("Authorization") String token);
+
+    @GET("users/get-user-by-id/{id}")
+    Call<Response<User>> getUserById(@Path("id") String id);
 
     @POST("users/add-user")
     Call<Response<User>> addUser(@Header("Authorization") String token, @Body User user);

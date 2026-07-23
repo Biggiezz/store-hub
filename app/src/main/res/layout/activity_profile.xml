@@ -134,7 +134,7 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginEnd="24dp"
                 android:layout_marginBottom="20dp"
-                android:background="@drawable/bg_profile_card"
+                android:background="@drawable/bg_card_section"
                 android:orientation="vertical"
                 android:padding="16dp">
 
@@ -286,7 +286,7 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginEnd="24dp"
                 android:layout_marginBottom="24dp"
-                android:background="@drawable/bg_profile_card"
+                android:background="@drawable/bg_card_section"
                 android:orientation="vertical"
                 android:padding="16dp">
 

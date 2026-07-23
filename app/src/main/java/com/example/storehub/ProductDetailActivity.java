@@ -18,8 +18,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.storehub.adapter.ProductReviewAdapter;
 import com.example.storehub.model.ApiMessageResponse;
 import com.example.storehub.model.CartItem;
 import com.example.storehub.model.Product;
@@ -46,6 +49,8 @@ public class ProductDetailActivity extends BaseActivity {
     private LinearLayout colorContainer;
     private ProgressBar progressBar;
     private MaterialButton btnAddToCart;
+    private RecyclerView rvProductReviews;
+    private ProductReviewAdapter reviewAdapter;
     private ApiServices apiService;
     private Call<Response<Product>> productCall;
     private Call<ApiMessageResponse> cartCall;
@@ -104,6 +109,11 @@ public class ProductDetailActivity extends BaseActivity {
         colorContainer = findViewById(R.id.colorContainer);
         progressBar = findViewById(R.id.progressBar);
         btnAddToCart = findViewById(R.id.btnAddToCart);
+
+        rvProductReviews = findViewById(R.id.rvProductReviews);
+        rvProductReviews.setLayoutManager(new LinearLayoutManager(this));
+        reviewAdapter = new ProductReviewAdapter(this);
+        rvProductReviews.setAdapter(reviewAdapter);
     }
 
     private void setUpListener() {
@@ -196,7 +206,15 @@ public class ProductDetailActivity extends BaseActivity {
 
         prepareDefaultColor(product.getColors());
         renderColors(product.getColors());
-        tvEmptyReview.setVisibility(View.VISIBLE);
+
+        if (product.getReviews() != null && !product.getReviews().isEmpty()) {
+            tvEmptyReview.setVisibility(View.GONE);
+            rvProductReviews.setVisibility(View.VISIBLE);
+            reviewAdapter.updateData(product.getReviews());
+        } else {
+            tvEmptyReview.setVisibility(View.VISIBLE);
+            rvProductReviews.setVisibility(View.GONE);
+        }
     }
 
     private void prepareDefaultColor(List<ProductColor> colors) {

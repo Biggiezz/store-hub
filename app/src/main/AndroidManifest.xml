@@ -16,6 +16,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".admin.ReplyReviewActivity"
+            android:exported="false" />
+        <activity
             android:name=".admin.ManagementReviewsActivity"
             android:exported="false" />
         <activity
