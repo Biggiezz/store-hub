@@ -37,12 +37,24 @@ public class Order implements Serializable {
     private double subtotal;
     private double discount;
     private double totalAmount;
+    @SerializedName("receiverName")
     private String recipientName;
+    @SerializedName("receiverPhone")
     private String recipientPhone;
+    @SerializedName("deliveryAddress")
     private String recipientAddress;
     private String createdDate;
     private String estimatedDeliveryDate;
     private String completedDate;
+    @SerializedName("confirmedAt")
+    private String confirmedAt;
+    @SerializedName("warehouseAt")
+    private String warehouseAt;
+    @SerializedName("deliveringAt")
+    private String deliveringAt;
+    @SerializedName("completedAt")
+    private String completedAt;
+    @SerializedName("cancelReason")
     private String cancelReason;
     private ArrayList<TimelineStep> timeline;
 
@@ -277,12 +289,44 @@ public class Order implements Serializable {
         this.timeline = timeline;
     }
 
+    public String getConfirmedAt() {
+        return confirmedAt;
+    }
+
+    public void setConfirmedAt(String confirmedAt) {
+        this.confirmedAt = confirmedAt;
+    }
+
+    public String getWarehouseAt() {
+        return warehouseAt;
+    }
+
+    public void setWarehouseAt(String warehouseAt) {
+        this.warehouseAt = warehouseAt;
+    }
+
+    public String getDeliveringAt() {
+        return deliveringAt;
+    }
+
+    public void setDeliveringAt(String deliveringAt) {
+        this.deliveringAt = deliveringAt;
+    }
+
+    public String getCompletedAt() {
+        return completedAt;
+    }
+
+    public void setCompletedAt(String completedAt) {
+        this.completedAt = completedAt;
+    }
+
     public static class TimelineStep implements Serializable {
-        private String title;
-        private String time;
-        private String description;
-        private boolean isCompleted;
-        private boolean isCurrent;
+        private final String title;
+        private final String time;
+        private final String description;
+        private final boolean isCompleted;
+        private final boolean isCurrent;
 
         public TimelineStep(String title, String time, String description, boolean isCompleted, boolean isCurrent) {
             this.title = title;

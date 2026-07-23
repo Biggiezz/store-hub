@@ -27,10 +27,9 @@ import com.example.storehub.services.HttpResquest;
 import com.example.storehub.utils.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
 
-import java.text.SimpleDateFormat;
+import com.example.storehub.utils.DateTimeUtils;
 import java.util.Date;
 import java.util.Locale;
-import java.util.TimeZone;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -96,7 +95,7 @@ public class ProfileActivity extends AppCompatActivity {
             return;
         }
 
-        txtProfileName.setText(user.getName() + " * " + (user.getRole().equalsIgnoreCase("admin") ? "Người quản lý" : "Khách hàng"));
+        txtProfileName.setText(user.getName() + " • " + (user.getRole().equalsIgnoreCase("admin") ? "Người quản lý" : "Khách hàng"));
         txtEmailValue.setText(user.getEmail());
         txtPhoneValue.setText(user.getPhone());
         txtAddressValue.setText(user.getAddress() == null || user.getAddress().isEmpty() ? "Chưa cập nhật địa chỉ" : user.getAddress());
@@ -119,9 +118,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
-            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-            Date changeDate = sdf.parse(changeDateStr);
+            Date changeDate = DateTimeUtils.parseISO(changeDateStr);
             Date currentDate = new Date();
 
             if (changeDate != null) {

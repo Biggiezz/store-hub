@@ -124,11 +124,7 @@ public class ProductDetailActivity extends AppCompatActivity {
             }
 
             if (currentProduct.getStock() > 0 && quantity >= currentProduct.getStock()) {
-                Toast.makeText(
-                        this,
-                        "Số lượng đã đạt giới hạn tồn kho (" + currentProduct.getStock() + ")",
-                        Toast.LENGTH_SHORT
-                ).show();
+                Toast.makeText(this, "Số lượng đã đạt giới hạn tồn kho (" + currentProduct.getStock() + ")", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -148,31 +144,22 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         productCall.enqueue(new Callback<Response<Product>>() {
             @Override
-            public void onResponse(
-                    @NonNull Call<Response<Product>> call,
-                    @NonNull retrofit2.Response<Response<Product>> response
-            ) {
+            public void onResponse(@NonNull Call<Response<Product>> call, @NonNull retrofit2.Response<Response<Product>> response) {
                 setLoading(false);
-
                 if (!response.isSuccessful() || response.body() == null || response.body().getData() == null) {
                     showLoadError();
                     return;
                 }
-
                 currentProduct = response.body().getData();
                 bindProduct(currentProduct);
                 btnAddToCart.setEnabled(currentProduct.getStock() != 0);
             }
 
             @Override
-            public void onFailure(
-                    @NonNull Call<Response<Product>> call,
-                    @NonNull Throwable throwable
-            ) {
+            public void onFailure(@NonNull Call<Response<Product>> call, @NonNull Throwable throwable) {
                 if (call.isCanceled()) {
                     return;
                 }
-
                 setLoading(false);
                 showLoadError();
             }
@@ -193,9 +180,7 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         ratingProduct.setRating(product.getRating());
 
-        String ratingSummary = String.format(
-                new Locale("vi", "VN"),
-                "%.1f (%d đánh giá)",
+        String ratingSummary = String.format(new Locale("vi", "VN"), "%.1f (%d đánh giá)",
                 product.getRating(),
                 product.getReviewCount()
         );
@@ -216,18 +201,15 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     private void prepareDefaultColor(List<ProductColor> colors) {
         selectedColorId = null;
-
         if (colors == null || colors.isEmpty()) {
             return;
         }
-
         for (ProductColor color : colors) {
             if (color.isDefault()) {
                 selectedColorId = color.getId() != null ? color.getId() : color.getMongoId();
                 break;
             }
         }
-
         if (selectedColorId == null && !colors.isEmpty()) {
             ProductColor first = colors.get(0);
             selectedColorId = first.getId() != null ? first.getId() : first.getMongoId();
@@ -276,10 +258,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         }
     }
 
-    private GradientDrawable createColorBackground(
-            String hexColor,
-            boolean selected
-    ) {
+    private GradientDrawable createColorBackground(String hexColor, boolean selected) {
         GradientDrawable drawable = new GradientDrawable();
         drawable.setShape(GradientDrawable.OVAL);
         drawable.setColor(parseColorSafely(hexColor));
@@ -308,17 +287,8 @@ public class ProductDetailActivity extends AppCompatActivity {
         if (currentProduct == null) {
             return;
         }
-
-        if (currentProduct.getColors() != null
-                && !currentProduct.getColors().isEmpty()
-                && selectedColorId == null) {
-
-            Toast.makeText(
-                    this,
-                    "Vui lòng chọn màu sản phẩm",
-                    Toast.LENGTH_SHORT
-            ).show();
-
+        if (currentProduct.getColors() != null && !currentProduct.getColors().isEmpty() && selectedColorId == null) {
+            Toast.makeText(this, "Vui lòng chọn màu sản phẩm", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -334,18 +304,10 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         cartCall.enqueue(new Callback<ApiMessageResponse>() {
             @Override
-            public void onResponse(
-                    @NonNull Call<ApiMessageResponse> call,
-                    @NonNull retrofit2.Response<ApiMessageResponse> response
-            ) {
+            public void onResponse(@NonNull Call<ApiMessageResponse> call, @NonNull retrofit2.Response<ApiMessageResponse> response) {
                 setCartLoading(false);
-
                 if (!response.isSuccessful() || response.body() == null) {
-                    Toast.makeText(
-                            ProductDetailActivity.this,
-                            "Không thể thêm sản phẩm vào giỏ",
-                            Toast.LENGTH_SHORT
-                    ).show();
+                    Toast.makeText(ProductDetailActivity.this, "Không thể thêm sản phẩm vào giỏ", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -357,29 +319,16 @@ public class ProductDetailActivity extends AppCompatActivity {
 
                 MainActivity.shouldOpenCartOnResume = true;
 
-                Toast.makeText(
-                        ProductDetailActivity.this,
-                        message,
-                        Toast.LENGTH_SHORT
-                ).show();
+                Toast.makeText(ProductDetailActivity.this, message, Toast.LENGTH_SHORT).show();
             }
 
             @Override
-            public void onFailure(
-                    @NonNull Call<ApiMessageResponse> call,
-                    @NonNull Throwable throwable
-            ) {
+            public void onFailure(@NonNull Call<ApiMessageResponse> call, @NonNull Throwable throwable) {
                 if (call.isCanceled()) {
                     return;
                 }
-
                 setCartLoading(false);
-
-                Toast.makeText(
-                        ProductDetailActivity.this,
-                        "Không thể kết nối đến máy chủ",
-                        Toast.LENGTH_SHORT
-                ).show();
+                Toast.makeText(ProductDetailActivity.this, "Không thể kết nối đến máy chủ", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -394,8 +343,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     private void setCartLoading(boolean loading) {
         btnAddToCart.setEnabled(!loading);
 
-        btnAddToCart.setText(
-                loading ? "Đang thêm..." : "Thêm vào giỏ"
+        btnAddToCart.setText(loading ? "Đang thêm..." : "Thêm vào giỏ"
         );
     }
 
@@ -413,7 +361,6 @@ public class ProductDetailActivity extends AppCompatActivity {
         NumberFormat formatter = NumberFormat.getCurrencyInstance(
                 new Locale("vi", "VN")
         );
-
         return formatter.format(price);
     }
 
@@ -422,8 +369,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     private int dpToPx(int dp) {
-        return Math.round(
-                dp * getResources().getDisplayMetrics().density
+        return Math.round(dp * getResources().getDisplayMetrics().density
         );
     }
 
@@ -432,11 +378,9 @@ public class ProductDetailActivity extends AppCompatActivity {
         if (productCall != null) {
             productCall.cancel();
         }
-
         if (cartCall != null) {
             cartCall.cancel();
         }
-
         super.onDestroy();
     }
 }

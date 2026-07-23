@@ -1,5 +1,6 @@
 package com.example.storehub.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -21,8 +22,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.storehub.MainActivity;
 import com.example.storehub.R;
+import com.example.storehub.ShippingOrderDetailActivity;
 import com.example.storehub.adapter.CartAdapter;
 import com.example.storehub.model.CartItem;
+import com.example.storehub.model.Order;
 import com.example.storehub.model.Response;
 import com.example.storehub.model.User;
 import com.example.storehub.services.ApiServices;
@@ -45,19 +48,18 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartChangeLi
     private LinearLayout emptyCartLayout;
     private NestedScrollView cartScrollView;
     private ProgressBar progressBar;
-    private TextView tvSubtotalLabel, tvReceiverInformation, tvDeliveryAddress, btnChangeAddress,tvSubtotal, tvShippingFee, tvTotal ;
+    private TextView tvSubtotalLabel, tvReceiverInformation, tvDeliveryAddress, btnChangeAddress, tvSubtotal, tvShippingFee, tvTotal;
     private MaterialButton btnCheckout;
     private ImageButton btnBack;
     private ApiServices apiService;
     private Call<Response<ArrayList<CartItem>>> cartCall;
     private long subtotalAmount = 0L;
     private static final long DEFAULT_SHIPPING_FEE = 40000L;
-    private long discountAmount = 0L;
+    private final long discountAmount = 0L;
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_cart, container, false);
     }
 
@@ -136,7 +138,7 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartChangeLi
         if (btnBack != null) {
             btnBack.setOnClickListener(v -> {
                 if (getActivity() instanceof MainActivity) {
-                    ((MainActivity) getActivity()).showOder();
+                    ((MainActivity) getActivity()).showHome();
                 } else if (getActivity() != null) {
                     getActivity().getOnBackPressedDispatcher().onBackPressed();
                 }
@@ -158,15 +160,14 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartChangeLi
                 btnCheckout.setEnabled(false);
                 SharedPreferencesManager prefManager = new SharedPreferencesManager(requireContext());
                 String userId = (prefManager.getUser() != null) ? prefManager.getUser().getId() : "";
-                apiService.createOrder(userId).enqueue(new retrofit2.Callback<Response<com.example.storehub.model.Order>>() {
+                apiService.createOrder(userId).enqueue(new retrofit2.Callback<Response<Order>>() {
                     @Override
-                    public void onResponse(@NonNull retrofit2.Call<Response<com.example.storehub.model.Order>> call,
-                                           @NonNull retrofit2.Response<Response<com.example.storehub.model.Order>> response) {
+                    public void onResponse(@NonNull retrofit2.Call<Response<Order>> call, @NonNull retrofit2.Response<Response<Order>> response) {
                         btnCheckout.setEnabled(true);
                         if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
-                            com.example.storehub.model.Order createdOrder = response.body().getData();
+                            Order createdOrder = response.body().getData();
                             Toast.makeText(requireContext(), "Đặt hàng thành công!", Toast.LENGTH_SHORT).show();
-                            android.content.Intent intent = new android.content.Intent(requireContext(), com.example.storehub.ShippingOrderDetailActivity.class);
+                            Intent intent = new Intent(requireContext(), ShippingOrderDetailActivity.class);
                             intent.putExtra("order_data", createdOrder);
                             startActivity(intent);
                         } else {
@@ -175,7 +176,7 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartChangeLi
                     }
 
                     @Override
-                    public void onFailure(@NonNull retrofit2.Call<Response<com.example.storehub.model.Order>> call, @NonNull Throwable t) {
+                    public void onFailure(@NonNull retrofit2.Call<Response<Order>> call, @NonNull Throwable t) {
                         btnCheckout.setEnabled(true);
                         Log.e("CartFragment", "Error creating order", t);
                         Toast.makeText(requireContext(), "Không thể kết nối đến máy chủ", Toast.LENGTH_SHORT).show();
@@ -195,8 +196,7 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartChangeLi
         cartCall = apiService.getCart();
         cartCall.enqueue(new Callback<Response<ArrayList<CartItem>>>() {
             @Override
-            public void onResponse(@NonNull Call<Response<ArrayList<CartItem>>> call,
-                                   @NonNull retrofit2.Response<Response<ArrayList<CartItem>>> response) {
+            public void onResponse(@NonNull Call<Response<ArrayList<CartItem>>> call, @NonNull retrofit2.Response<Response<ArrayList<CartItem>>> response) {
                 setLoading(false);
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     updateCartUi(response.body().getData());
@@ -265,8 +265,7 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartChangeLi
         CartItem.UpdateQuantityRequest request = new CartItem.UpdateQuantityRequest(cartItem.getId(), newQuantity);
         apiService.updateCartQuantity(request).enqueue(new Callback<Response<ArrayList<CartItem>>>() {
             @Override
-            public void onResponse(@NonNull Call<Response<ArrayList<CartItem>>> call,
-                                   @NonNull retrofit2.Response<Response<ArrayList<CartItem>>> response) {
+            public void onResponse(@NonNull Call<Response<ArrayList<CartItem>>> call, @NonNull retrofit2.Response<Response<ArrayList<CartItem>>> response) {
                 setLoading(false);
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     updateCartUi(response.body().getData());
@@ -289,8 +288,7 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartChangeLi
         setLoading(true);
         apiService.deleteCartItem(cartItem.getId()).enqueue(new Callback<Response<ArrayList<CartItem>>>() {
             @Override
-            public void onResponse(@NonNull Call<Response<ArrayList<CartItem>>> call,
-                                   @NonNull retrofit2.Response<Response<ArrayList<CartItem>>> response) {
+            public void onResponse(@NonNull Call<Response<ArrayList<CartItem>>> call, @NonNull retrofit2.Response<Response<ArrayList<CartItem>>> response) {
                 setLoading(false);
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     Toast.makeText(requireContext(), "Đã xóa khỏi giỏ hàng", Toast.LENGTH_SHORT).show();

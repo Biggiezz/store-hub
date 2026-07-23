@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.storehub.model.Response;
@@ -15,27 +16,19 @@ import com.example.storehub.services.HttpResquest;
 import com.example.storehub.utils.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
 
-import java.text.SimpleDateFormat;
+import com.example.storehub.utils.DateTimeUtils;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 
 public class ChangePasswordActivity extends AppCompatActivity {
 
-    private EditText edtCurrentPassword;
-    private EditText edtNewPassword;
-    private EditText edtConfirmNewPassword;
-
-    private ImageView btnToggleCurrentPassword;
-    private ImageView btnToggleNewPassword;
-    private ImageView btnToggleConfirmNewPassword;
+    private EditText edtCurrentPassword, edtNewPassword, edtConfirmNewPassword;
+    private ImageView btnToggleCurrentPassword, btnToggleNewPassword, btnToggleConfirmNewPassword;
     private MaterialButton btnUpdatePassword;
-
     private boolean isCurrentPasswordVisible = false;
     private boolean isNewPasswordVisible = false;
     private boolean isConfirmPasswordVisible = false;
@@ -126,7 +119,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         HttpResquest httpResquest = new HttpResquest();
         httpResquest.callAPI().changePassword(tokenHeader, body).enqueue(new Callback<Response<Void>>() {
             @Override
-            public void onResponse(Call<Response<Void>> call, retrofit2.Response<Response<Void>> response) {
+            public void onResponse(@NonNull Call<Response<Void>> call, @NonNull retrofit2.Response<Response<Void>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Response<Void> res = response.body();
                     if (res.getCode() == 200) {
@@ -134,9 +127,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
                         User user = sharedPreferencesManager.getUser();
                         if (user != null) {
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
-                            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-                            user.setChangePasswordDate(sdf.format(new Date()));
+                            user.setChangePasswordDate(DateTimeUtils.formatToISO(new Date()));
                             sharedPreferencesManager.updateUser(user);
                         }
 
@@ -151,7 +142,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<Response<Void>> call, Throwable t) {
+            public void onFailure(@NonNull Call<Response<Void>> call, @NonNull Throwable t) {
                 Toast.makeText(ChangePasswordActivity.this, "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
             }
         });

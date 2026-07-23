@@ -95,6 +95,7 @@
                     android:background="#E5E7E4" />
 
                 <TextView
+                    android:id="@+id/tvCancelReason"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="18dp"

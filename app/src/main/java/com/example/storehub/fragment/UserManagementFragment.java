@@ -26,6 +26,8 @@ import com.example.storehub.R;
 import com.example.storehub.adapter.UserManagementAdapter;
 import com.example.storehub.admin.AddUserActivity;
 import com.example.storehub.model.User;
+import com.example.storehub.services.HttpResquest;
+import com.example.storehub.utils.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
@@ -35,12 +37,11 @@ public class UserManagementFragment extends Fragment {
 
     private MaterialButton btnAddNewUser;
     private LinearLayout btnTabStaff, btnTabCustomer;
-    private TextView tvStaffTabTitle, tvCustomerTabTitle, tvStaffCount, tvCustomerCount;
+    private TextView tvStaffTabTitle, tvCustomerTabTitle, tvStaffCount, tvCustomerCount, tvEmptyState;
     private EditText etSearchUser;
     private FrameLayout btnFilterUser;
     private RecyclerView rvUsers;
     private ProgressBar pbLoadingUsers;
-    private TextView tvEmptyState;
     private LinearLayout llPagination;
     private TextView btnPrevPage, btnPage1, btnPage2, btnPage3, btnNextPage;
 
@@ -96,7 +97,7 @@ public class UserManagementFragment extends Fragment {
     }
 
     private void setUpAdapter() {
-        com.example.storehub.utils.SharedPreferencesManager prefManager = new com.example.storehub.utils.SharedPreferencesManager(requireContext());
+        SharedPreferencesManager prefManager = new SharedPreferencesManager(requireContext());
         User currentUser = prefManager.getUser();
         userAdapter = new UserManagementAdapter(requireContext(), currentUser);
         rvUsers.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -104,7 +105,7 @@ public class UserManagementFragment extends Fragment {
     }
 
     private void setUpListener() {
-        com.example.storehub.utils.SharedPreferencesManager prefManager = new com.example.storehub.utils.SharedPreferencesManager(requireContext());
+        SharedPreferencesManager prefManager = new com.example.storehub.utils.SharedPreferencesManager(requireContext());
         User currentUser = prefManager.getUser();
 
         btnAddNewUser.setOnClickListener(v -> {
@@ -117,7 +118,8 @@ public class UserManagementFragment extends Fragment {
 
         etSearchUser.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -126,7 +128,8 @@ public class UserManagementFragment extends Fragment {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
         });
 
         btnFilterUser.setOnClickListener(v -> {
@@ -349,9 +352,9 @@ public class UserManagementFragment extends Fragment {
 
     private void fetchUsersFromServer() {
         pbLoadingUsers.setVisibility(View.VISIBLE);
-        com.example.storehub.utils.SharedPreferencesManager prefManager = new com.example.storehub.utils.SharedPreferencesManager(requireContext());
+        SharedPreferencesManager prefManager = new SharedPreferencesManager(requireContext());
         String token = "Bearer " + prefManager.getToken();
-        com.example.storehub.services.HttpResquest httpResquest = new com.example.storehub.services.HttpResquest();
+        HttpResquest httpResquest = new HttpResquest();
         httpResquest.callAPI().getListUsers(token).enqueue(new retrofit2.Callback<com.example.storehub.model.Response<ArrayList<User>>>() {
             @Override
             public void onResponse(@NonNull retrofit2.Call<com.example.storehub.model.Response<ArrayList<User>>> call,

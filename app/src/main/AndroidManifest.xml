@@ -61,17 +61,17 @@
         <activity
             android:name=".ChangePasswordActivity"
             android:exported="false" />
-        <activity 
-            android:name=".ShippingOrderDetailActivity" 
-            android:exported="false" />
-        <activity 
-            android:name=".CancelledOrderDetailActivity" 
-            android:exported="false" />
-        <activity 
-            android:name=".CompletedOrderDetailActivity" 
+        <activity
+            android:name=".ShippingOrderDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".OrderDetailActivity"
+            android:name=".CancelledOrderDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CompletedOrderDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".admin.AdminOrdersActivity"
             android:exported="false" />
         <activity
             android:name=".WriteReviewActivity"

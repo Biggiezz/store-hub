@@ -157,7 +157,6 @@ public class MainActivity extends AppCompatActivity {
 
         btnHome.setOnClickListener(v -> showHome());
         btnProducts.setOnClickListener(v -> showProducts());
-        btnCart.setOnClickListener(v -> showOrders());
         btnCart.setOnClickListener(v -> showCart());
         btnNews.setOnClickListener(v -> showNews());
 
@@ -198,19 +197,9 @@ public class MainActivity extends AppCompatActivity {
     private void openTab(String tab) {
         if (TAB_PRODUCTS.equals(tab)) showProducts();
         else if (TAB_NEWS.equals(tab)) showNews();
-        else if (TAB_ORDERS.equals(tab)) showOrders();
+        else if (TAB_ORDERS.equals(tab)) showOder();
         else if (TAB_CART.equals(tab)) showCart();
         else if (TAB_HOME.equals(tab)) showHome();
-    }
-
-    private void showOrders() {
-        selectedTab = TAB_ORDERS;
-        findViewById(R.id.mainScrollView).setVisibility(View.GONE);
-        findViewById(R.id.fragmentContainer).setVisibility(View.VISIBLE);
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragmentContainer, new OrdersFragment(), "orders")
-                .commit();
-        updateBottomNavigation(btnCart);
     }
 
     @Override
@@ -256,6 +245,10 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.fragmentContainer, new OderFragment(), "oder")
                 .commit();
         updateBottomNavigation(btnCart);
+        View bottomNav = findViewById(R.id.bottomNavigation);
+        if (bottomNav != null) {
+            bottomNav.setVisibility(View.GONE);
+        }
     }
 
     private void showNews() {
@@ -271,6 +264,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateBottomNavigation(MaterialButton activeButton) {
+        View bottomNav = findViewById(R.id.bottomNavigation);
+        if (bottomNav != null) {
+            bottomNav.setVisibility(View.VISIBLE);
+        }
         int inactiveColor = ContextCompat.getColor(this, android.R.color.transparent);
         int activeColor = ContextCompat.getColor(this, R.color.bottom_nav_active);
         int inactiveContentColor = Color.parseColor("#AAA49D");

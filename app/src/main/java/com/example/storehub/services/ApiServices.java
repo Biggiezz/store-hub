@@ -9,6 +9,7 @@ import com.example.storehub.model.Order;
 import com.example.storehub.model.Product;
 import com.example.storehub.model.ProductReview;
 import com.example.storehub.model.Response;
+import com.example.storehub.model.UpdateStatusRequest;
 import com.example.storehub.model.User;
 
 import java.util.ArrayList;
@@ -98,6 +99,9 @@ public interface ApiServices {
 
     @POST("api/oderRouter/cancel-order")
     Call<Response<Order>> cancelOrder(@Body CancelOrderRequest request);
+
+    @POST("api/oderRouter/update-status")
+    Call<Response<Order>> updateOrderStatus(@Body UpdateStatusRequest request);
 
     @POST("api/oderRouter/clear-cart")
     Call<Response<Object>> clearCart();

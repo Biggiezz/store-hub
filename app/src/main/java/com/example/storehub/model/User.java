@@ -124,10 +124,10 @@ public class User {
 
     public static class LoginRequest {
         @SerializedName("email")
-        private String email;
+        private final String email;
 
         @SerializedName("password")
-        private String password;
+        private final String password;
 
         public LoginRequest(String email, String password) {
             this.email = email;
@@ -140,16 +140,16 @@ public class User {
 
     public static class RegisterRequest {
         @SerializedName("name")
-        private String name;
+        private final String name;
 
         @SerializedName("email")
-        private String email;
+        private final String email;
 
         @SerializedName("phone")
-        private String phone;
+        private final String phone;
 
         @SerializedName("password")
-        private String password;
+        private final String password;
 
         public RegisterRequest(String name, String email, String phone, String password) {
             this.name = name;
