@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,6 +16,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.storehub.R;
 import com.example.storehub.admin.AdminOrdersActivity;
+import com.example.storehub.admin.ManagementReviewsActivity;
 import com.example.storehub.auth.LoginActivity;
 import com.example.storehub.model.AdminStats;
 import com.example.storehub.model.Product;
@@ -62,6 +64,12 @@ public class AdminHomeFragment extends Fragment {
                 startActivity(intent);
             });
         }
+
+        ImageView imgProductReview = view.findViewById(R.id.imgProductReview);
+        imgProductReview.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), ManagementReviewsActivity.class);
+            startActivity(intent);
+        });
 
         View btnLogout = view.findViewById(R.id.btnLogout);
         if (btnLogout != null) {

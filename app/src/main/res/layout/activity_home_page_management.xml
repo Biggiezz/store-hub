@@ -42,12 +42,6 @@
             app:icon="@drawable/ic_news" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnUsers"
-            style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="@string/admin_users"
-            app:icon="@drawable/ic_users" />
-
-        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnStats"
             style="@style/Widget.StoreHub.BottomNavButton"
             android:text="@string/admin_stats"

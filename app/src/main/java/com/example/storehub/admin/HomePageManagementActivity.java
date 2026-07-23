@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -25,11 +24,11 @@ public class HomePageManagementActivity extends BaseActivity {
     public static final String TAB_HOME = "home";
     public static final String TAB_PRODUCTS = "products";
     public static final String TAB_NEWS = "news";
-    public static final String TAB_USERS = "users";
+    //    public static final String TAB_USERS = "users";
     public static final String TAB_STATS = "stats";
     private static final String STATE_TAB = "selected_admin_tab";
 
-    private MaterialButton btnHome, btnProducts, btnNews, btnUsers, btnStats;
+    private MaterialButton btnHome, btnProducts, btnNews, btnStats;
     private String currentTabTag = "";
 
     @Override
@@ -42,6 +41,11 @@ public class HomePageManagementActivity extends BaseActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentAdminContainer, new PostManagementFragment())
+                    .commit();
+        }
 
         initUi();
         setUpListener();
@@ -58,7 +62,6 @@ public class HomePageManagementActivity extends BaseActivity {
         btnHome = findViewById(R.id.btnHome);
         btnProducts = findViewById(R.id.btnProducts);
         btnNews = findViewById(R.id.btnNews);
-        btnUsers = findViewById(R.id.btnUsers);
         btnStats = findViewById(R.id.btnStats);
     }
 
@@ -98,15 +101,6 @@ public class HomePageManagementActivity extends BaseActivity {
                 showTab(TAB_STATS, new StatsManagerFragment());
             });
         }
-
-        if (btnUsers != null) {
-            btnUsers.setOnClickListener(v -> {
-                if (TAB_USERS.equals(currentTabTag)) {
-                    return;
-                }
-                showTab(TAB_USERS, new com.example.storehub.fragment.UserManagementFragment());
-            });
-        }
     }
 
     private void showTab(String tabTag, Fragment fragment) {
@@ -123,8 +117,8 @@ public class HomePageManagementActivity extends BaseActivity {
         int activeContent = Color.parseColor("#756E67");
         int inactiveContent = Color.parseColor("#AAA49D");
 
-        MaterialButton[] buttons = {btnHome, btnProducts, btnNews, btnUsers, btnStats};
-        String[] tabs = {TAB_HOME, TAB_PRODUCTS, TAB_NEWS, TAB_USERS, TAB_STATS};
+        MaterialButton[] buttons = {btnHome, btnProducts, btnNews, btnStats};
+        String[] tabs = {TAB_HOME, TAB_PRODUCTS, TAB_NEWS, TAB_STATS};
         for (int i = 0; i < buttons.length; i++) {
             boolean isActive = tabs[i].equals(activeTab);
             buttons[i].setBackgroundTintList(ColorStateList.valueOf(
