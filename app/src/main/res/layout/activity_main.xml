@@ -303,14 +303,6 @@
             app:icon="@drawable/ic_new"
             app:iconTint="#AAA49D" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnProfile"
-            style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="@string/nav_profile"
-            android:textColor="#AAA49D"
-            app:icon="@drawable/ic_user"
-            app:iconTint="#AAA49D" />
-
     </LinearLayout>
 
 </LinearLayout>

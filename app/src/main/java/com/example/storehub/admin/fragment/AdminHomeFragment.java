@@ -24,6 +24,7 @@ import com.example.storehub.model.Response;
 import com.example.storehub.services.HttpResquest;
 import com.example.storehub.utils.SharedPreferencesManager;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -171,10 +172,12 @@ public class AdminHomeFragment extends Fragment {
             TextView txtStatus = cardSales.findViewById(R.id.txtStatus);
 
             if (txtValue != null) {
-                txtValue.setText(String.valueOf(data.getTotalSalesCount()));
+                DecimalFormat formatter = new DecimalFormat("#,###");
+                String formattedSales = formatter.format(data.getTotalSales()) + " đ";
+                txtValue.setText(formattedSales);
             }
             if (txtStatus != null) {
-                txtStatus.setText(data.getSalesStatus() != null ? data.getSalesStatus() : "+0% so với tháng trước");
+                txtStatus.setText("Đã bán " + data.getTotalSalesCount() + " sản phẩm");
             }
         }
 
@@ -190,5 +193,16 @@ public class AdminHomeFragment extends Fragment {
             }
         }
 
+        if (cardOrders != null) {
+            TextView txtValue = cardOrders.findViewById(R.id.txtValue);
+            TextView txtStatus = cardOrders.findViewById(R.id.txtStatus);
+
+            if (txtValue != null) {
+                txtValue.setText(String.valueOf(data.getTotalOrders()) + " đơn");
+            }
+            if (txtStatus != null) {
+                txtStatus.setText(data.getPendingOrders() + " đơn chờ xử lý");
+            }
+        }
     }
 }
