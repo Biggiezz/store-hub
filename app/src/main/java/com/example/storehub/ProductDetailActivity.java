@@ -26,6 +26,9 @@ import com.example.storehub.model.CartItem;
 import com.example.storehub.model.Product;
 import com.example.storehub.model.ProductColor;
 import com.example.storehub.model.Response;
+import com.example.storehub.model.User;
+import com.example.storehub.admin.ProductFormManagementActivity;
+import com.example.storehub.utils.SharedPreferencesManager;
 import com.example.storehub.services.ApiServices;
 import com.example.storehub.services.HttpResquest;
 import com.google.android.material.button.MaterialButton;
@@ -46,7 +49,7 @@ public class ProductDetailActivity extends BaseActivity {
     private RatingBar ratingProduct;
     private LinearLayout colorContainer;
     private ProgressBar progressBar;
-    private MaterialButton btnAddToCart;
+    private MaterialButton btnAddToCart, btnEditProduct;
     private ApiServices apiService;
     private Call<Response<Product>> productCall;
     private Call<ApiMessageResponse> cartCall;
@@ -107,10 +110,30 @@ public class ProductDetailActivity extends BaseActivity {
         colorContainer = findViewById(R.id.colorContainer);
         progressBar = findViewById(R.id.progressBar);
         btnAddToCart = findViewById(R.id.btnAddToCart);
+        btnEditProduct = findViewById(R.id.btnEditProduct);
+
+        checkAdminRole();
+    }
+
+    private void checkAdminRole() {
+        User user = SharedPreferencesManager.getInstance(this).getUser();
+        if (user != null && "admin".equalsIgnoreCase(user.getRole())) {
+            btnEditProduct.setVisibility(View.VISIBLE);
+        } else {
+            btnEditProduct.setVisibility(View.GONE);
+        }
     }
 
     private void setUpListener() {
         btnBack.setOnClickListener(view -> finish());
+
+        btnEditProduct.setOnClickListener(v -> {
+            if (currentProduct != null) {
+                String pid = currentProduct.get_id();
+                if (pid == null || pid.isEmpty()) pid = currentProduct.getId();
+                startActivity(ProductFormManagementActivity.createEditIntent(this, pid));
+            }
+        });
 
         tvError.setOnClickListener(view -> loadProduct());
 
