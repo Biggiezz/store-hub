@@ -64,6 +64,13 @@
         <item name="cornerSize">12dp</item>
     </style>
 
+    <style name="ShapeAppearanceOverlay.StoreHub.TopRounded" parent="">
+        <item name="cornerSizeTopLeft">40dp</item>
+        <item name="cornerSizeTopRight">40dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
+
     <style name="Widget.StoreHub.AdminChip" parent="">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">30dp</item>

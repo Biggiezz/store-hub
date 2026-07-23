@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -71,9 +72,11 @@ public class ProductDetailActivity extends BaseActivity {
         if (getIntent() != null && getIntent().hasExtra(EXTRA_PRODUCT_ID)) {
             Object extra = getIntent().getExtras().get(EXTRA_PRODUCT_ID);
             productId = extra != null ? String.valueOf(extra) : "";
+            Log.d("ProductDetail", "Received Product ID: " + productId);
         }
 
         if (TextUtils.isEmpty(productId) || "null".equalsIgnoreCase(productId)) {
+            Log.e("ProductDetail", "Invalid Product ID: " + productId);
             Toast.makeText(this, "Mã sản phẩm không hợp lệ", Toast.LENGTH_SHORT).show();
             finish();
             return;

@@ -23,6 +23,9 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
+            android:name=".admin.AdminProductDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".admin.AddUserActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />

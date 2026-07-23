@@ -29,6 +29,17 @@
     <string name="all">All</string>
     <string name="search_product_hint">Search products...</string>
     <string name="add_product">Add Product</string>
+    <string name="product_detail">Product Detail</string>
+    <string name="product_status">Selling Status</string>
+    <string name="status_active">Active</string>
+    <string name="status_inactive">Inactive</string>
+    <string name="stock_label">Stock:</string>
+    <string name="sold_label">Sold:</string>
+    <string name="description_label">DESCRIPTION</string>
+    <string name="colors_label">COLORS</string>
+    <string name="edit_product">Edit Product</string>
+    <string name="rating_format">%1$.1f (%2$d reviews)</string>
+    <string name="price_format">%sđ</string>
     <string name="admin_stats_title">Admin Statistics</string>
     <string name="revenue_chart">Revenue Chart</string>
     <string name="top_products">Best Selling Products</string>
