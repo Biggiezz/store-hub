@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:fontFamily="@font/libre_caslon_text"
-            android:text="Tin tức công nghệ"
+            android:text="@string/tech_news_title"
             android:textColor="@color/dark_green"
             android:textSize="20sp"
             android:textStyle="bold" />

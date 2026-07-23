@@ -23,7 +23,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Quản trị Thống kê"
+                android:text="@string/admin_stats_title"
                 android:textColor="#203028"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -70,7 +70,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Biểu đồ doanh thu"
+                        android:text="@string/revenue_chart"
                         android:textSize="22sp"
                         android:textStyle="bold" />
 
@@ -95,7 +95,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="Sản phẩm bán chạy"
+            android:text="@string/top_products"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -116,7 +116,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Hoạt động gần đây"
+                android:text="@string/recent_activity"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -124,7 +124,7 @@
                 android:id="@+id/tvSeeAll"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Xem tất cả" />
+                android:text="@string/view_all" />
         </LinearLayout>
 
         <LinearLayout

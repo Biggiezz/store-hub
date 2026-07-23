@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- App -->
+    <string name="app_name">StoreHub</string>
+    <string name="store_hub">StoreHub</string>
+    <string name="back">Back</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_products">Products</string>
+    <string name="nav_cart">Cart</string>
+    <string name="nav_news">NEWS</string>
+    <string name="nav_profile">Profile</string>
+    <string name="featured_products">Featured Products</string>
+    <string name="view_all">View all</string>
+    <string name="phone">Phone</string>
+    <string name="laptop">Laptop</string>
+    <string name="headphone">Headphone</string>
+
+    <!-- Admin -->
+    <string name="admin_home">Admin Dashboard</string>
+    <string name="product_review">Product Review</string>
+    <string name="admin_news">News Management</string>
+    <string name="admin_products">Products Management</string>
+    <string name="admin_users">Users Management</string>
+    <string name="admin_stats">Statistics</string>
+    <string name="admin_product_management">Products Management</string>
+    <string name="all">All</string>
+    <string name="search_product_hint">Search products...</string>
+    <string name="add_product">Add Product</string>
+    <string name="admin_stats_title">Admin Statistics</string>
+    <string name="revenue_chart">Revenue Chart</string>
+    <string name="top_products">Best Selling Products</string>
+    <string name="recent_activity">Recent Activity</string>
+    <string name="admin_user_management">Users Management</string>
+    <string name="add_new_user">+  ADD NEW USER</string>
+    <string name="staff">Staff</string>
+    <string name="customer">Customer</string>
+    <string name="search_user_hint">Search by name or email...</string>
+    <string name="no_user_found">No matching users found</string>
+
+    <!-- Login -->
+    <string name="login">Login</string>
+    <string name="login_description">Manage your store elegantly and\nefficiently.</string>
+
+    <string name="email">Email</string>
+    <string name="email_hint">example@storehub.vn</string>
+
+    <string name="password">Password</string>
+    <string name="password_hint">••••••••</string>
+
+    <string name="forgot_password">Forgot password?</string>
+    <string name="no_account">Don\'t have an account?</string>
+    <string name="register_now">Register now</string>
+
+    <!-- Register -->
+    <string name="register">Register</string>
+    <string name="register_description">Create an account to start experiencing</string>
+
+    <string name="full_name">Full Name</string>
+    <string name="full_name_hint">John Doe</string>
+
+    <string name="register_email_hint">email@example.com</string>
+
+    <string name="phone_number">Phone Number</string>
+    <string name="phone_hint">090 123 4567</string>
+
+    <string name="confirm_password">Confirm Password</string>
+
+    <string name="show_password">Show password</string>
+    <string name="hide_password">Hide password</string>
+
+    <string name="show_confirm_password">Show confirm password</string>
+    <string name="hide_confirm_password">Hide confirm password</string>
+
+    <string name="already_have_account">Already have an account?</string>
+    <string name="login_now">Login now</string>
+
+    <!-- Profile -->
+    <string name="profile_title">Profile</string>
+    <string name="personal_info">Personal Information</string>
+    <string name="edit">Edit</string>
+    <string name="address">Address</string>
+    <string name="security">Security</string>
+    <string name="change_password">Change Password</string>
+    <string name="password_changed_sub">Changed 3 months ago</string>
+    <string name="change_language">Change Language</string>
+    <string name="change_language_en">Language: English</string>
+    <string name="logout">Logout</string>
+    <string name="role_admin">Admin</string>
+    <string name="role_customer">Customer</string>
+    <string name="no_password_change">Password not changed yet</string>
+    <string name="password_changed_today">Changed today</string>
+    <string name="password_changed_days_ago">Changed %d days ago</string>
+    <string name="password_changed_months_ago">Changed %d months ago</string>
+    <string name="no_user_info">No user information available</string>
+    <string name="current_language_label">English</string>
+    <string name="no_address_update">Address not updated yet</string>
+
+    <!-- Edit Profile -->
+    <string name="edit_profile_title">Edit Info</string>
+    <string name="change_avatar">CHANGE AVATAR</string>
+    <string name="store_address">Store Address</string>
+    <string name="save_changes">Save Changes</string>
+
+    <!-- Change Password -->
+    <string name="change_password_description">Please enter your current password and new password to update your login information.</string>
+    <string name="current_password">CURRENT PASSWORD</string>
+    <string name="new_password">NEW PASSWORD</string>
+    <string name="new_password_hint">* Minimum 8 characters, including letters and numbers.</string>
+    <string name="confirm_new_password">CONFIRM NEW PASSWORD</string>
+    <string name="password_shield_text">Ensure your password is unique and hard to guess.</string>
+    <string name="update_password">Update Password</string>
+
+    <!-- Logout Dialog -->
+    <string name="logout_dialog_title">Logout?</string>
+    <string name="logout_dialog_message">Are you sure you want to log out of your account?</string>
+    <string name="no">No</string>
+
+    <!-- Products, Cart, News, Orders and Toasts -->
+    <string name="product_list_title">Product List</string>
+    <string name="sort_by">Sort by:</string>
+    <string name="sort_price_asc">Price: Low to High</string>
+    <string name="sort_a_z">A - Z</string>
+    <string name="sort_z_a">Z - A</string>
+    <string name="cart_title">Your Cart</string>
+    <string name="cart_empty_msg">Your cart is empty</string>
+    <string name="delivery_address_title">Delivery Address</string>
+    <string name="change_button">Change</string>
+    <string name="order_summary_title">Order Summary</string>
+    <string name="promo_code_label">Promo Code</string>
+    <string name="promo_code_hint">Enter code...</string>
+    <string name="apply_button">Apply</string>
+    <string name="choose_voucher_label">Select discount code</string>
+    <string name="shipping_fee_label">Shipping Fee ⓘ</string>
+    <string name="total_label">Total:</string>
+    <string name="vat_included_label">(VAT included if applicable)</string>
+    <string name="checkout_now_button">Checkout Now</string>
+    <string name="subtotal_label_template">Subtotal (%d products):</string>
+    <string name="tech_news_title">Tech News</string>
+    <string name="my_orders_title">My Orders</string>
+    <string name="order_filter_all">All</string>
+    <string name="order_filter_pending">Pending</string>
+    <string name="order_filter_shipping">Shipping</string>
+    <string name="order_filter_completed">Completed</string>
+    <string name="order_filter_cancelled">Cancelled</string>
+    <string name="status_not_ordered">Not ordered yet</string>
+    <string name="qty_other_products_template">Qty: %1$d (and %2$d other products)</string>
+    <string name="qty_template">Qty: %d</string>
+    <string name="checkout">Checkout</string>
+    <string name="status_completed">Completed</string>
+    <string name="status_cancelled">Cancelled</string>
+    <string name="status_shipping">Shipping</string>
+    <string name="btn_cancel_order">Cancel Order</string>
+    <string name="btn_details">Details</string>
+    <string name="no_orders_label">No orders found.</string>
+    <string name="change_delivery_address_toast">Change delivery address</string>
+    <string name="empty_cart_toast">Your cart is empty</string>
+    <string name="order_success_toast">Order placed successfully!</string>
+    <string name="order_failed_toast">Order failed. Please try again</string>
+    <string name="cannot_connect_server_toast">Cannot connect to server</string>
+    <string name="cannot_update_qty_toast">Cannot update quantity</string>
+    <string name="removed_from_cart_toast">Removed from cart</string>
+    <string name="cannot_delete_item_toast">Cannot delete product</string>
+    <string name="color_prefix">Color: %s</string>
+    <string name="variant_prefix">Variant: %s</string>
+    <string name="qty_prefix">Quantity: %d</string>
+    <string name="select_cancel_reason_toast">Please select or enter a cancellation reason</string>
+    <string name="cancel_order_success_toast">Order cancelled successfully!</string>
+    <string name="cancel_order_failed_toast">Failed to cancel order</string>
+    <string name="confirm_delete_title">Confirm Delete</string>
+    <string name="confirm_clear_temp_cart_msg">Are you sure you want to clear all products from the temporary cart?</string>
+    <string name="clear_temp_cart_success_toast">Temporary cart cleared!</string>
+    <string name="clear_temp_cart_failed_toast">Failed to clear temporary cart</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+</resources>

@@ -115,6 +115,12 @@ public interface ApiServices {
     @GET("api/newsRouter/get-news-by-id/{id}")
     Call<Response<News>> getNewsById(@Path("id") String id);
 
+    @POST("api/newsRouter/add-news")
+    Call<Response<News>> addNews(@Body News news);
+
+    @DELETE("api/newsRouter/delete-news/{id}")
+    Call<ApiMessageResponse> deleteNews(@Path("id") String id);
+
     @POST("users/register")
     Call<Response<User>> register(@Body User.RegisterRequest request);
 

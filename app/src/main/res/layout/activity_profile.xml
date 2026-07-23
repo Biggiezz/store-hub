@@ -387,7 +387,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="@string/change_language_en"
+                            android:text="@string/current_language_label"
                             android:textColor="#8F8E8A"
                             android:textSize="13sp" />
 
@@ -472,7 +472,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnHome"
             style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="Trang chủ"
+            android:text="@string/nav_home"
             android:textColor="#AAA49D"
             app:icon="@drawable/ic_home"
             app:iconTint="#AAA49D" />
@@ -480,7 +480,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnProducts"
             style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="Sản phẩm"
+            android:text="@string/nav_products"
             android:textColor="#AAA49D"
             app:icon="@drawable/ic_product"
             app:iconTint="#AAA49D" />
@@ -488,7 +488,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCart"
             style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="Giỏ hàng"
+            android:text="@string/nav_cart"
             android:textColor="#AAA49D"
             app:icon="@drawable/ic_cart"
             app:iconTint="#AAA49D" />
@@ -496,7 +496,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnNews"
             style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="Tin tức"
+            android:text="@string/nav_news"
             android:textColor="#AAA49D"
             app:icon="@drawable/ic_new"
             app:iconTint="#AAA49D" />

@@ -22,7 +22,7 @@
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:fontFamily="@font/hanken_grotesk_semibold"
-            android:text="Quản trị Người dùng"
+            android:text="@string/admin_user_management"
             android:textColor="@color/dark_green"
             android:textSize="22sp"
             android:textStyle="bold" />
@@ -46,7 +46,7 @@
         android:layout_marginBottom="20dp"
         android:backgroundTint="@color/dark_green"
         android:fontFamily="@font/hanken_grotesk_semibold"
-        android:text="+  THÊM NGƯỜI DÙNG MỚI"
+        android:text="@string/add_new_user"
         android:textColor="@color/white"
         android:textSize="14sp"
         app:cornerRadius="10dp"
@@ -79,7 +79,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/hanken_grotesk_semibold"
-                android:text="Nhân viên"
+                android:text="@string/staff"
                 android:textColor="@color/text_primary"
                 android:textSize="17sp"
                 android:textStyle="bold" />
@@ -113,7 +113,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/hanken_grotesk_semibold"
-                android:text="Khách hàng"
+                android:text="@string/customer"
                 android:textColor="#8A8077"
                 android:textSize="17sp" />
 
@@ -162,7 +162,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="8dp"
                 android:background="@null"
-                android:hint="Tìm kiếm theo tên hoặc email..."
+                android:hint="@string/search_user_hint"
                 android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:textColor="@color/text_primary"
@@ -207,7 +207,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginVertical="30dp"
-        android:text="Không tìm thấy người dùng phù hợp"
+        android:text="@string/no_user_found"
         android:textColor="@color/subtext_primary"
         android:textSize="14sp"
         android:visibility="gone" />

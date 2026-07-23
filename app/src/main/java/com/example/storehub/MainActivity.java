@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import retrofit2.Call;
 import retrofit2.Callback;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     public static final String EXTRA_OPEN_TAB = "open_tab";
     public static final String TAB_HOME = "home";
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView rvProducts, rvNews;
     private ProductAdapter productAdapter;
     private NewsAdapter newsAdapter;
-    private MaterialButton btnViewAllProducts, btnHome, btnProducts, btnCart, btnNews, btnPhone, btnComputer, btnHeadphone;
+    private MaterialButton btnViewAllProducts, btnHome, btnProducts, btnCart, btnNews, btnProfile, btnPhone, btnComputer, btnHeadphone;
     private ArrayList<Product> allProductsList = new ArrayList<>();
     private ArrayList<News> newsList;
     private String selectedTab = TAB_HOME;
@@ -122,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
         btnProducts = findViewById(R.id.btnProducts);
         btnCart = findViewById(R.id.btnCart);
         btnNews = findViewById(R.id.btnNews);
+        btnProfile = findViewById(R.id.btnProfile);
 
         // Initialize category buttons
         btnPhone = findViewById(R.id.btnPhone);
@@ -159,6 +160,10 @@ public class MainActivity extends AppCompatActivity {
         btnProducts.setOnClickListener(v -> showProducts());
         btnCart.setOnClickListener(v -> showCart());
         btnNews.setOnClickListener(v -> showNews());
+        btnProfile.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+            startActivity(intent);
+        });
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
@@ -273,7 +278,7 @@ public class MainActivity extends AppCompatActivity {
         int inactiveContentColor = Color.parseColor("#AAA49D");
         int activeContentColor = Color.parseColor("#756E67");
 
-        for (MaterialButton button : new MaterialButton[]{btnHome, btnProducts, btnCart, btnNews}) {
+        for (MaterialButton button : new MaterialButton[]{btnHome, btnProducts, btnCart, btnNews, btnProfile}) {
             boolean isActive = button == activeButton;
             button.setBackgroundTintList(ColorStateList.valueOf(isActive ? activeColor : inactiveColor));
             button.setTextColor(isActive ? activeContentColor : inactiveContentColor);

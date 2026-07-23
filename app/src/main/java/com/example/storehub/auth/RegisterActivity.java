@@ -9,6 +9,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.storehub.BaseActivity;
 import com.example.storehub.R;
 import com.example.storehub.model.Response;
 import com.example.storehub.model.User;
@@ -19,7 +20,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import retrofit2.Call;
 import retrofit2.Callback;
 
-public class RegisterActivity extends AppCompatActivity {
+public class RegisterActivity extends BaseActivity {
 
     private TextInputEditText edtFullName, edtEmail, edtPhone, edtPassword, edtConfirmPassword;
     private MaterialButton btnRegister, btnBack;

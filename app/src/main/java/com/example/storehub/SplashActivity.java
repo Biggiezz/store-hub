@@ -13,7 +13,7 @@ import com.example.storehub.auth.LoginActivity;
 import com.example.storehub.model.User;
 import com.example.storehub.utils.SharedPreferencesManager;
 
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -36,7 +36,7 @@ import java.util.Locale;
 import retrofit2.Call;
 import retrofit2.Callback;
 
-public class ProductDetailActivity extends AppCompatActivity {
+public class ProductDetailActivity extends BaseActivity {
 
     public static final String EXTRA_PRODUCT_ID = "product_id";
     private ImageView ivProduct;

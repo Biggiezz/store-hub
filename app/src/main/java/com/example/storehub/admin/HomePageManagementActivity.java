@@ -12,6 +12,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.storehub.BaseActivity;
 import com.example.storehub.R;
 import com.example.storehub.admin.fragment.AdminHomeFragment;
 import com.example.storehub.admin.fragment.NewsFragmentManagement;
@@ -19,7 +20,7 @@ import com.example.storehub.admin.fragment.ProductsFragmentManagement;
 import com.example.storehub.admin.fragment.StatsManagerFragment;
 import com.google.android.material.button.MaterialButton;
 
-public class HomePageManagementActivity extends AppCompatActivity {
+public class HomePageManagementActivity extends BaseActivity {
 
     public static final String TAB_HOME = "home";
     public static final String TAB_PRODUCTS = "products";

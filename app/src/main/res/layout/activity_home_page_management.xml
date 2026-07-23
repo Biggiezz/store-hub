@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
@@ -8,7 +7,6 @@
     android:background="#F9F6F2"
     android:orientation="vertical">
 
-    <!-- Container nạp StatsManagerFragment (fragment_stats_manager.xml) -->
     <FrameLayout
         android:id="@+id/fragmentAdminContainer"
         android:layout_width="match_parent"
@@ -19,50 +17,41 @@
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/background"
+        android:background="#F9F6F2"
+        android:elevation="8dp"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingTop="8dp">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnHome"
             style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="Trang chủ"
-            android:textColor="#434844"
-            app:backgroundTint="@color/bottom_nav_active"
-            app:icon="@drawable/ic_home"
-            app:iconTint="#434844" />
+            android:text="@string/nav_home"
+            app:icon="@drawable/ic_home" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnProducts"
             style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="Sản phẩm"
-            android:textColor="#434844"
-            app:icon="@drawable/ic_products"
-            app:iconTint="#434844" />
+            android:text="@string/nav_products"
+            app:icon="@drawable/ic_products" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnNews"
             style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="Bài viết"
-            android:textColor="#434844"
-            app:icon="@drawable/ic_news"
-            app:iconTint="#434844" />
+            android:text="@string/nav_news"
+            app:icon="@drawable/ic_news" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnUsers"
             style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="Người dùng"
-            android:textColor="#434844"
-            app:icon="@drawable/ic_users"
-            app:iconTint="#434844" />
+            android:text="@string/admin_users"
+            app:icon="@drawable/ic_users" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnStats"
             style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="Thống kê"
-            android:textColor="#434844"
-            app:icon="@drawable/ic_stats"
-            app:iconTint="#434844" />
+            android:text="@string/admin_stats"
+            app:icon="@drawable/ic_stats" />
 
     </LinearLayout>
 
