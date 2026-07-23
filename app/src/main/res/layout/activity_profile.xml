@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/profile_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -29,17 +28,16 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
+                android:paddingHorizontal="20dp"
                 android:paddingBottom="12dp">
 
                 <ImageView
                     android:id="@+id/btnBack"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:padding="4dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/back"
+                    android:padding="4dp"
                     android:src="@drawable/ic_back"
                     app:tint="@color/dark_green" />
 
@@ -50,89 +48,66 @@
                     android:fontFamily="serif"
                     android:text="@string/profile_title"
                     android:textColor="@color/dark_green"
-                    android:textSize="24sp"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
             </LinearLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="#E5E0DA" />
+
             <!-- Profile Avatar and Name Section -->
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <!-- Avatar + tên người dùng -->
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="24dp">
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
 
-                <!-- Avatar Card -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cvAvatarContainer"
+                <!-- FrameLayout để đặt nút sửa chồng lên avatar -->
+                <FrameLayout
                     android:layout_width="130dp"
-                    android:layout_height="130dp"
-                    app:cardCornerRadius="65dp"
-                    app:cardElevation="0dp"
-                    app:strokeColor="#DDD8D2"
-                    app:strokeWidth="1dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    android:layout_height="130dp">
 
-                    <ImageView
-                        android:id="@+id/imgProfileAvatar"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:contentDescription="Ảnh đại diện lớn"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/ic_avatar" />
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cvAvatarContainer"
+                        android:layout_width="130dp"
+                        android:layout_height="130dp"
+                        app:cardCornerRadius="65dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="#DDD8D2"
+                        app:strokeWidth="1dp">
 
-                </com.google.android.material.card.MaterialCardView>
+                        <ImageView
+                            android:id="@+id/imgProfileAvatar"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop" />
 
-                <!-- Edit Pencil Overlay -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/btnEditAvatar"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    app:cardBackgroundColor="#EDE6DE"
-                    app:cardCornerRadius="18dp"
-                    app:cardElevation="2dp"
-                    app:strokeColor="#DDD8D2"
-                    app:strokeWidth="1dp"
-                    app:layout_constraintBottom_toBottomOf="@id/cvAvatarContainer"
-                    app:layout_constraintEnd_toEndOf="@id/cvAvatarContainer">
+                    </com.google.android.material.card.MaterialCardView>
 
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:padding="8dp"
-                        android:contentDescription="Sửa ảnh đại diện"
-                        android:src="@drawable/ic_edit"
-                        app:tint="@color/dark_green" />
 
-                </com.google.android.material.card.MaterialCardView>
+                </FrameLayout>
 
-                <!-- Name Text -->
                 <TextView
                     android:id="@+id/txtProfileName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginVertical="16dp"
                     android:fontFamily="serif"
-                    android:text="Eleanor Vance * Người quản lý"
                     android:textColor="@color/dark_green"
                     android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/cvAvatarContainer" />
+                    android:textStyle="bold" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
+            </LinearLayout>
             <!-- Personal Info Card -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
+                android:layout_marginHorizontal="24dp"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/bg_card_section"
                 android:orientation="vertical"
@@ -147,11 +122,9 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
                         android:text="@string/personal_info"
                         android:textColor="@color/dark_green"
-                        android:textSize="18sp"
+                        android:textSize="16sp"
                         android:textStyle="bold" />
 
                     <LinearLayout
@@ -177,7 +150,6 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
                             android:text="@string/edit"
-                            android:textColor="#756E67"
                             android:textSize="14sp" />
 
                     </LinearLayout>
@@ -194,8 +166,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingTop="12dp"
-                    android:paddingBottom="12dp">
+                    android:paddingVertical="12dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -209,7 +180,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="eleanor.vance@storehub.com"
                         android:textColor="@color/text_primary"
                         android:textSize="16sp" />
 
@@ -225,8 +195,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingTop="12dp"
-                    android:paddingBottom="12dp">
+                    android:paddingVertical="12dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -240,7 +209,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="+1 (555) 123-4567"
                         android:textColor="@color/text_primary"
                         android:textSize="16sp" />
 
@@ -271,7 +239,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="San Francisco, CA"
                         android:textColor="@color/text_primary"
                         android:textSize="16sp" />
 
@@ -283,8 +250,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
+                android:layout_marginHorizontal="24dp"
                 android:layout_marginBottom="24dp"
                 android:background="@drawable/bg_card_section"
                 android:orientation="vertical"
@@ -297,7 +263,7 @@
                     android:layout_marginBottom="12dp"
                     android:text="@string/security"
                     android:textColor="@color/dark_green"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <View
@@ -310,9 +276,9 @@
                     android:id="@+id/btnChangePassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
                     android:clickable="true"
                     android:focusable="true"
-                    android:background="?attr/selectableItemBackground"
                     android:paddingTop="12dp"
                     android:paddingBottom="12dp">
 
@@ -345,12 +311,11 @@
 
                     <ImageView
                         android:id="@+id/imgChevronRight"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
-                        android:contentDescription="Mũi tên đi tiếp"
-                        android:src="@drawable/ic_chevron_right"
+                        android:src="@drawable/ic_arrow_right"
                         app:tint="#41413F" />
 
                 </RelativeLayout>
@@ -371,7 +336,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
                         android:layout_toStartOf="@id/layoutLanguageToggle"
                         android:orientation="vertical">
 
@@ -393,11 +357,10 @@
 
                     </LinearLayout>
 
-                    <!-- Custom Language Toggle (VI/EN) -->
                     <LinearLayout
                         android:id="@+id/layoutLanguageToggle"
                         android:layout_width="wrap_content"
-                        android:layout_height="32dp"
+                        android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:background="@drawable/bg_language_toggle"
@@ -407,28 +370,30 @@
 
                         <TextView
                             android:id="@+id/btnLangVI"
-                            android:layout_width="44dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:background="@drawable/bg_language_selected"
+                            android:clickable="true"
+                            android:focusable="true"
                             android:gravity="center"
+                            android:padding="8dp"
                             android:text="VI"
                             android:textColor="@color/text_primary"
                             android:textSize="13sp"
-                            android:textStyle="bold"
-                            android:clickable="true"
-                            android:focusable="true"/>
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/btnLangEN"
-                            android:layout_width="44dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:background="@android:color/transparent"
+                            android:clickable="true"
+                            android:focusable="true"
                             android:gravity="center"
+                            android:padding="8dp"
                             android:text="EN"
                             android:textColor="#8F8E8A"
-                            android:textSize="13sp"
-                            android:clickable="true"
-                            android:focusable="true"/>
+                            android:textSize="13sp" />
 
                     </LinearLayout>
 
@@ -440,67 +405,16 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnLogout"
                 android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
                 android:text="@string/logout"
-                android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="17sp"
                 android:textStyle="bold"
                 app:backgroundTint="@color/dark_green"
-                app:cornerRadius="27dp" />
+                app:cornerRadius="8dp" />
 
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
-
-    <!-- Bottom Navigation Bar (Matching activity_main.xml structure) -->
-    <LinearLayout
-        android:id="@+id/bottomNavigation"
-        android:layout_width="match_parent"
-        android:layout_height="78dp"
-        android:background="@color/background"
-        android:elevation="8dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:paddingStart="4dp"
-        android:paddingTop="8dp"
-        android:paddingEnd="4dp"
-        android:paddingBottom="8dp">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnHome"
-            style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="@string/nav_home"
-            android:textColor="#AAA49D"
-            app:icon="@drawable/ic_home"
-            app:iconTint="#AAA49D" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnProducts"
-            style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="@string/nav_products"
-            android:textColor="#AAA49D"
-            app:icon="@drawable/ic_product"
-            app:iconTint="#AAA49D" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnCart"
-            style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="@string/nav_cart"
-            android:textColor="#AAA49D"
-            app:icon="@drawable/ic_cart"
-            app:iconTint="#AAA49D" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnNews"
-            style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="@string/nav_news"
-            android:textColor="#AAA49D"
-            app:icon="@drawable/ic_new"
-            app:iconTint="#AAA49D" />
-
-    </LinearLayout>
-
 </LinearLayout>

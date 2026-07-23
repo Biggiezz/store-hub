@@ -6,9 +6,11 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
-import com.bumptech.glide.Glide;
 import com.example.storehub.model.Response;
 import com.example.storehub.model.User;
 import com.example.storehub.services.HttpResquest;
@@ -23,15 +25,9 @@ import retrofit2.Callback;
 
 public class EditProfileActivity extends BaseActivity {
 
-    private EditText edtProfileName;
-    private EditText edtProfileEmail;
-    private EditText edtProfilePhone;
-    private EditText edtProfileAddress;
-    
-    private ImageView imgSmallAvatar;
+    private EditText edtProfileName, edtProfileEmail, edtProfilePhone, edtProfileAddress;
     private ImageView imgLargeAvatar;
     private MaterialButton btnSaveChanges;
-    
     private SharedPreferencesManager sharedPreferencesManager;
     private User currentUser;
 
@@ -40,7 +36,11 @@ public class EditProfileActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_edit_profile);
-
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.edit_profile_activity), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
         sharedPreferencesManager = new SharedPreferencesManager(this);
         currentUser = sharedPreferencesManager.getUser();
 
@@ -60,8 +60,7 @@ public class EditProfileActivity extends BaseActivity {
         edtProfileEmail = findViewById(R.id.edtProfileEmail);
         edtProfilePhone = findViewById(R.id.edtProfilePhone);
         edtProfileAddress = findViewById(R.id.edtProfileAddress);
-        
-        imgSmallAvatar = findViewById(R.id.imgSmallAvatar);
+
         imgLargeAvatar = findViewById(R.id.imgLargeAvatar);
         btnSaveChanges = findViewById(R.id.btnSaveChanges);
     }
@@ -71,17 +70,11 @@ public class EditProfileActivity extends BaseActivity {
         edtProfileEmail.setText(currentUser.getEmail());
         edtProfilePhone.setText(currentUser.getPhone());
         edtProfileAddress.setText(currentUser.getAddress());
-
-        // Load avatar if exists
-        if (currentUser.getImage() != null && !currentUser.getImage().isEmpty()) {
-            Glide.with(this).load(currentUser.getImage()).placeholder(R.drawable.ic_avatar).into(imgSmallAvatar);
-            Glide.with(this).load(currentUser.getImage()).placeholder(R.drawable.ic_avatar).into(imgLargeAvatar);
-        }
     }
 
     private void setupClickListeners() {
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
-        
+
         findViewById(R.id.btnChangeAvatarPhoto).setOnClickListener(v -> {
             Toast.makeText(this, "Chức năng thay đổi ảnh đại diện (Đang phát triển)", Toast.LENGTH_SHORT).show();
         });
@@ -109,7 +102,7 @@ public class EditProfileActivity extends BaseActivity {
         HttpResquest httpResquest = new HttpResquest();
         httpResquest.callAPI().updateProfile(tokenHeader, body).enqueue(new Callback<Response<User>>() {
             @Override
-            public void onResponse(Call<Response<User>> call, retrofit2.Response<Response<User>> response) {
+            public void onResponse(@NonNull Call<Response<User>> call, @NonNull retrofit2.Response<Response<User>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Response<User> res = response.body();
                     if (res.getCode() == 200 && res.getData() != null) {
@@ -126,7 +119,7 @@ public class EditProfileActivity extends BaseActivity {
             }
 
             @Override
-            public void onFailure(Call<Response<User>> call, Throwable t) {
+            public void onFailure(@NonNull Call<Response<User>> call, @NonNull Throwable t) {
                 Toast.makeText(EditProfileActivity.this, "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
             }
         });

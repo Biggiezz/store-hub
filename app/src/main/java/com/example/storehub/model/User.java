@@ -3,15 +3,24 @@ package com.example.storehub.model;
 import com.google.gson.annotations.SerializedName;
 
 public class User {
+    // Mã MongoDB ID dạng chuỗi của tài khoản
     @SerializedName("_id")
     private String id;
+    // Họ và tên người dùng
     private String name;
+    // Địa chỉ email người dùng
     private String email;
+    // Số điện thoại người dùng
     private String phone;
+    // Vai trò phân quyền người dùng (customer, admin, superadmin)
     private String role;
+    // Đường dẫn hình ảnh đại diện (avatar) của người dùng
     private String image;
+    // Địa chỉ giao nhận hàng của người dùng
     private String address;
+    // Thời điểm thay đổi mật khẩu lần gần nhất
     private String changePasswordDate;
+    // Thời điểm hoạt động cuối cùng của người dùng (phục vụ hiển thị Admin)
     private String lastActive;
 
     public User() {
@@ -25,8 +34,8 @@ public class User {
         this.role = role;
         this.image = image;
         this.address = address;
-        this.changePasswordDate = changePasswordDate;
         this.lastActive = lastActive;
+        this.changePasswordDate = "";
     }
 
     public String getId() {
@@ -123,9 +132,11 @@ public class User {
     }
 
     public static class LoginRequest {
+        // Email dùng đăng nhập
         @SerializedName("email")
         private final String email;
 
+        // Mật khẩu đăng nhập
         @SerializedName("password")
         private final String password;
 
@@ -139,15 +150,19 @@ public class User {
     }
 
     public static class RegisterRequest {
+        // Họ tên đầy đủ khi đăng ký
         @SerializedName("name")
         private final String name;
 
+        // Email dùng đăng ký tài khoản mới (phải là duy nhất)
         @SerializedName("email")
         private final String email;
 
+        // Số điện thoại liên hệ
         @SerializedName("phone")
         private final String phone;
 
+        // Mật khẩu mong muốn
         @SerializedName("password")
         private final String password;
 
@@ -165,15 +180,19 @@ public class User {
     }
 
     public static class LoginResponse {
+        // Mã HTTP phản hồi (ví dụ: 200, 400, 404, 500)
         @SerializedName("code")
         private int code;
 
+        // Thông điệp trạng thái (ví dụ: "Đăng nhập thành công")
         @SerializedName("message")
         private String message;
 
+        // Token xác thực JWT gửi kèm
         @SerializedName("token")
         private String token;
 
+        // Thông tin chi tiết của tài khoản người dùng đăng nhập
         @SerializedName("data")
         private User data;
 

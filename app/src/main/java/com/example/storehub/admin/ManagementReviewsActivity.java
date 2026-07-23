@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -20,7 +21,7 @@ import com.example.storehub.R;
 import com.example.storehub.admin.adapter.AdminReviewAdapter;
 import com.example.storehub.admin.adapter.AdminReviewAdapter.ReviewWithProduct;
 import com.example.storehub.model.Product;
-import com.example.storehub.model.ProductReview;
+import com.example.storehub.model.Product.ProductReview;
 import com.example.storehub.model.Response;
 import com.example.storehub.services.ApiServices;
 import com.example.storehub.services.HttpResquest;
@@ -49,7 +50,6 @@ public class ManagementReviewsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_management_reviews);
-
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.management_reviews_layout), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -137,7 +137,7 @@ public class ManagementReviewsActivity extends AppCompatActivity {
     private void loadReviews() {
         apiServices.getListProduct(1, 1000, "").enqueue(new Callback<Response<ArrayList<Product>>>() {
             @Override
-            public void onResponse(Call<Response<ArrayList<Product>>> call, retrofit2.Response<Response<ArrayList<Product>>> response) {
+            public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     allReviews.clear();
                     ArrayList<Product> products = response.body().getData();
@@ -158,7 +158,7 @@ public class ManagementReviewsActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<Response<ArrayList<Product>>> call, Throwable t) {
+            public void onFailure(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull Throwable t) {
                 Toast.makeText(ManagementReviewsActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 tvEmptyState.setVisibility(View.VISIBLE);
                 rvReviews.setVisibility(View.GONE);

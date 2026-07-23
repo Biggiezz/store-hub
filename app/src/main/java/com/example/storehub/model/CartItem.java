@@ -3,33 +3,43 @@ package com.example.storehub.model;
 import com.google.gson.annotations.SerializedName;
 
 public class CartItem implements java.io.Serializable {
+    // Mã MongoDB ID dạng chuỗi của CartItem
     @SerializedName("_id")
     private String mongoId;
 
+    // Mã ID định dạng chung (kiểu Object hỗ trợ String/Number)
     @SerializedName("id")
     private Object id;
 
+    // ID của sản phẩm
     @SerializedName("productId")
     private String productId;
 
+    // ID tham chiếu đến sản phẩm (phòng trường hợp Schema Server trả về dạng product)
     @SerializedName("product")
     private String productRefId;
 
+    // Tên của sản phẩm
     @SerializedName("productName")
     private String productName;
 
+    // Đường dẫn hình ảnh sản phẩm
     @SerializedName("productImage")
     private String productImage;
 
+    // ID của biến thể màu sắc đã chọn
     @SerializedName("colorId")
     private String colorId;
 
+    // Tên màu sắc của biến thể (ví dụ: Đen, Trắng)
     @SerializedName("colorName")
     private String colorName;
 
+    // Giá sản phẩm tại giỏ hàng (kiểu Object hỗ trợ nhiều kiểu số/chuỗi)
     @SerializedName("price")
     private Object rawPrice;
 
+    // Số lượng đặt hàng (mặc định là 1)
     @SerializedName("quantity")
     private int quantity = 1;
 
@@ -117,12 +127,15 @@ public class CartItem implements java.io.Serializable {
     }
 
     public static class AddToCartRequest {
+        // Mã ID sản phẩm thêm vào giỏ hàng
         @SerializedName("productId")
         private Object productId;
 
+        // Mã ID màu sắc đã chọn của sản phẩm
         @SerializedName("colorId")
         private Object colorId;
 
+        // Số lượng sản phẩm thêm mới
         @SerializedName("quantity")
         private int quantity;
 
@@ -138,9 +151,11 @@ public class CartItem implements java.io.Serializable {
     }
 
     public static class UpdateQuantityRequest {
+        // Mã ID của CartItem cần cập nhật
         @SerializedName("cartItemId")
         private String cartItemId;
 
+        // Số lượng sản phẩm mới cập nhật
         @SerializedName("quantity")
         private int quantity;
 

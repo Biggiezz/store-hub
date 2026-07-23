@@ -1,9 +1,13 @@
 package com.example.storehub.model;
 
 public class Pagination {
+    // Tổng số lượng sản phẩm/bản ghi
     private int totalProducts;
+    // Trang hiện tại đang hiển thị
     private int currentPage;
+    // Tổng số trang phân trang
     private int totalPages;
+    // Số lượng sản phẩm/bản ghi tối đa trên một trang
     private int limit;
 
     public Pagination(int totalProducts, int currentPage, int totalPages, int limit) {

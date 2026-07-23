@@ -15,7 +15,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.storehub.R;
 import com.example.storehub.model.Product;
-import com.example.storehub.model.ProductReview;
+import com.example.storehub.model.Product.ProductReview;
 import com.example.storehub.model.Response;
 import com.example.storehub.services.HttpResquest;
 

@@ -26,16 +26,6 @@
             android:textColor="@color/dark_green"
             android:textSize="22sp"
             android:textStyle="bold" />
-
-        <ImageView
-            android:id="@+id/ivHeaderAction"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:contentDescription="Bookmark Action"
-            android:src="@drawable/ic_bookmark"
-            app:tint="@color/dark_green" />
     </RelativeLayout>
 
     <!-- Add New User Button -->

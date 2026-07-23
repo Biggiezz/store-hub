@@ -6,11 +6,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.bumptech.glide.Glide;
 import com.example.storehub.model.CartItem;
 import com.example.storehub.model.Order;
 import com.example.storehub.model.Product;
-import com.example.storehub.model.ProductReview;
+import com.example.storehub.model.Product.ProductReview;
 import com.example.storehub.model.User;
 import com.example.storehub.services.ApiServices;
 import com.example.storehub.services.HttpResquest;
@@ -27,7 +29,7 @@ public class WriteReviewActivity extends BaseActivity {
     private ImageView btnBack;
     private ShapeableImageView ivReviewProductImage;
     private TextView tvReviewProductName, tvReviewProductVariant;
-    private ImageView[] starViews = new ImageView[5];
+    private final ImageView[] starViews = new ImageView[5];
     private EditText edtReviewContent;
     private MaterialButton btnSubmitReview;
 
@@ -88,10 +90,10 @@ public class WriteReviewActivity extends BaseActivity {
                 }
             }
 
-            ProductReview.AddRequest request = new ProductReview.AddRequest(productId, customerName, customerImage, selectedRating, content);
+            ProductReview.AddRequest request = new ProductReview.AddRequest(productId, customerName, customerImage, selectedRating, content, order.getOrderId());
             apiServices.addReview(request).enqueue(new Callback<com.example.storehub.model.Response<Product>>() {
                 @Override
-                public void onResponse(Call<com.example.storehub.model.Response<Product>> call, Response<com.example.storehub.model.Response<Product>> response) {
+                public void onResponse(@NonNull Call<com.example.storehub.model.Response<Product>> call, @NonNull Response<com.example.storehub.model.Response<Product>> response) {
                     if (response.isSuccessful() && response.body() != null && response.body().getCode() == 200) {
                         Toast.makeText(WriteReviewActivity.this, "Gửi đánh giá thành công!", Toast.LENGTH_SHORT).show();
                         finish();
@@ -101,7 +103,7 @@ public class WriteReviewActivity extends BaseActivity {
                 }
 
                 @Override
-                public void onFailure(Call<com.example.storehub.model.Response<Product>> call, Throwable t) {
+                public void onFailure(@NonNull Call<com.example.storehub.model.Response<Product>> call, @NonNull Throwable t) {
                     Toast.makeText(WriteReviewActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });

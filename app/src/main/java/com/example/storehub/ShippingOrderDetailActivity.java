@@ -17,9 +17,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.storehub.adapter.OrderProductAdapter;
-import com.example.storehub.model.CancelOrderRequest;
 import com.example.storehub.model.CartItem;
 import com.example.storehub.model.Order;
+import com.example.storehub.model.Order.CancelOrderRequest;
 import com.example.storehub.model.Response;
 import com.example.storehub.services.ApiServices;
 import com.example.storehub.services.HttpResquest;

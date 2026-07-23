@@ -1,30 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/management_reviews_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FAF9F7"
-    android:id="@+id/management_reviews_layout"
     android:orientation="vertical">
 
     <!-- Toolbar -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="64dp"
+        android:layout_height="wrap_content"
         android:background="#FFFEFC"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp">
+        android:paddingVertical="16dp">
 
         <ImageButton
             android:id="@+id/btnBack"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:padding="8dp"
-            android:src="@drawable/ic_back"
-            app:tint="#24382F" />
+            android:src="@drawable/ic_back" />
 
         <TextView
             android:id="@+id/tvTitle"
@@ -47,8 +44,9 @@
     <!-- Filter tabs -->
     <HorizontalScrollView
         android:layout_width="match_parent"
-        android:layout_height="64dp"
+        android:layout_height="wrap_content"
         android:background="#FFFEFC"
+        android:layout_marginTop="16dp"
         android:fillViewport="true"
         android:scrollbars="none">
 
@@ -93,11 +91,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:paddingStart="20dp"
+            android:overScrollMode="never"
+            android:paddingVertical="20dp"
             android:paddingTop="16dp"
-            android:paddingEnd="20dp"
-            android:paddingBottom="20dp"
-            android:overScrollMode="never" />
+            android:paddingBottom="20dp" />
 
         <TextView
             android:id="@+id/tvEmptyState"

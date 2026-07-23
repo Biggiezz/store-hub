@@ -14,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -23,10 +22,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.storehub.adapter.ProductReviewAdapter;
-import com.example.storehub.model.ApiMessageResponse;
 import com.example.storehub.model.CartItem;
 import com.example.storehub.model.Product;
-import com.example.storehub.model.ProductColor;
+import com.example.storehub.model.Product.ProductColor;
 import com.example.storehub.model.Response;
 import com.example.storehub.services.ApiServices;
 import com.example.storehub.services.HttpResquest;
@@ -53,7 +51,7 @@ public class ProductDetailActivity extends BaseActivity {
     private ProductReviewAdapter reviewAdapter;
     private ApiServices apiService;
     private Call<Response<Product>> productCall;
-    private Call<ApiMessageResponse> cartCall;
+    private Call<Response<Void>> cartCall;
     private Product currentProduct;
     private String productId;
     private Object selectedColorId;
@@ -320,16 +318,16 @@ public class ProductDetailActivity extends BaseActivity {
 
         cartCall = apiService.addToCart(request);
 
-        cartCall.enqueue(new Callback<ApiMessageResponse>() {
+        cartCall.enqueue(new Callback<Response<Void>>() {
             @Override
-            public void onResponse(@NonNull Call<ApiMessageResponse> call, @NonNull retrofit2.Response<ApiMessageResponse> response) {
+            public void onResponse(@NonNull Call<Response<Void>> call, @NonNull retrofit2.Response<Response<Void>> response) {
                 setCartLoading(false);
                 if (!response.isSuccessful() || response.body() == null) {
                     Toast.makeText(ProductDetailActivity.this, "Không thể thêm sản phẩm vào giỏ", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                ApiMessageResponse result = response.body();
+                Response<Void> result = response.body();
 
                 String message = TextUtils.isEmpty(result.getMessage())
                         ? "Đã thêm sản phẩm vào giỏ"
@@ -341,7 +339,7 @@ public class ProductDetailActivity extends BaseActivity {
             }
 
             @Override
-            public void onFailure(@NonNull Call<ApiMessageResponse> call, @NonNull Throwable throwable) {
+            public void onFailure(@NonNull Call<Response<Void>> call, @NonNull Throwable throwable) {
                 if (call.isCanceled()) {
                     return;
                 }

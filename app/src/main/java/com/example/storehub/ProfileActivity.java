@@ -14,7 +14,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -24,13 +24,12 @@ import com.example.storehub.auth.LoginActivity;
 import com.example.storehub.model.Response;
 import com.example.storehub.model.User;
 import com.example.storehub.services.HttpResquest;
-import com.example.storehub.utils.SharedPreferencesManager;
+import com.example.storehub.utils.DateTimeUtils;
 import com.example.storehub.utils.LocaleHelper;
+import com.example.storehub.utils.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
 
-import com.example.storehub.utils.DateTimeUtils;
 import java.util.Date;
-import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -137,7 +136,7 @@ public class ProfileActivity extends BaseActivity {
         if (user.getId() != null && !user.getId().isEmpty()) {
             new HttpResquest().callAPI().getUserById(user.getId()).enqueue(new Callback<Response<User>>() {
                 @Override
-                public void onResponse(Call<Response<User>> call, retrofit2.Response<Response<User>> response) {
+                public void onResponse(@NonNull Call<Response<User>> call, @NonNull retrofit2.Response<Response<User>> response) {
                     if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                         User freshUser = response.body().getData();
                         sharedPreferencesManager.updateUser(freshUser);
@@ -152,7 +151,7 @@ public class ProfileActivity extends BaseActivity {
                 }
 
                 @Override
-                public void onFailure(Call<Response<User>> call, Throwable t) {
+                public void onFailure(@NonNull Call<Response<User>> call, @NonNull Throwable t) {
                 }
             });
         }
@@ -189,20 +188,12 @@ public class ProfileActivity extends BaseActivity {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            if (txtPasswordChangedSub != null) {
-                txtPasswordChangedSub.setText(getString(R.string.password_changed_sub));
-            }
         }
     }
 
     private void setupClickListeners() {
         // Back Button
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
-
-        findViewById(R.id.btnEditAvatar).setOnClickListener(v -> {
-            Intent intent = new Intent(this, EditProfileActivity.class);
-            editProfileLauncher.launch(intent);
-        });
 
         findViewById(R.id.btnEditPersonalInfo).setOnClickListener(v -> {
             Intent intent = new Intent(this, EditProfileActivity.class);
@@ -219,43 +210,12 @@ public class ProfileActivity extends BaseActivity {
         btnLangEN.setOnClickListener(v -> selectLanguage(false));
 
         findViewById(R.id.btnLogout).setOnClickListener(v -> showCustomLogoutDialog());
-
-        findViewById(R.id.btnHome).setOnClickListener(v -> {
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra(MainActivity.EXTRA_OPEN_TAB, MainActivity.TAB_HOME);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(intent);
-            finish();
-        });
-        findViewById(R.id.btnProducts).setOnClickListener(v -> {
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra(MainActivity.EXTRA_OPEN_TAB, MainActivity.TAB_PRODUCTS);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(intent);
-            finish();
-        });
-
-        findViewById(R.id.btnCart).setOnClickListener(v -> {
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra(MainActivity.EXTRA_OPEN_TAB, MainActivity.TAB_CART);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(intent);
-            finish();
-        });
-
-        findViewById(R.id.btnNews).setOnClickListener(v -> {
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra(MainActivity.EXTRA_OPEN_TAB, MainActivity.TAB_NEWS);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(intent);
-            finish();
-        });
     }
 
     private void selectLanguage(boolean isVI) {
         String lang = isVI ? "vi" : "en";
         LocaleHelper.setLocale(this, lang);
-        
+
         // Cập nhật UI ngay lập tức bằng cách khởi động lại activity
         Intent intent = getIntent();
         finish();
@@ -296,7 +256,7 @@ public class ProfileActivity extends BaseActivity {
         HttpResquest httpResquest = new HttpResquest();
         httpResquest.callAPI().logout(tokenHeader).enqueue(new Callback<Response<Void>>() {
             @Override
-            public void onResponse(Call<Response<Void>> call, retrofit2.Response<Response<Void>> response) {
+            public void onResponse(@NonNull Call<Response<Void>> call, @NonNull retrofit2.Response<Response<Void>> response) {
                 // Wipe local preferences anyway
                 sharedPreferencesManager.logout();
                 Toast.makeText(ProfileActivity.this, "Đã đăng xuất thành công", Toast.LENGTH_SHORT).show();
@@ -307,7 +267,7 @@ public class ProfileActivity extends BaseActivity {
             }
 
             @Override
-            public void onFailure(Call<Response<Void>> call, Throwable t) {
+            public void onFailure(@NonNull Call<Response<Void>> call, @NonNull Throwable t) {
                 sharedPreferencesManager.logout();
                 Toast.makeText(ProfileActivity.this, "Đã đăng xuất", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);

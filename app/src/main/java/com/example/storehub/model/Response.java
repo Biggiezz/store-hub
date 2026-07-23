@@ -1,10 +1,15 @@
 package com.example.storehub.model;
 
 public class Response<T> {
+    // Mã trạng thái phản hồi HTTP (ví dụ: 200, 400, 404, 500)
     private int code;
+    // Dữ liệu nội dung phản hồi (có kiểu Generic T)
     private T data;
+    // Thông điệp phản hồi từ máy chủ (ví dụ: "Thành công", "Lỗi")
     private String message;
+    // Thông tin phân trang (nếu có)
     private Pagination pagination;
+    // Token xác thực JWT gửi kèm khi đăng ký/đăng nhập thành công
     private String token;
 
     public Response(int code, T data, String message) {

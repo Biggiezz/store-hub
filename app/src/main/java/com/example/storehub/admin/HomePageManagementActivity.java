@@ -17,7 +17,7 @@ import com.example.storehub.admin.fragment.AdminHomeFragment;
 import com.example.storehub.admin.fragment.NewsFragmentManagement;
 import com.example.storehub.admin.fragment.ProductsFragmentManagement;
 import com.example.storehub.admin.fragment.StatsManagerFragment;
-import com.example.storehub.fragment.UserManagementFragment;
+import com.example.storehub.admin.fragment.UserManagementFragment;
 import com.google.android.material.button.MaterialButton;
 
 public class HomePageManagementActivity extends BaseActivity {

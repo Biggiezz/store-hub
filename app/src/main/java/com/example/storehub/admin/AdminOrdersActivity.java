@@ -19,8 +19,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.storehub.R;
 import com.example.storehub.admin.adapter.AdminOrderAdapter;
 import com.example.storehub.model.Order;
+import com.example.storehub.model.Order.UpdateStatusRequest;
 import com.example.storehub.model.Response;
-import com.example.storehub.model.UpdateStatusRequest;
 import com.example.storehub.services.ApiServices;
 import com.example.storehub.services.HttpResquest;
 
@@ -80,8 +80,7 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
         ordersCall = apiService.getOrders(null);
         ordersCall.enqueue(new Callback<Response<ArrayList<Order>>>() {
             @Override
-            public void onResponse(@NonNull Call<Response<ArrayList<Order>>> call,
-                                   @NonNull retrofit2.Response<Response<ArrayList<Order>>> response) {
+            public void onResponse(@NonNull Call<Response<ArrayList<Order>>> call, @NonNull retrofit2.Response<Response<ArrayList<Order>>> response) {
                 setLoading(false);
                 if (response.isSuccessful() && response.body() != null) {
                     ArrayList<Order> orderList = response.body().getData();

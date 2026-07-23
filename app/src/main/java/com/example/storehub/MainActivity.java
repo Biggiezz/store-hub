@@ -28,7 +28,9 @@ import com.example.storehub.fragment.ProductsFragment;
 import com.example.storehub.model.News;
 import com.example.storehub.model.Product;
 import com.example.storehub.model.Response;
+import com.example.storehub.model.User;
 import com.example.storehub.services.HttpResquest;
+import com.example.storehub.utils.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
@@ -91,6 +93,8 @@ public class MainActivity extends BaseActivity {
 
         if (savedInstanceState != null) openTab(savedInstanceState.getString(STATE_TAB, TAB_HOME));
         else handleRequestedTab(getIntent());
+
+
     }
 
     private void initUi() {
@@ -261,6 +265,8 @@ public class MainActivity extends BaseActivity {
         updateBottomNavigation(btnNews);
     }
 
+
+
     private void updateBottomNavigation(MaterialButton activeButton) {
         View bottomNav = findViewById(R.id.bottomNavigation);
         if (bottomNav != null) {
@@ -272,6 +278,7 @@ public class MainActivity extends BaseActivity {
         int activeContentColor = Color.parseColor("#756E67");
 
         for (MaterialButton button : new MaterialButton[]{btnHome, btnProducts, btnCart, btnNews}) {
+            if (button == null) continue;
             boolean isActive = button == activeButton;
             button.setBackgroundTintList(ColorStateList.valueOf(isActive ? activeColor : inactiveColor));
             button.setTextColor(isActive ? activeContentColor : inactiveContentColor);
@@ -333,7 +340,7 @@ public class MainActivity extends BaseActivity {
         HttpResquest httpResquest = new HttpResquest();
         httpResquest.callAPI().getListProduct(1, 50, "").enqueue(new Callback<Response<ArrayList<Product>>>() {
             @Override
-            public void onResponse(Call<Response<ArrayList<Product>>> call, retrofit2.Response<Response<ArrayList<Product>>> response) {
+            public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Response<ArrayList<Product>> apiResponse = response.body();
                     if (apiResponse.getCode() == 200 && apiResponse.getData() != null) {
@@ -358,7 +365,7 @@ public class MainActivity extends BaseActivity {
         HttpResquest httpResquest = new HttpResquest();
         httpResquest.callAPI().getListNews(1, 5).enqueue(new Callback<Response<ArrayList<News>>>() {
             @Override
-            public void onResponse(Call<Response<ArrayList<News>>> call, retrofit2.Response<Response<ArrayList<News>>> response) {
+            public void onResponse(@NonNull Call<Response<ArrayList<News>>> call, @NonNull retrofit2.Response<Response<ArrayList<News>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Response<ArrayList<News>> apiResponse = response.body();
                     if (apiResponse.getCode() == 200 && apiResponse.getData() != null) {

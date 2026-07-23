@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.storehub.R;
-import com.example.storehub.model.ProductReview;
+import com.example.storehub.model.Product.ProductReview;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.ArrayList;

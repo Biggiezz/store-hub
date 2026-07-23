@@ -1,4 +1,4 @@
-package com.example.storehub.fragment;
+package com.example.storehub.admin.fragment;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.storehub.R;
 import com.example.storehub.adapter.UserManagementAdapter;
 import com.example.storehub.admin.AddUserActivity;
+import com.example.storehub.model.Response;
 import com.example.storehub.model.User;
 import com.example.storehub.services.HttpResquest;
 import com.example.storehub.utils.SharedPreferencesManager;
@@ -46,8 +47,8 @@ public class UserManagementFragment extends Fragment {
     private TextView btnPrevPage, btnPage1, btnPage2, btnPage3, btnNextPage;
 
     private UserManagementAdapter userAdapter;
-    private List<User> allStaffList = new ArrayList<>();
-    private List<User> allCustomerList = new ArrayList<>();
+    private final List<User> allStaffList = new ArrayList<>();
+    private final List<User> allCustomerList = new ArrayList<>();
     private List<User> currentList = new ArrayList<>();
 
     private boolean isStaffTabSelected = true;
@@ -132,9 +133,7 @@ public class UserManagementFragment extends Fragment {
             }
         });
 
-        btnFilterUser.setOnClickListener(v -> {
-            Toast.makeText(requireContext(), "Bộ lọc nâng cao", Toast.LENGTH_SHORT).show();
-        });
+        btnFilterUser.setOnClickListener(v -> Toast.makeText(requireContext(), "Bộ lọc nâng cao", Toast.LENGTH_SHORT).show());
 
         userAdapter.setOnUserClickListener(user -> {
             if (currentUser != null && !currentUser.canManage(user)) {
@@ -355,10 +354,9 @@ public class UserManagementFragment extends Fragment {
         SharedPreferencesManager prefManager = new SharedPreferencesManager(requireContext());
         String token = "Bearer " + prefManager.getToken();
         HttpResquest httpResquest = new HttpResquest();
-        httpResquest.callAPI().getListUsers(token).enqueue(new retrofit2.Callback<com.example.storehub.model.Response<ArrayList<User>>>() {
+        httpResquest.callAPI().getListUsers(token).enqueue(new retrofit2.Callback<Response<ArrayList<User>>>() {
             @Override
-            public void onResponse(@NonNull retrofit2.Call<com.example.storehub.model.Response<ArrayList<User>>> call,
-                                   @NonNull retrofit2.Response<com.example.storehub.model.Response<ArrayList<User>>> response) {
+            public void onResponse(@NonNull retrofit2.Call<Response<ArrayList<User>>> call, @NonNull retrofit2.Response<Response<ArrayList<User>>> response) {
                 pbLoadingUsers.setVisibility(View.GONE);
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null && !response.body().getData().isEmpty()) {
                     ArrayList<User> serverUsers = response.body().getData();
