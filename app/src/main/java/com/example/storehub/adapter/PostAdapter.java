@@ -25,6 +25,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     public interface PostItemListener {
         void onDeleteClick(News news);
         void onItemClick(News news);
+        void onEditClick(News news);
     }
 
     public PostAdapter(Context context, List<News> newsList, PostItemListener listener) {
@@ -52,6 +53,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                 .into(holder.imgPost);
 
         holder.btnDelete.setOnClickListener(v -> listener.onDeleteClick(news));
+        holder.btnEdit.setOnClickListener(v -> listener.onEditClick(news));
         holder.itemView.setOnClickListener(v -> listener.onItemClick(news));
     }
 
@@ -66,13 +68,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     }
 
     public static class PostViewHolder extends RecyclerView.ViewHolder {
-        ImageView imgPost, btnDelete;
+        ImageView imgPost, btnDelete, btnEdit;
         TextView txtTitle, txtContent;
 
         public PostViewHolder(@NonNull View itemView) {
             super(itemView);
             imgPost = itemView.findViewById(R.id.imgPost);
             btnDelete = itemView.findViewById(R.id.btnDeletePost);
+            btnEdit = itemView.findViewById(R.id.btnEditPost);
             txtTitle = itemView.findViewById(R.id.txtPostTitle);
             txtContent = itemView.findViewById(R.id.txtPostContent);
         }

@@ -24,11 +24,11 @@ public class HomePageManagementActivity extends BaseActivity {
     public static final String TAB_HOME = "home";
     public static final String TAB_PRODUCTS = "products";
     public static final String TAB_NEWS = "news";
-    //    public static final String TAB_USERS = "users";
+    public static final String TAB_USERS = "users";
     public static final String TAB_STATS = "stats";
     private static final String STATE_TAB = "selected_admin_tab";
 
-    private MaterialButton btnHome, btnProducts, btnNews, btnStats;
+    private MaterialButton btnHome, btnProducts, btnNews, btnStats,btnUsers;
     private String currentTabTag = "";
 
     @Override
@@ -63,6 +63,7 @@ public class HomePageManagementActivity extends BaseActivity {
         btnProducts = findViewById(R.id.btnProducts);
         btnNews = findViewById(R.id.btnNews);
         btnStats = findViewById(R.id.btnStats);
+        btnUsers = findViewById(R.id.btnUsers);
     }
 
     private void setUpListener() {
@@ -101,6 +102,15 @@ public class HomePageManagementActivity extends BaseActivity {
                 showTab(TAB_STATS, new StatsManagerFragment());
             });
         }
+
+        if (btnUsers != null) {
+            btnUsers.setOnClickListener(v -> {
+                if (TAB_USERS.equals(currentTabTag)) {
+                    return;
+                }
+                showTab(TAB_USERS, new com.example.storehub.fragment.UserManagementFragment());
+            });
+        }
     }
 
     private void showTab(String tabTag, Fragment fragment) {
@@ -117,8 +127,8 @@ public class HomePageManagementActivity extends BaseActivity {
         int activeContent = Color.parseColor("#756E67");
         int inactiveContent = Color.parseColor("#AAA49D");
 
-        MaterialButton[] buttons = {btnHome, btnProducts, btnNews, btnStats};
-        String[] tabs = {TAB_HOME, TAB_PRODUCTS, TAB_NEWS, TAB_STATS};
+        MaterialButton[] buttons = {btnHome, btnProducts, btnNews, btnStats, btnUsers};
+        String[] tabs = {TAB_HOME, TAB_PRODUCTS, TAB_NEWS, TAB_STATS, TAB_USERS};
         for (int i = 0; i < buttons.length; i++) {
             boolean isActive = tabs[i].equals(activeTab);
             buttons[i].setBackgroundTintList(ColorStateList.valueOf(

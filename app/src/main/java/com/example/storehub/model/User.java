@@ -13,6 +13,7 @@ public class User {
     private String address;
     private String changePasswordDate;
     private String lastActive;
+    private String password;
 
     public User() {
     }
@@ -120,6 +121,14 @@ public class User {
 
     public void setChangePasswordDate(String changePasswordDate) {
         this.changePasswordDate = changePasswordDate;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public static class LoginRequest {

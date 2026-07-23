@@ -146,8 +146,14 @@ public interface ApiServices {
                                       @Part("status") RequestBody status,
                                       @Part MultipartBody.Part image);
 
+    @Multipart
     @PUT("api/newsRouter/admin/update-news/{id}")
-    Call<Response<News>> updateAdminNews(@Header("Authorization") String token, @Path("id") String id, @Body News news);
+    Call<Response<News>> updateAdminNews(@Header("Authorization") String token,
+                                         @Path("id") String id,
+                                         @Part("title") RequestBody title,
+                                         @Part("content") RequestBody content,
+                                         @Part("status") RequestBody status,
+                                         @Part MultipartBody.Part image);
 
     @DELETE("api/newsRouter/admin/delete-news/{id}")
     Call<Response<Void>> deleteAdminNews(@Header("Authorization") String token, @Path("id") String id);

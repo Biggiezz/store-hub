@@ -72,7 +72,18 @@ public class UserManagementFragment extends Fragment {
         setUpListener();
 
         loadMockUserData();
-        switchTab(true);
+
+        SharedPreferencesManager prefManager = new SharedPreferencesManager(requireContext());
+        User currentUser = prefManager.getUser();
+        boolean isSuperAdmin = currentUser != null && currentUser.isSuperAdmin();
+
+        if (!isSuperAdmin) {
+            if (btnAddNewUser != null) btnAddNewUser.setVisibility(View.GONE);
+            if (btnTabStaff != null) btnTabStaff.setVisibility(View.GONE);
+            switchTab(false);
+        } else {
+            switchTab(true);
+        }
     }
 
     private void initUi(View view) {
@@ -137,20 +148,25 @@ public class UserManagementFragment extends Fragment {
         });
 
         userAdapter.setOnUserClickListener(user -> {
-            if (currentUser != null && !currentUser.canManage(user)) {
-                Toast.makeText(requireContext(), "Bạn không có quyền chỉnh sửa/xóa tài khoản Super Admin này!", Toast.LENGTH_LONG).show();
-                return;
+            boolean isSuperAdmin = currentUser != null && currentUser.isSuperAdmin();
+            if (isSuperAdmin) {
+                if (!currentUser.canManage(user)) {
+                    Toast.makeText(requireContext(), "Bạn không có quyền chỉnh sửa/xóa tài khoản Super Admin này!", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                    .setTitle("Tùy chọn quản lý")
+                    .setMessage("Bạn muốn thực hiện thao tác gì với " + user.getName() + "?")
+                    .setPositiveButton("Chỉnh sửa", (dialog, which) -> {
+                        Intent intent = new Intent(requireContext(), AddUserActivity.class);
+                        intent.putExtra("user_edit", new com.google.gson.Gson().toJson(user));
+                        startActivity(intent);
+                    })
+                    .setNegativeButton("Hủy", null)
+                    .show();
+            } else {
+                showCustomerDetailDialog(user);
             }
-            new androidx.appcompat.app.AlertDialog.Builder(requireContext())
-                .setTitle("Tùy chọn quản lý")
-                .setMessage("Bạn muốn thực hiện thao tác gì với " + user.getName() + "?")
-                .setPositiveButton("Chỉnh sửa", (dialog, which) -> {
-                    Intent intent = new Intent(requireContext(), AddUserActivity.class);
-                    intent.putExtra("user_edit", new com.google.gson.Gson().toJson(user));
-                    startActivity(intent);
-                })
-                .setNegativeButton("Hủy", null)
-                .show();
         });
 
         btnPrevPage.setOnClickListener(v -> {
@@ -197,10 +213,13 @@ public class UserManagementFragment extends Fragment {
         currentPage = 1;
 
         if (selectStaff) {
-            tvStaffTabTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary));
+            btnTabStaff.setBackgroundResource(R.drawable.bg_admin_chip_active);
+            btnTabCustomer.setBackgroundResource(R.drawable.bg_admin_chip);
+
+            tvStaffTabTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
             tvStaffTabTitle.setAlpha(1.0f);
             tvStaffCount.setBackgroundResource(R.drawable.bg_tab_badge_selected);
-            tvStaffCount.setTextColor(Color.parseColor("#50504D"));
+            tvStaffCount.setTextColor(Color.parseColor("#172C22"));
 
             tvCustomerTabTitle.setTextColor(Color.parseColor("#8A8077"));
             tvCustomerCount.setBackgroundResource(R.drawable.bg_tab_badge_unselected);
@@ -208,10 +227,13 @@ public class UserManagementFragment extends Fragment {
 
             currentList = new ArrayList<>(allStaffList);
         } else {
-            tvCustomerTabTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary));
+            btnTabStaff.setBackgroundResource(R.drawable.bg_admin_chip);
+            btnTabCustomer.setBackgroundResource(R.drawable.bg_admin_chip_active);
+
+            tvCustomerTabTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
             tvCustomerTabTitle.setAlpha(1.0f);
             tvCustomerCount.setBackgroundResource(R.drawable.bg_tab_badge_selected);
-            tvCustomerCount.setTextColor(Color.parseColor("#50504D"));
+            tvCustomerCount.setTextColor(Color.parseColor("#172C22"));
 
             tvStaffTabTitle.setTextColor(Color.parseColor("#8A8077"));
             tvStaffCount.setBackgroundResource(R.drawable.bg_tab_badge_unselected);
@@ -334,17 +356,17 @@ public class UserManagementFragment extends Fragment {
 
     private void loadMockUserData() {
         allStaffList.clear();
-        allStaffList.add(new User("1", "Eleanor Vance", "eleanor.v@storehub.com", "0912345678", "Quản lý cửa hàng", "", "Hà Nội", "2 giờ trước"));
+        allStaffList.add(new User("1", "Eleanor Vance", "eleanor.v@storehub.com", "0912345678", "admin", "", "Hà Nội", "2 giờ trước"));
         allStaffList.add(new User("2", "Margaret Atwood", "m.atwood@storehub.com", "0987654321", "Chuyên viên kho", "", "TP. Hồ Chí Minh", "1 ngày trước"));
         allStaffList.add(new User("3", "Julianne Moore", "j.moore@storehub.com", "0933445566", "Nhân viên bán hàng", "", "Đà Nẵng", "Vừa xong"));
         allStaffList.add(new User("4", "Arthur Pendelton", "arthur.p@storehub.com", "0977889900", "Hỗ trợ khách hàng", "", "Cần Thơ", "3 ngày trước"));
         allStaffList.add(new User("5", "Robert Langdon", "robert.l@storehub.com", "0944556677", "Kế toán viên", "", "Hải Phòng", "5 giờ trước"));
 
         allCustomerList.clear();
-        allCustomerList.add(new User("101", "Nguyễn Văn An", "an.nguyen@gmail.com", "0901112233", "Khách hàng", "", "Hà Nội", "10 phút trước"));
+        allCustomerList.add(new User("101", "Nguyễn Văn An", "an.nguyen@gmail.com", "0901112233", "customer", "", "Hà Nội", "10 phút trước"));
         allCustomerList.add(new User("102", "Trần Thị Bình", "binh.tran@yahoo.com", "0902223344", "Khách hàng VIP", "", "TP. Hồ Chí Minh", "1 giờ trước"));
         allCustomerList.add(new User("103", "Lê Hoàng Cường", "cuong.le@gmail.com", "0903334455", "Khách hàng thân thiết", "", "Đà Nẵng", "4 giờ trước"));
-        allCustomerList.add(new User("104", "Phạm Minh Dung", "dung.pham@gmail.com", "0904445566", "Khách hàng", "", "Cần Thơ", "1 ngày trước"));
+        allCustomerList.add(new User("104", "Phạm Minh Dung", "dung.pham@gmail.com", "0904445566", "customer", "", "Cần Thơ", "1 ngày trước"));
 
         tvStaffCount.setText(String.valueOf(allStaffList.size()));
         tvCustomerCount.setText("1,492");
@@ -390,6 +412,23 @@ public class UserManagementFragment extends Fragment {
                 switchTab(isStaffTabSelected);
             }
         });
+    }
+
+    private void showCustomerDetailDialog(User user) {
+        if (getContext() == null || user == null) return;
+        StringBuilder sb = new StringBuilder();
+        sb.append("Họ và tên: ").append(user.getName() != null ? user.getName() : "Chưa cập nhật").append("\n\n");
+        sb.append("Số điện thoại: ").append(user.getPhone() != null && !user.getPhone().isEmpty() ? user.getPhone() : "Chưa cập nhật").append("\n\n");
+        sb.append("Email: ").append(user.getEmail() != null ? user.getEmail() : "Chưa cập nhật").append("\n\n");
+        sb.append("Vai trò: ").append(user.getRole() != null ? user.getRole() : "Chưa cập nhật").append("\n\n");
+        sb.append("Địa chỉ: ").append(user.getAddress() != null && !user.getAddress().isEmpty() ? user.getAddress() : "Chưa cập nhật").append("\n\n");
+        sb.append("Hoạt động lần cuối: ").append(user.getLastActive() != null ? user.getLastActive() : "Không khả dụng");
+
+        new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setTitle("Thông tin khách hàng")
+            .setMessage(sb.toString())
+            .setPositiveButton("Đóng", null)
+            .show();
     }
 
     @Override

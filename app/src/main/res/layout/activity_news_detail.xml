@@ -142,67 +142,75 @@
                 android:textSize="16sp"
                 tools:text="Đây là nội dung mô tả chi tiết bài viết tin tức. Nội dung này có thể rất dài và sẽ hỗ trợ cuộn màn hình một cách mượt mà nhờ việc đặt trong NestedScrollView." />
 
-            <!-- Separator Line before Share panel -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginTop="28dp"
-                android:layout_marginBottom="18dp"
-                android:background="#D8D2C4" />
-
-            <!-- Share Title -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="CHIA SẺ BÀI VIẾT"
-                android:textColor="#AAA49D"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.08"
-                android:layout_marginBottom="16dp" />
-
-            <!-- Circular Action Buttons -->
+            <!-- Share Section (Visible only to customers) -->
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:id="@+id/layoutShareSection"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:orientation="horizontal"
-                android:layout_marginBottom="24dp">
+                android:orientation="vertical">
 
-                <ImageView
-                    android:id="@+id/btnShare"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginHorizontal="8dp"
-                    android:background="@drawable/bg_circle_button"
-                    android:contentDescription="Chia sẻ"
-                    android:padding="13dp"
-                    android:src="@drawable/ic_share"
-                    app:tint="@color/dark_green" />
+                <!-- Separator Line before Share panel -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginTop="28dp"
+                    android:layout_marginBottom="18dp"
+                    android:background="#D8D2C4" />
 
-                <ImageView
-                    android:id="@+id/btnBookmark"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginHorizontal="8dp"
-                    android:background="@drawable/bg_circle_button"
-                    android:contentDescription="Lưu bài viết"
-                    android:padding="13dp"
-                    android:src="@drawable/ic_bookmark"
-                    app:tint="@color/dark_green" />
+                <!-- Share Title -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="CHIA SẺ BÀI VIẾT"
+                    android:textColor="#AAA49D"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.08"
+                    android:layout_marginBottom="16dp" />
 
-                <ImageView
-                    android:id="@+id/btnLike"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginHorizontal="8dp"
-                    android:background="@drawable/bg_circle_button"
-                    android:contentDescription="Yêu thích"
-                    android:padding="13dp"
-                    android:src="@drawable/ic_like"
-                    app:tint="@color/dark_green" />
+                <!-- Circular Action Buttons -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="24dp">
 
+                    <ImageView
+                        android:id="@+id/btnShare"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginHorizontal="8dp"
+                        android:background="@drawable/bg_circle_button"
+                        android:contentDescription="Chia sẻ"
+                        android:padding="13dp"
+                        android:src="@drawable/ic_share"
+                        app:tint="@color/dark_green" />
+
+                    <ImageView
+                        android:id="@+id/btnBookmark"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginHorizontal="8dp"
+                        android:background="@drawable/bg_circle_button"
+                        android:contentDescription="Lưu bài viết"
+                        android:padding="13dp"
+                        android:src="@drawable/ic_bookmark"
+                        app:tint="@color/dark_green" />
+
+                    <ImageView
+                        android:id="@+id/btnLike"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginHorizontal="8dp"
+                        android:background="@drawable/bg_circle_button"
+                        android:contentDescription="Yêu thích"
+                        android:padding="13dp"
+                        android:src="@drawable/ic_like"
+                        app:tint="@color/dark_green" />
+
+                </LinearLayout>
             </LinearLayout>
 
         </LinearLayout>
