@@ -68,7 +68,7 @@ public class UserManagementAdapter extends RecyclerView.Adapter<UserManagementAd
 
         holder.tvUserName.setText(user.getName());
 
-        String role = !TextUtils.isEmpty(user.getRole()) ? user.getRole() : "Khách hàng";
+        String role = !TextUtils.isEmpty(user.getRole()) ? user.getRole() : "customer";
         holder.tvUserRole.setText(role);
 
         // Đánh dấu huy hiệu nổi bật cho Super Admin

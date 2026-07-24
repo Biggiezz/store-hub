@@ -62,7 +62,10 @@
             android:focusable="true"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingEnd="20dp">
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            android:layout_marginEnd="12dp"
+            android:background="@drawable/bg_admin_chip_active">
 
             <TextView
                 android:id="@+id/tvStaffTabTitle"
@@ -70,8 +73,8 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/hanken_grotesk_semibold"
                 android:text="@string/staff"
-                android:textColor="@color/text_primary"
-                android:textSize="17sp"
+                android:textColor="@color/white"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -83,7 +86,7 @@
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="2dp"
                 android:text="12"
-                android:textColor="#50504D"
+                android:textColor="#172C22"
                 android:textSize="12sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -96,7 +99,10 @@
             android:clickable="true"
             android:focusable="true"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            android:background="@drawable/bg_admin_chip">
 
             <TextView
                 android:id="@+id/tvCustomerTabTitle"
@@ -105,7 +111,7 @@
                 android:fontFamily="@font/hanken_grotesk_semibold"
                 android:text="@string/customer"
                 android:textColor="#8A8077"
-                android:textSize="17sp" />
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/tvCustomerCount"

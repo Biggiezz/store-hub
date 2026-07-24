@@ -8,6 +8,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.view.View;
+
 import com.bumptech.glide.Glide;
 import com.example.storehub.model.News;
 
@@ -32,6 +34,14 @@ public class NewsDetailActivity extends BaseActivity {
 
         // Lấy dữ liệu đối tượng News được truyền từ Adapter
         News news = (News) getIntent().getSerializableExtra("news_item");
+        boolean isAdmin = getIntent().getBooleanExtra("is_admin", false);
+
+        if (isAdmin) {
+            View shareSection = findViewById(R.id.layoutShareSection);
+            View bottomNav = findViewById(R.id.bottomNavigation);
+            if (shareSection != null) shareSection.setVisibility(View.GONE);
+            if (bottomNav != null) bottomNav.setVisibility(View.GONE);
+        }
 
         if (news != null) {
             displayNewsDetails(news);
