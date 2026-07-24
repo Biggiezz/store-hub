@@ -149,6 +149,16 @@ public interface ApiServices {
     @PUT("users/update-profile")
     Call<Response<User>> updateProfile(@Header("Authorization") String authHeader, @Body Map<String, String> body);
 
+    @Multipart
+    @PUT("users/update-profile")
+    Call<Response<User>> updateProfileMultipart(
+            @Header("Authorization") String authHeader,
+            @Part("name") RequestBody name,
+            @Part("phone") RequestBody phone,
+            @Part("address") RequestBody address,
+            @Part MultipartBody.Part image
+    );
+
     @PUT("users/change-password")
     Call<Response<Void>> changePassword(@Header("Authorization") String authHeader, @Body Map<String, String> body);
 

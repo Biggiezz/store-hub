@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="RegisterInputLabel">
         <item name="android:layout_width">wrap_content</item>
@@ -200,6 +200,23 @@
         <item name="android:textSize">11sp</item>
         <item name="android:background">@drawable/bg_order_action</item>
         <item name="android:drawableEnd">@drawable/ic_arrow_order</item>
+    </style>
+
+    <!-- Theme dành riêng cho uCrop để không bị dính Status Bar -->
+    <style name="Theme.StoreHub.UCrop" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@color/dark_green</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <!-- Can thiệp vào chiều cao và khoảng cách của Toolbar -->
+        <item name="actionBarSize">50dp</item> <!-- 56dp chuẩn + 50dp padding -->
+        <item name="toolbarStyle">@style/Widget.StoreHub.UCropToolbar</item>
+    </style>
+
+    <style name="Widget.StoreHub.UCropToolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="android:paddingTop">50dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">106dp</item>
     </style>
 
 </resources>

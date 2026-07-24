@@ -80,6 +80,11 @@
             android:name=".WriteReviewActivity"
             android:exported="false" />
 
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.StoreHub.UCrop" />
+
         <service
             android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
             android:enabled="false"
