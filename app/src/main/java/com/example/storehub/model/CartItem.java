@@ -24,6 +24,9 @@ public class CartItem implements java.io.Serializable {
     @SerializedName("colorName")
     private String colorName;
 
+    @SerializedName("colorHex")
+    private String colorHex;
+
     @SerializedName("price")
     private Object rawPrice;
 
@@ -77,6 +80,14 @@ public class CartItem implements java.io.Serializable {
 
     public void setColorName(String colorName) {
         this.colorName = colorName;
+    }
+
+    public String getColorHex() {
+        return colorHex != null ? colorHex : "";
+    }
+
+    public void setColorHex(String colorHex) {
+        this.colorHex = colorHex;
     }
 
     public long getPrice() {

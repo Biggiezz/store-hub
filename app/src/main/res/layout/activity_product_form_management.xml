@@ -130,29 +130,37 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="258dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:background="@drawable/bg_admin_form_section"
                 android:orientation="vertical"
                 android:padding="24dp">
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
+                <LinearLayout
+                    android:id="@+id/layoutAddColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
                     <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Biến thể màu sắc" android:textColor="#172C22" android:textSize="19sp" android:textStyle="bold" />
                     <TextView android:layout_width="30dp" android:layout_height="30dp" android:gravity="center" android:text="⊕" android:textColor="#172C22" android:textSize="28sp" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="9dp" android:text="Thêm\nmàu" android:textColor="#172C22" android:textSize="14sp" android:textStyle="bold" />
                 </LinearLayout>
-                <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_marginTop="22dp" android:layout_weight="1" android:background="#FCFBF8" android:orientation="vertical" android:padding="16dp">
-                    <TextView style="@style/Widget.StoreHub.AdminFormLabel" android:text="CHỌN MÀU SẮC" />
-                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:orientation="horizontal">
-                        <com.google.android.material.button.MaterialButton style="@style/Widget.StoreHub.ColorSwatch" app:backgroundTint="#000000" app:strokeColor="#172C22" app:strokeWidth="3dp" />
-                        <com.google.android.material.button.MaterialButton style="@style/Widget.StoreHub.ColorSwatch" app:backgroundTint="#E2E3E3" />
-                        <com.google.android.material.button.MaterialButton style="@style/Widget.StoreHub.ColorSwatch" app:backgroundTint="#FFFFFF" />
-                        <com.google.android.material.button.MaterialButton style="@style/Widget.StoreHub.ColorSwatch" app:backgroundTint="#354A40" />
-                        <com.google.android.material.button.MaterialButton style="@style/Widget.StoreHub.ColorSwatch" app:backgroundTint="#6D665E" />
-                    </LinearLayout>
-                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:orientation="horizontal">
-                        <com.google.android.material.button.MaterialButton style="@style/Widget.StoreHub.ColorSwatch" app:backgroundTint="#D1160D" />
-                        <com.google.android.material.button.MaterialButton style="@style/Widget.StoreHub.ColorSwatch" android:text="◉" android:textColor="#172C22" android:textSize="14sp" app:backgroundTint="#E6E5E2" />
-                    </LinearLayout>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="22dp" android:background="#FCFBF8" android:orientation="vertical" android:padding="16dp">
+                    <TextView style="@style/Widget.StoreHub.AdminFormLabel" android:text="DANH SÁCH MÀU (Nhấp chọn mặc định, Nhấn giữ để sửa/xóa)" />
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:scrollbars="none">
+                        <LinearLayout
+                            android:id="@+id/adminColorContainer"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal" />
+                    </HorizontalScrollView>
                 </LinearLayout>
             </LinearLayout>
 
