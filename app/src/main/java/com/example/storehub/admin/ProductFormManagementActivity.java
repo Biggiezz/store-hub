@@ -386,6 +386,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
         builder.setTitle("Thêm biến thể màu sắc");
 
+        android.widget.ScrollView scrollView = new android.widget.ScrollView(this);
         android.widget.LinearLayout layout = new android.widget.LinearLayout(this);
         layout.setOrientation(android.widget.LinearLayout.VERTICAL);
         layout.setPadding(dp(20), dp(15), dp(20), dp(10));
@@ -408,13 +409,55 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         space2.setLayoutParams(new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(12)));
         layout.addView(space2);
 
-        final android.widget.CheckBox defaultCheck = new android.widget.CheckBox(this);
-        defaultCheck.setText("Đặt làm màu mặc định");
-        layout.addView(defaultCheck);
+        // Color preview
+        final View colorPreview = new View(this);
+        android.widget.LinearLayout.LayoutParams previewParams = new android.widget.LinearLayout.LayoutParams(dp(50), dp(50));
+        previewParams.gravity = android.view.Gravity.CENTER_HORIZONTAL;
+        colorPreview.setLayoutParams(previewParams);
+        android.graphics.drawable.GradientDrawable previewDrawable = new android.graphics.drawable.GradientDrawable();
+        previewDrawable.setShape(android.graphics.drawable.GradientDrawable.OVAL);
+        previewDrawable.setColor(android.graphics.Color.LTGRAY);
+        previewDrawable.setStroke(dp(1), android.graphics.Color.parseColor("#CCCCCC"));
+        colorPreview.setBackground(previewDrawable);
+        layout.addView(colorPreview);
 
         View space3 = new View(this);
         space3.setLayoutParams(new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(12)));
         layout.addView(space3);
+
+        // Button to open color picker dialog
+        Button pickColorBtn = new Button(this);
+        pickColorBtn.setText("🎨 Chọn từ bảng màu");
+        pickColorBtn.setAllCaps(false);
+        pickColorBtn.setOnClickListener(v -> {
+            new com.skydoves.colorpickerview.ColorPickerDialog.Builder(this)
+                    .setTitle("Chọn màu")
+                    .setPositiveButton("Chọn", (com.skydoves.colorpickerview.listeners.ColorEnvelopeListener) (envelope, fromUser) -> {
+                        String hex = "#" + envelope.getHexCode().substring(2);
+                        hexInput.setText(hex);
+                        nameInput.setText(guessColorName(envelope.getColor()));
+                        android.graphics.drawable.GradientDrawable bg = (android.graphics.drawable.GradientDrawable) colorPreview.getBackground();
+                        bg.setColor(envelope.getColor());
+                    })
+                    .setNegativeButton("Hủy", (dialogInterface, i) -> dialogInterface.dismiss())
+                    .attachAlphaSlideBar(false)
+                    .attachBrightnessSlideBar(true)
+                    .setBottomSpace(12)
+                    .show();
+        });
+        layout.addView(pickColorBtn);
+
+        View space4 = new View(this);
+        space4.setLayoutParams(new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(12)));
+        layout.addView(space4);
+
+        final android.widget.CheckBox defaultCheck = new android.widget.CheckBox(this);
+        defaultCheck.setText("Đặt làm màu mặc định");
+        layout.addView(defaultCheck);
+
+        View space5 = new View(this);
+        space5.setLayoutParams(new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(12)));
+        layout.addView(space5);
 
         TextView presetLabel = new TextView(this);
         presetLabel.setText("Chọn nhanh màu mẫu:");
@@ -450,13 +493,16 @@ public class ProductFormManagementActivity extends AppCompatActivity {
             swatch.setOnClickListener(v -> {
                 nameInput.setText(preset[0]);
                 hexInput.setText(preset[1]);
+                android.graphics.drawable.GradientDrawable bg = (android.graphics.drawable.GradientDrawable) colorPreview.getBackground();
+                bg.setColor(android.graphics.Color.parseColor(preset[1]));
             });
             scrollContent.addView(swatch);
         }
         scrollPresets.addView(scrollContent);
         layout.addView(scrollPresets);
 
-        builder.setView(layout);
+        scrollView.addView(layout);
+        builder.setView(scrollView);
 
         builder.setPositiveButton("Thêm", (dialog, which) -> {
             String name = nameInput.getText().toString().trim();
@@ -494,6 +540,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
         builder.setTitle("Chỉnh sửa màu sắc");
 
+        android.widget.ScrollView scrollView = new android.widget.ScrollView(this);
         android.widget.LinearLayout layout = new android.widget.LinearLayout(this);
         layout.setOrientation(android.widget.LinearLayout.VERTICAL);
         layout.setPadding(dp(20), dp(15), dp(20), dp(10));
@@ -518,12 +565,55 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         space2.setLayoutParams(new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(12)));
         layout.addView(space2);
 
+        // Color preview (shows current color)
+        final View colorPreview = new View(this);
+        android.widget.LinearLayout.LayoutParams previewParams = new android.widget.LinearLayout.LayoutParams(dp(50), dp(50));
+        previewParams.gravity = android.view.Gravity.CENTER_HORIZONTAL;
+        colorPreview.setLayoutParams(previewParams);
+        android.graphics.drawable.GradientDrawable previewDrawable = new android.graphics.drawable.GradientDrawable();
+        previewDrawable.setShape(android.graphics.drawable.GradientDrawable.OVAL);
+        previewDrawable.setColor(parseColorSafely(color.getHex()));
+        previewDrawable.setStroke(dp(1), android.graphics.Color.parseColor("#CCCCCC"));
+        colorPreview.setBackground(previewDrawable);
+        layout.addView(colorPreview);
+
+        View space3 = new View(this);
+        space3.setLayoutParams(new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(12)));
+        layout.addView(space3);
+
+        // Button to open color picker dialog
+        Button pickColorBtn = new Button(this);
+        pickColorBtn.setText("🎨 Chọn từ bảng màu");
+        pickColorBtn.setAllCaps(false);
+        pickColorBtn.setOnClickListener(v -> {
+            new com.skydoves.colorpickerview.ColorPickerDialog.Builder(this)
+                    .setTitle("Chọn màu")
+                    .setPositiveButton("Chọn", (com.skydoves.colorpickerview.listeners.ColorEnvelopeListener) (envelope, fromUser) -> {
+                        String hex = "#" + envelope.getHexCode().substring(2);
+                        hexInput.setText(hex);
+                        nameInput.setText(guessColorName(envelope.getColor()));
+                        android.graphics.drawable.GradientDrawable bg = (android.graphics.drawable.GradientDrawable) colorPreview.getBackground();
+                        bg.setColor(envelope.getColor());
+                    })
+                    .setNegativeButton("Hủy", (dialogInterface, i) -> dialogInterface.dismiss())
+                    .attachAlphaSlideBar(false)
+                    .attachBrightnessSlideBar(true)
+                    .setBottomSpace(12)
+                    .show();
+        });
+        layout.addView(pickColorBtn);
+
+        View space4 = new View(this);
+        space4.setLayoutParams(new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(12)));
+        layout.addView(space4);
+
         final android.widget.CheckBox defaultCheck = new android.widget.CheckBox(this);
         defaultCheck.setText("Đặt làm màu mặc định");
         defaultCheck.setChecked(color.isDefault());
         layout.addView(defaultCheck);
 
-        builder.setView(layout);
+        scrollView.addView(layout);
+        builder.setView(scrollView);
 
         builder.setPositiveButton("Lưu", (dialog, which) -> {
             String name = nameInput.getText().toString().trim();
@@ -569,6 +659,47 @@ public class ProductFormManagementActivity extends AppCompatActivity {
 
         builder.setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss());
         builder.show();
+    }
+
+    private static final String[][] COLOR_NAME_TABLE = {
+            {"Đen", "#000000"}, {"Trắng", "#FFFFFF"},
+            {"Xám đậm", "#404040"}, {"Xám", "#808080"}, {"Xám nhạt", "#C0C0C0"},
+            {"Đỏ", "#FF0000"}, {"Đỏ đậm", "#8B0000"}, {"Đỏ tươi", "#DC143C"},
+            {"Cam", "#FF8C00"}, {"Cam nhạt", "#FFA500"},
+            {"Vàng", "#FFD700"}, {"Vàng nhạt", "#FFFF00"}, {"Vàng cát", "#F4C430"},
+            {"Xanh lá", "#00AA00"}, {"Xanh lá đậm", "#006400"}, {"Xanh lá nhạt", "#90EE90"},
+            {"Xanh rêu", "#556B2F"}, {"Xanh olive", "#808000"},
+            {"Xanh ngọc", "#00CED1"}, {"Xanh cyan", "#00FFFF"},
+            {"Xanh dương", "#0000FF"}, {"Xanh dương nhạt", "#4169E1"}, {"Xanh navy", "#000080"},
+            {"Xanh da trời", "#87CEEB"}, {"Xanh cobalt", "#0047AB"},
+            {"Tím", "#800080"}, {"Tím nhạt", "#9370DB"}, {"Tím đậm", "#4B0082"},
+            {"Hồng", "#FF69B4"}, {"Hồng nhạt", "#FFC0CB"}, {"Hồng đậm", "#C71585"},
+            {"Nâu", "#8B4513"}, {"Nâu nhạt", "#D2B48C"}, {"Nâu đậm", "#5C4033"},
+            {"Be", "#F5F5DC"}, {"Kem", "#FFFDD0"}, {"Bạc", "#C0C0C0"},
+            {"Vàng đồng", "#B87333"}, {"Vàng gold", "#FFD700"}, {"Xanh mint", "#98FF98"},
+            {"Xanh teal", "#008080"}, {"Đỏ san hô", "#FF7F50"}, {"Lavender", "#E6E6FA"}
+    };
+
+    private String guessColorName(int color) {
+        int r = android.graphics.Color.red(color);
+        int g = android.graphics.Color.green(color);
+        int b = android.graphics.Color.blue(color);
+
+        String bestName = "Tùy chỉnh";
+        double bestDist = Double.MAX_VALUE;
+
+        for (String[] entry : COLOR_NAME_TABLE) {
+            int ref = android.graphics.Color.parseColor(entry[1]);
+            int dr = r - android.graphics.Color.red(ref);
+            int dg = g - android.graphics.Color.green(ref);
+            int db = b - android.graphics.Color.blue(ref);
+            double dist = Math.sqrt(dr * dr + dg * dg + db * db);
+            if (dist < bestDist) {
+                bestDist = dist;
+                bestName = entry[0];
+            }
+        }
+        return bestName;
     }
 
     private void setLoading(boolean loading) {
