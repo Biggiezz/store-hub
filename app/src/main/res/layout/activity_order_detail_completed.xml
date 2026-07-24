@@ -46,15 +46,10 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <TextView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:background="@drawable/bg_timeline_active"
-                        android:gravity="center"
-                        android:text="✓"
-                        android:textColor="#FFFFFF"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/ic_check" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -67,7 +62,6 @@
                             android:id="@+id/tvStatusText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Đã hoàn thành"
                             android:textColor="#1A2821"
                             android:textSize="14sp" />
 
@@ -76,7 +70,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="Mã đơn: #SH-875022"
                             android:textColor="#434844"
                             android:textSize="14sp" />
                     </LinearLayout>
@@ -87,32 +80,63 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
-                    android:drawableStart="@drawable/ic_detail_clock"
                     android:drawablePadding="8dp"
-                    android:text="Hoàn thành lúc 10:30, 20/05/2024"
                     android:textColor="#434844"
                     android:textSize="14sp" />
             </LinearLayout>
 
-            <TextView
+            <include
+                layout="@layout/include_shipping_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="12dp"
-                android:fontFamily="serif"
-                android:text="Sản phẩm"
-                android:textColor="#1A2821"
-                android:textSize="22sp"
-                android:textStyle="bold" />
+                android:layout_marginTop="16dp" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvOrderProducts"
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                android:overScrollMode="never"
-                android:padding="8dp" />
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeColor="#ECE7DF"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="#F5F3EF"
+                        android:gravity="center_vertical"
+                        android:padding="16dp"
+                        android:text="Sản phẩm"
+                        android:textColor="#1A2821"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#ECE7DF" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvOrderProducts"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false"
+                        android:overScrollMode="never"
+                        android:padding="16dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <include
+                layout="@layout/include_detail_summary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp" />
 
             <TextView
                 android:id="@+id/btnReview"

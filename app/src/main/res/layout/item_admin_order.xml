@@ -4,9 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
+    app:cardBackgroundColor="#FFFFFF"
     app:cardCornerRadius="16dp"
-    app:cardElevation="1dp"
-    app:cardBackgroundColor="#FFFFFF">
+    app:cardElevation="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,15 +18,14 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/tvOrderCode"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="#SH-283921"
                 android:textColor="#1A2821"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -35,7 +34,6 @@
                 android:id="@+id/tvOrderDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="20/05/2026"
                 android:textColor="#8F8A82"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -59,14 +57,13 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="4dp">
+            android:layout_marginTop="4dp"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tvRecipientNamePhone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Nguyễn Minh Tuấn  •  090 123 4567"
                 android:textColor="#434844"
                 android:textSize="13sp" />
 
@@ -75,7 +72,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="123 Đường Tự Do, Phường Bến Nghé, Quận 1"
                 android:textColor="#676B66"
                 android:textSize="13sp" />
         </LinearLayout>
@@ -84,16 +80,15 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_marginTop="12dp"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/tvItemsCount"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Sản phẩm: 3 món"
                 android:textColor="#434844"
                 android:textSize="13sp" />
 
@@ -101,7 +96,6 @@
                 android:id="@+id/tvTotalPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1.200.000đ"
                 android:textColor="#BA1A1A"
                 android:textSize="15sp"
                 android:textStyle="bold" />
@@ -111,9 +105,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_marginTop="14dp"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <!-- Status Tag -->
             <TextView
@@ -121,11 +115,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_status_dark"
-                android:textColor="#FFFFFF"
-                android:textSize="12sp"
                 android:paddingHorizontal="10dp"
                 android:paddingVertical="4dp"
-                android:text="Đang giao hàng" />
+                android:text="Đang giao hàng"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp" />
 
             <View
                 android:layout_width="0dp"

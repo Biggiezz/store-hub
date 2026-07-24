@@ -57,12 +57,6 @@
             app:iconTint="#434844" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnUsers"
-            style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="@string/nav_users"
-            app:icon="@drawable/ic_users" />
-
-        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnStats"
             style="@style/Widget.StoreHub.BottomNavButton"
             android:text="Thống kê"

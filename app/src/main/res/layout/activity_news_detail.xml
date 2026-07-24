@@ -4,9 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/news_detail_layout"
     android:background="@color/background"
-    android:orientation="vertical"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
 
     <!-- Custom Header Bar -->
     <RelativeLayout
@@ -86,10 +87,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
+                android:fontFamily="@font/libre_caslon_text"
                 android:textColor="@color/dark_green"
                 android:textSize="22sp"
                 android:textStyle="bold"
-                android:fontFamily="@font/libre_caslon_text"
                 tools:text="Tiêu đề bài viết tin tức mẫu cực kỳ hấp dẫn tại StoreHub" />
 
             <!-- News Metadata (Author & Time) -->
@@ -162,20 +163,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="16dp"
+                    android:letterSpacing="0.08"
                     android:text="CHIA SẺ BÀI VIẾT"
                     android:textColor="#AAA49D"
                     android:textSize="11sp"
-                    android:textStyle="bold"
-                    android:letterSpacing="0.08"
-                    android:layout_marginBottom="16dp" />
+                    android:textStyle="bold" />
 
                 <!-- Circular Action Buttons -->
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="24dp">
+                    android:layout_marginBottom="24dp"
+                    android:orientation="horizontal">
 
                     <ImageView
                         android:id="@+id/btnShare"
@@ -183,7 +184,6 @@
                         android:layout_height="50dp"
                         android:layout_marginHorizontal="8dp"
                         android:background="@drawable/bg_circle_button"
-                        android:contentDescription="Chia sẻ"
                         android:padding="13dp"
                         android:src="@drawable/ic_share"
                         app:tint="@color/dark_green" />
@@ -194,7 +194,6 @@
                         android:layout_height="50dp"
                         android:layout_marginHorizontal="8dp"
                         android:background="@drawable/bg_circle_button"
-                        android:contentDescription="Lưu bài viết"
                         android:padding="13dp"
                         android:src="@drawable/ic_bookmark"
                         app:tint="@color/dark_green" />
@@ -205,7 +204,6 @@
                         android:layout_height="50dp"
                         android:layout_marginHorizontal="8dp"
                         android:background="@drawable/bg_circle_button"
-                        android:contentDescription="Yêu thích"
                         android:padding="13dp"
                         android:src="@drawable/ic_like"
                         app:tint="@color/dark_green" />
@@ -215,59 +213,4 @@
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="#C3C8C3" />
-
-    <!-- Thanh điều hướng dưới (Đồng bộ với Trang chủ, nút Tin tức ở trạng thái Active) -->
-    <LinearLayout
-        android:id="@+id/bottomNavigation"
-        android:layout_width="match_parent"
-        android:layout_height="78dp"
-        android:background="@color/background"
-        android:elevation="8dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:paddingStart="4dp"
-        android:paddingTop="8dp"
-        android:paddingEnd="4dp"
-        android:paddingBottom="8dp">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnHome"
-            style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="Trang chủ"
-            android:textColor="#AAA49D"
-            app:icon="@drawable/ic_home"
-            app:iconTint="#AAA49D" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnProducts"
-            style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="Sản phẩm"
-            android:textColor="#AAA49D"
-            app:icon="@drawable/ic_product"
-            app:iconTint="#AAA49D" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnCart"
-            style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="Giỏ hàng"
-            android:textColor="#AAA49D"
-            app:icon="@drawable/ic_cart"
-            app:iconTint="#AAA49D" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnNews"
-            style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="Tin tức"
-            android:textColor="#756E67"
-            app:backgroundTint="@color/bottom_nav_active"
-            app:icon="@drawable/ic_new"
-            app:iconTint="#756E67" />
-
-    </LinearLayout>
-
 </LinearLayout>
