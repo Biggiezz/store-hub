@@ -42,7 +42,7 @@ public class ShippingOrderDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_detail_shipping);
-        
+
         applySystemBarInsets();
 
         // Bind views
@@ -85,9 +85,9 @@ public class ShippingOrderDetailActivity extends AppCompatActivity {
         if (tvOrderDetailCode != null) {
             tvOrderDetailCode.setText("Mã đơn: " + order.getOrderCode());
         }
-        
+
         adapter.updateData(order.getItems());
-        
+
         long subtotal = 0;
         for (CartItem item : order.getItems()) {
             subtotal += item.getTotalItemPrice();
@@ -99,7 +99,7 @@ public class ShippingOrderDetailActivity extends AppCompatActivity {
         if (tvSubtotal != null) tvSubtotal.setText(formatPrice(subtotal));
         if (tvShippingFee != null) tvShippingFee.setText(formatPrice(shippingFee));
         if (tvTotal != null) tvTotal.setText(formatPrice(total));
-        
+
         TextView tvVoucher = findViewById(R.id.tvVoucher);
         if (tvVoucher != null) tvVoucher.setText("-" + formatPrice(0));
     }
@@ -117,7 +117,7 @@ public class ShippingOrderDetailActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     ArrayList<CartItem> items = response.body().getData();
                     adapter.updateData(items);
-                    
+
                     long subtotal = 0;
                     for (CartItem item : items) {
                         subtotal += item.getTotalItemPrice();
@@ -185,7 +185,7 @@ public class ShippingOrderDetailActivity extends AppCompatActivity {
                         reason = rb.getText().toString();
                     }
                 }
-                
+
                 String note = edtCancelNote != null ? edtCancelNote.getText().toString().trim() : "";
                 if (!note.isEmpty()) {
                     if (reason.isEmpty()) {
@@ -194,12 +194,12 @@ public class ShippingOrderDetailActivity extends AppCompatActivity {
                         reason += " - Ghi chú: " + note;
                     }
                 }
-                
+
                 if (reason.isEmpty()) {
                     Toast.makeText(this, "Vui lòng chọn hoặc nhập lý do hủy", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                
+
                 dialog.dismiss();
                 executeCancelOrder(order, reason);
             });

@@ -30,9 +30,9 @@ public class CompletedOrderDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_detail_completed);
-        
+
         applySystemBarInsets();
-        
+
         androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
         if (toolbar != null) {
             toolbar.setNavigationOnClickListener(v -> finish());
@@ -63,9 +63,9 @@ public class CompletedOrderDetailActivity extends AppCompatActivity {
         if (tvOrderDetailCode != null) {
             tvOrderDetailCode.setText("Mã đơn: " + order.getOrderCode());
         }
-        
+
         adapter.updateData(order.getItems());
-        
+
         long subtotal = 0;
         for (CartItem item : order.getItems()) {
             subtotal += item.getTotalItemPrice();
@@ -77,7 +77,7 @@ public class CompletedOrderDetailActivity extends AppCompatActivity {
         if (tvSubtotal != null) tvSubtotal.setText(formatPrice(subtotal));
         if (tvShippingFee != null) tvShippingFee.setText(formatPrice(shippingFee));
         if (tvTotal != null) tvTotal.setText(formatPrice(total));
-        
+
         TextView tvVoucher = findViewById(R.id.tvVoucher);
         if (tvVoucher != null) tvVoucher.setText("-" + formatPrice(0));
     }
