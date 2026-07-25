@@ -195,4 +195,40 @@
         <item name="android:drawableEnd">@drawable/ic_arrow_order</item>
     </style>
 
+    <style name="Widget.StoreHub.ReplySuggestion">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+
+        <item name="android:background">@drawable/bg_detail_section_warm</item>
+
+        <item name="android:paddingHorizontal">14dp</item>
+        <item name="android:paddingVertical">7dp</item>
+
+        <item name="android:textColor">#756E68</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="ReplySuggestionStyle" parent="Widget.StoreHub.ReplySuggestion" />
+
+    <style name="Widget.StoreHub.AdminOrderSummaryRow" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="Widget.StoreHub.AdminOrderSummaryLabel" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textColor">#666A66</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Widget.StoreHub.AdminOrderSummaryValue" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#303A35</item>
+        <item name="android:textSize">14sp</item>
+    </style>
 </resources>

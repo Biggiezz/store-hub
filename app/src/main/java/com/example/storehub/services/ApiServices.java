@@ -96,6 +96,24 @@ public interface ApiServices {
     @GET("api/oderRouter/get-orders")
     Call<Response<ArrayList<Order>>> getOrders();
 
+    @GET("api/oderRouter/admin/orders")
+    Call<Response<ArrayList<Order>>> getAdminOrders(
+            @Header("Authorization") String token
+    );
+
+    @GET("api/oderRouter/admin/orders/{id}")
+    Call<Response<Order>> getAdminOrderDetail(
+            @Header("Authorization") String token,
+            @Path("id") String orderId
+    );
+
+    @PUT("api/oderRouter/admin/orders/{id}/status")
+    Call<Response<Order>> updateAdminOrderStatus(
+            @Header("Authorization") String token,
+            @Path("id") String orderId,
+            @Body Order.UpdateStatusRequest request
+    );
+
     @POST("api/oderRouter/cancel-order")
     Call<Response<Order>> cancelOrder(@Body CancelOrderRequest request);
 
