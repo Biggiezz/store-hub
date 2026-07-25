@@ -182,12 +182,15 @@ public class EditProfileActivity extends BaseActivity {
         if (croppedImageUri != null) {
             // Multipart update
             File file = new File(croppedImageUri.getPath());
-            RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
+            
+            // Senior Tip: Sử dụng "image/jpeg" thay vì "image/*" để tránh lỗi mime-type trên Server
+            RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), file);
             MultipartBody.Part imagePart = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
 
-            RequestBody rbName = RequestBody.create(MediaType.parse("text/plain"), name);
-            RequestBody rbPhone = RequestBody.create(MediaType.parse("text/plain"), phone);
-            RequestBody rbAddress = RequestBody.create(MediaType.parse("text/plain"), address);
+            // Gửi dữ liệu text đơn giản
+            RequestBody rbName = RequestBody.create(MediaType.parse("multipart/form-data"), name);
+            RequestBody rbPhone = RequestBody.create(MediaType.parse("multipart/form-data"), phone);
+            RequestBody rbAddress = RequestBody.create(MediaType.parse("multipart/form-data"), address);
 
             call = httpResquest.callAPI().updateProfileMultipart(tokenHeader, rbName, rbPhone, rbAddress, imagePart);
         } else {
