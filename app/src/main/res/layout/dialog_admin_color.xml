@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:id="@+id/adminColorDialogContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <EditText
+            android:id="@+id/edtAdminColorName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tên màu"
+            android:singleLine="true" />
+
+        <EditText
+            android:id="@+id/edtAdminColorHex"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="Mã HEX"
+            android:singleLine="true" />
+
+        <View
+            android:id="@+id/viewAdminColorPreview"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_admin_color_preview" />
+
+        <TextView
+            android:id="@+id/tvAdminColorPaletteLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Chọn màu mẫu:"
+            android:textColor="#26342D"
+            android:textSize="14sp" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/adminColorPalette"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="12dp" />
+        </HorizontalScrollView>
+
+        <CheckBox
+            android:id="@+id/chkAdminDefaultColor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Đặt làm màu mặc định" />
+    </LinearLayout>
+</ScrollView>

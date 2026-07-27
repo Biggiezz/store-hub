@@ -3,15 +3,22 @@ package com.example.storehub.admin;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +28,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -36,10 +44,9 @@ import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -50,16 +57,24 @@ import retrofit2.Callback;
 public class ProductFormManagementActivity extends AppCompatActivity {
     private static final String EXTRA_PRODUCT_ID = "product_id";
     private static final MediaType TEXT = MediaType.get("text/plain; charset=utf-8");
+    private static final String[][] COLOR_PALETTE = {
+            {"Đen", "#000000"},
+            {"Trắng", "#FFFFFF"},
+            {"Xám", "#808080"},
+            {"Đỏ", "#FF0000"},
+            {"Xanh dương", "#0000FF"}
+    };
 
     private EditText nameInput, descriptionInput, stockInput, priceInput;
-    private TextView categoryValue, uploadPrompt;
+    private TextView formTitle, categoryValue, uploadPrompt;
     private ImageView selectedImage;
     private Button submitButton;
+    private View backButton, cancelButton, imagePickerLayout, categoryPickerLayout, addColorLayout;
     private String productId;
     private Uri selectedImageUri;
     private Call<Response<Product>> currentCall;
-    private android.widget.LinearLayout adminColorContainer;
-    private List<ProductColor> productColors = new java.util.ArrayList<>();
+    private LinearLayout adminColorContainer;
+    private final List<ProductColor> productColors = new ArrayList<>();
 
     private final ActivityResultLauncher<String> imagePicker = registerForActivityResult(
             new ActivityResultContracts.GetContent(), uri -> {
@@ -92,27 +107,16 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         });
 
         initUi();
+        initListener();
         productId = getIntent().getStringExtra(EXTRA_PRODUCT_ID);
         boolean editMode = productId != null && !productId.isBlank();
-        ((TextView) findViewById(R.id.tvProductFormTitle))
-                .setText(editMode ? "Chỉnh sửa sản phẩm" : "Thêm sản phẩm mới");
+        formTitle.setText(editMode ? "Chỉnh sửa sản phẩm" : "Thêm sản phẩm mới");
         submitButton.setText(editMode ? "Lưu sản phẩm" : "Thêm");
         ViewGroup.LayoutParams submitLayout = submitButton.getLayoutParams();
         submitLayout.width = dp(editMode ? 174 : 110);
         submitButton.setLayoutParams(submitLayout);
 
-        findViewById(R.id.btnBackProductForm).setOnClickListener(v -> finish());
-        findViewById(R.id.btnCancelProductForm).setOnClickListener(v -> finish());
-        findViewById(R.id.layoutAdminImagePicker).setOnClickListener(v -> imagePicker.launch("image/*"));
-        findViewById(R.id.layoutAdminCategoryPicker).setOnClickListener(this::showCategoryMenu);
-        findViewById(R.id.layoutAddColor).setOnClickListener(v -> showAddColorDialog());
-        submitButton.setOnClickListener(v -> submitProduct());
-
-        if (editMode) {
-            loadProductDetail();
-        } else {
-            initializeDefaultColors();
-        }
+        if (editMode) loadProductDetail();
     }
 
     private void initUi() {
@@ -120,11 +124,27 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         descriptionInput = findViewById(R.id.edtAdminProductDescription);
         stockInput = findViewById(R.id.edtAdminProductStock);
         priceInput = findViewById(R.id.edtAdminProductPrice);
+        formTitle = findViewById(R.id.tvProductFormTitle);
         categoryValue = findViewById(R.id.tvAdminCategoryValue);
         selectedImage = findViewById(R.id.ivAdminSelectedImage);
         uploadPrompt = findViewById(R.id.tvAdminUploadPrompt);
         submitButton = findViewById(R.id.btnSubmitProductForm);
         adminColorContainer = findViewById(R.id.adminColorContainer);
+        backButton = findViewById(R.id.btnBackProductForm);
+        cancelButton = findViewById(R.id.btnCancelProductForm);
+        imagePickerLayout = findViewById(R.id.layoutAdminImagePicker);
+        categoryPickerLayout = findViewById(R.id.layoutAdminCategoryPicker);
+        addColorLayout = findViewById(R.id.layoutAddColor);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+    private void initListener() {
+        backButton.setOnClickListener(v -> finish());
+        cancelButton.setOnClickListener(v -> finish());
+        imagePickerLayout.setOnClickListener(v -> imagePicker.launch("image/*"));
+        categoryPickerLayout.setOnClickListener(this::showCategoryMenu);
+        addColorLayout.setOnClickListener(v -> showColorDialog(null, -1));
+        submitButton.setOnClickListener(v -> submitProduct());
     }
 
     private void showCategoryMenu(View anchor) {
@@ -189,14 +209,25 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         String category = categoryValue.getText().toString().trim();
         boolean editMode = productId != null && !productId.isBlank();
 
-        if (name.isEmpty()) { nameInput.setError("Vui lòng nhập tên sản phẩm"); return; }
-        if (category.equals("Chọn danh mục")) {
-            Toast.makeText(this, "Vui lòng chọn danh mục", Toast.LENGTH_SHORT).show(); return;
+        if (name.isEmpty()) {
+            nameInput.setError("Vui lòng nhập tên sản phẩm");
+            return;
         }
-        if (stock.isEmpty()) { stockInput.setError("Vui lòng nhập tồn kho"); return; }
-        if (price.isEmpty() || "0".equals(price)) { priceInput.setError("Giá bán phải lớn hơn 0"); return; }
+        if (category.equals("Chọn danh mục")) {
+            Toast.makeText(this, "Vui lòng chọn danh mục", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (stock.isEmpty()) {
+            stockInput.setError("Vui lòng nhập tồn kho");
+            return;
+        }
+        if (price.isEmpty() || "0".equals(price)) {
+            priceInput.setError("Giá bán phải lớn hơn 0");
+            return;
+        }
         if (!editMode && selectedImageUri == null) {
-            Toast.makeText(this, "Vui lòng chọn hình ảnh sản phẩm", Toast.LENGTH_SHORT).show(); return;
+            Toast.makeText(this, "Vui lòng chọn hình ảnh sản phẩm", Toast.LENGTH_SHORT).show();
+            return;
         }
 
         MultipartBody.Part imagePart;
@@ -207,27 +238,15 @@ public class ProductFormManagementActivity extends AppCompatActivity {
             return;
         }
 
-        // Ensure at least one color is default before submitting
-        if (!productColors.isEmpty()) {
-            boolean hasDefault = false;
-            for (ProductColor c : productColors) {
-                if (c.isDefault()) {
-                    hasDefault = true;
-                    break;
-                }
-            }
-            if (!hasDefault) {
-                productColors.get(0).setDefault(true);
-            }
-        }
+        ensureDefaultColor();
         String colorsJson = new Gson().toJson(productColors);
         setLoading(true);
         HttpResquest request = new HttpResquest();
         currentCall = editMode
                 ? request.callAPI().updateProduct(productId, text(name), text(price), text(category),
-                        text(description), text(stock), text(colorsJson), imagePart)
+                text(description), text(stock), text(colorsJson), imagePart)
                 : request.callAPI().addProduct(text(name), text(price), text(category),
-                        text(description), text(stock), text(colorsJson), imagePart);
+                text(description), text(stock), text(colorsJson), imagePart);
         currentCall.enqueue(new Callback<Response<Product>>() {
             @Override
             public void onResponse(@NonNull Call<Response<Product>> call, @NonNull retrofit2.Response<Response<Product>> response) {
@@ -277,32 +296,14 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         return RequestBody.create(TEXT, value);
     }
 
-    private void initializeDefaultColors() {
-        String[][] values = {{"Đen", "#000000"}, {"Xám", "#E2E3E3"}, {"Trắng", "#FFFFFF"},
-                {"Xanh", "#354A40"}, {"Nâu", "#6D665E"}, {"Đỏ", "#D1160D"}};
-        productColors.clear();
-        for (int i = 0; i < values.length; i++) {
-            ProductColor color = new ProductColor();
-            color.setId(String.valueOf(i + 1));
-            color.setName(values[i][0]);
-            color.setHex(values[i][1]);
-            color.setDefault(i == 0);
-            productColors.add(color);
-        }
-        renderAdminColors();
-    }
-
     private void renderAdminColors() {
         adminColorContainer.removeAllViews();
-        if (productColors == null || productColors.isEmpty()) {
-            return;
-        }
         for (int i = 0; i < productColors.size(); i++) {
             final int index = i;
             ProductColor color = productColors.get(i);
-            
-            android.widget.FrameLayout frameLayout = new android.widget.FrameLayout(this);
-            android.widget.LinearLayout.LayoutParams params = new android.widget.LinearLayout.LayoutParams(
+
+            FrameLayout frameLayout = new FrameLayout(this);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     dp(44),
                     dp(44)
             );
@@ -311,38 +312,38 @@ public class ProductFormManagementActivity extends AppCompatActivity {
 
             // Outer border
             View borderView = new View(this);
-            android.widget.FrameLayout.LayoutParams borderParams = new android.widget.FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams borderParams = new FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT
             );
             borderView.setLayoutParams(borderParams);
-            
-            android.graphics.drawable.GradientDrawable outerDrawable = new android.graphics.drawable.GradientDrawable();
-            outerDrawable.setShape(android.graphics.drawable.GradientDrawable.OVAL);
-            outerDrawable.setColor(android.graphics.Color.TRANSPARENT);
+
+            GradientDrawable outerDrawable = new GradientDrawable();
+            outerDrawable.setShape(GradientDrawable.OVAL);
+            outerDrawable.setColor(Color.TRANSPARENT);
             if (color.isDefault()) {
-                outerDrawable.setStroke(dp(3), android.graphics.Color.parseColor("#172C22"));
+                outerDrawable.setStroke(dp(3), Color.parseColor("#172C22"));
             } else {
-                outerDrawable.setStroke(dp(1), android.graphics.Color.parseColor("#C3C5C3"));
+                outerDrawable.setStroke(dp(1), Color.parseColor("#C3C5C3"));
             }
             borderView.setBackground(outerDrawable);
             frameLayout.addView(borderView);
 
             // Inner circle
             View circleView = new View(this);
-            android.widget.FrameLayout.LayoutParams circleParams = new android.widget.FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams circleParams = new FrameLayout.LayoutParams(
                     dp(34),
                     dp(34)
             );
-            circleParams.gravity = android.view.Gravity.CENTER;
+            circleParams.gravity = Gravity.CENTER;
             circleView.setLayoutParams(circleParams);
-            
-            android.graphics.drawable.GradientDrawable innerDrawable = new android.graphics.drawable.GradientDrawable();
-            innerDrawable.setShape(android.graphics.drawable.GradientDrawable.OVAL);
+
+            GradientDrawable innerDrawable = new GradientDrawable();
+            innerDrawable.setShape(GradientDrawable.OVAL);
             int colorVal = parseColorSafely(color.getHex());
             innerDrawable.setColor(colorVal);
             if (isLightColor(colorVal)) {
-                innerDrawable.setStroke(dp(1), android.graphics.Color.parseColor("#DDDDDD"));
+                innerDrawable.setStroke(dp(1), Color.parseColor("#DDDDDD"));
             }
             circleView.setBackground(innerDrawable);
             frameLayout.addView(circleView);
@@ -359,7 +360,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
 
             // Long click to edit or delete
             frameLayout.setOnLongClickListener(v -> {
-                showEditColorDialog(color, index);
+                showColorDialog(color, index);
                 return true;
             });
 
@@ -369,337 +370,108 @@ public class ProductFormManagementActivity extends AppCompatActivity {
 
     private int parseColorSafely(String hex) {
         try {
-            if (hex == null || hex.isEmpty()) return android.graphics.Color.LTGRAY;
+            if (hex == null || hex.isEmpty()) return Color.LTGRAY;
             if (!hex.startsWith("#")) hex = "#" + hex;
-            return android.graphics.Color.parseColor(hex);
+            return Color.parseColor(hex);
         } catch (Exception e) {
-            return android.graphics.Color.LTGRAY;
+            return Color.LTGRAY;
         }
     }
 
     private boolean isLightColor(int color) {
-        double luminance = (0.299 * android.graphics.Color.red(color) + 0.587 * android.graphics.Color.green(color) + 0.114 * android.graphics.Color.blue(color)) / 255;
+        double luminance = (0.299 * Color.red(color) + 0.587 * Color.green(color)
+                + 0.114 * Color.blue(color)) / 255;
         return luminance > 0.85;
     }
 
-    private void showAddColorDialog() {
-        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
-        builder.setTitle("Thêm biến thể màu sắc");
+    private void showColorDialog(ProductColor color, int index) {
+        boolean editing = color != null;
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_admin_color, null);
+        EditText colorNameInput = dialogView.findViewById(R.id.edtAdminColorName);
+        EditText hexInput = dialogView.findViewById(R.id.edtAdminColorHex);
+        View preview = dialogView.findViewById(R.id.viewAdminColorPreview);
+        CheckBox defaultCheck = dialogView.findViewById(R.id.chkAdminDefaultColor);
+        colorNameInput.setFocusable(false);
+        hexInput.setFocusable(false);
+        setColor(preview, editing ? parseColorSafely(color.getHex()) : Color.LTGRAY);
+        if (editing) bindColorDialog(color, colorNameInput, hexInput, defaultCheck);
+        addColorPalette(colorNameInput, hexInput, preview, dialogView.findViewById(R.id.adminColorPalette));
 
-        android.widget.ScrollView scrollView = new android.widget.ScrollView(this);
-        android.widget.LinearLayout layout = new android.widget.LinearLayout(this);
-        layout.setOrientation(android.widget.LinearLayout.VERTICAL);
-        layout.setPadding(dp(20), dp(15), dp(20), dp(10));
-
-        final EditText nameInput = new EditText(this);
-        nameInput.setHint("Tên màu (Ví dụ: Vàng cát)");
-        nameInput.setSingleLine(true);
-        layout.addView(nameInput);
-
-        View space = new View(this);
-        space.setLayoutParams(new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(12)));
-        layout.addView(space);
-
-        final EditText hexInput = new EditText(this);
-        hexInput.setHint("Mã Hex (Ví dụ: #FFD700)");
-        hexInput.setSingleLine(true);
-        layout.addView(hexInput);
-
-        View space2 = new View(this);
-        space2.setLayoutParams(new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(12)));
-        layout.addView(space2);
-
-        // Color preview
-        final View colorPreview = new View(this);
-        android.widget.LinearLayout.LayoutParams previewParams = new android.widget.LinearLayout.LayoutParams(dp(50), dp(50));
-        previewParams.gravity = android.view.Gravity.CENTER_HORIZONTAL;
-        colorPreview.setLayoutParams(previewParams);
-        android.graphics.drawable.GradientDrawable previewDrawable = new android.graphics.drawable.GradientDrawable();
-        previewDrawable.setShape(android.graphics.drawable.GradientDrawable.OVAL);
-        previewDrawable.setColor(android.graphics.Color.LTGRAY);
-        previewDrawable.setStroke(dp(1), android.graphics.Color.parseColor("#CCCCCC"));
-        colorPreview.setBackground(previewDrawable);
-        layout.addView(colorPreview);
-
-        View space3 = new View(this);
-        space3.setLayoutParams(new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(12)));
-        layout.addView(space3);
-
-        // Button to open color picker dialog
-        Button pickColorBtn = new Button(this);
-        pickColorBtn.setText("🎨 Chọn từ bảng màu");
-        pickColorBtn.setAllCaps(false);
-        pickColorBtn.setOnClickListener(v -> {
-            new com.skydoves.colorpickerview.ColorPickerDialog.Builder(this)
-                    .setTitle("Chọn màu")
-                    .setPositiveButton("Chọn", (com.skydoves.colorpickerview.listeners.ColorEnvelopeListener) (envelope, fromUser) -> {
-                        String hex = "#" + envelope.getHexCode().substring(2);
-                        hexInput.setText(hex);
-                        nameInput.setText(guessColorName(envelope.getColor()));
-                        android.graphics.drawable.GradientDrawable bg = (android.graphics.drawable.GradientDrawable) colorPreview.getBackground();
-                        bg.setColor(envelope.getColor());
-                    })
-                    .setNegativeButton("Hủy", (dialogInterface, i) -> dialogInterface.dismiss())
-                    .attachAlphaSlideBar(false)
-                    .attachBrightnessSlideBar(true)
-                    .setBottomSpace(12)
-                    .show();
-        });
-        layout.addView(pickColorBtn);
-
-        View space4 = new View(this);
-        space4.setLayoutParams(new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(12)));
-        layout.addView(space4);
-
-        final android.widget.CheckBox defaultCheck = new android.widget.CheckBox(this);
-        defaultCheck.setText("Đặt làm màu mặc định");
-        layout.addView(defaultCheck);
-
-        View space5 = new View(this);
-        space5.setLayoutParams(new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(12)));
-        layout.addView(space5);
-
-        TextView presetLabel = new TextView(this);
-        presetLabel.setText("Chọn nhanh màu mẫu:");
-        presetLabel.setTextSize(14);
-        presetLabel.setTextColor(android.graphics.Color.GRAY);
-        layout.addView(presetLabel);
-
-        android.widget.HorizontalScrollView scrollPresets = new android.widget.HorizontalScrollView(this);
-        scrollPresets.setHorizontalScrollBarEnabled(false);
-        
-        android.widget.LinearLayout scrollContent = new android.widget.LinearLayout(this);
-        scrollContent.setOrientation(android.widget.LinearLayout.HORIZONTAL);
-        
-        String[][] presets = {
-            {"Đen", "#000000"}, {"Xám", "#E2E3E3"}, {"Trắng", "#FFFFFF"},
-            {"Xanh", "#354A40"}, {"Nâu", "#6D665E"}, {"Đỏ", "#D1160D"},
-            {"Vàng", "#FFD700"}, {"Hồng", "#FFC0CB"}, {"Tím", "#800080"}
-        };
-
-        for (String[] preset : presets) {
-            View swatch = new View(this);
-            android.widget.LinearLayout.LayoutParams swParams = new android.widget.LinearLayout.LayoutParams(dp(30), dp(30));
-            swParams.setMarginEnd(dp(8));
-            swatch.setLayoutParams(swParams);
-            
-            android.graphics.drawable.GradientDrawable swDrawable = new android.graphics.drawable.GradientDrawable();
-            swDrawable.setShape(android.graphics.drawable.GradientDrawable.OVAL);
-            int colVal = android.graphics.Color.parseColor(preset[1]);
-            swDrawable.setColor(colVal);
-            swDrawable.setStroke(dp(1), android.graphics.Color.parseColor("#CCCCCC"));
-            swatch.setBackground(swDrawable);
-            
-            swatch.setOnClickListener(v -> {
-                nameInput.setText(preset[0]);
-                hexInput.setText(preset[1]);
-                android.graphics.drawable.GradientDrawable bg = (android.graphics.drawable.GradientDrawable) colorPreview.getBackground();
-                bg.setColor(android.graphics.Color.parseColor(preset[1]));
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle(editing ? "Chỉnh sửa màu sắc" : "Thêm biến thể màu sắc")
+                .setView(dialogView)
+                .setPositiveButton(editing ? "Lưu" : "Thêm", (dialog, which) ->
+                        saveColor(color, colorNameInput, hexInput, defaultCheck, editing))
+                .setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss());
+        if (editing) {
+            builder.setNeutralButton("Xóa màu", (dialog, which) -> {
+                productColors.remove(index);
+                ensureDefaultColor();
+                renderAdminColors();
             });
-            scrollContent.addView(swatch);
         }
-        scrollPresets.addView(scrollContent);
-        layout.addView(scrollPresets);
-
-        scrollView.addView(layout);
-        builder.setView(scrollView);
-
-        builder.setPositiveButton("Thêm", (dialog, which) -> {
-            String name = nameInput.getText().toString().trim();
-            String hex = hexInput.getText().toString().trim();
-            
-            if (name.isEmpty() || hex.isEmpty()) {
-                Toast.makeText(this, "Vui lòng nhập đầy đủ tên và mã màu", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (!hex.startsWith("#")) {
-                hex = "#" + hex;
-            }
-            
-            ProductColor newColor = new ProductColor();
-            newColor.setId(String.valueOf(System.currentTimeMillis()));
-            newColor.setName(name);
-            newColor.setHex(hex);
-            newColor.setDefault(defaultCheck.isChecked());
-
-            if (defaultCheck.isChecked()) {
-                for (ProductColor c : productColors) {
-                    c.setDefault(false);
-                }
-            }
-            
-            productColors.add(newColor);
-            renderAdminColors();
-        });
-
-        builder.setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss());
         builder.show();
     }
 
-    private void showEditColorDialog(ProductColor color, int index) {
-        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
-        builder.setTitle("Chỉnh sửa màu sắc");
-
-        android.widget.ScrollView scrollView = new android.widget.ScrollView(this);
-        android.widget.LinearLayout layout = new android.widget.LinearLayout(this);
-        layout.setOrientation(android.widget.LinearLayout.VERTICAL);
-        layout.setPadding(dp(20), dp(15), dp(20), dp(10));
-
-        final EditText nameInput = new EditText(this);
-        nameInput.setHint("Tên màu");
+    private void bindColorDialog(ProductColor color, EditText nameInput,
+                                 EditText hexInput, CheckBox defaultCheck) {
         nameInput.setText(color.getName());
-        nameInput.setSingleLine(true);
-        layout.addView(nameInput);
-
-        View space = new View(this);
-        space.setLayoutParams(new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(12)));
-        layout.addView(space);
-
-        final EditText hexInput = new EditText(this);
-        hexInput.setHint("Mã Hex");
         hexInput.setText(color.getHex());
-        hexInput.setSingleLine(true);
-        layout.addView(hexInput);
-
-        View space2 = new View(this);
-        space2.setLayoutParams(new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(12)));
-        layout.addView(space2);
-
-        // Color preview (shows current color)
-        final View colorPreview = new View(this);
-        android.widget.LinearLayout.LayoutParams previewParams = new android.widget.LinearLayout.LayoutParams(dp(50), dp(50));
-        previewParams.gravity = android.view.Gravity.CENTER_HORIZONTAL;
-        colorPreview.setLayoutParams(previewParams);
-        android.graphics.drawable.GradientDrawable previewDrawable = new android.graphics.drawable.GradientDrawable();
-        previewDrawable.setShape(android.graphics.drawable.GradientDrawable.OVAL);
-        previewDrawable.setColor(parseColorSafely(color.getHex()));
-        previewDrawable.setStroke(dp(1), android.graphics.Color.parseColor("#CCCCCC"));
-        colorPreview.setBackground(previewDrawable);
-        layout.addView(colorPreview);
-
-        View space3 = new View(this);
-        space3.setLayoutParams(new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(12)));
-        layout.addView(space3);
-
-        // Button to open color picker dialog
-        Button pickColorBtn = new Button(this);
-        pickColorBtn.setText("🎨 Chọn từ bảng màu");
-        pickColorBtn.setAllCaps(false);
-        pickColorBtn.setOnClickListener(v -> {
-            new com.skydoves.colorpickerview.ColorPickerDialog.Builder(this)
-                    .setTitle("Chọn màu")
-                    .setPositiveButton("Chọn", (com.skydoves.colorpickerview.listeners.ColorEnvelopeListener) (envelope, fromUser) -> {
-                        String hex = "#" + envelope.getHexCode().substring(2);
-                        hexInput.setText(hex);
-                        nameInput.setText(guessColorName(envelope.getColor()));
-                        android.graphics.drawable.GradientDrawable bg = (android.graphics.drawable.GradientDrawable) colorPreview.getBackground();
-                        bg.setColor(envelope.getColor());
-                    })
-                    .setNegativeButton("Hủy", (dialogInterface, i) -> dialogInterface.dismiss())
-                    .attachAlphaSlideBar(false)
-                    .attachBrightnessSlideBar(true)
-                    .setBottomSpace(12)
-                    .show();
-        });
-        layout.addView(pickColorBtn);
-
-        View space4 = new View(this);
-        space4.setLayoutParams(new android.widget.LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(12)));
-        layout.addView(space4);
-
-        final android.widget.CheckBox defaultCheck = new android.widget.CheckBox(this);
-        defaultCheck.setText("Đặt làm màu mặc định");
         defaultCheck.setChecked(color.isDefault());
-        layout.addView(defaultCheck);
-
-        scrollView.addView(layout);
-        builder.setView(scrollView);
-
-        builder.setPositiveButton("Lưu", (dialog, which) -> {
-            String name = nameInput.getText().toString().trim();
-            String hex = hexInput.getText().toString().trim();
-            
-            if (name.isEmpty() || hex.isEmpty()) {
-                Toast.makeText(this, "Tên và mã màu không được bỏ trống", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (!hex.startsWith("#")) {
-                hex = "#" + hex;
-            }
-            
-            color.setName(name);
-            color.setHex(hex);
-            color.setDefault(defaultCheck.isChecked());
-
-            if (defaultCheck.isChecked()) {
-                for (int i = 0; i < productColors.size(); i++) {
-                    if (i != index) {
-                        productColors.get(i).setDefault(false);
-                    }
-                }
-            }
-            
-            renderAdminColors();
-        });
-
-        builder.setNeutralButton("Xóa màu", (dialog, which) -> {
-            productColors.remove(index);
-            boolean hasDefault = false;
-            for (ProductColor c : productColors) {
-                if (c.isDefault()) {
-                    hasDefault = true;
-                    break;
-                }
-            }
-            if (!hasDefault && !productColors.isEmpty()) {
-                productColors.get(0).setDefault(true);
-            }
-            renderAdminColors();
-        });
-
-        builder.setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss());
-        builder.show();
     }
 
-    private static final String[][] COLOR_NAME_TABLE = {
-            {"Đen", "#000000"}, {"Trắng", "#FFFFFF"},
-            {"Xám đậm", "#404040"}, {"Xám", "#808080"}, {"Xám nhạt", "#C0C0C0"},
-            {"Đỏ", "#FF0000"}, {"Đỏ đậm", "#8B0000"}, {"Đỏ tươi", "#DC143C"},
-            {"Cam", "#FF8C00"}, {"Cam nhạt", "#FFA500"},
-            {"Vàng", "#FFD700"}, {"Vàng nhạt", "#FFFF00"}, {"Vàng cát", "#F4C430"},
-            {"Xanh lá", "#00AA00"}, {"Xanh lá đậm", "#006400"}, {"Xanh lá nhạt", "#90EE90"},
-            {"Xanh rêu", "#556B2F"}, {"Xanh olive", "#808000"},
-            {"Xanh ngọc", "#00CED1"}, {"Xanh cyan", "#00FFFF"},
-            {"Xanh dương", "#0000FF"}, {"Xanh dương nhạt", "#4169E1"}, {"Xanh navy", "#000080"},
-            {"Xanh da trời", "#87CEEB"}, {"Xanh cobalt", "#0047AB"},
-            {"Tím", "#800080"}, {"Tím nhạt", "#9370DB"}, {"Tím đậm", "#4B0082"},
-            {"Hồng", "#FF69B4"}, {"Hồng nhạt", "#FFC0CB"}, {"Hồng đậm", "#C71585"},
-            {"Nâu", "#8B4513"}, {"Nâu nhạt", "#D2B48C"}, {"Nâu đậm", "#5C4033"},
-            {"Be", "#F5F5DC"}, {"Kem", "#FFFDD0"}, {"Bạc", "#C0C0C0"},
-            {"Vàng đồng", "#B87333"}, {"Vàng gold", "#FFD700"}, {"Xanh mint", "#98FF98"},
-            {"Xanh teal", "#008080"}, {"Đỏ san hô", "#FF7F50"}, {"Lavender", "#E6E6FA"}
-    };
-
-    private String guessColorName(int color) {
-        int r = android.graphics.Color.red(color);
-        int g = android.graphics.Color.green(color);
-        int b = android.graphics.Color.blue(color);
-
-        String bestName = "Tùy chỉnh";
-        double bestDist = Double.MAX_VALUE;
-
-        for (String[] entry : COLOR_NAME_TABLE) {
-            int ref = android.graphics.Color.parseColor(entry[1]);
-            int dr = r - android.graphics.Color.red(ref);
-            int dg = g - android.graphics.Color.green(ref);
-            int db = b - android.graphics.Color.blue(ref);
-            double dist = Math.sqrt(dr * dr + dg * dg + db * db);
-            if (dist < bestDist) {
-                bestDist = dist;
-                bestName = entry[0];
-            }
+    private void addColorPalette(EditText nameInput, EditText hexInput,
+                                 View preview, LinearLayout colors) {
+        for (String[] sample : COLOR_PALETTE) {
+            View item = LayoutInflater.from(this).inflate(
+                    R.layout.item_admin_color_palette, colors, false);
+            View swatch = item.findViewById(R.id.ivAdminPaletteSwatch);
+            TextView name = item.findViewById(R.id.tvAdminPaletteColorName);
+            setColor(swatch, Color.parseColor(sample[1]));
+            name.setText(sample[0]);
+            item.setContentDescription("Màu " + sample[0]);
+            item.setOnClickListener(v -> {
+                nameInput.setText(sample[0]);
+                hexInput.setText(sample[1]);
+                setColor(preview, Color.parseColor(sample[1]));
+            });
+            colors.addView(item);
         }
-        return bestName;
+    }
+
+    private void setColor(View view, int color) {
+        if (view.getBackground() instanceof GradientDrawable background) {
+            background.mutate();
+            background.setColor(color);
+        }
+    }
+
+    private void saveColor(ProductColor color, EditText nameInput, EditText hexInput,
+                           CheckBox defaultCheck, boolean editing) {
+        String name = nameInput.getText().toString().trim();
+        String hex = hexInput.getText().toString().trim();
+        if (name.isEmpty() || hex.isEmpty()) {
+            Toast.makeText(this, "Tên và mã màu không được bỏ trống", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        ProductColor target = editing ? color : new ProductColor();
+        if (!editing) target.setId(String.valueOf(System.currentTimeMillis()));
+        if (defaultCheck.isChecked()) {
+            for (ProductColor item : productColors) item.setDefault(false);
+        }
+        target.setName(name);
+        target.setHex(hex.startsWith("#") ? hex : "#" + hex);
+        target.setDefault(defaultCheck.isChecked());
+        if (!editing) productColors.add(target);
+        renderAdminColors();
+    }
+
+    private void ensureDefaultColor() {
+        for (ProductColor color : productColors) {
+            if (color.isDefault()) return;
+        }
+        if (!productColors.isEmpty()) productColors.get(0).setDefault(true);
     }
 
     private void setLoading(boolean loading) {
