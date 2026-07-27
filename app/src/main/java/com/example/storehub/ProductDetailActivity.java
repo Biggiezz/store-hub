@@ -52,6 +52,8 @@ public class ProductDetailActivity extends BaseActivity {
     private LinearLayout colorContainer;
     private ProgressBar progressBar;
     private MaterialButton btnAddToCart, btnEditProduct;
+    private RecyclerView rvProductReviews;
+    private ProductReviewAdapter reviewAdapter;
     private ApiServices apiService;
     private Call<Response<Product>> productCall;
     private Call<Response<Void>> cartCall;

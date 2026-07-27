@@ -64,7 +64,6 @@ public class EditProfileActivity extends BaseActivity {
                     if (resultUri != null) {
                         croppedImageUri = resultUri;
                         imgLargeAvatar.setImageURI(croppedImageUri);
-                        imgSmallAvatar.setImageURI(croppedImageUri);
                     }
                 } else if (result.getResultCode() == UCrop.RESULT_ERROR) {
                     final Throwable cropError = UCrop.getError(result.getData());
