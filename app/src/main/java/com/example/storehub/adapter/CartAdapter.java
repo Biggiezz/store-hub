@@ -61,10 +61,16 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         holder.tvProductName.setText(item.getProductName());
 
         if (!TextUtils.isEmpty(item.getColorName())) {
-            holder.tvVariant.setVisibility(View.VISIBLE);
+            holder.layoutVariant.setVisibility(View.VISIBLE);
             holder.tvVariant.setText("Màu: " + item.getColorName());
+            if (!TextUtils.isEmpty(item.getColorHex())) {
+                holder.viewColorPreview.setVisibility(View.VISIBLE);
+                holder.viewColorPreview.setBackground(createColorCircleDrawable(item.getColorHex()));
+            } else {
+                holder.viewColorPreview.setVisibility(View.GONE);
+            }
         } else {
-            holder.tvVariant.setVisibility(View.GONE);
+            holder.layoutVariant.setVisibility(View.GONE);
         }
 
         holder.tvProductPrice.setText(formatPrice(item.getTotalItemPrice()));
@@ -109,16 +115,45 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         return formatter.format(price);
     }
 
+    private android.graphics.drawable.GradientDrawable createColorCircleDrawable(String hexColor) {
+        android.graphics.drawable.GradientDrawable drawable = new android.graphics.drawable.GradientDrawable();
+        drawable.setShape(android.graphics.drawable.GradientDrawable.OVAL);
+        int color = parseColorSafely(hexColor);
+        drawable.setColor(color);
+        if (isLightColor(color)) {
+            drawable.setStroke(Math.round(1 * context.getResources().getDisplayMetrics().density), android.graphics.Color.parseColor("#DDDDDD"));
+        }
+        return drawable;
+    }
+
+    private int parseColorSafely(String color) {
+        try {
+            if (android.text.TextUtils.isEmpty(color)) return android.graphics.Color.TRANSPARENT;
+            if (!color.startsWith("#")) color = "#" + color;
+            return android.graphics.Color.parseColor(color);
+        } catch (Exception ignored) {
+            return android.graphics.Color.TRANSPARENT;
+        }
+    }
+
+    private boolean isLightColor(int color) {
+        double luminance = (0.299 * android.graphics.Color.red(color) + 0.587 * android.graphics.Color.green(color) + 0.114 * android.graphics.Color.blue(color)) / 255;
+        return luminance > 0.85;
+    }
+
     static class CartViewHolder extends RecyclerView.ViewHolder {
         ShapeableImageView ivProduct;
         TextView tvProductName, tvVariant, tvProductPrice, btnDecrease, tvQuantity, btnIncrease;
         ImageButton btnDelete;
+        View layoutVariant, viewColorPreview;
 
         public CartViewHolder(@NonNull View itemView) {
             super(itemView);
             ivProduct = itemView.findViewById(R.id.ivProduct);
             tvProductName = itemView.findViewById(R.id.tvProductName);
             tvVariant = itemView.findViewById(R.id.tvVariant);
+            layoutVariant = itemView.findViewById(R.id.layoutVariant);
+            viewColorPreview = itemView.findViewById(R.id.viewColorPreview);
             tvProductPrice = itemView.findViewById(R.id.tvProductPrice);
             btnDecrease = itemView.findViewById(R.id.btnDecrease);
             tvQuantity = itemView.findViewById(R.id.tvQuantity);

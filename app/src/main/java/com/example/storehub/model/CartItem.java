@@ -35,6 +35,9 @@ public class CartItem implements java.io.Serializable {
     @SerializedName("colorName")
     private String colorName;
 
+    @SerializedName("colorHex")
+    private String colorHex;
+
     // Giá sản phẩm tại giỏ hàng (kiểu Object hỗ trợ nhiều kiểu số/chuỗi)
     @SerializedName("price")
     private Object rawPrice;
@@ -98,6 +101,14 @@ public class CartItem implements java.io.Serializable {
         this.colorName = colorName;
     }
 
+    public String getColorHex() {
+        return colorHex != null ? colorHex : "";
+    }
+
+    public void setColorHex(String colorHex) {
+        this.colorHex = colorHex;
+    }
+
     public long getPrice() {
         if (rawPrice == null) return 0L;
         try {
@@ -145,9 +156,17 @@ public class CartItem implements java.io.Serializable {
             this.quantity = quantity;
         }
 
-        public Object getProductId() { return productId; }
-        public Object getColorId() { return colorId; }
-        public int getQuantity() { return quantity; }
+        public Object getProductId() {
+            return productId;
+        }
+
+        public Object getColorId() {
+            return colorId;
+        }
+
+        public int getQuantity() {
+            return quantity;
+        }
     }
 
     public static class UpdateQuantityRequest {
@@ -164,7 +183,12 @@ public class CartItem implements java.io.Serializable {
             this.quantity = quantity;
         }
 
-        public String getCartItemId() { return cartItemId; }
-        public int getQuantity() { return quantity; }
+        public String getCartItemId() {
+            return cartItemId;
+        }
+
+        public int getQuantity() {
+            return quantity;
+        }
     }
 }
