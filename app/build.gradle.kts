@@ -51,4 +51,9 @@ dependencies {
     annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
     // Chart
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    // Color Picker
+    implementation("com.github.skydoves:colorpickerview:2.3.0")
+
+    // uCrop
+    implementation(libs.ucrop)
 }

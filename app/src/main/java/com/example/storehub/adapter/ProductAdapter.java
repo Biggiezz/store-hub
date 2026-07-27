@@ -2,6 +2,7 @@ package com.example.storehub.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,7 +60,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, ProductDetailActivity.class);
-            intent.putExtra(ProductDetailActivity.EXTRA_PRODUCT_ID, product.get_id());
+            String pid = product.get_id();
+            if (pid == null || pid.isEmpty()) pid = product.getId();
+            Log.d("ProductAdapter", "Opening detail for ID: " + pid);
+            intent.putExtra(ProductDetailActivity.EXTRA_PRODUCT_ID, pid);
             context.startActivity(intent);
         });
     }

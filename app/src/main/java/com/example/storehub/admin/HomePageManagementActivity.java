@@ -5,21 +5,22 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.storehub.BaseActivity;
 import com.example.storehub.R;
 import com.example.storehub.admin.fragment.AdminHomeFragment;
 import com.example.storehub.admin.fragment.NewsFragmentManagement;
 import com.example.storehub.admin.fragment.ProductsFragmentManagement;
 import com.example.storehub.admin.fragment.StatsManagerFragment;
+import com.example.storehub.admin.fragment.UserManagementFragment;
 import com.google.android.material.button.MaterialButton;
 
-public class HomePageManagementActivity extends AppCompatActivity {
+public class HomePageManagementActivity extends BaseActivity {
 
     public static final String TAB_HOME = "home";
     public static final String TAB_PRODUCTS = "products";
@@ -36,12 +37,16 @@ public class HomePageManagementActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home_page_management);
-
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentAdminContainer, new PostManagementFragment())
+                    .commit();
+        }
 
         initUi();
         setUpListener();
@@ -89,6 +94,14 @@ public class HomePageManagementActivity extends AppCompatActivity {
                 showTab(TAB_NEWS, new NewsFragmentManagement());
             });
         }
+        if (btnUsers != null) {
+            btnUsers.setOnClickListener(v -> {
+                if (TAB_USERS.equals(currentTabTag)) {
+                    return;
+                }
+                showTab(TAB_USERS, new UserManagementFragment());
+            });
+        }
 
         if (btnStats != null) {
             btnStats.setOnClickListener(v -> {
@@ -114,8 +127,8 @@ public class HomePageManagementActivity extends AppCompatActivity {
         int activeContent = Color.parseColor("#756E67");
         int inactiveContent = Color.parseColor("#AAA49D");
 
-        MaterialButton[] buttons = {btnHome, btnProducts, btnNews, btnUsers, btnStats};
-        String[] tabs = {TAB_HOME, TAB_PRODUCTS, TAB_NEWS, TAB_USERS, TAB_STATS};
+        MaterialButton[] buttons = {btnHome, btnProducts, btnNews, btnStats, btnUsers};
+        String[] tabs = {TAB_HOME, TAB_PRODUCTS, TAB_NEWS, TAB_STATS, TAB_USERS};
         for (int i = 0; i < buttons.length; i++) {
             boolean isActive = tabs[i].equals(activeTab);
             buttons[i].setBackgroundTintList(ColorStateList.valueOf(

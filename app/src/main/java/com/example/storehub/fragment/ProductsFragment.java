@@ -85,7 +85,7 @@ public class ProductsFragment extends Fragment {
             toolbar.setNavigationOnClickListener(v -> ((MainActivity) requireActivity()).showHome());
             toolbar.setOnMenuItemClickListener(item -> {
                 if (item.getItemId() == R.id.action_receipt) {
-                    ((MainActivity) requireActivity()).showCart();
+                    ((MainActivity) requireActivity()).showOder();
                     return true;
                 }
                 return false;

@@ -13,7 +13,7 @@
         android:background="@color/background"
         app:menu="@menu/menu_product"
         app:navigationIcon="@drawable/ic_back"
-        app:title="Danh sách sản phẩm"
+        app:title="@string/product_list_title"
         app:titleCentered="true" />
 
     <androidx.core.widget.NestedScrollView
@@ -39,7 +39,7 @@
                     android:id="@+id/edtSearch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Tìm kiếm sản phẩm..."
+                    android:hint="@string/search_product_hint"
                     android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -65,7 +65,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
-                        android:text="Sắp xếp:"
+                        android:text="@string/sort_by"
                         android:textStyle="bold" />
 
                     <com.google.android.material.button.MaterialButton
@@ -74,7 +74,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="40dp"
                         android:layout_marginStart="12dp"
-                        android:text="Giá thấp đến cao" />
+                        android:text="@string/sort_price_asc" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnAZ"
@@ -82,7 +82,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="40dp"
                         android:layout_marginStart="8dp"
-                        android:text="A - Z" />
+                        android:text="@string/sort_a_z" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnZA"
@@ -90,7 +90,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="40dp"
                         android:layout_marginStart="8dp"
-                        android:text="Z - A" />
+                        android:text="@string/sort_z_a" />
                 </LinearLayout>
             </HorizontalScrollView>
 

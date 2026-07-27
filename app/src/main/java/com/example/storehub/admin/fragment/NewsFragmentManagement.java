@@ -105,8 +105,7 @@ public class NewsFragmentManagement extends Fragment implements PostAdapter.Post
 
         httpRequest.callAPI().getAdminListNews(authHeader, 1, 50).enqueue(new Callback<Response<ArrayList<News>>>() {
             @Override
-            public void onResponse(@NonNull Call<Response<ArrayList<News>>> call,
-                                   @NonNull retrofit2.Response<Response<ArrayList<News>>> response) {
+            public void onResponse(@NonNull Call<Response<ArrayList<News>>> call, @NonNull retrofit2.Response<Response<ArrayList<News>>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     newsList = response.body().getData();
                     filterByStatus(selectedStatus);
@@ -168,8 +167,7 @@ public class NewsFragmentManagement extends Fragment implements PostAdapter.Post
 
         httpRequest.callAPI().deleteAdminNews(authHeader, id).enqueue(new Callback<Response<Void>>() {
             @Override
-            public void onResponse(@NonNull Call<Response<Void>> call,
-                                   @NonNull retrofit2.Response<Response<Void>> response) {
+            public void onResponse(@NonNull Call<Response<Void>> call, @NonNull retrofit2.Response<Response<Void>> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(getContext(), "Đã xóa bài viết thành công", Toast.LENGTH_SHORT).show();
                     fetchPosts();
@@ -187,5 +185,18 @@ public class NewsFragmentManagement extends Fragment implements PostAdapter.Post
 
     @Override
     public void onItemClick(News news) {
+        if (getContext() == null || news == null) return;
+        Intent intent = new Intent(getContext(), com.example.storehub.NewsDetailActivity.class);
+        intent.putExtra("news_item", news);
+        intent.putExtra("is_admin", true);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onEditClick(News news) {
+        if (getContext() == null || news == null) return;
+        Intent intent = new Intent(getContext(), AddNewsManagementActivity.class);
+        intent.putExtra("edit_news", news);
+        startActivity(intent);
     }
 }

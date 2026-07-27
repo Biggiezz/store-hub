@@ -15,14 +15,24 @@
         android:theme="@style/Theme.StoreHub"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-        <activity android:name=".ShippingOrderDetailActivity" android:exported="false" />
-        <activity android:name=".CancelledOrderDetailActivity" android:exported="false" />
-        <activity android:name=".CompletedOrderDetailActivity" android:exported="false" />
+        <activity
+            android:name=".admin.ReplyReviewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".admin.ManagementReviewsActivity"
+            android:exported="false" />
         <activity
             android:name=".admin.HomePageManagementActivity"
             android:exported="false" />
         <activity
             android:name=".admin.ProductFormManagementActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".admin.AdminProductDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".admin.AddUserActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
@@ -73,11 +83,13 @@
             android:name=".admin.AdminOrdersActivity"
             android:exported="false" />
         <activity
-            android:name=".admin.AdminOrderDetailActivity"
-            android:exported="false" />
-        <activity
             android:name=".WriteReviewActivity"
             android:exported="false" />
+
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.StoreHub.UCrop" />
 
         <service
             android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"

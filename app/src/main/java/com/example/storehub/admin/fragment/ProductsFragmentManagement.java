@@ -1,5 +1,6 @@
 package com.example.storehub.admin.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -19,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.storehub.admin.AdminProductDetailActivity;
 import com.example.storehub.R;
 import com.example.storehub.admin.ProductFormManagementActivity;
 import com.example.storehub.admin.adapter.AdminProductAdapter;
@@ -39,16 +41,14 @@ public class ProductsFragmentManagement extends Fragment {
     private AdminProductAdapter adapter;
     private Call<Response<ArrayList<Product>>> currentCall;
     private EditText searchInput;
-    private TextView chipAll, chipPhone, chipComputer, chipHeadphone;
-    private TextView page1, page2, page3, lastPage;
+    private TextView chipAll, chipPhone, chipComputer, chipHeadphone, page1, page2, page3, lastPage;
     private int currentPage = 1;
     private int totalPages = 1;
     private String selectedCategory = "";
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_products_management, container, false);
     }
 
@@ -58,8 +58,13 @@ public class ProductsFragmentManagement extends Fragment {
         RecyclerView grid = view.findViewById(R.id.rvAdminProducts);
         grid.setLayoutManager(new GridLayoutManager(requireContext(), 2));
         grid.setNestedScrollingEnabled(false);
-        adapter = new AdminProductAdapter(product -> startActivity(
-                ProductFormManagementActivity.createEditIntent(requireContext(), product.getId())));
+        adapter = new AdminProductAdapter(product -> {
+            Intent intent = new Intent(requireContext(), AdminProductDetailActivity.class);
+            String pid = product.get_id();
+            if (pid == null || pid.isEmpty()) pid = product.getId();
+            intent.putExtra(AdminProductDetailActivity.EXTRA_PRODUCT_ID, pid);
+            startActivity(intent);
+        });
         grid.setAdapter(adapter);
 
         searchInput = view.findViewById(R.id.edtAdminProductSearch);
@@ -135,8 +140,7 @@ public class ProductsFragmentManagement extends Fragment {
                 : request.callAPI().searchProduct(currentPage, PAGE_SIZE, keyword, selectedCategory);
         currentCall.enqueue(new Callback<Response<ArrayList<Product>>>() {
             @Override
-            public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call,
-                                   @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
+            public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
                 if (!isAdded() || call.isCanceled()) return;
                 if (response.isSuccessful() && response.body() != null) {
                     adapter.submitList(response.body().getData());

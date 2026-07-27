@@ -22,9 +22,9 @@ import com.example.storehub.admin.adapter.AdminOrderAdapter;
 import com.example.storehub.model.Order;
 import com.example.storehub.model.Order.UpdateStatusRequest;
 import com.example.storehub.model.Response;
+import com.example.storehub.model.User;
 import com.example.storehub.services.ApiServices;
 import com.example.storehub.services.HttpResquest;
-import com.example.storehub.model.User;
 import com.example.storehub.utils.SharedPreferencesManager;
 
 import java.util.ArrayList;
@@ -89,6 +89,8 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
         }
 
         ordersCall = apiService.getAdminOrders(getAuthHeader());
+        // Passing null as userId retrieves all customer orders
+        ordersCall = apiService.getOrders(null);
         ordersCall.enqueue(new Callback<Response<ArrayList<Order>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<Order>>> call, @NonNull retrofit2.Response<Response<ArrayList<Order>>> response) {
@@ -103,7 +105,7 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
                         adapter.updateData(orderList);
                     }
                 } else {
-                    handleProtectedApiError(response.code(), "Không thể tải danh sách đơn hàng");
+                    Toast.makeText(AdminOrdersActivity.this, "Không thể tải danh sách đơn hàng", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -168,25 +170,25 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
         UpdateStatusRequest request = new UpdateStatusRequest(orderId, newStatus);
         apiService.updateAdminOrderStatus(getAuthHeader(), orderId, request)
                 .enqueue(new Callback<Response<Order>>() {
-            @Override
-            public void onResponse(@NonNull Call<Response<Order>> call,
-                                   @NonNull retrofit2.Response<Response<Order>> response) {
-                setLoading(false);
-                if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(AdminOrdersActivity.this, "Cập nhật trạng thái thành công!", Toast.LENGTH_SHORT).show();
-                    loadOrders(); // Refresh lists
-                } else {
-                    handleProtectedApiError(response.code(), "Cập nhật thất bại");
-                }
-            }
+                    @Override
+                    public void onResponse(@NonNull Call<Response<Order>> call,
+                                           @NonNull retrofit2.Response<Response<Order>> response) {
+                        setLoading(false);
+                        if (response.isSuccessful() && response.body() != null) {
+                            Toast.makeText(AdminOrdersActivity.this, "Cập nhật trạng thái thành công!", Toast.LENGTH_SHORT).show();
+                            loadOrders(); // Refresh lists
+                        } else {
+                            Toast.makeText(AdminOrdersActivity.this, "Cập nhật thất bại", Toast.LENGTH_SHORT).show();
+                        }
+                    }
 
-            @Override
-            public void onFailure(@NonNull Call<Response<Order>> call, @NonNull Throwable t) {
-                setLoading(false);
-                Log.e("AdminOrdersActivity", "Error updating status", t);
-                Toast.makeText(AdminOrdersActivity.this, "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
-            }
-        });
+                    @Override
+                    public void onFailure(@NonNull Call<Response<Order>> call, @NonNull Throwable t) {
+                        setLoading(false);
+                        Log.e("AdminOrdersActivity", "Error updating status", t);
+                        Toast.makeText(AdminOrdersActivity.this, "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private boolean hasAdminAccess() {
@@ -200,14 +202,6 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
 
     private String getAuthHeader() {
         return "Bearer " + preferencesManager.getToken();
-    }
-
-    private void handleProtectedApiError(int statusCode, String fallbackMessage) {
-        String message = statusCode == 401 || statusCode == 403
-                ? "Phiên đăng nhập không hợp lệ hoặc bạn không có quyền"
-                : fallbackMessage;
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-        if (statusCode == 401 || statusCode == 403) finish();
     }
 
     @Override

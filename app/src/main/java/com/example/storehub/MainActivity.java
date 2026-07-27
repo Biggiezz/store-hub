@@ -11,7 +11,6 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -29,7 +28,9 @@ import com.example.storehub.fragment.ProductsFragment;
 import com.example.storehub.model.News;
 import com.example.storehub.model.Product;
 import com.example.storehub.model.Response;
+import com.example.storehub.model.User;
 import com.example.storehub.services.HttpResquest;
+import com.example.storehub.utils.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
@@ -37,13 +38,14 @@ import java.util.ArrayList;
 import retrofit2.Call;
 import retrofit2.Callback;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     public static final String EXTRA_OPEN_TAB = "open_tab";
     public static final String TAB_HOME = "home";
     public static final String TAB_PRODUCTS = "products";
     public static final String TAB_NEWS = "news";
     public static final String TAB_CART = "cart";
+    public static final String TAB_ORDERS = "orders";
     private static final String STATE_TAB = "selected_tab";
     public static ArrayList<Product> preloadedProducts = null;
     public static boolean shouldOpenCartOnResume = false;
@@ -91,11 +93,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) openTab(savedInstanceState.getString(STATE_TAB, TAB_HOME));
         else handleRequestedTab(getIntent());
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+
     }
 
     private void initUi() {
@@ -161,9 +160,8 @@ public class MainActivity extends AppCompatActivity {
 
         btnHome.setOnClickListener(v -> showHome());
         btnProducts.setOnClickListener(v -> showProducts());
-        btnCart.setOnClickListener(v -> showOder());
+        btnCart.setOnClickListener(v -> showCart());
         btnNews.setOnClickListener(v -> showNews());
-
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -201,6 +199,7 @@ public class MainActivity extends AppCompatActivity {
     private void openTab(String tab) {
         if (TAB_PRODUCTS.equals(tab)) showProducts();
         else if (TAB_NEWS.equals(tab)) showNews();
+        else if (TAB_ORDERS.equals(tab)) showOder();
         else if (TAB_CART.equals(tab)) showCart();
         else if (TAB_HOME.equals(tab)) showHome();
     }
@@ -248,6 +247,10 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.fragmentContainer, new OderFragment(), "oder")
                 .commit();
         updateBottomNavigation(btnCart);
+        View bottomNav = findViewById(R.id.bottomNavigation);
+        if (bottomNav != null) {
+            bottomNav.setVisibility(View.GONE);
+        }
     }
 
     private void showNews() {
@@ -262,13 +265,20 @@ public class MainActivity extends AppCompatActivity {
         updateBottomNavigation(btnNews);
     }
 
+
+
     private void updateBottomNavigation(MaterialButton activeButton) {
+        View bottomNav = findViewById(R.id.bottomNavigation);
+        if (bottomNav != null) {
+            bottomNav.setVisibility(View.VISIBLE);
+        }
         int inactiveColor = ContextCompat.getColor(this, android.R.color.transparent);
         int activeColor = ContextCompat.getColor(this, R.color.bottom_nav_active);
         int inactiveContentColor = Color.parseColor("#AAA49D");
         int activeContentColor = Color.parseColor("#756E67");
 
         for (MaterialButton button : new MaterialButton[]{btnHome, btnProducts, btnCart, btnNews}) {
+            if (button == null) continue;
             boolean isActive = button == activeButton;
             button.setBackgroundTintList(ColorStateList.valueOf(isActive ? activeColor : inactiveColor));
             button.setTextColor(isActive ? activeContentColor : inactiveContentColor);
@@ -330,7 +340,7 @@ public class MainActivity extends AppCompatActivity {
         HttpResquest httpResquest = new HttpResquest();
         httpResquest.callAPI().getListProduct(1, 50, "").enqueue(new Callback<Response<ArrayList<Product>>>() {
             @Override
-            public void onResponse(Call<Response<ArrayList<Product>>> call, retrofit2.Response<Response<ArrayList<Product>>> response) {
+            public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Response<ArrayList<Product>> apiResponse = response.body();
                     if (apiResponse.getCode() == 200 && apiResponse.getData() != null) {
@@ -355,7 +365,7 @@ public class MainActivity extends AppCompatActivity {
         HttpResquest httpResquest = new HttpResquest();
         httpResquest.callAPI().getListNews(1, 5).enqueue(new Callback<Response<ArrayList<News>>>() {
             @Override
-            public void onResponse(Call<Response<ArrayList<News>>> call, retrofit2.Response<Response<ArrayList<News>>> response) {
+            public void onResponse(@NonNull Call<Response<ArrayList<News>>> call, @NonNull retrofit2.Response<Response<ArrayList<News>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Response<ArrayList<News>> apiResponse = response.body();
                     if (apiResponse.getCode() == 200 && apiResponse.getData() != null) {

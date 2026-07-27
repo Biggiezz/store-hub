@@ -10,13 +10,22 @@ public class SharedPreferencesManager {
     private static final String PREF_NAME = "store_hub_prefs";
     private static final String KEY_TOKEN = "auth_token";
     private static final String KEY_USER = "auth_user";
+    private static final String KEY_LANGUAGE = "app_language";
 
+    private static SharedPreferencesManager instance;
     private final SharedPreferences sharedPreferences;
     private final Gson gson;
 
     public SharedPreferencesManager(Context context) {
         this.sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         this.gson = new Gson();
+    }
+
+    public static synchronized SharedPreferencesManager getInstance(Context context) {
+        if (instance == null) {
+            instance = new SharedPreferencesManager(context.getApplicationContext());
+        }
+        return instance;
     }
 
     public void saveUserSession(String token, User user) {
@@ -51,8 +60,18 @@ public class SharedPreferencesManager {
         return getToken() != null;
     }
 
+    // Quản lý ngôn ngữ
+    public void setLanguage(String languageCode) {
+        sharedPreferences.edit().putString(KEY_LANGUAGE, languageCode).apply();
+    }
+
+    public String getLanguage() {
+        return sharedPreferences.getString(KEY_LANGUAGE, "vi"); // Mặc định là tiếng Việt
+    }
+
     // Đăng xuất (Xóa hết dữ liệu)
     public void logout() {
-        sharedPreferences.edit().clear().apply();
+        sharedPreferences.edit().remove(KEY_TOKEN).remove(KEY_USER).apply();
+        // Không xóa ngôn ngữ khi logout để giữ nguyên lựa chọn của user
     }
 }

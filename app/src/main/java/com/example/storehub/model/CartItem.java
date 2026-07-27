@@ -3,30 +3,46 @@ package com.example.storehub.model;
 import com.google.gson.annotations.SerializedName;
 
 public class CartItem implements java.io.Serializable {
+    // Mã MongoDB ID dạng chuỗi của CartItem
     @SerializedName("_id")
     private String mongoId;
 
+    // Mã ID định dạng chung (kiểu Object hỗ trợ String/Number)
     @SerializedName("id")
     private Object id;
 
+    // ID của sản phẩm
     @SerializedName("productId")
     private String productId;
 
+    // ID tham chiếu đến sản phẩm (phòng trường hợp Schema Server trả về dạng product)
+    @SerializedName("product")
+    private String productRefId;
+
+    // Tên của sản phẩm
     @SerializedName("productName")
     private String productName;
 
+    // Đường dẫn hình ảnh sản phẩm
     @SerializedName("productImage")
     private String productImage;
 
+    // ID của biến thể màu sắc đã chọn
     @SerializedName("colorId")
     private String colorId;
 
+    // Tên màu sắc của biến thể (ví dụ: Đen, Trắng)
     @SerializedName("colorName")
     private String colorName;
 
+    @SerializedName("colorHex")
+    private String colorHex;
+
+    // Giá sản phẩm tại giỏ hàng (kiểu Object hỗ trợ nhiều kiểu số/chuỗi)
     @SerializedName("price")
     private Object rawPrice;
 
+    // Số lượng đặt hàng (mặc định là 1)
     @SerializedName("quantity")
     private int quantity = 1;
 
@@ -40,7 +56,13 @@ public class CartItem implements java.io.Serializable {
     }
 
     public String getProductId() {
-        return productId != null ? productId : "";
+        if (productId != null && !productId.isEmpty()) {
+            return productId;
+        }
+        if (productRefId != null && !productRefId.isEmpty()) {
+            return productRefId;
+        }
+        return "";
     }
 
     public void setProductId(String productId) {
@@ -79,6 +101,14 @@ public class CartItem implements java.io.Serializable {
         this.colorName = colorName;
     }
 
+    public String getColorHex() {
+        return colorHex != null ? colorHex : "";
+    }
+
+    public void setColorHex(String colorHex) {
+        this.colorHex = colorHex;
+    }
+
     public long getPrice() {
         if (rawPrice == null) return 0L;
         try {
@@ -108,12 +138,15 @@ public class CartItem implements java.io.Serializable {
     }
 
     public static class AddToCartRequest {
+        // Mã ID sản phẩm thêm vào giỏ hàng
         @SerializedName("productId")
         private Object productId;
 
+        // Mã ID màu sắc đã chọn của sản phẩm
         @SerializedName("colorId")
         private Object colorId;
 
+        // Số lượng sản phẩm thêm mới
         @SerializedName("quantity")
         private int quantity;
 
@@ -123,15 +156,25 @@ public class CartItem implements java.io.Serializable {
             this.quantity = quantity;
         }
 
-        public Object getProductId() { return productId; }
-        public Object getColorId() { return colorId; }
-        public int getQuantity() { return quantity; }
+        public Object getProductId() {
+            return productId;
+        }
+
+        public Object getColorId() {
+            return colorId;
+        }
+
+        public int getQuantity() {
+            return quantity;
+        }
     }
 
     public static class UpdateQuantityRequest {
+        // Mã ID của CartItem cần cập nhật
         @SerializedName("cartItemId")
         private String cartItemId;
 
+        // Số lượng sản phẩm mới cập nhật
         @SerializedName("quantity")
         private int quantity;
 
@@ -140,7 +183,12 @@ public class CartItem implements java.io.Serializable {
             this.quantity = quantity;
         }
 
-        public String getCartItemId() { return cartItemId; }
-        public int getQuantity() { return quantity; }
+        public String getCartItemId() {
+            return cartItemId;
+        }
+
+        public int getQuantity() {
+            return quantity;
+        }
     }
 }

@@ -2,25 +2,24 @@ package com.example.storehub;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.storehub.model.News;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
+import com.example.storehub.utils.DateTimeUtils;
 
 /**
  * Activity displaying the detailed view of a News Article.
  * Receives the News object via intent extra.
  */
-public class NewsDetailActivity extends AppCompatActivity {
+public class NewsDetailActivity extends BaseActivity {
 
     private ImageView btnBack, ivDetailNewsImage;
     private TextView tvDetailNewsTitle, tvDetailNewsAuthor, tvDetailNewsTime, tvDetailNewsContent;
@@ -29,12 +28,24 @@ public class NewsDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_detail);
-
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.news_detail_layout), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
         initUi();
         setUpListener();
 
         // Lấy dữ liệu đối tượng News được truyền từ Adapter
         News news = (News) getIntent().getSerializableExtra("news_item");
+        boolean isAdmin = getIntent().getBooleanExtra("is_admin", false);
+
+        if (isAdmin) {
+            View shareSection = findViewById(R.id.layoutShareSection);
+            View bottomNav = findViewById(R.id.bottomNavigation);
+            if (shareSection != null) shareSection.setVisibility(View.GONE);
+            if (bottomNav != null) bottomNav.setVisibility(View.GONE);
+        }
 
         if (news != null) {
             displayNewsDetails(news);
@@ -58,7 +69,6 @@ public class NewsDetailActivity extends AppCompatActivity {
             btnBack.setOnClickListener(v -> finish());
         }
 
-        setupBottomNavigation();
         setupInteractionButtons();
     }
 
@@ -86,47 +96,7 @@ public class NewsDetailActivity extends AppCompatActivity {
      * Chuyển đổi chuỗi ISO Date từ Server sang định dạng dd/MM/yyyy HH:mm
      */
     private String formatDateString(String isoDateString) {
-        if (isoDateString == null || isoDateString.isEmpty()) {
-            return "";
-        }
-        try {
-            // Định dạng chuỗi gốc từ MongoDB (ví dụ: 2026-07-18T01:51:40.000Z)
-            SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
-            parser.setTimeZone(TimeZone.getTimeZone("UTC"));
-            Date date = parser.parse(isoDateString);
-
-            // Định dạng hiển thị mong muốn
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
-            formatter.setTimeZone(TimeZone.getDefault());
-
-            return formatter.format(date);
-        } catch (Exception e) {
-            try {
-                SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault());
-                parser.setTimeZone(TimeZone.getTimeZone("UTC"));
-                Date date = parser.parse(isoDateString);
-                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
-                formatter.setTimeZone(TimeZone.getDefault());
-                return formatter.format(date);
-            } catch (Exception ex) {
-                return isoDateString;
-            }
-        }
-    }
-
-    /**
-     * Cấu hình điều hướng cho thanh Bottom Navigation ở góc dưới màn hình chi tiết
-     */
-    private void setupBottomNavigation() {
-        findViewById(R.id.btnHome).setOnClickListener(v -> openMainTab(MainActivity.TAB_HOME));
-
-        findViewById(R.id.btnProducts).setOnClickListener(v -> openMainTab(MainActivity.TAB_PRODUCTS));
-
-        findViewById(R.id.btnCart).setOnClickListener(v -> {
-            Toast.makeText(this, "Chức năng Giỏ hàng đang được phát triển!", Toast.LENGTH_SHORT).show();
-        });
-
-        findViewById(R.id.btnNews).setOnClickListener(v -> openMainTab(MainActivity.TAB_NEWS));
+        return DateTimeUtils.formatISOToLocal(isoDateString, "dd/MM/yyyy HH:mm");
     }
 
     private void openMainTab(String tab) {

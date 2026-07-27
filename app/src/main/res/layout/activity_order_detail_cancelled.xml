@@ -17,7 +17,6 @@
         app:title="Chi tiết đơn hàng"
         app:titleTextColor="#1A2821" />
 
-    <include layout="@layout/include_order_detail_header" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -38,7 +37,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="168dp"
-                android:background="@drawable/bg_cancelled_status_figma"
+                android:background="@drawable/bg_detail_section_warm"
                 android:orientation="vertical"
                 android:padding="25dp">
 
@@ -74,6 +73,7 @@
                         android:gravity="center"
                         android:paddingHorizontal="14dp"
                         android:text="Đã hoàn tiền"
+                        android:textStyle="bold"
                         android:textColor="#675C53"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -95,13 +95,14 @@
                     android:background="#E5E7E4" />
 
                 <TextView
+                    android:id="@+id/tvCancelReason"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="18dp"
                     android:drawableStart="@drawable/ic_detail_clock"
                     android:drawablePadding="8dp"
                     android:text="Lý do hủy: Thay đổi ý định"
-                    android:textColor="#434844"
+                    android:textColor="#1B1C1A"
                     android:textSize="14sp" />
             </LinearLayout>
 
@@ -115,19 +116,35 @@
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvOrderProducts"
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                android:overScrollMode="never"
-                android:padding="8dp" />
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeColor="#ECE7DF"
+                app:strokeWidth="1dp"
+                app:cardBackgroundColor="#FFFFFF">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvOrderProducts"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:overScrollMode="never"
+                    android:padding="16dp" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <include
+                layout="@layout/include_detail_summary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginTop="40dp"
-                android:background="@drawable/bg_detail_primary_button"
+                android:background="@drawable/bg_button"
                 android:fontFamily="serif"
                 android:gravity="center"
                 android:text="Mua lại sản phẩm"

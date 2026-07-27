@@ -120,6 +120,7 @@ public class AdminOrderAdapter extends RecyclerView.Adapter<AdminOrderAdapter.Or
                 tvOrderStatus.setBackgroundResource(R.drawable.bg_timeline_active);
             }
 
+            // Click listener
             itemView.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onViewDetailsClick(order);

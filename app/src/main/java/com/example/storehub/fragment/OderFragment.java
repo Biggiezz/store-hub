@@ -1,5 +1,7 @@
 package com.example.storehub.fragment;
 
+import static com.example.storehub.R.drawable.ic_receipt;
+
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -15,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -23,14 +26,16 @@ import com.bumptech.glide.Glide;
 import com.example.storehub.CancelledOrderDetailActivity;
 import com.example.storehub.CompletedOrderDetailActivity;
 import com.example.storehub.MainActivity;
+import com.example.storehub.ProfileActivity;
 import com.example.storehub.R;
 import com.example.storehub.ShippingOrderDetailActivity;
-import com.example.storehub.model.CancelOrderRequest;
 import com.example.storehub.model.CartItem;
 import com.example.storehub.model.Order;
+import com.example.storehub.model.Order.CancelOrderRequest;
 import com.example.storehub.model.Response;
 import com.example.storehub.services.ApiServices;
 import com.example.storehub.services.HttpResquest;
+import com.example.storehub.utils.SharedPreferencesManager;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -53,11 +58,7 @@ public class OderFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(
-            @NonNull LayoutInflater inflater,
-            @Nullable ViewGroup container,
-            @Nullable Bundle savedInstanceState
-    ) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_oder, container, false);
     }
 
@@ -68,6 +69,25 @@ public class OderFragment extends Fragment {
         ordersContainer = view.findViewById(R.id.ordersContainer);
         progressBar = view.findViewById(R.id.progressBar);
         apiService = new HttpResquest().callAPI();
+
+        // Bind profile click
+        View btnProfile = view.findViewById(R.id.btnProfile);
+        if (btnProfile != null) {
+            btnProfile.setOnClickListener(v -> {
+                Intent intent = new Intent(requireContext(), ProfileActivity.class);
+                startActivity(intent);
+            });
+        }
+
+        // Bind back button
+        View btnBack = view.findViewById(R.id.btnBack);
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> {
+                if (getActivity() != null) {
+                    getActivity().getOnBackPressedDispatcher().onBackPressed();
+                }
+            });
+        }
 
         loadOrdersAndCart();
     }
@@ -99,7 +119,7 @@ public class OderFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     cartItems.addAll(response.body().getData());
                 }
-                
+
                 // 2. Lấy danh sách Đơn hàng thật từ Server
                 fetchRealOrders(cartItems);
             }
@@ -113,12 +133,13 @@ public class OderFragment extends Fragment {
     }
 
     private void fetchRealOrders(final ArrayList<CartItem> cartItems) {
-        ordersCall = apiService.getOrders();
+        SharedPreferencesManager prefManager = new SharedPreferencesManager(requireContext());
+        String userId = (prefManager.getUser() != null) ? prefManager.getUser().getId() : "";
+        ordersCall = apiService.getOrders(userId);
 
         ordersCall.enqueue(new Callback<Response<ArrayList<Order>>>() {
             @Override
-            public void onResponse(@NonNull Call<Response<ArrayList<Order>>> call,
-                                   @NonNull retrofit2.Response<Response<ArrayList<Order>>> response) {
+            public void onResponse(@NonNull Call<Response<ArrayList<Order>>> call, @NonNull retrofit2.Response<Response<ArrayList<Order>>> response) {
                 setLoading(false);
                 ArrayList<Order> orders = new ArrayList<>();
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
@@ -157,7 +178,7 @@ public class OderFragment extends Fragment {
 
             tvOrderCode.setText("#GIỎ-HÀNG-TẠM");
             tvOrderStatus.setText("Chưa đặt hàng");
-            tvOrderStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_receipt, 0, 0, 0);
+            tvOrderStatus.setCompoundDrawablesWithIntrinsicBounds(ic_receipt, 0, 0, 0);
             tvOrderStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.dark_green));
 
             CartItem firstItem = cartItems.get(0);
@@ -211,21 +232,21 @@ public class OderFragment extends Fragment {
             tvOrderCode.setText(order.getOrderCode());
 
             String status = order.getStatus();
-            if ("Đã hoàn thành".equalsIgnoreCase(status) || "completed".equalsIgnoreCase(status)) {
+            if ("Đã hoàn thành".equalsIgnoreCase(status) || "Đã giao hàng".equalsIgnoreCase(status) || "completed".equalsIgnoreCase(status)) {
                 tvOrderStatus.setText("Đã hoàn thành");
-                tvOrderStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_check, 0, 0, 0);
+                tvOrderStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_check_done, 0, 0, 0);
                 tvOrderStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.dark_green));
                 tvOrderStatus.setBackgroundResource(R.drawable.bg_order_status);
                 btnCancelOrder.setVisibility(View.GONE);
             } else if ("Đã hủy".equalsIgnoreCase(status) || "cancelled".equalsIgnoreCase(status) || "cancel".equalsIgnoreCase(status)) {
                 tvOrderStatus.setText("Đã hủy");
-                tvOrderStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_order_cancelled, 0, 0, 0);
+                tvOrderStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_reject, 0, 0, 0);
                 tvOrderStatus.setTextColor(Color.parseColor("#BA1A1A"));
                 tvOrderStatus.setBackgroundResource(R.drawable.bg_order_status_cancelled);
                 btnCancelOrder.setVisibility(View.GONE);
             } else {
-                tvOrderStatus.setText("Đang giao hàng");
-                tvOrderStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_order_shipping, 0, 0, 0);
+                tvOrderStatus.setText(status != null ? status : "Đang giao hàng");
+                tvOrderStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_car_waiting, 0, 0, 0);
                 tvOrderStatus.setTextColor(Color.parseColor("#625E58"));
                 tvOrderStatus.setBackgroundResource(R.drawable.bg_order_status);
                 btnCancelOrder.setVisibility(View.VISIBLE);
@@ -237,7 +258,7 @@ public class OderFragment extends Fragment {
             if (order.getItems() != null && !order.getItems().isEmpty()) {
                 CartItem firstItem = order.getItems().get(0);
                 tvProductName.setText(firstItem.getProductName());
-                
+
                 Glide.with(this)
                         .load(firstItem.getProductImage())
                         .placeholder(R.drawable.ic_product)
@@ -283,7 +304,7 @@ public class OderFragment extends Fragment {
 
     private void openOrderDetail(Order order) {
         Class<? extends AppCompatActivity> destination;
-        if ("Đã hoàn thành".equals(order.getStatus())) {
+        if ("Đã hoàn thành".equals(order.getStatus()) || "Đã giao hàng".equals(order.getStatus())) {
             destination = CompletedOrderDetailActivity.class;
         } else if ("Đã hủy".equals(order.getStatus())) {
             destination = CancelledOrderDetailActivity.class;
@@ -328,7 +349,7 @@ public class OderFragment extends Fragment {
                         reason = rb.getText().toString();
                     }
                 }
-                
+
                 String note = edtCancelNote != null ? edtCancelNote.getText().toString().trim() : "";
                 if (!note.isEmpty()) {
                     if (reason.isEmpty()) {
@@ -337,12 +358,12 @@ public class OderFragment extends Fragment {
                         reason += " - Ghi chú: " + note;
                     }
                 }
-                
+
                 if (reason.isEmpty()) {
                     Toast.makeText(requireContext(), "Vui lòng chọn hoặc nhập lý do hủy", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                
+
                 dialog.dismiss();
                 executeCancelOrder(order, reason);
             });
@@ -356,8 +377,7 @@ public class OderFragment extends Fragment {
         CancelOrderRequest request = new CancelOrderRequest(order.getOrderId(), reason);
         apiService.cancelOrder(request).enqueue(new Callback<Response<Order>>() {
             @Override
-            public void onResponse(@NonNull Call<Response<Order>> call,
-                                   @NonNull retrofit2.Response<Response<Order>> response) {
+            public void onResponse(@NonNull Call<Response<Order>> call, @NonNull retrofit2.Response<Response<Order>> response) {
                 setLoading(false);
                 if (response.isSuccessful()) {
                     Toast.makeText(requireContext(), "Đã hủy đơn hàng thành công!", Toast.LENGTH_SHORT).show();
@@ -377,7 +397,7 @@ public class OderFragment extends Fragment {
 
     private void showClearCartConfirmDialog() {
         if (getActivity() == null || !isAdded()) return;
-        new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+        new AlertDialog.Builder(requireContext())
                 .setTitle("Xác nhận xóa")
                 .setMessage("Bạn có chắc chắn muốn xóa tất cả sản phẩm trong giỏ hàng tạm không?")
                 .setPositiveButton("Xóa", (dialog, which) -> executeClearCart())
@@ -389,8 +409,7 @@ public class OderFragment extends Fragment {
         setLoading(true);
         apiService.clearCart().enqueue(new Callback<Response<Object>>() {
             @Override
-            public void onResponse(@NonNull Call<Response<Object>> call,
-                                   @NonNull retrofit2.Response<Response<Object>> response) {
+            public void onResponse(@NonNull Call<Response<Object>> call, @NonNull retrofit2.Response<Response<Object>> response) {
                 setLoading(false);
                 if (response.isSuccessful()) {
                     Toast.makeText(requireContext(), "Đã xóa giỏ hàng tạm!", Toast.LENGTH_SHORT).show();
@@ -410,15 +429,16 @@ public class OderFragment extends Fragment {
 
     private void createOrderFromTempCart() {
         setLoading(true);
-        apiService.createOrder().enqueue(new Callback<Response<Order>>() {
+        SharedPreferencesManager prefManager = new SharedPreferencesManager(requireContext());
+        String userId = (prefManager.getUser() != null) ? prefManager.getUser().getId() : "";
+        apiService.createOrder(userId).enqueue(new Callback<Response<Order>>() {
             @Override
-            public void onResponse(@NonNull Call<Response<Order>> call,
-                                   @NonNull retrofit2.Response<Response<Order>> response) {
+            public void onResponse(@NonNull Call<Response<Order>> call, @NonNull retrofit2.Response<Response<Order>> response) {
                 setLoading(false);
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     Order createdOrder = response.body().getData();
                     Toast.makeText(requireContext(), "Đặt hàng thành công!", Toast.LENGTH_SHORT).show();
-                    
+
                     Intent intent = new Intent(requireContext(), com.example.storehub.ShippingOrderDetailActivity.class);
                     intent.putExtra("order_data", createdOrder);
                     startActivity(intent);
