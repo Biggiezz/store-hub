@@ -26,6 +26,18 @@ public class Order implements Serializable {
     @SerializedName("createdAt")
     private String createdAt;
 
+    @SerializedName("receiverName")
+    private String recipientName;
+
+    @SerializedName("receiverPhone")
+    private String recipientPhone;
+
+    @SerializedName("deliveryAddress")
+    private String recipientAddress;
+
+    @SerializedName("cancelReason")
+    private String cancelReason;
+
     public Order() {
         items = new ArrayList<>();
     }
@@ -84,5 +96,34 @@ public class Order implements Serializable {
 
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getRecipientName() {
+        return recipientName != null ? recipientName : "";
+    }
+
+    public String getRecipientPhone() {
+        return recipientPhone != null ? recipientPhone : "";
+    }
+
+    public String getRecipientAddress() {
+        return recipientAddress != null ? recipientAddress : "";
+    }
+
+    public String getCancelReason() {
+        return cancelReason != null ? cancelReason : "";
+    }
+
+    public static class UpdateStatusRequest {
+        @SerializedName("orderId")
+        private final String orderId;
+
+        @SerializedName("status")
+        private final String status;
+
+        public UpdateStatusRequest(String orderId, String status) {
+            this.orderId = orderId;
+            this.status = status;
+        }
     }
 }

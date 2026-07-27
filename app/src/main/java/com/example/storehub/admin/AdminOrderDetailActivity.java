@@ -10,13 +10,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.storehub.BaseActivity;
 import com.example.storehub.R;
 import com.example.storehub.adapter.OrderProductAdapter;
 import com.example.storehub.model.CartItem;
@@ -25,17 +25,19 @@ import com.example.storehub.model.Response;
 import com.example.storehub.model.User;
 import com.example.storehub.services.ApiServices;
 import com.example.storehub.services.HttpResquest;
-import com.example.storehub.utils.DateTimeUtils;
 import com.example.storehub.utils.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
 
 import java.text.NumberFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 
-public class AdminOrderDetailActivity extends BaseActivity {
+public class AdminOrderDetailActivity extends AppCompatActivity {
     private static final String EXTRA_ORDER_ID = "admin_order_id";
 
     private final String[] statusOptions = {
@@ -76,7 +78,7 @@ public class AdminOrderDetailActivity extends BaseActivity {
                     return insets;
                 });
 
-        preferencesManager = SharedPreferencesManager.getInstance(this);
+        preferencesManager = new SharedPreferencesManager(this);
         if (!hasAdminAccess()) {
             Toast.makeText(this, "Bạn không có quyền xem đơn hàng này", Toast.LENGTH_SHORT).show();
             finish();
@@ -153,8 +155,7 @@ public class AdminOrderDetailActivity extends BaseActivity {
         orderCodeView.setText(order.getOrderCode().isEmpty()
                 ? "Đơn hàng"
                 : order.getOrderCode());
-        createdAtView.setText("Ngày đặt: " +
-                DateTimeUtils.formatISOToVN(order.getCreatedAt(), "HH:mm, dd/MM/yyyy"));
+        createdAtView.setText("Ngày đặt: " + formatDate(order.getCreatedAt()));
 
         String status = order.getStatus();
         statusView.setText(status);
@@ -280,6 +281,16 @@ public class AdminOrderDetailActivity extends BaseActivity {
     private String formatPrice(long value) {
         return NumberFormat.getNumberInstance(new Locale("vi", "VN"))
                 .format(value) + "đ";
+    }
+
+    private String formatDate(String value) {
+        try {
+            return DateTimeFormatter.ofPattern("HH:mm, dd/MM/yyyy")
+                    .withZone(ZoneId.of("Asia/Ho_Chi_Minh"))
+                    .format(Instant.parse(value));
+        } catch (Exception ignored) {
+            return value;
+        }
     }
 
     @Override

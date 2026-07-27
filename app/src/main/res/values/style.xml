@@ -195,7 +195,7 @@
         <item name="android:drawableEnd">@drawable/ic_arrow_order</item>
     </style>
 
-    <style name="Widget.StoreHub.ReplySuggestion">
+    <style name="Widget.StoreHub.ReplySuggestion" parent="">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
 

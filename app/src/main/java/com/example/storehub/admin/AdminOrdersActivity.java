@@ -70,7 +70,7 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
         rvAdminOrders.setAdapter(adapter);
 
         apiService = new HttpResquest().callAPI();
-        preferencesManager = SharedPreferencesManager.getInstance(this);
+        preferencesManager = new SharedPreferencesManager(this);
 
         if (!hasAdminAccess()) {
             Toast.makeText(this, "Bạn không có quyền quản lý đơn hàng", Toast.LENGTH_SHORT).show();
@@ -119,8 +119,8 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
 
     @Override
     public void onViewDetailsClick(Order order) {
-        if (order == null || order.getId().isEmpty()) return;
-        Intent intent = AdminOrderDetailActivity.createIntent(this, order.getId());
+        if (order == null || order.getOrderId().isEmpty()) return;
+        Intent intent = AdminOrderDetailActivity.createIntent(this, order.getOrderId());
         startActivity(intent);
     }
 
@@ -132,7 +132,7 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
 
     @Override
     public void onUpdateStatusClick(Order order) {
-        if (order == null || order.getId() == null) return;
+        if (order == null || order.getOrderId().isEmpty()) return;
 
         final String[] statusOptions = {"Đã xác nhận", "Đã rời kho", "Đang giao hàng", "Đã giao hàng"};
 
@@ -155,7 +155,7 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
         builder.setPositiveButton("Cập nhật", (dialog, which) -> {
             if (selectedIndex[0] >= 0 && selectedIndex[0] < statusOptions.length) {
                 String newStatus = statusOptions[selectedIndex[0]];
-                updateStatus(order.getId(), newStatus);
+                updateStatus(order.getOrderId(), newStatus);
             }
         });
 
