@@ -29,6 +29,17 @@
     <string name="all">Tất cả</string>
     <string name="search_product_hint">Tìm kiếm sản phẩm...</string>
     <string name="add_product">Thêm sản phẩm</string>
+    <string name="product_detail">Chi tiết sản phẩm</string>
+    <string name="product_status">Trạng thái kinh doanh</string>
+    <string name="status_active">Đang bán</string>
+    <string name="status_inactive">Ngừng bán</string>
+    <string name="stock_label">Tồn kho:</string>
+    <string name="sold_label">Đã bán:</string>
+    <string name="description_label">MÔ TẢ</string>
+    <string name="colors_label">MÀU SẮC</string>
+    <string name="edit_product">Sửa sản phẩm</string>
+    <string name="rating_format">%1$.1f (%2$d đánh giá)</string>
+    <string name="price_format">%sđ</string>
     <string name="admin_stats_title">Quản trị Thống kê</string>
     <string name="revenue_chart">Biểu đồ doanh thu</string>
     <string name="top_products">Sản phẩm bán chạy</string>

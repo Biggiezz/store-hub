@@ -1,12 +1,18 @@
 package com.example.storehub;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -16,9 +22,18 @@ import com.example.storehub.model.User;
 import com.example.storehub.services.HttpResquest;
 import com.example.storehub.utils.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
+import com.yalantis.ucrop.UCrop;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -30,6 +45,35 @@ public class EditProfileActivity extends BaseActivity {
     private MaterialButton btnSaveChanges;
     private SharedPreferencesManager sharedPreferencesManager;
     private User currentUser;
+    private Uri croppedImageUri;
+
+    private final ActivityResultLauncher<String> imagePickerLauncher = registerForActivityResult(
+            new ActivityResultContracts.GetContent(),
+            uri -> {
+                if (uri != null) {
+                    startCrop(uri);
+                }
+            }
+    );
+
+    private final ActivityResultLauncher<Intent> cropResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    final Uri resultUri = UCrop.getOutput(result.getData());
+                    if (resultUri != null) {
+                        croppedImageUri = resultUri;
+                        imgLargeAvatar.setImageURI(croppedImageUri);
+                        imgSmallAvatar.setImageURI(croppedImageUri);
+                    }
+                } else if (result.getResultCode() == UCrop.RESULT_ERROR) {
+                    final Throwable cropError = UCrop.getError(result.getData());
+                    if (cropError != null) {
+                        Toast.makeText(this, cropError.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,10 +120,33 @@ public class EditProfileActivity extends BaseActivity {
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
 
         findViewById(R.id.btnChangeAvatarPhoto).setOnClickListener(v -> {
-            Toast.makeText(this, "Chức năng thay đổi ảnh đại diện (Đang phát triển)", Toast.LENGTH_SHORT).show();
+            imagePickerLauncher.launch("image/*");
         });
 
         btnSaveChanges.setOnClickListener(v -> saveProfileChanges());
+    }
+
+    private void startCrop(@NonNull Uri uri) {
+        String destinationFileName = "avatar_" + UUID.randomUUID().toString() + ".jpg";
+        UCrop.Options options = new UCrop.Options();
+        options.setCircleDimmedLayer(true);
+        options.setShowCropGrid(false);
+        options.setToolbarTitle("Cắt ảnh đại diện");
+        options.setCompressionFormat(android.graphics.Bitmap.CompressFormat.JPEG);
+        options.setCompressionQuality(90);
+        options.setToolbarColor(ContextCompat.getColor(this, R.color.dark_green));
+        options.setStatusBarColor(ContextCompat.getColor(this, R.color.dark_green));
+        options.setToolbarWidgetColor(ContextCompat.getColor(this, R.color.white));
+
+        Uri destinationUri = Uri.fromFile(new File(getCacheDir(), destinationFileName));
+
+        Intent cropIntent = UCrop.of(uri, destinationUri)
+                .withAspectRatio(1, 1)
+                .withMaxResultSize(1000, 1000)
+                .withOptions(options)
+                .getIntent(this);
+
+        cropResultLauncher.launch(cropIntent);
     }
 
     private void saveProfileChanges() {
@@ -92,15 +159,34 @@ public class EditProfileActivity extends BaseActivity {
             return;
         }
 
-        Map<String, String> body = new HashMap<>();
-        body.put("name", name);
-        body.put("phone", phone);
-        body.put("address", address);
-
         String tokenHeader = "Bearer " + sharedPreferencesManager.getToken();
-
         HttpResquest httpResquest = new HttpResquest();
-        httpResquest.callAPI().updateProfile(tokenHeader, body).enqueue(new Callback<Response<User>>() {
+        Call<Response<User>> call;
+
+        if (croppedImageUri != null) {
+            // Multipart update
+            File file = new File(croppedImageUri.getPath());
+
+            // Senior Tip: Sử dụng "image/jpeg" thay vì "image/*" để tránh lỗi mime-type trên Server
+            RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), file);
+            MultipartBody.Part imagePart = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
+
+            // Gửi dữ liệu text đơn giản
+            RequestBody rbName = RequestBody.create(MediaType.parse("multipart/form-data"), name);
+            RequestBody rbPhone = RequestBody.create(MediaType.parse("multipart/form-data"), phone);
+            RequestBody rbAddress = RequestBody.create(MediaType.parse("multipart/form-data"), address);
+
+            call = httpResquest.callAPI().updateProfileMultipart(tokenHeader, rbName, rbPhone, rbAddress, imagePart);
+        } else {
+            // Standard update
+            Map<String, String> body = new HashMap<>();
+            body.put("name", name);
+            body.put("phone", phone);
+            body.put("address", address);
+            call = httpResquest.callAPI().updateProfile(tokenHeader, body);
+        }
+
+        call.enqueue(new Callback<Response<User>>() {
             @Override
             public void onResponse(@NonNull Call<Response<User>> call, @NonNull retrofit2.Response<Response<User>> response) {
                 if (response.isSuccessful() && response.body() != null) {

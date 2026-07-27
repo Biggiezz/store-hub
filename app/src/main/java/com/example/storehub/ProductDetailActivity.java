@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -27,6 +28,9 @@ import com.example.storehub.model.CartItem;
 import com.example.storehub.model.Product;
 import com.example.storehub.model.Product.ProductColor;
 import com.example.storehub.model.Response;
+import com.example.storehub.model.User;
+import com.example.storehub.admin.ProductFormManagementActivity;
+import com.example.storehub.utils.SharedPreferencesManager;
 import com.example.storehub.services.ApiServices;
 import com.example.storehub.services.HttpResquest;
 import com.google.android.material.button.MaterialButton;
@@ -47,9 +51,7 @@ public class ProductDetailActivity extends BaseActivity {
     private RatingBar ratingProduct;
     private LinearLayout colorContainer;
     private ProgressBar progressBar;
-    private MaterialButton btnAddToCart;
-    private RecyclerView rvProductReviews;
-    private ProductReviewAdapter reviewAdapter;
+    private MaterialButton btnAddToCart, btnEditProduct;
     private ApiServices apiService;
     private Call<Response<Product>> productCall;
     private Call<Response<Void>> cartCall;
@@ -75,9 +77,11 @@ public class ProductDetailActivity extends BaseActivity {
         if (getIntent() != null && getIntent().hasExtra(EXTRA_PRODUCT_ID)) {
             Object extra = getIntent().getExtras().get(EXTRA_PRODUCT_ID);
             productId = extra != null ? String.valueOf(extra) : "";
+            Log.d("ProductDetail", "Received Product ID: " + productId);
         }
 
         if (TextUtils.isEmpty(productId) || "null".equalsIgnoreCase(productId)) {
+            Log.e("ProductDetail", "Invalid Product ID: " + productId);
             Toast.makeText(this, "Mã sản phẩm không hợp lệ", Toast.LENGTH_SHORT).show();
             finish();
             return;
@@ -113,10 +117,30 @@ public class ProductDetailActivity extends BaseActivity {
         rvProductReviews.setLayoutManager(new LinearLayoutManager(this));
         reviewAdapter = new ProductReviewAdapter(this);
         rvProductReviews.setAdapter(reviewAdapter);
+        btnEditProduct = findViewById(R.id.btnEditProduct);
+
+        checkAdminRole();
+    }
+
+    private void checkAdminRole() {
+        User user = SharedPreferencesManager.getInstance(this).getUser();
+        if (user != null && "admin".equalsIgnoreCase(user.getRole())) {
+            btnEditProduct.setVisibility(View.VISIBLE);
+        } else {
+            btnEditProduct.setVisibility(View.GONE);
+        }
     }
 
     private void setUpListener() {
         btnBack.setOnClickListener(view -> finish());
+
+        btnEditProduct.setOnClickListener(v -> {
+            if (currentProduct != null) {
+                String pid = currentProduct.get_id();
+                if (pid == null || pid.isEmpty()) pid = currentProduct.getId();
+                startActivity(ProductFormManagementActivity.createEditIntent(this, pid));
+            }
+        });
 
         tvError.setOnClickListener(view -> loadProduct());
 

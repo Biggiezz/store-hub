@@ -1,5 +1,6 @@
 package com.example.storehub.admin.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -19,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.storehub.admin.AdminProductDetailActivity;
 import com.example.storehub.R;
 import com.example.storehub.admin.ProductFormManagementActivity;
 import com.example.storehub.admin.adapter.AdminProductAdapter;
@@ -56,8 +58,13 @@ public class ProductsFragmentManagement extends Fragment {
         RecyclerView grid = view.findViewById(R.id.rvAdminProducts);
         grid.setLayoutManager(new GridLayoutManager(requireContext(), 2));
         grid.setNestedScrollingEnabled(false);
-        adapter = new AdminProductAdapter(product -> startActivity(
-                ProductFormManagementActivity.createEditIntent(requireContext(), product.getId())));
+        adapter = new AdminProductAdapter(product -> {
+            Intent intent = new Intent(requireContext(), AdminProductDetailActivity.class);
+            String pid = product.get_id();
+            if (pid == null || pid.isEmpty()) pid = product.getId();
+            intent.putExtra(AdminProductDetailActivity.EXTRA_PRODUCT_ID, pid);
+            startActivity(intent);
+        });
         grid.setAdapter(adapter);
 
         searchInput = view.findViewById(R.id.edtAdminProductSearch);
