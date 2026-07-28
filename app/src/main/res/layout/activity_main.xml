@@ -128,55 +128,23 @@
                     </LinearLayout>
                 </FrameLayout>
 
-                <!-- Danh mục -->
-                <LinearLayout
+                <!-- Danh mục động -->
+                <HorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:paddingTop="16dp">
+                    android:paddingTop="16dp"
+                    android:scrollbars="none">
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnPhone"
+                    <LinearLayout
+                        android:id="@+id/layoutCategories"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/phone"
-                        android:textAllCaps="false"
-                        android:textColor="@color/white"
-                        android:textSize="12sp"
-                        app:backgroundTint="@color/dark_green"
-                        app:cornerRadius="99dp" />
-
-                    <Space
-                        android:layout_width="24dp"
-                        android:layout_height="1dp" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnComputer"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/laptop"
-                        android:textColor="@color/text_primary"
-                        android:textSize="12sp"
-                        app:backgroundTint="#F1E3D7"
-                        app:cornerRadius="99dp" />
-
-                    <Space
-                        android:layout_width="24dp"
-                        android:layout_height="1dp" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnHeadphone"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/headphone"
-                        android:textColor="@color/text_primary"
-                        android:textSize="13sp"
-                        app:backgroundTint="#F1E3D7"
-                        app:cornerRadius="99dp" />
-
-                </LinearLayout>
+                        android:orientation="horizontal"
+                        android:paddingStart="24dp"
+                        android:paddingEnd="24dp"
+                        android:gravity="center_vertical" />
+                </HorizontalScrollView>
 
                 <!-- Tiêu đề sản phẩm -->
                 <LinearLayout

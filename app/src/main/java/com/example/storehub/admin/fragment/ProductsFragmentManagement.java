@@ -10,9 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ProgressBar;
+import android.view.Gravity;
+import java.util.List;
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,13 +46,17 @@ public class ProductsFragmentManagement extends Fragment {
     private AdminProductAdapter adapter;
     private Call<Response<ArrayList<Product>>> currentCall;
     private EditText searchInput;
-    private TextView chipAll, chipPhone, chipComputer, chipHeadphone, page1, page2, page3, lastPage, tvEllipsis;
+    private LinearLayout layoutAdminChips;
+    private TextView page1, page2, page3, lastPage, tvEllipsis;
     private int currentPage = 1;
     private int totalPages = 1;
     private String selectedCategory = "";
     private ProgressBar progressBar;
     private View layoutPagination;
     private RecyclerView grid;
+    private List<String> categoriesList = new ArrayList<>();
+    private final ArrayList<TextView> dynamicChips = new ArrayList<>();
+    private final ArrayList<String> dynamicChipValues = new ArrayList<>();
 
     @Nullable
     @Override
@@ -72,10 +80,7 @@ public class ProductsFragmentManagement extends Fragment {
         grid.setAdapter(adapter);
 
         searchInput = view.findViewById(R.id.edtAdminProductSearch);
-        chipAll = view.findViewById(R.id.chipAllProducts);
-        chipPhone = view.findViewById(R.id.chipPhoneProducts);
-        chipComputer = view.findViewById(R.id.chipComputerProducts);
-        chipHeadphone = view.findViewById(R.id.chipHeadphoneProducts);
+        layoutAdminChips = view.findViewById(R.id.layoutAdminChips);
         page1 = view.findViewById(R.id.btnAdminPage1);
         page2 = view.findViewById(R.id.btnAdminPage2);
         page3 = view.findViewById(R.id.btnAdminPage3);
@@ -84,10 +89,7 @@ public class ProductsFragmentManagement extends Fragment {
         progressBar = view.findViewById(R.id.progressBar);
         layoutPagination = view.findViewById(R.id.layoutPagination);
 
-        setCategoryListener(chipAll, "");
-        setCategoryListener(chipPhone, "Điện thoại");
-        setCategoryListener(chipComputer, "Máy tính");
-        setCategoryListener(chipHeadphone, "Tai nghe");
+        fetchCategories();
 
         searchInput.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
@@ -123,22 +125,83 @@ public class ProductsFragmentManagement extends Fragment {
 
     @Override public void onResume() { super.onResume(); loadProducts(); }
 
-    private void setCategoryListener(TextView chip, String category) {
+    private void fetchCategories() {
+        new HttpResquest().callAPI().getCategories().enqueue(new Callback<Response<ArrayList<String>>>() {
+            @Override
+            public void onResponse(@NonNull Call<Response<ArrayList<String>>> call, @NonNull retrofit2.Response<Response<ArrayList<String>>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    categoriesList = response.body().getData();
+                    renderAdminChips(categoriesList);
+                } else {
+                    useFallbackCategories();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Response<ArrayList<String>>> call, @NonNull Throwable t) {
+                useFallbackCategories();
+            }
+        });
+    }
+
+    private void useFallbackCategories() {
+        categoriesList = java.util.Arrays.asList("Điện thoại", "Máy tính", "Tai nghe", "Đồng hồ");
+        renderAdminChips(categoriesList);
+    }
+
+    private void renderAdminChips(List<String> categories) {
+        if (layoutAdminChips == null || !isAdded()) return;
+        layoutAdminChips.removeAllViews();
+        dynamicChips.clear();
+        dynamicChipValues.clear();
+
+        // Thêm chip "Tất cả" đầu tiên
+        addChip(getString(R.string.all), "");
+
+        // Thêm các chip danh mục động
+        for (String category : categories) {
+            addChip(category, category);
+        }
+
+        updateCategoryChips();
+    }
+
+    private void addChip(String label, String value) {
+        TextView chip = new TextView(requireContext());
+        chip.setText(label);
+        chip.setTextSize(14f);
+        chip.setGravity(Gravity.CENTER);
+        chip.setPadding(35, 15, 35, 15);
+
+        // Đặt LayoutParams và margins
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.setMargins(0, 0, 20, 0);
+        chip.setLayoutParams(params);
+
         chip.setOnClickListener(v -> {
-            selectedCategory = category;
+            selectedCategory = value;
             currentPage = 1;
             updateCategoryChips();
             loadProducts();
         });
+
+        layoutAdminChips.addView(chip);
+        dynamicChips.add(chip);
+        dynamicChipValues.add(value);
     }
 
     private void updateCategoryChips() {
-        TextView[] chips = {chipAll, chipPhone, chipComputer, chipHeadphone};
-        String[] values = {"", "Điện thoại", "Máy tính", "Tai nghe"};
-        for (int i = 0; i < chips.length; i++) {
-            boolean active = values[i].equals(selectedCategory);
-            chips[i].setBackgroundResource(active ? R.drawable.bg_admin_chip_active : R.drawable.bg_admin_chip);
-            chips[i].setTextColor(ContextCompat.getColor(requireContext(),
+        if (!isAdded()) return;
+        for (int i = 0; i < dynamicChips.size(); i++) {
+            TextView chip = dynamicChips.get(i);
+            String value = dynamicChipValues.get(i);
+            boolean active = value.equals(selectedCategory);
+
+            chip.setBackgroundResource(active ? R.drawable.bg_admin_chip_active : R.drawable.bg_admin_chip);
+            chip.setTextColor(ContextCompat.getColor(requireContext(),
                     active ? R.color.white : R.color.text_secondary));
         }
     }

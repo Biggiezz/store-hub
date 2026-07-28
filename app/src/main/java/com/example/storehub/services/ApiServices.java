@@ -26,6 +26,9 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface ApiServices {
+    @GET("api/productsRouter/get-categories")
+    Call<Response<ArrayList<String>>> getCategories();
+
     @GET("api/productsRouter/get-all-product")
     Call<Response<ArrayList<Product>>> getListProduct(
             @Query("page") int page,

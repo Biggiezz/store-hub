@@ -7,7 +7,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import java.util.List;
+
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
@@ -58,10 +61,14 @@ public class MainActivity extends BaseActivity {
     private ImageView imgAvatar;
     private ProductAdapter productAdapter;
     private NewsAdapter newsAdapter;
-    private MaterialButton btnViewAllProducts, btnHome, btnProducts, btnCart, btnNews, btnPhone, btnComputer, btnHeadphone;
+    private MaterialButton btnViewAllProducts, btnHome, btnProducts, btnCart, btnNews;
+    private LinearLayout layoutCategories;
     private ArrayList<Product> allProductsList = new ArrayList<>();
     private ArrayList<News> newsList;
     private String selectedTab = TAB_HOME;
+    private String activeCategory = "Điện thoại";
+    private List<String> categoriesList = new ArrayList<>();
+    private final ArrayList<MaterialButton> dynamicCategoryButtons = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,11 +136,7 @@ public class MainActivity extends BaseActivity {
         btnProducts = findViewById(R.id.btnProducts);
         btnCart = findViewById(R.id.btnCart);
         btnNews = findViewById(R.id.btnNews);
-
-        // Initialize category buttons
-        btnPhone = findViewById(R.id.btnPhone);
-        btnComputer = findViewById(R.id.btnComputer);
-        btnHeadphone = findViewById(R.id.btnHeadphone);
+        layoutCategories = findViewById(R.id.layoutCategories);
     }
 
     private void setUpAdapter() {
@@ -177,16 +180,7 @@ public class MainActivity extends BaseActivity {
                 }
             }
         });
-
-        if (btnPhone != null) {
-            btnPhone.setOnClickListener(v -> updateCategorySelection("Điện thoại"));
-        }
-        if (btnComputer != null) {
-            btnComputer.setOnClickListener(v -> updateCategorySelection("Laptop"));
-        }
-        if (btnHeadphone != null) {
-            btnHeadphone.setOnClickListener(v -> updateCategorySelection("Tai nghe"));
-        }
+        fetchCategories();
     }
 
     @Override
@@ -290,41 +284,82 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    private void updateCategorySelection(String activeCategory) {
+    private void fetchCategories() {
+        new HttpResquest().callAPI().getCategories().enqueue(new Callback<Response<ArrayList<String>>>() {
+            @Override
+            public void onResponse(@NonNull Call<Response<ArrayList<String>>> call, @NonNull retrofit2.Response<Response<ArrayList<String>>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    categoriesList = response.body().getData();
+                    if (!categoriesList.contains("Điện thoại") && categoriesList.size() > 0) {
+                        activeCategory = categoriesList.get(0);
+                    }
+                    renderCategoryButtons(categoriesList);
+                } else {
+                    useFallbackCategories();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Response<ArrayList<String>>> call, @NonNull Throwable t) {
+                useFallbackCategories();
+            }
+        });
+    }
+
+    private void useFallbackCategories() {
+        categoriesList = java.util.Arrays.asList("Điện thoại", "Máy tính", "Tai nghe", "Đồng hồ");
+        renderCategoryButtons(categoriesList);
+    }
+
+    private void renderCategoryButtons(List<String> categories) {
+        if (layoutCategories == null) return;
+        layoutCategories.removeAllViews();
+        dynamicCategoryButtons.clear();
+
         int activeBgColor = Color.parseColor("#14291F"); // dark_green
         int activeTextColor = Color.parseColor("#FFFFFF"); // white
-
         int inactiveBgColor = Color.parseColor("#F1E3D7");
         int inactiveTextColor = Color.parseColor("#41413F"); // text_primary
 
-        if (btnPhone != null) {
-            if ("Điện thoại".equals(activeCategory)) {
-                btnPhone.setBackgroundTintList(android.content.res.ColorStateList.valueOf(activeBgColor));
-                btnPhone.setTextColor(activeTextColor);
-            } else {
-                btnPhone.setBackgroundTintList(android.content.res.ColorStateList.valueOf(inactiveBgColor));
-                btnPhone.setTextColor(inactiveTextColor);
+        for (int i = 0; i < categories.size(); i++) {
+            String category = categories.get(i);
+            MaterialButton btn = new MaterialButton(this);
+            btn.setText(category);
+            btn.setTextSize(12f);
+            btn.setCornerRadius(99);
+            btn.setAllCaps(false);
+            btn.setPadding(35, 15, 35, 15);
+
+            boolean isActive = category.equals(activeCategory);
+            btn.setBackgroundTintList(ColorStateList.valueOf(isActive ? activeBgColor : inactiveBgColor));
+            btn.setTextColor(isActive ? activeTextColor : inactiveTextColor);
+
+            btn.setOnClickListener(v -> updateCategorySelection(category));
+
+            layoutCategories.addView(btn);
+            dynamicCategoryButtons.add(btn);
+
+            if (i < categories.size() - 1) {
+                View space = new View(this);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(40, 1);
+                space.setLayoutParams(params);
+                layoutCategories.addView(space);
             }
         }
+        filterProductsByCategory(activeCategory);
+    }
 
-        if (btnComputer != null) {
-            if ("Laptop".equals(activeCategory)) {
-                btnComputer.setBackgroundTintList(android.content.res.ColorStateList.valueOf(activeBgColor));
-                btnComputer.setTextColor(activeTextColor);
-            } else {
-                btnComputer.setBackgroundTintList(android.content.res.ColorStateList.valueOf(inactiveBgColor));
-                btnComputer.setTextColor(inactiveTextColor);
-            }
-        }
+    private void updateCategorySelection(String selectedCategory) {
+        activeCategory = selectedCategory;
+        int activeBgColor = Color.parseColor("#14291F"); // dark_green
+        int activeTextColor = Color.parseColor("#FFFFFF"); // white
+        int inactiveBgColor = Color.parseColor("#F1E3D7");
+        int inactiveTextColor = Color.parseColor("#41413F"); // text_primary
 
-        if (btnHeadphone != null) {
-            if ("Tai nghe".equals(activeCategory)) {
-                btnHeadphone.setBackgroundTintList(android.content.res.ColorStateList.valueOf(activeBgColor));
-                btnHeadphone.setTextColor(activeTextColor);
-            } else {
-                btnHeadphone.setBackgroundTintList(android.content.res.ColorStateList.valueOf(inactiveBgColor));
-                btnHeadphone.setTextColor(inactiveTextColor);
-            }
+        for (MaterialButton btn : dynamicCategoryButtons) {
+            boolean isActive = btn.getText().toString().equals(activeCategory);
+            btn.setBackgroundTintList(ColorStateList.valueOf(isActive ? activeBgColor : inactiveBgColor));
+            btn.setTextColor(isActive ? activeTextColor : inactiveTextColor);
         }
 
         filterProductsByCategory(activeCategory);
@@ -349,7 +384,11 @@ public class MainActivity extends BaseActivity {
                     Response<ArrayList<Product>> apiResponse = response.body();
                     if (apiResponse.getCode() == 200 && apiResponse.getData() != null) {
                         allProductsList = apiResponse.getData();
-                        updateCategorySelection("Điện thoại");
+                        if (categoriesList.isEmpty()) {
+                            fetchCategories();
+                        } else {
+                            filterProductsByCategory(activeCategory);
+                        }
                     } else {
                         Log.e("MainActivity", "Server response error: " + apiResponse.getMessage());
                     }
