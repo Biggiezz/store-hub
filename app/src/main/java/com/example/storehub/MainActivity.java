@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -31,6 +32,7 @@ import com.example.storehub.model.Response;
 import com.example.storehub.model.User;
 import com.example.storehub.services.HttpResquest;
 import com.example.storehub.utils.SharedPreferencesManager;
+import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
@@ -53,6 +55,7 @@ public class MainActivity extends BaseActivity {
     private ViewPager2 sliderBanner;
     private TextView dotOne, dotTwo, dotThree;
     private RecyclerView rvProducts, rvNews;
+    private ImageView imgAvatar;
     private ProductAdapter productAdapter;
     private NewsAdapter newsAdapter;
     private MaterialButton btnViewAllProducts, btnHome, btnProducts, btnCart, btnNews, btnPhone, btnComputer, btnHeadphone;
@@ -98,12 +101,13 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initUi() {
-        // Initialize SlideShow ViewPager2
-        // Set click listener on avatar to open profile screen
-        findViewById(R.id.imgAvatar).setOnClickListener(v -> {
+        // Initialize avatar & load user image
+        imgAvatar = findViewById(R.id.imgAvatar);
+        imgAvatar.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
             startActivity(intent);
         });
+        loadAvatar();
 
         // Initialize SlideShow ViewPager2 & Adapter
         sliderBanner = findViewById(R.id.sliderBanner);
@@ -393,5 +397,23 @@ public class MainActivity extends BaseActivity {
         dotOne.setTextColor(position == 0 ? activeColor : inactiveColor);
         dotTwo.setTextColor(position == 1 ? activeColor : inactiveColor);
         dotThree.setTextColor(position == 2 ? activeColor : inactiveColor);
+    }
+
+    private void loadAvatar() {
+        User user = new SharedPreferencesManager(this).getUser();
+        if (user != null && user.getImage() != null && !user.getImage().isEmpty()) {
+            Glide.with(this)
+                    .load(user.getImage())
+                    .placeholder(R.drawable.ic_avatar)
+                    .error(R.drawable.ic_avatar)
+                    .circleCrop()
+                    .into(imgAvatar);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadAvatar();
     }
 }
