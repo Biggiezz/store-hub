@@ -1,5 +1,7 @@
 package com.example.storehub.model;
 
+import com.example.storehub.services.HttpResquest;
+import com.example.storehub.utils.ImageUtils;
 import com.google.gson.annotations.SerializedName;
 
 public class User {
@@ -83,7 +85,7 @@ public class User {
     }
 
     public String getImage() {
-        return com.example.storehub.utils.ImageUtils.getCorrectedImageUrl(image, com.example.storehub.services.HttpResquest.BASE_URL);
+        return ImageUtils.getCorrectedImageUrl(image, HttpResquest.BASE_URL);
     }
 
     public void setImage(String image) {

@@ -1,5 +1,7 @@
 package com.example.storehub.model;
 
+import com.example.storehub.services.HttpResquest;
+import com.example.storehub.utils.ImageUtils;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -115,7 +117,7 @@ public class Product {
 
     public String getImage() {
         String rawImg = image != null ? image : (imageUrl != null ? imageUrl : "");
-        return com.example.storehub.utils.ImageUtils.getCorrectedImageUrl(rawImg, com.example.storehub.services.HttpResquest.BASE_URL);
+        return ImageUtils.getCorrectedImageUrl(rawImg, HttpResquest.BASE_URL);
     }
 
     public String getImageUrl() {

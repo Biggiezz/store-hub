@@ -2,6 +2,8 @@ package com.example.storehub.utils;
 
 import android.text.TextUtils;
 
+import com.example.storehub.services.HttpResquest;
+
 public class ImageUtils {
 
     /**
@@ -16,7 +18,7 @@ public class ImageUtils {
             return "";
         }
         if (TextUtils.isEmpty(baseUrl)) {
-            baseUrl = "http://10.0.2.2:5000/"; // Fallback mặc định
+            baseUrl = HttpResquest.BASE_URL; // Fallback mặc định
         }
 
         // Trường hợp 1: Đường dẫn tương đối bắt đầu bằng "/"
