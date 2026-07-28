@@ -75,6 +75,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
     private Call<Response<Product>> currentCall;
     private LinearLayout adminColorContainer;
     private final List<ProductColor> productColors = new ArrayList<>();
+    private String originalStatus = "active";
 
     private final ActivityResultLauncher<String> imagePicker = registerForActivityResult(
             new ActivityResultContracts.GetContent(), uri -> {
@@ -197,6 +198,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         if (product.getColors() != null) {
             productColors.addAll(product.getColors());
         }
+        originalStatus = product.getStatus();
         renderAdminColors();
     }
 
@@ -244,9 +246,9 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         HttpResquest request = new HttpResquest();
         currentCall = editMode
                 ? request.callAPI().updateProduct(productId, text(name), text(price), text(category),
-                text(description), text(stock), text(colorsJson), imagePart)
+                text(description), text(stock), text(colorsJson), text(originalStatus), imagePart)
                 : request.callAPI().addProduct(text(name), text(price), text(category),
-                text(description), text(stock), text(colorsJson), imagePart);
+                text(description), text(stock), text(colorsJson), text("active"), imagePart);
         currentCall.enqueue(new Callback<Response<Product>>() {
             @Override
             public void onResponse(@NonNull Call<Response<Product>> call, @NonNull retrofit2.Response<Response<Product>> response) {

@@ -29,7 +29,15 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     }
 
     public void updateData(ArrayList<Product> list) {
-        this.listProduct = list;
+        this.listProduct = new ArrayList<>();
+        if (list != null) {
+            for (Product p : list) {
+                boolean isActive = !"inactive".equalsIgnoreCase(p.getStatus()) && !"Ngừng bán".equalsIgnoreCase(p.getStatus()) && !"hidden".equalsIgnoreCase(p.getStatus());
+                if (isActive) {
+                    this.listProduct.add(p);
+                }
+            }
+        }
         notifyDataSetChanged();
     }
 
@@ -43,7 +51,15 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Product product = listProduct.get(position);
+        
         holder.tvProductName.setText(product.getName());
+        
+        if (product.getStock() <= 0) {
+            holder.tvProductStatus.setVisibility(View.VISIBLE);
+            holder.tvProductStatus.setText("HẾT HÀNG");
+        } else {
+            holder.tvProductStatus.setVisibility(View.GONE);
+        }
 
         try {
             double priceValue = Double.parseDouble(product.getPrice());
@@ -77,12 +93,14 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         ImageView imgProduct;
         TextView tvProductName;
         TextView tvProductPrice;
+        TextView tvProductStatus;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             imgProduct = itemView.findViewById(R.id.imgProduct);
             tvProductName = itemView.findViewById(R.id.tvProductName);
             tvProductPrice = itemView.findViewById(R.id.tvProductPrice);
+            tvProductStatus = itemView.findViewById(R.id.tvProductStatus);
         }
     }
 }

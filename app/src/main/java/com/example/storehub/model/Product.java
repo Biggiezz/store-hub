@@ -50,6 +50,9 @@ public class Product {
     @SerializedName("stock")
     private int stock;
 
+    @SerializedName("status")
+    private String status;
+
     // Danh sách các tùy chọn màu sắc biến thể của sản phẩm
     @SerializedName("colors")
     private List<ProductColor> colors = new ArrayList<>();
@@ -161,6 +164,14 @@ public class Product {
 
     public void setStock(int stock) {
         this.stock = stock;
+    }
+
+    public String getStatus() {
+        return status != null ? status : "active";
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public List<ProductColor> getColors() {

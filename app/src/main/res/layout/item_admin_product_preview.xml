@@ -39,6 +39,20 @@
         android:textSize="17sp" />
 
     <TextView
+        android:id="@+id/tvAdminProductStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="5dp"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="3dp"
+        android:background="@drawable/bg_status_out_of_stock"
+        android:textColor="#C62828"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+    <TextView
         android:id="@+id/tvAdminProductPrice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

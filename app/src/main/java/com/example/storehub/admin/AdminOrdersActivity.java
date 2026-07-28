@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -34,10 +35,8 @@ import retrofit2.Callback;
 
 public class AdminOrdersActivity extends AppCompatActivity implements AdminOrderAdapter.OnOrderClickListener {
 
-    private RecyclerView rvAdminOrders;
     private TextView tvEmptyState;
     private ProgressBar progressBar;
-
     private AdminOrderAdapter adapter;
     private ApiServices apiService;
     private Call<Response<ArrayList<Order>>> ordersCall;
@@ -54,13 +53,13 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
             return insets;
         });
         // Bind Toolbar
-        androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         if (toolbar != null) {
             toolbar.setNavigationOnClickListener(v -> finish());
         }
 
         // Bind Views
-        rvAdminOrders = findViewById(R.id.rvAdminOrders);
+        RecyclerView rvAdminOrders = findViewById(R.id.rvAdminOrders);
         tvEmptyState = findViewById(R.id.tvEmptyState);
         progressBar = findViewById(R.id.progressBar);
 

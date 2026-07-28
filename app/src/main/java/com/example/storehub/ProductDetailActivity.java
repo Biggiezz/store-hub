@@ -47,7 +47,7 @@ public class ProductDetailActivity extends BaseActivity {
     public static final String EXTRA_PRODUCT_ID = "product_id";
     private ImageView ivProduct;
     private ImageButton btnBack;
-    private TextView tvCategory, tvProductName, tvPrice, tvRatingSummary, tvDescription, tvEmptyReview, tvError, tvQuantity, btnMinus, btnPlus, tvColorLabel;
+    private TextView tvCategory, tvProductName, tvPrice, tvRatingSummary, tvDescription, tvEmptyReview, tvError, tvQuantity, btnMinus, btnPlus, tvColorLabel, tvStockStatus;
     private RatingBar ratingProduct;
     private LinearLayout colorContainer;
     private ProgressBar progressBar;
@@ -109,6 +109,7 @@ public class ProductDetailActivity extends BaseActivity {
         btnMinus = findViewById(R.id.btnMinus);
         btnPlus = findViewById(R.id.btnPlus);
         tvColorLabel = findViewById(R.id.tvColorLabel);
+        tvStockStatus = findViewById(R.id.tvStockStatus);
 
         ratingProduct = findViewById(R.id.ratingProduct);
         colorContainer = findViewById(R.id.colorContainer);
@@ -187,7 +188,13 @@ public class ProductDetailActivity extends BaseActivity {
                 }
                 currentProduct = response.body().getData();
                 bindProduct(currentProduct);
-                btnAddToCart.setEnabled(currentProduct.getStock() != 0);
+                if (currentProduct.getStock() <= 0) {
+                    btnAddToCart.setEnabled(false);
+                    btnAddToCart.setText("Đã hết hàng");
+                } else {
+                    btnAddToCart.setEnabled(true);
+                    btnAddToCart.setText("Thêm vào giỏ");
+                }
             }
 
             @Override
@@ -205,6 +212,15 @@ public class ProductDetailActivity extends BaseActivity {
         tvProductName.setText(nonNullText(product.getName()));
         tvPrice.setText(formatPrice(product.getPriceAsLong()));
         tvDescription.setText(nonNullText(product.getDescription()));
+
+        if (tvStockStatus != null) {
+            if (product.getStock() <= 0) {
+                tvStockStatus.setVisibility(View.VISIBLE);
+                tvStockStatus.setText("ĐÃ HẾT HÀNG");
+            } else {
+                tvStockStatus.setVisibility(View.GONE);
+            }
+        }
 
         if (TextUtils.isEmpty(product.getCategory())) {
             tvCategory.setVisibility(View.GONE);

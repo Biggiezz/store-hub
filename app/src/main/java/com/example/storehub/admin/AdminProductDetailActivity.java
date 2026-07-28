@@ -3,7 +3,6 @@ package com.example.storehub.admin;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -12,7 +11,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -22,17 +20,18 @@ import com.example.storehub.model.Response;
 import com.example.storehub.services.HttpResquest;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.google.gson.Gson;
 
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.Locale;
 
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 
 public class AdminProductDetailActivity extends AppCompatActivity {
     public static final String EXTRA_PRODUCT_ID = "product_id";
-    
     private ImageView ivProductImage;
     private ImageButton btnBack;
     private TextView tvCategory, tvProductName, tvProductPrice, tvRatingText, tvStockValue, tvSoldValue, tvDescription;
@@ -40,7 +39,6 @@ public class AdminProductDetailActivity extends AppCompatActivity {
     private SwitchMaterial switchStatus;
     private RecyclerView rvColors;
     private MaterialButton btnEditProduct;
-    
     private String productId;
     private Product currentProduct;
 
@@ -90,6 +88,55 @@ public class AdminProductDetailActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        setUpSwitchStatusListener();
+    }
+
+    private void setUpSwitchStatusListener() {
+        switchStatus.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (currentProduct == null) return;
+            String newStatus = isChecked ? "active" : "inactive";
+            currentProduct.setStatus(newStatus);
+            updateProductStatus(newStatus);
+        });
+    }
+
+    private void updateProductStatus(String status) {
+        if (currentProduct == null) return;
+        
+        HttpResquest request = new HttpResquest();
+        RequestBody nameBody = RequestBody.create(MediaType.parse("text/plain"), currentProduct.getName());
+        RequestBody priceBody = RequestBody.create(MediaType.parse("text/plain"), currentProduct.getPrice());
+        RequestBody categoryBody = RequestBody.create(MediaType.parse("text/plain"), currentProduct.getCategory());
+        RequestBody descriptionBody = RequestBody.create(MediaType.parse("text/plain"), currentProduct.getDescription());
+        RequestBody stockBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(currentProduct.getStock()));
+        
+        String colorsJson = new Gson().toJson(currentProduct.getColors());
+        RequestBody colorsBody = RequestBody.create(MediaType.parse("text/plain"), colorsJson);
+        RequestBody statusBody = RequestBody.create(MediaType.parse("text/plain"), status);
+        
+        request.callAPI().updateProduct(productId, nameBody, priceBody, categoryBody, descriptionBody, stockBody, colorsBody, statusBody, null)
+                .enqueue(new Callback<Response<Product>>() {
+                    @Override
+                    public void onResponse(@NonNull Call<Response<Product>> call, @NonNull retrofit2.Response<Response<Product>> response) {
+                        if (response.isSuccessful()) {
+                            Toast.makeText(AdminProductDetailActivity.this, "Cập nhật trạng thái thành công", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(AdminProductDetailActivity.this, "Không thể cập nhật trạng thái", Toast.LENGTH_SHORT).show();
+                            switchStatus.setOnCheckedChangeListener(null);
+                            switchStatus.setChecked(!switchStatus.isChecked());
+                            setUpSwitchStatusListener();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<Response<Product>> call, @NonNull Throwable t) {
+                        Toast.makeText(AdminProductDetailActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                        switchStatus.setOnCheckedChangeListener(null);
+                        switchStatus.setChecked(!switchStatus.isChecked());
+                        setUpSwitchStatusListener();
+                    }
+                });
     }
 
     private void loadProductDetail() {
@@ -124,7 +171,6 @@ public class AdminProductDetailActivity extends AppCompatActivity {
         
         tvDescription.setText(product.getDescription());
         tvStockValue.setText(String.valueOf(product.getStock()));
-        // Giả lập Sold Value vì model Product có thể chưa có field này
         tvSoldValue.setText("0"); 
         
         ratingBar.setRating(product.getRating());
@@ -136,7 +182,9 @@ public class AdminProductDetailActivity extends AppCompatActivity {
                 .error(R.drawable.ic_product)
                 .into(ivProductImage);
         
-        // Setup switch status dựa trên stock hoặc field status nếu có
-        switchStatus.setChecked(product.getStock() > 0);
+        switchStatus.setOnCheckedChangeListener(null);
+        boolean isActive = !"inactive".equalsIgnoreCase(product.getStatus()) && !"Ngừng bán".equalsIgnoreCase(product.getStatus()) && !"hidden".equalsIgnoreCase(product.getStatus());
+        switchStatus.setChecked(isActive);
+        setUpSwitchStatusListener();
     }
 }

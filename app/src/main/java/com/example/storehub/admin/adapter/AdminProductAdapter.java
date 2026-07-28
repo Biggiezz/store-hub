@@ -45,7 +45,24 @@ public class AdminProductAdapter extends RecyclerView.Adapter<AdminProductAdapte
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
         Product product = products.get(position);
         holder.category.setText(product.getCategory());
+        
         holder.name.setText(product.getName());
+        
+        boolean isInactive = "inactive".equalsIgnoreCase(product.getStatus()) || "Ngừng bán".equalsIgnoreCase(product.getStatus()) || "hidden".equalsIgnoreCase(product.getStatus());
+        if (isInactive) {
+            holder.status.setVisibility(View.VISIBLE);
+            holder.status.setText("ĐÃ ẨN");
+            holder.status.setBackgroundResource(R.drawable.bg_status_hidden);
+            holder.status.setTextColor(android.graphics.Color.parseColor("#777777"));
+        } else if (product.getStock() <= 0) {
+            holder.status.setVisibility(View.VISIBLE);
+            holder.status.setText("HẾT HÀNG");
+            holder.status.setBackgroundResource(R.drawable.bg_status_out_of_stock);
+            holder.status.setTextColor(android.graphics.Color.parseColor("#C62828"));
+        } else {
+            holder.status.setVisibility(View.GONE);
+        }
+
         holder.price.setText(NumberFormat.getNumberInstance(new Locale("vi", "VN"))
                 .format(product.getPriceAsLong()) + "đ");
         Glide.with(holder.image)
@@ -61,13 +78,14 @@ public class AdminProductAdapter extends RecyclerView.Adapter<AdminProductAdapte
 
     static class ProductViewHolder extends RecyclerView.ViewHolder {
         final ImageView image;
-        final TextView category, name, price;
+        final TextView category, name, price, status;
         ProductViewHolder(@NonNull View view) {
             super(view);
             image = view.findViewById(R.id.ivAdminProduct);
             category = view.findViewById(R.id.tvAdminProductCategory);
             name = view.findViewById(R.id.tvAdminProductName);
             price = view.findViewById(R.id.tvAdminProductPrice);
+            status = view.findViewById(R.id.tvAdminProductStatus);
         }
     }
 }

@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,20 +35,20 @@ import retrofit2.Callback;
 public class ProductsFragment extends Fragment {
     private RecyclerView rvProducts;
     private MaterialToolbar toolbar;
-    private NestedScrollView nestedScrollView;
     private ProductAdapter productAdapter;
     private TextInputEditText edtSearch;
-
     private final ArrayList<Product> allProducts = new ArrayList<>();
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
     private static final int LIMIT = 6;
     private static final long SEARCH_DEBOUNCE_MS = 400;
     private int currentPage = 1;
-    private boolean isLoading;
-    private boolean isLastPage;
+    private int totalPages = 1;
     private String currentSearchKeyword = "";
     private Runnable searchRunnable;
     private Call<Response<ArrayList<Product>>> currentCall;
+    private TextView page1, page2, page3, lastPage, tvEllipsis;
+    private ProgressBar progressBar;
+    private View layoutPagination;
 
     @Nullable
     @Override
@@ -61,7 +63,7 @@ public class ProductsFragment extends Fragment {
 
         initUi(view);
         setUpAdapter();
-        setUpListener();
+        setUpListener(view);
 
         loadFirstPage();
     }
@@ -70,7 +72,13 @@ public class ProductsFragment extends Fragment {
         rvProducts = view.findViewById(R.id.rvProducts);
         toolbar = view.findViewById(R.id.toolbar);
         edtSearch = view.findViewById(R.id.edtSearch);
-        nestedScrollView = view.findViewById(R.id.nestedScrollView);
+        page1 = view.findViewById(R.id.btnPage1);
+        page2 = view.findViewById(R.id.btnPage2);
+        page3 = view.findViewById(R.id.btnPage3);
+        lastPage = view.findViewById(R.id.tvLastPage);
+        tvEllipsis = view.findViewById(R.id.tvEllipsis);
+        progressBar = view.findViewById(R.id.progressBar);
+        layoutPagination = view.findViewById(R.id.layoutPagination);
     }
 
     private void setUpAdapter() {
@@ -80,7 +88,7 @@ public class ProductsFragment extends Fragment {
         }
     }
 
-    private void setUpListener() {
+    private void setUpListener(View view) {
         if (toolbar != null) {
             toolbar.setNavigationOnClickListener(v -> ((MainActivity) requireActivity()).showHome());
             toolbar.setOnMenuItemClickListener(item -> {
@@ -112,14 +120,39 @@ public class ProductsFragment extends Fragment {
             });
         }
 
-        if (nestedScrollView != null) {
-            nestedScrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener)
-                    (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
-                        if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()
-                                && !isLoading && !isLastPage) {
-                            loadMoreProducts();
-                        }
-                    });
+        if (page1 != null) {
+            page1.setOnClickListener(v -> {
+                try {
+                    goToPage(Integer.parseInt(page1.getText().toString()));
+                } catch (Exception ignored) {}
+            });
+        }
+        if (page2 != null) {
+            page2.setOnClickListener(v -> {
+                try {
+                    goToPage(Integer.parseInt(page2.getText().toString()));
+                } catch (Exception ignored) {}
+            });
+        }
+        if (page3 != null) {
+            page3.setOnClickListener(v -> {
+                try {
+                    goToPage(Integer.parseInt(page3.getText().toString()));
+                } catch (Exception ignored) {}
+            });
+        }
+        if (lastPage != null) {
+            lastPage.setOnClickListener(v -> goToPage(totalPages));
+        }
+
+        View prevBtn = view.findViewById(R.id.btnPreviousPage);
+        if (prevBtn != null) {
+            prevBtn.setOnClickListener(v -> goToPage(currentPage - 1));
+        }
+
+        View nextBtn = view.findViewById(R.id.btnNextPage);
+        if (nextBtn != null) {
+            nextBtn.setOnClickListener(v -> goToPage(currentPage + 1));
         }
     }
 
@@ -127,7 +160,6 @@ public class ProductsFragment extends Fragment {
         cancelCurrentCall();
         currentSearchKeyword = keyword;
         currentPage = 1;
-        isLastPage = false;
         allProducts.clear();
         productAdapter.updateData(allProducts);
         fetchProducts(currentPage, keyword);
@@ -136,18 +168,26 @@ public class ProductsFragment extends Fragment {
     private void loadFirstPage() {
         cancelCurrentCall();
         currentPage = 1;
-        isLastPage = false;
         allProducts.clear();
         productAdapter.updateData(allProducts);
         fetchProducts(currentPage, "");
     }
 
-    private void loadMoreProducts() {
-        fetchProducts(++currentPage, currentSearchKeyword);
+    private void goToPage(int page) {
+        if (page < 1 || page > totalPages || page == currentPage) return;
+        currentPage = page;
+        allProducts.clear();
+        productAdapter.updateData(allProducts);
+        fetchProducts(currentPage, currentSearchKeyword);
     }
 
     private void fetchProducts(int page, String keyword) {
-        isLoading = true;
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+        if (rvProducts != null) rvProducts.setVisibility(View.GONE);
+        if (layoutPagination != null) layoutPagination.setVisibility(View.GONE);
+
+        long startTime = System.currentTimeMillis();
+
         HttpResquest request = new HttpResquest();
         currentCall = keyword.isEmpty()
                 ? request.apiServices.getListProduct(page, LIMIT, "")
@@ -158,27 +198,99 @@ public class ProductsFragment extends Fragment {
             public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call,
                                    @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
                 if (call.isCanceled() || productAdapter == null) return;
-                isLoading = false;
-                if (response.isSuccessful() && response.body() != null
-                        && response.body().getCode() == 200 && response.body().getData() != null) {
-                    ArrayList<Product> newProducts = response.body().getData();
-                    allProducts.addAll(newProducts);
-                    isLastPage = response.body().getPagination() != null
-                            ? currentPage >= response.body().getPagination().getTotalPages()
-                            : newProducts.size() < LIMIT;
-                    productAdapter.updateData(allProducts);
-                } else {
-                    Log.e("ProductsFragment", "Không thể tải danh sách sản phẩm");
-                }
+
+                long elapsedTime = System.currentTimeMillis() - startTime;
+                long remainingDelay = Math.max(0, 3000 - elapsedTime);
+
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    if (call.isCanceled() || productAdapter == null || !isAdded()) return;
+
+                    if (progressBar != null) progressBar.setVisibility(View.GONE);
+                    if (rvProducts != null) rvProducts.setVisibility(View.VISIBLE);
+                    if (layoutPagination != null) layoutPagination.setVisibility(View.VISIBLE);
+
+                    if (response.isSuccessful() && response.body() != null
+                            && response.body().getCode() == 200 && response.body().getData() != null) {
+                        ArrayList<Product> newProducts = response.body().getData();
+                        allProducts.clear();
+                        allProducts.addAll(newProducts);
+                        com.example.storehub.model.Pagination pagination = response.body().getPagination();
+                        totalPages = pagination == null ? 1 : Math.max(1, pagination.getTotalPages());
+                        currentPage = pagination == null ? 1 : pagination.getCurrentPage();
+                        productAdapter.updateData(allProducts);
+                        updatePagination();
+                    } else {
+                        Log.e("ProductsFragment", "Không thể tải danh sách sản phẩm");
+                    }
+                }, remainingDelay);
             }
 
             @Override
             public void onFailure(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull Throwable t) {
                 if (call.isCanceled()) return;
-                isLoading = false;
-                Log.e("ProductsFragment", "Lỗi tải sản phẩm", t);
+
+                long elapsedTime = System.currentTimeMillis() - startTime;
+                long remainingDelay = Math.max(0, 3000 - elapsedTime);
+
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    if (call.isCanceled() || !isAdded()) return;
+                    if (progressBar != null) progressBar.setVisibility(View.GONE);
+                    if (rvProducts != null) rvProducts.setVisibility(View.VISIBLE);
+                    if (layoutPagination != null) layoutPagination.setVisibility(View.VISIBLE);
+                    Log.e("ProductsFragment", "Lỗi tải sản phẩm", t);
+                }, remainingDelay);
             }
         });
+    }
+
+    private void updatePagination() {
+        if (lastPage == null) return;
+        lastPage.setText(String.valueOf(totalPages));
+        lastPage.setVisibility(totalPages > 3 ? View.VISIBLE : View.GONE);
+        
+        int p1, p2, p3;
+        if (totalPages <= 3) {
+            p1 = 1;
+            p2 = 2;
+            p3 = 3;
+            if (page2 != null) page2.setVisibility(totalPages >= 2 ? View.VISIBLE : View.GONE);
+            if (page3 != null) page3.setVisibility(totalPages >= 3 ? View.VISIBLE : View.GONE);
+        } else {
+            if (page2 != null) page2.setVisibility(View.VISIBLE);
+            if (page3 != null) page3.setVisibility(View.VISIBLE);
+            if (currentPage <= 2) {
+                p1 = 1;
+                p2 = 2;
+                p3 = 3;
+            } else if (currentPage >= totalPages - 1) {
+                p1 = totalPages - 3;
+                p2 = totalPages - 2;
+                p3 = totalPages - 1;
+            } else {
+                p1 = currentPage - 1;
+                p2 = currentPage;
+                p3 = currentPage + 1;
+            }
+        }
+        
+        if (page1 != null) page1.setText(String.valueOf(p1));
+        if (page2 != null) page2.setText(String.valueOf(p2));
+        if (page3 != null) page3.setText(String.valueOf(p3));
+
+        if (tvEllipsis != null) {
+            tvEllipsis.setVisibility(totalPages > p3 + 1 ? View.VISIBLE : View.GONE);
+        }
+
+        TextView[] pages = {page1, page2, page3, lastPage};
+        for (TextView tv : pages) {
+            if (tv == null) continue;
+            try {
+                int val = Integer.parseInt(tv.getText().toString());
+                boolean active = currentPage == val;
+                tv.setBackgroundResource(active ? R.drawable.bg_admin_chip_active : R.drawable.bg_circle_button);
+                tv.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), active ? R.color.white : R.color.text_secondary));
+            } catch (Exception ignored) {}
+        }
     }
 
     private void cancelCurrentCall() {

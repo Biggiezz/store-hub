@@ -16,6 +16,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".admin.RecentActivity"
+            android:exported="false" />
+        <activity
             android:name=".admin.ReplyReviewActivity"
             android:exported="false" />
         <activity
@@ -88,7 +91,6 @@
         <activity
             android:name=".WriteReviewActivity"
             android:exported="false" />
-
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"

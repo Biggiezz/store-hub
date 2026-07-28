@@ -1,9 +1,7 @@
 package com.example.storehub.admin;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.widget.ArrayAdapter;
@@ -91,10 +89,10 @@ public class AddUserActivity extends AppCompatActivity {
     }
 
     private void setUpAdapter() {
-        SharedPreferencesManager prefManager = new com.example.storehub.utils.SharedPreferencesManager(this);
+        SharedPreferencesManager prefManager = new SharedPreferencesManager(this);
         User currentUser = prefManager.getUser();
 
-        ArrayList<String> roleList = new java.util.ArrayList<>();
+        ArrayList<String> roleList = new ArrayList<>();
         roleList.add("Chọn vai trò");
         if (currentUser != null && currentUser.isSuperAdmin()) {
             roleList.add("superadmin");
@@ -183,7 +181,7 @@ public class AddUserActivity extends AppCompatActivity {
         SharedPreferencesManager prefManager = new SharedPreferencesManager(this);
         String token = "Bearer " + prefManager.getToken();
         HttpResquest httpResquest = new HttpResquest();
-        httpResquest.callAPI().addUser(token, newUser).enqueue(new retrofit2.Callback<com.example.storehub.model.Response<com.example.storehub.model.User>>() {
+        httpResquest.callAPI().addUser(token, newUser).enqueue(new retrofit2.Callback<Response<User>>() {
             @Override
             public void onResponse(@NonNull retrofit2.Call<Response<User>> call,
                                    @NonNull retrofit2.Response<Response<User>> response) {

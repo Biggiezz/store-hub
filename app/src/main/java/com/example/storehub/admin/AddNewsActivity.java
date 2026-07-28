@@ -15,7 +15,11 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.example.storehub.R;
 import com.example.storehub.model.News;
@@ -58,7 +62,11 @@ public class AddNewsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_news);
-
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.add_news_activity), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
         initViews();
         setupData();
         setupListeners();
@@ -127,7 +135,7 @@ public class AddNewsActivity extends AppCompatActivity {
 
         apiServices.addNews(news).enqueue(new Callback<Response<News>>() {
             @Override
-            public void onResponse(Call<Response<News>> call, retrofit2.Response<Response<News>> response) {
+            public void onResponse(@NonNull Call<Response<News>> call, @NonNull retrofit2.Response<Response<News>> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(AddNewsActivity.this, "Lưu bài viết thành công", Toast.LENGTH_SHORT).show();
                     finish();
@@ -137,7 +145,7 @@ public class AddNewsActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<Response<News>> call, Throwable t) {
+            public void onFailure(@NonNull Call<Response<News>> call, @NonNull Throwable t) {
                 Toast.makeText(AddNewsActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
             }
         });

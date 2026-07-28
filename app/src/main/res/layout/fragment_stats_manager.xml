@@ -127,11 +127,23 @@
                 android:text="@string/view_all" />
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/layoutActivity"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:layout_marginTop="6dp"
+            app:cardBackgroundColor="#FFFFFF"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#E9E6E0"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:id="@+id/layoutActivity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+        </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
 

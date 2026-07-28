@@ -1,6 +1,8 @@
 package com.example.storehub.admin.fragment;
 
+import android.content.Intent;
 import android.graphics.Color;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +19,7 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.example.storehub.R;
+import com.example.storehub.admin.RecentActivity;
 import com.example.storehub.admin.adapter.StatsTimeAdapter;
 import com.example.storehub.model.AdminStats;
 import com.example.storehub.model.Response;
@@ -31,7 +34,6 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.example.storehub.utils.DateTimeUtils;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -44,7 +46,7 @@ public class StatsManagerFragment extends Fragment {
     private Spinner spTime;
     private View layoutRevenue, layoutOrder;
     private LinearLayout layoutTopProduct, layoutActivity;
-
+    private TextView tvSeeAll;
     public StatsManagerFragment() {
     }
 
@@ -70,6 +72,7 @@ public class StatsManagerFragment extends Fragment {
         layoutOrder = view.findViewById(R.id.layoutOrder);
         layoutTopProduct = view.findViewById(R.id.layoutTopProduct);
         layoutActivity = view.findViewById(R.id.layoutActivity);
+        tvSeeAll = view.findViewById(R.id.tvSeeAll);
 
         if (barChart != null) {
             // Mặc định hiển thị thông báo chưa có dữ liệu thống kê nếu không có dữ liệu
@@ -103,6 +106,10 @@ public class StatsManagerFragment extends Fragment {
                 }
             });
         }
+        tvSeeAll.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), RecentActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void onTimeFilterSelected(int position) {
@@ -235,20 +242,64 @@ public class StatsManagerFragment extends Fragment {
             return;
         }
 
-        for (AdminStats.RecentActivity activity : activities) {
+        for (int i = 0; i < activities.size(); i++) {
+            AdminStats.RecentActivity activity = activities.get(i);
             View item = getLayoutInflater().inflate(R.layout.item_recent_activity, layoutActivity, false);
             ImageView icon = item.findViewById(R.id.ivActivityIcon);
-            int iconResource = "user".equals(activity.getType())
-                    ? R.drawable.ic_user_check
-                    : "low_stock".equals(activity.getType())
-                    ? R.drawable.ic_product_check
-                    : R.drawable.ic_check;
+            int iconResource = getRecentActivityIcon(activity.getType());
             icon.setImageResource(iconResource);
+            icon.setBackgroundTintList(ColorStateList.valueOf(getRecentActivityIconBackground(activity.getType())));
             icon.setContentDescription(activity.getTitle());
             ((TextView) item.findViewById(R.id.tvActivityTitle)).setText(activity.getTitle());
+            ((TextView) item.findViewById(R.id.tvActivityDetail)).setText(activity.getDetail() != null ? activity.getDetail() : "");
             ((TextView) item.findViewById(R.id.tvActivityTime)).setText(formatDate(activity.getCreatedAt()));
+            View divider = item.findViewById(R.id.viewDivider);
+            if (divider != null) {
+                divider.setVisibility(i == activities.size() - 1 ? View.GONE : View.VISIBLE);
+            }
             layoutActivity.addView(item);
         }
+    }
+
+    private int getRecentActivityIcon(String type) {
+        if ("order_created".equals(type)) {
+            return R.drawable.ic_order_shipping;
+        }
+        if ("order_completed".equals(type)) {
+            return R.drawable.ic_check;
+        }
+        if ("order_cancelled".equals(type)) {
+            return R.drawable.ic_order_cancelled;
+        }
+        if ("product_created".equals(type)) {
+            return R.drawable.ic_products;
+        }
+        if ("login_admin".equals(type) || "login_customer".equals(type)) {
+            return R.drawable.ic_user_check;
+        }
+        if ("user_created".equals(type)) {
+            return R.drawable.ic_users;
+        }
+        return R.drawable.ic_check_done;
+    }
+
+    private int getRecentActivityIconBackground(String type) {
+        if ("order_cancelled".equals(type)) {
+            return Color.parseColor("#F9D8D8");
+        }
+        if ("order_created".equals(type)) {
+            return Color.parseColor("#E6E3DD");
+        }
+        if ("product_created".equals(type)) {
+            return Color.parseColor("#E6E3DD");
+        }
+        if ("login_admin".equals(type) || "login_customer".equals(type)) {
+            return Color.parseColor("#DDE8C0");
+        }
+        if ("user_created".equals(type)) {
+            return Color.parseColor("#E4EAD0");
+        }
+        return Color.parseColor("#EADDD2");
     }
 
     private void addEmptyText(LinearLayout container, String message) {

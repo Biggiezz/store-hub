@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -71,8 +72,6 @@ public class UserManagementFragment extends Fragment {
         initUi(view);
         setUpAdapter();
         setUpListener();
-
-        loadMockUserData();
 
         SharedPreferencesManager prefManager = new SharedPreferencesManager(requireContext());
         User currentUser = prefManager.getUser();
@@ -153,7 +152,7 @@ public class UserManagementFragment extends Fragment {
                     Toast.makeText(requireContext(), "Bạn không có quyền chỉnh sửa/xóa tài khoản Super Admin này!", Toast.LENGTH_LONG).show();
                     return;
                 }
-                new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                new AlertDialog.Builder(requireContext())
                     .setTitle("Tùy chọn quản lý")
                     .setMessage("Bạn muốn thực hiện thao tác gì với " + user.getName() + "?")
                     .setPositiveButton("Chỉnh sửa", (dialog, which) -> {
@@ -353,24 +352,6 @@ public class UserManagementFragment extends Fragment {
         }
     }
 
-    private void loadMockUserData() {
-        allStaffList.clear();
-        allStaffList.add(new User("1", "Eleanor Vance", "eleanor.v@storehub.com", "0912345678", "admin", "", "Hà Nội", "2 giờ trước"));
-        allStaffList.add(new User("2", "Margaret Atwood", "m.atwood@storehub.com", "0987654321", "Chuyên viên kho", "", "TP. Hồ Chí Minh", "1 ngày trước"));
-        allStaffList.add(new User("3", "Julianne Moore", "j.moore@storehub.com", "0933445566", "Nhân viên bán hàng", "", "Đà Nẵng", "Vừa xong"));
-        allStaffList.add(new User("4", "Arthur Pendelton", "arthur.p@storehub.com", "0977889900", "Hỗ trợ khách hàng", "", "Cần Thơ", "3 ngày trước"));
-        allStaffList.add(new User("5", "Robert Langdon", "robert.l@storehub.com", "0944556677", "Kế toán viên", "", "Hải Phòng", "5 giờ trước"));
-
-        allCustomerList.clear();
-        allCustomerList.add(new User("101", "Nguyễn Văn An", "an.nguyen@gmail.com", "0901112233", "customer", "", "Hà Nội", "10 phút trước"));
-        allCustomerList.add(new User("102", "Trần Thị Bình", "binh.tran@yahoo.com", "0902223344", "Khách hàng VIP", "", "TP. Hồ Chí Minh", "1 giờ trước"));
-        allCustomerList.add(new User("103", "Lê Hoàng Cường", "cuong.le@gmail.com", "0903334455", "Khách hàng thân thiết", "", "Đà Nẵng", "4 giờ trước"));
-        allCustomerList.add(new User("104", "Phạm Minh Dung", "dung.pham@gmail.com", "0904445566", "customer", "", "Cần Thơ", "1 ngày trước"));
-
-        tvStaffCount.setText(String.valueOf(allStaffList.size()));
-        tvCustomerCount.setText("1,492");
-    }
-
     private void fetchUsersFromServer() {
         pbLoadingUsers.setVisibility(View.VISIBLE);
         SharedPreferencesManager prefManager = new SharedPreferencesManager(requireContext());
@@ -380,10 +361,10 @@ public class UserManagementFragment extends Fragment {
             @Override
             public void onResponse(@NonNull retrofit2.Call<Response<ArrayList<User>>> call, @NonNull retrofit2.Response<Response<ArrayList<User>>> response) {
                 pbLoadingUsers.setVisibility(View.GONE);
+                allStaffList.clear();
+                allCustomerList.clear();
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null && !response.body().getData().isEmpty()) {
                     ArrayList<User> serverUsers = response.body().getData();
-                    allStaffList.clear();
-                    allCustomerList.clear();
                     for (User u : serverUsers) {
                         String role = u.getRole() != null ? u.getRole().toLowerCase() : "";
                         if (role.contains("khách hàng") || role.contains("customer")) {
@@ -392,22 +373,21 @@ public class UserManagementFragment extends Fragment {
                             allStaffList.add(u);
                         }
                     }
-                    tvStaffCount.setText(String.valueOf(allStaffList.size()));
-                    tvCustomerCount.setText(String.valueOf(allCustomerList.size()));
-                    switchTab(isStaffTabSelected);
-                } else {
-                    // Fallback to mock data if server response is empty
-                    loadMockUserData();
-                    switchTab(isStaffTabSelected);
                 }
+                tvStaffCount.setText(String.valueOf(allStaffList.size()));
+                tvCustomerCount.setText(String.valueOf(allCustomerList.size()));
+                switchTab(isStaffTabSelected);
             }
 
             @Override
             public void onFailure(@NonNull retrofit2.Call<com.example.storehub.model.Response<ArrayList<User>>> call, @NonNull Throwable t) {
                 pbLoadingUsers.setVisibility(View.GONE);
-                // Fallback to mock data if network request fails
-                loadMockUserData();
+                allStaffList.clear();
+                allCustomerList.clear();
+                tvStaffCount.setText("0");
+                tvCustomerCount.setText("0");
                 switchTab(isStaffTabSelected);
+                Toast.makeText(requireContext(), "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
             }
         });
     }

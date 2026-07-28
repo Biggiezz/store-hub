@@ -41,9 +41,6 @@ public interface ApiServices {
             @Query("category") String category
     );
 
-    @GET("api/productsRouter/get-latest-product")
-    Call<Response<ArrayList<Product>>> getLatestProduct();
-
     @GET("api/productsRouter/get-product-by-id/{id}")
     Call<Response<Product>> getProductDetail(@Path("id") String id);
 
@@ -56,6 +53,7 @@ public interface ApiServices {
             @Part("description") RequestBody description,
             @Part("stock") RequestBody stock,
             @Part("colors") RequestBody colors,
+            @Part("status") RequestBody status,
             @Part MultipartBody.Part image
     );
 
@@ -69,6 +67,7 @@ public interface ApiServices {
             @Part("description") RequestBody description,
             @Part("stock") RequestBody stock,
             @Part("colors") RequestBody colors,
+            @Part("status") RequestBody status,
             @Part MultipartBody.Part image
     );
 
@@ -200,9 +199,12 @@ public interface ApiServices {
     @GET("users/admin/dashboard")
     Call<Response<AdminStats.DashboardData>> getAdminDashboardStats();
 
-    @POST("api/productsRouter/checkout")
-    Call<Response<Object>> checkout();
-
     @GET("users/admin/revenue-stats")
     Call<Response<AdminStats.RevenueData>> getRevenueStats(@Query("period") int period);
+
+    @GET("users/admin/revenue-stats")
+    Call<Response<AdminStats.RevenueData>> getRevenueStatsWithLimit(
+            @Query("period") int period,
+            @Query("activityLimit") int activityLimit
+    );
 }

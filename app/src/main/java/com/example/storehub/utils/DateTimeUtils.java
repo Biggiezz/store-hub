@@ -1,5 +1,9 @@
 package com.example.storehub.utils;
 
+import android.app.DatePickerDialog;
+import android.content.Context;
+import android.widget.TextView;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -112,19 +116,24 @@ public class DateTimeUtils {
     }
     public static Date parseISO(String isoString) {
         if (isoString == null || isoString.isEmpty()) return null;
-        try {
-            SimpleDateFormat parser = new SimpleDateFormat(ISO_FORMAT_MS, Locale.US);
-            parser.setTimeZone(TimeZone.getTimeZone("UTC"));
+        String[] patterns = {
+                "yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
+                "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+                "yyyy-MM-dd'T'HH:mm:ssXXX",
+                "yyyy-MM-dd'T'HH:mm:ss'Z'",
+                "yyyy-MM-dd HH:mm:ss",
+                "yyyy-MM-dd"
+        };
+        for (String pattern : patterns) {
             try {
-                return parser.parse(isoString);
-            } catch (Exception e) {
-                SimpleDateFormat parserAlt = new SimpleDateFormat(ISO_FORMAT, Locale.US);
-                parserAlt.setTimeZone(TimeZone.getTimeZone("UTC"));
-                return parserAlt.parse(isoString);
+                SimpleDateFormat parser = new SimpleDateFormat(pattern, Locale.US);
+                parser.setTimeZone(TimeZone.getTimeZone("UTC"));
+                Date d = parser.parse(isoString);
+                if (d != null) return d;
+            } catch (Exception ignored) {
             }
-        } catch (Exception e) {
-            return null;
         }
+        return null;
     }
 
     public static String formatToISO(Date date) {
@@ -136,5 +145,25 @@ public class DateTimeUtils {
         } catch (Exception e) {
             return "";
         }
+    }
+
+    public static void showDatePicker(Context context, final TextView targetView) {
+        Calendar calendar = Calendar.getInstance();
+        new DatePickerDialog(
+                context,
+                (view, year, month, dayOfMonth) -> {
+                    String selectedDate = String.format(
+                            Locale.getDefault(),
+                            "%02d/%02d/%04d",
+                            dayOfMonth,
+                            month + 1,
+                            year
+                    );
+                    targetView.setText(selectedDate);
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+        ).show();
     }
 }
