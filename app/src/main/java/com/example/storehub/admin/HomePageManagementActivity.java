@@ -127,8 +127,8 @@ public class HomePageManagementActivity extends BaseActivity {
         int activeContent = Color.parseColor("#756E67");
         int inactiveContent = Color.parseColor("#AAA49D");
 
-        MaterialButton[] buttons = {btnHome, btnProducts, btnNews, btnUsers, btnStats};
-        String[] tabs = {TAB_HOME, TAB_PRODUCTS, TAB_NEWS, TAB_USERS, TAB_STATS};
+        MaterialButton[] buttons = {btnHome, btnProducts, btnNews, btnStats, btnUsers};
+        String[] tabs = {TAB_HOME, TAB_PRODUCTS, TAB_NEWS, TAB_STATS, TAB_USERS};
         for (int i = 0; i < buttons.length; i++) {
             boolean isActive = tabs[i].equals(activeTab);
             buttons[i].setBackgroundTintList(ColorStateList.valueOf(

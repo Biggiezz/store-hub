@@ -22,7 +22,6 @@
                 android:id="@+id/imgSlider"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:contentDescription="Banner"
                 android:scaleType="centerCrop" />
 
             <!-- Lớp phủ tối -->

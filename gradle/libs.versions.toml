@@ -21,4 +21,3 @@ ucrop = { group = "com.github.yalantis", name = "ucrop", version.ref = "ucrop" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-

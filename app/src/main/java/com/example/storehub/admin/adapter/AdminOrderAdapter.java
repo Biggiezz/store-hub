@@ -24,6 +24,7 @@ public class AdminOrderAdapter extends RecyclerView.Adapter<AdminOrderAdapter.Or
     private final OnOrderClickListener listener;
 
     public interface OnOrderClickListener {
+        void onViewDetailsClick(Order order);
         void onUpdateStatusClick(Order order);
     }
 
@@ -60,7 +61,7 @@ public class AdminOrderAdapter extends RecyclerView.Adapter<AdminOrderAdapter.Or
 
     class OrderViewHolder extends RecyclerView.ViewHolder {
         TextView tvOrderCode, tvOrderDate, tvRecipientNamePhone, tvRecipientAddress, tvItemsCount, tvTotalPrice, tvOrderStatus;
-        MaterialButton btnUpdateStatus;
+        MaterialButton btnViewDetails, btnUpdateStatus;
 
         public OrderViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -71,6 +72,7 @@ public class AdminOrderAdapter extends RecyclerView.Adapter<AdminOrderAdapter.Or
             tvItemsCount = itemView.findViewById(R.id.tvItemsCount);
             tvTotalPrice = itemView.findViewById(R.id.tvTotalPrice);
             tvOrderStatus = itemView.findViewById(R.id.tvOrderStatus);
+            btnViewDetails = itemView.findViewById(R.id.btnViewOrderDetails);
             btnUpdateStatus = itemView.findViewById(R.id.btnUpdateStatus);
         }
 
@@ -119,6 +121,16 @@ public class AdminOrderAdapter extends RecyclerView.Adapter<AdminOrderAdapter.Or
             }
 
             // Click listener
+            itemView.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onViewDetailsClick(order);
+                }
+            });
+            btnViewDetails.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onViewDetailsClick(order);
+                }
+            });
             btnUpdateStatus.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onUpdateStatusClick(order);

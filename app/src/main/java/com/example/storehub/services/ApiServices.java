@@ -96,6 +96,24 @@ public interface ApiServices {
     @GET("api/oderRouter/get-orders")
     Call<Response<ArrayList<Order>>> getOrders(@Query("userId") String userId);
 
+    @GET("api/oderRouter/admin/orders")
+    Call<Response<ArrayList<Order>>> getAdminOrders(
+            @Header("Authorization") String token
+    );
+
+    @GET("api/oderRouter/admin/orders/{id}")
+    Call<Response<Order>> getAdminOrderDetail(
+            @Header("Authorization") String token,
+            @Path("id") String orderId
+    );
+
+    @PUT("api/oderRouter/admin/orders/{id}/status")
+    Call<Response<Order>> updateAdminOrderStatus(
+            @Header("Authorization") String token,
+            @Path("id") String orderId,
+            @Body Order.UpdateStatusRequest request
+    );
+
     @POST("api/oderRouter/cancel-order")
     Call<Response<Order>> cancelOrder(@Body Order.CancelOrderRequest request);
 
@@ -148,8 +166,14 @@ public interface ApiServices {
                                       @Part("status") RequestBody status,
                                       @Part MultipartBody.Part image);
 
+    @Multipart
     @PUT("api/newsRouter/admin/update-news/{id}")
-    Call<Response<News>> updateAdminNews(@Header("Authorization") String token, @Path("id") String id, @Body News news);
+    Call<Response<News>> updateAdminNews(@Header("Authorization") String token,
+                                         @Path("id") String id,
+                                         @Part("title") RequestBody title,
+                                         @Part("content") RequestBody content,
+                                         @Part("status") RequestBody status,
+                                         @Part MultipartBody.Part image);
 
     @DELETE("api/newsRouter/admin/delete-news/{id}")
     Call<Response<Void>> deleteAdminNews(@Header("Authorization") String token, @Path("id") String id);

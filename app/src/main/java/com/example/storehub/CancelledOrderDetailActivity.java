@@ -85,8 +85,10 @@ public class CancelledOrderDetailActivity extends BaseActivity {
         adapter.updateData(order.getItems());
 
         long subtotal = 0;
+        int totalQty = 0;
         for (CartItem item : order.getItems()) {
             subtotal += item.getTotalItemPrice();
+            totalQty += item.getQuantity();
         }
 
         long shippingFee = order.getShippingFee();
@@ -95,6 +97,11 @@ public class CancelledOrderDetailActivity extends BaseActivity {
         if (tvSubtotal != null) tvSubtotal.setText(formatPrice(subtotal));
         if (tvShippingFee != null) tvShippingFee.setText(formatPrice(shippingFee));
         if (tvTotal != null) tvTotal.setText(formatPrice(total));
+
+        TextView tvSubtotalLabel = findViewById(R.id.tvSubtotalLabel);
+        if (tvSubtotalLabel != null) {
+            tvSubtotalLabel.setText("Tạm tính (" + totalQty + " sản phẩm)");
+        }
 
         TextView tvVoucher = findViewById(R.id.tvVoucher);
         if (tvVoucher != null) tvVoucher.setText("-" + formatPrice(0));

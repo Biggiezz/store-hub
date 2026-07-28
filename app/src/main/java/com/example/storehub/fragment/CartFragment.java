@@ -147,7 +147,7 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartChangeLi
 
         if (btnChangeAddress != null) {
             btnChangeAddress.setOnClickListener(v ->
-                    Toast.makeText(requireContext(), "Thay đổi địa chỉ giao hàng", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Chức năng đang được phát triển", Toast.LENGTH_SHORT).show()
             );
         }
 

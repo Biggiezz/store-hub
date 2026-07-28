@@ -83,6 +83,9 @@
             android:name=".admin.AdminOrdersActivity"
             android:exported="false" />
         <activity
+            android:name=".admin.AdminOrderDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".WriteReviewActivity"
             android:exported="false" />
 

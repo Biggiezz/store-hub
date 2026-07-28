@@ -2,15 +2,17 @@ package com.example.storehub;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.storehub.model.News;
-
 import com.example.storehub.utils.DateTimeUtils;
 
 /**
@@ -26,12 +28,24 @@ public class NewsDetailActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_detail);
-
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.news_detail_layout), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
         initUi();
         setUpListener();
 
         // Lấy dữ liệu đối tượng News được truyền từ Adapter
         News news = (News) getIntent().getSerializableExtra("news_item");
+        boolean isAdmin = getIntent().getBooleanExtra("is_admin", false);
+
+        if (isAdmin) {
+            View shareSection = findViewById(R.id.layoutShareSection);
+            View bottomNav = findViewById(R.id.bottomNavigation);
+            if (shareSection != null) shareSection.setVisibility(View.GONE);
+            if (bottomNav != null) bottomNav.setVisibility(View.GONE);
+        }
 
         if (news != null) {
             displayNewsDetails(news);
@@ -55,7 +69,6 @@ public class NewsDetailActivity extends BaseActivity {
             btnBack.setOnClickListener(v -> finish());
         }
 
-        setupBottomNavigation();
         setupInteractionButtons();
     }
 
@@ -84,21 +97,6 @@ public class NewsDetailActivity extends BaseActivity {
      */
     private String formatDateString(String isoDateString) {
         return DateTimeUtils.formatISOToLocal(isoDateString, "dd/MM/yyyy HH:mm");
-    }
-
-    /**
-     * Cấu hình điều hướng cho thanh Bottom Navigation ở góc dưới màn hình chi tiết
-     */
-    private void setupBottomNavigation() {
-        findViewById(R.id.btnHome).setOnClickListener(v -> openMainTab(MainActivity.TAB_HOME));
-
-        findViewById(R.id.btnProducts).setOnClickListener(v -> openMainTab(MainActivity.TAB_PRODUCTS));
-
-        findViewById(R.id.btnCart).setOnClickListener(v -> {
-            Toast.makeText(this, "Chức năng Giỏ hàng đang được phát triển!", Toast.LENGTH_SHORT).show();
-        });
-
-        findViewById(R.id.btnNews).setOnClickListener(v -> openMainTab(MainActivity.TAB_NEWS));
     }
 
     private void openMainTab(String tab) {

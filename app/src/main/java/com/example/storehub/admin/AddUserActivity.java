@@ -97,13 +97,10 @@ public class AddUserActivity extends AppCompatActivity {
         ArrayList<String> roleList = new java.util.ArrayList<>();
         roleList.add("Chọn vai trò");
         if (currentUser != null && currentUser.isSuperAdmin()) {
-            roleList.add("Super Admin");
+            roleList.add("superadmin");
         }
-        roleList.add("Quản lý cửa hàng");
-        roleList.add("Chuyên viên kho");
-        roleList.add("Nhân viên bán hàng");
-        roleList.add("Hỗ trợ khách hàng");
-        roleList.add("Khách hàng");
+        roleList.add("admin");
+        roleList.add("customer");
 
         ArrayAdapter<String> roleAdapter = new ArrayAdapter<>(
                 this,
@@ -181,6 +178,7 @@ public class AddUserActivity extends AppCompatActivity {
         User newUser = new User(
                 null, fullName, email, phone, role, selectedImageUri != null ? selectedImageUri.toString() : "", address, "Vừa xong"
         );
+        newUser.setPassword(password);
 
         SharedPreferencesManager prefManager = new SharedPreferencesManager(this);
         String token = "Bearer " + prefManager.getToken();
@@ -189,18 +187,21 @@ public class AddUserActivity extends AppCompatActivity {
             @Override
             public void onResponse(@NonNull retrofit2.Call<Response<User>> call,
                                    @NonNull retrofit2.Response<Response<User>> response) {
-                Toast.makeText(AddUserActivity.this, "Thêm người dùng '" + fullName + "' thành công!", Toast.LENGTH_LONG).show();
-                setResult(RESULT_OK);
-                finish();
+                if (response.isSuccessful() && response.body() != null && response.body().getCode() == 201) {
+                    Toast.makeText(AddUserActivity.this, "Thêm người dùng '" + fullName + "' thành công!", Toast.LENGTH_LONG).show();
+                    setResult(RESULT_OK);
+                    finish();
+                } else if (response.body() != null && response.body().getMessage() != null) {
+                    Toast.makeText(AddUserActivity.this, response.body().getMessage(), Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(AddUserActivity.this, "Lỗi khi thêm người dùng", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
             public void onFailure(@NonNull retrofit2.Call<Response<User>> call,
                                   @NonNull Throwable t) {
-                // Return success fallback even if local server fails during offline testing
-                Toast.makeText(AddUserActivity.this, "Thêm người dùng '" + fullName + "' thành công (offline)!", Toast.LENGTH_LONG).show();
-                setResult(RESULT_OK);
-                finish();
+                Toast.makeText(AddUserActivity.this, "Lỗi kết nối máy chủ: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }

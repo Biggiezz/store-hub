@@ -1,5 +1,7 @@
 package com.example.storehub.fragment;
 
+import static com.example.storehub.R.drawable.ic_receipt;
+
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -176,7 +178,7 @@ public class OderFragment extends Fragment {
 
             tvOrderCode.setText("#GIỎ-HÀNG-TẠM");
             tvOrderStatus.setText("Chưa đặt hàng");
-            tvOrderStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_receipt, 0, 0, 0);
+            tvOrderStatus.setCompoundDrawablesWithIntrinsicBounds(ic_receipt, 0, 0, 0);
             tvOrderStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.dark_green));
 
             CartItem firstItem = cartItems.get(0);
@@ -232,19 +234,19 @@ public class OderFragment extends Fragment {
             String status = order.getStatus();
             if ("Đã hoàn thành".equalsIgnoreCase(status) || "Đã giao hàng".equalsIgnoreCase(status) || "completed".equalsIgnoreCase(status)) {
                 tvOrderStatus.setText("Đã hoàn thành");
-                tvOrderStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_check, 0, 0, 0);
+                tvOrderStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_check_done, 0, 0, 0);
                 tvOrderStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.dark_green));
                 tvOrderStatus.setBackgroundResource(R.drawable.bg_order_status);
                 btnCancelOrder.setVisibility(View.GONE);
             } else if ("Đã hủy".equalsIgnoreCase(status) || "cancelled".equalsIgnoreCase(status) || "cancel".equalsIgnoreCase(status)) {
                 tvOrderStatus.setText("Đã hủy");
-                tvOrderStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_order_cancelled, 0, 0, 0);
+                tvOrderStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_reject, 0, 0, 0);
                 tvOrderStatus.setTextColor(Color.parseColor("#BA1A1A"));
                 tvOrderStatus.setBackgroundResource(R.drawable.bg_order_status_cancelled);
                 btnCancelOrder.setVisibility(View.GONE);
             } else {
                 tvOrderStatus.setText(status != null ? status : "Đang giao hàng");
-                tvOrderStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_order_shipping, 0, 0, 0);
+                tvOrderStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_car_waiting, 0, 0, 0);
                 tvOrderStatus.setTextColor(Color.parseColor("#625E58"));
                 tvOrderStatus.setBackgroundResource(R.drawable.bg_order_status);
                 btnCancelOrder.setVisibility(View.VISIBLE);

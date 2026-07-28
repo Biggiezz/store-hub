@@ -1,6 +1,7 @@
 package com.example.storehub.admin;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,8 +22,10 @@ import com.example.storehub.admin.adapter.AdminOrderAdapter;
 import com.example.storehub.model.Order;
 import com.example.storehub.model.Order.UpdateStatusRequest;
 import com.example.storehub.model.Response;
+import com.example.storehub.model.User;
 import com.example.storehub.services.ApiServices;
 import com.example.storehub.services.HttpResquest;
+import com.example.storehub.utils.SharedPreferencesManager;
 
 import java.util.ArrayList;
 
@@ -38,6 +41,8 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
     private AdminOrderAdapter adapter;
     private ApiServices apiService;
     private Call<Response<ArrayList<Order>>> ordersCall;
+    private SharedPreferencesManager preferencesManager;
+    private boolean resumedOnce;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +70,13 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
         rvAdminOrders.setAdapter(adapter);
 
         apiService = new HttpResquest().callAPI();
+        preferencesManager = new SharedPreferencesManager(this);
+
+        if (!hasAdminAccess()) {
+            Toast.makeText(this, "Bạn không có quyền quản lý đơn hàng", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
         // Load Initial Data
         loadOrders();
@@ -76,6 +88,7 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
             ordersCall.cancel();
         }
 
+        ordersCall = apiService.getAdminOrders(getAuthHeader());
         // Passing null as userId retrieves all customer orders
         ordersCall = apiService.getOrders(null);
         ordersCall.enqueue(new Callback<Response<ArrayList<Order>>>() {
@@ -106,6 +119,13 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
         });
     }
 
+    @Override
+    public void onViewDetailsClick(Order order) {
+        if (order == null || order.getOrderId().isEmpty()) return;
+        Intent intent = AdminOrderDetailActivity.createIntent(this, order.getOrderId());
+        startActivity(intent);
+    }
+
     private void setLoading(boolean loading) {
         if (progressBar != null) {
             progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
@@ -114,7 +134,7 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
 
     @Override
     public void onUpdateStatusClick(Order order) {
-        if (order == null || order.getId() == null) return;
+        if (order == null || order.getOrderId().isEmpty()) return;
 
         final String[] statusOptions = {"Đã xác nhận", "Đã rời kho", "Đang giao hàng", "Đã giao hàng"};
 
@@ -137,7 +157,7 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
         builder.setPositiveButton("Cập nhật", (dialog, which) -> {
             if (selectedIndex[0] >= 0 && selectedIndex[0] < statusOptions.length) {
                 String newStatus = statusOptions[selectedIndex[0]];
-                updateStatus(order.getId(), newStatus);
+                updateStatus(order.getOrderId(), newStatus);
             }
         });
 
@@ -148,26 +168,47 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
     private void updateStatus(String orderId, String newStatus) {
         setLoading(true);
         UpdateStatusRequest request = new UpdateStatusRequest(orderId, newStatus);
-        apiService.updateOrderStatus(request).enqueue(new Callback<Response<Order>>() {
-            @Override
-            public void onResponse(@NonNull Call<Response<Order>> call,
-                                   @NonNull retrofit2.Response<Response<Order>> response) {
-                setLoading(false);
-                if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(AdminOrdersActivity.this, "Cập nhật trạng thái thành công!", Toast.LENGTH_SHORT).show();
-                    loadOrders(); // Refresh lists
-                } else {
-                    Toast.makeText(AdminOrdersActivity.this, "Cập nhật thất bại", Toast.LENGTH_SHORT).show();
-                }
-            }
+        apiService.updateAdminOrderStatus(getAuthHeader(), orderId, request)
+                .enqueue(new Callback<Response<Order>>() {
+                    @Override
+                    public void onResponse(@NonNull Call<Response<Order>> call,
+                                           @NonNull retrofit2.Response<Response<Order>> response) {
+                        setLoading(false);
+                        if (response.isSuccessful() && response.body() != null) {
+                            Toast.makeText(AdminOrdersActivity.this, "Cập nhật trạng thái thành công!", Toast.LENGTH_SHORT).show();
+                            loadOrders(); // Refresh lists
+                        } else {
+                            Toast.makeText(AdminOrdersActivity.this, "Cập nhật thất bại", Toast.LENGTH_SHORT).show();
+                        }
+                    }
 
-            @Override
-            public void onFailure(@NonNull Call<Response<Order>> call, @NonNull Throwable t) {
-                setLoading(false);
-                Log.e("AdminOrdersActivity", "Error updating status", t);
-                Toast.makeText(AdminOrdersActivity.this, "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
-            }
-        });
+                    @Override
+                    public void onFailure(@NonNull Call<Response<Order>> call, @NonNull Throwable t) {
+                        setLoading(false);
+                        Log.e("AdminOrdersActivity", "Error updating status", t);
+                        Toast.makeText(AdminOrdersActivity.this, "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private boolean hasAdminAccess() {
+        User user = preferencesManager.getUser();
+        if (user == null || preferencesManager.getToken() == null) return false;
+        String role = user.getRole() == null
+                ? ""
+                : user.getRole().replaceAll("\\s+", "").toLowerCase();
+        return "admin".equals(role) || "superadmin".equals(role);
+    }
+
+    private String getAuthHeader() {
+        return "Bearer " + preferencesManager.getToken();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (resumedOnce && hasAdminAccess()) loadOrders();
+        resumedOnce = true;
     }
 
     @Override

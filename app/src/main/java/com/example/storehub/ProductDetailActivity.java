@@ -4,7 +4,9 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -26,6 +28,9 @@ import com.example.storehub.model.CartItem;
 import com.example.storehub.model.Product;
 import com.example.storehub.model.Product.ProductColor;
 import com.example.storehub.model.Response;
+import com.example.storehub.model.User;
+import com.example.storehub.admin.ProductFormManagementActivity;
+import com.example.storehub.utils.SharedPreferencesManager;
 import com.example.storehub.services.ApiServices;
 import com.example.storehub.services.HttpResquest;
 import com.google.android.material.button.MaterialButton;
@@ -46,7 +51,7 @@ public class ProductDetailActivity extends BaseActivity {
     private RatingBar ratingProduct;
     private LinearLayout colorContainer;
     private ProgressBar progressBar;
-    private MaterialButton btnAddToCart;
+    private MaterialButton btnAddToCart, btnEditProduct;
     private RecyclerView rvProductReviews;
     private ProductReviewAdapter reviewAdapter;
     private ApiServices apiService;
@@ -74,9 +79,11 @@ public class ProductDetailActivity extends BaseActivity {
         if (getIntent() != null && getIntent().hasExtra(EXTRA_PRODUCT_ID)) {
             Object extra = getIntent().getExtras().get(EXTRA_PRODUCT_ID);
             productId = extra != null ? String.valueOf(extra) : "";
+            Log.d("ProductDetail", "Received Product ID: " + productId);
         }
 
         if (TextUtils.isEmpty(productId) || "null".equalsIgnoreCase(productId)) {
+            Log.e("ProductDetail", "Invalid Product ID: " + productId);
             Toast.makeText(this, "Mã sản phẩm không hợp lệ", Toast.LENGTH_SHORT).show();
             finish();
             return;
@@ -112,10 +119,30 @@ public class ProductDetailActivity extends BaseActivity {
         rvProductReviews.setLayoutManager(new LinearLayoutManager(this));
         reviewAdapter = new ProductReviewAdapter(this);
         rvProductReviews.setAdapter(reviewAdapter);
+        btnEditProduct = findViewById(R.id.btnEditProduct);
+
+        checkAdminRole();
+    }
+
+    private void checkAdminRole() {
+        User user = SharedPreferencesManager.getInstance(this).getUser();
+        if (user != null && "admin".equalsIgnoreCase(user.getRole())) {
+            btnEditProduct.setVisibility(View.VISIBLE);
+        } else {
+            btnEditProduct.setVisibility(View.GONE);
+        }
     }
 
     private void setUpListener() {
         btnBack.setOnClickListener(view -> finish());
+
+        btnEditProduct.setOnClickListener(v -> {
+            if (currentProduct != null) {
+                String pid = currentProduct.get_id();
+                if (pid == null || pid.isEmpty()) pid = currentProduct.getId();
+                startActivity(ProductFormManagementActivity.createEditIntent(this, pid));
+            }
+        });
 
         tvError.setOnClickListener(view -> loadProduct());
 
@@ -222,13 +249,15 @@ public class ProductDetailActivity extends BaseActivity {
         }
         for (ProductColor color : colors) {
             if (color.isDefault()) {
-                selectedColorId = color.getId() != null ? color.getId() : color.getMongoId();
+                String idVal = color.getId();
+                selectedColorId = !TextUtils.isEmpty(idVal) ? idVal : color.getMongoId();
                 break;
             }
         }
         if (selectedColorId == null && !colors.isEmpty()) {
             ProductColor first = colors.get(0);
-            selectedColorId = first.getId() != null ? first.getId() : first.getMongoId();
+            String idVal = first.getId();
+            selectedColorId = !TextUtils.isEmpty(idVal) ? idVal : first.getMongoId();
         }
     }
 
@@ -244,8 +273,23 @@ public class ProductDetailActivity extends BaseActivity {
             return;
         }
 
+        String selectedColorName = "";
         for (ProductColor productColor : colors) {
-            View colorView = new View(this);
+            String idVal = productColor.getId();
+            Object currentColorId = !TextUtils.isEmpty(idVal) ? idVal : productColor.getMongoId();
+            if (selectedColorId != null && selectedColorId.toString().equals(String.valueOf(currentColorId))) {
+                selectedColorName = productColor.getName();
+                break;
+            }
+        }
+        if (!selectedColorName.isEmpty()) {
+            tvColorLabel.setText("MÀU SẮC: " + selectedColorName);
+        } else {
+            tvColorLabel.setText("MÀU SẮC");
+        }
+
+        for (ProductColor productColor : colors) {
+            android.widget.FrameLayout frameLayout = new android.widget.FrameLayout(this);
 
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     dpToPx(50),
@@ -253,39 +297,67 @@ public class ProductDetailActivity extends BaseActivity {
             );
 
             params.setMarginEnd(dpToPx(12));
-            colorView.setLayoutParams(params);
+            frameLayout.setLayoutParams(params);
 
-            Object currentColorId = productColor.getId() != null ? productColor.getId() : productColor.getMongoId();
+            String idVal = productColor.getId();
+            Object currentColorId = !TextUtils.isEmpty(idVal) ? idVal : productColor.getMongoId();
             boolean selected = selectedColorId != null
                     && selectedColorId.toString().equals(String.valueOf(currentColorId));
 
-            colorView.setBackground(
-                    createColorBackground(productColor.getHex(), selected)
+            // Outer border
+            View borderView = new View(this);
+            android.widget.FrameLayout.LayoutParams borderParams = new android.widget.FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
             );
+            borderView.setLayoutParams(borderParams);
+            borderView.setBackground(createOuterBorder(selected));
+            frameLayout.addView(borderView);
 
-            colorView.setContentDescription(productColor.getName());
+            // Inner circle
+            View colorCircle = new View(this);
+            android.widget.FrameLayout.LayoutParams circleParams = new android.widget.FrameLayout.LayoutParams(
+                    dpToPx(36),
+                    dpToPx(36)
+            );
+            circleParams.gravity = android.view.Gravity.CENTER;
+            colorCircle.setLayoutParams(circleParams);
+            colorCircle.setBackground(createInnerCircle(parseColorSafely(productColor.getHex())));
+            frameLayout.addView(colorCircle);
 
-            colorView.setOnClickListener(view -> {
+            frameLayout.setContentDescription(productColor.getName());
+
+            frameLayout.setOnClickListener(view -> {
                 selectedColorId = currentColorId;
                 renderColors(colors);
             });
 
-            colorContainer.addView(colorView);
+            colorContainer.addView(frameLayout);
         }
     }
 
-    private GradientDrawable createColorBackground(String hexColor, boolean selected) {
+    private boolean isLightColor(int color) {
+        double luminance = (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255;
+        return luminance > 0.85;
+    }
+
+    private GradientDrawable createInnerCircle(int color) {
         GradientDrawable drawable = new GradientDrawable();
         drawable.setShape(GradientDrawable.OVAL);
-        drawable.setColor(parseColorSafely(hexColor));
+        drawable.setColor(color);
+        if (isLightColor(color)) {
+            drawable.setStroke(dpToPx(1), Color.parseColor("#DDDDDD"));
+        }
+        return drawable;
+    }
 
-        int strokeWidth = selected ? dpToPx(3) : dpToPx(1);
-        int strokeColor = selected
-                ? Color.parseColor("#193329")
-                : Color.parseColor("#B9B9B9");
-
-        drawable.setStroke(strokeWidth, strokeColor);
-
+    private GradientDrawable createOuterBorder(boolean selected) {
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setShape(GradientDrawable.OVAL);
+        drawable.setColor(Color.TRANSPARENT);
+        if (selected) {
+            drawable.setStroke(dpToPx(2), Color.parseColor("#112D21"));
+        }
         return drawable;
     }
 

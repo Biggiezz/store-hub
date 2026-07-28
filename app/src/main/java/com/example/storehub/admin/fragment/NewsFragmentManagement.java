@@ -185,5 +185,18 @@ public class NewsFragmentManagement extends Fragment implements PostAdapter.Post
 
     @Override
     public void onItemClick(News news) {
+        if (getContext() == null || news == null) return;
+        Intent intent = new Intent(getContext(), com.example.storehub.NewsDetailActivity.class);
+        intent.putExtra("news_item", news);
+        intent.putExtra("is_admin", true);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onEditClick(News news) {
+        if (getContext() == null || news == null) return;
+        Intent intent = new Intent(getContext(), AddNewsManagementActivity.class);
+        intent.putExtra("edit_news", news);
+        startActivity(intent);
     }
 }
