@@ -234,19 +234,20 @@ public class AddUserActivity extends AppCompatActivity {
         SharedPreferencesManager prefManager = new SharedPreferencesManager(this);
         String token = "Bearer " + prefManager.getToken();
         HttpResquest httpResquest = new HttpResquest();
-        httpResquest.callAPI().addUser(token, newUser).enqueue(new retrofit2.Callback<Response<User>>() {
-            @Override
-            public void onResponse(@NonNull retrofit2.Call<Response<User>> call, @NonNull retrofit2.Response<Response<User>> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().getCode() == 201) {
-                    Toast.makeText(AddUserActivity.this, "Thêm người dùng '" + fullName + "' thành công!", Toast.LENGTH_LONG).show();
-                    setResult(RESULT_OK);
-                    finish();
-                } else if (response.body() != null && response.body().getMessage() != null) {
-                    Toast.makeText(AddUserActivity.this, response.body().getMessage(), Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(AddUserActivity.this, "Lỗi khi thêm người dùng", Toast.LENGTH_SHORT).show();
+        if (userToEdit != null) {
+            httpResquest.callAPI().updateUser(token, userToEdit.getId(), newUser).enqueue(new retrofit2.Callback<Response<User>>() {
+                @Override
+                public void onResponse(@NonNull retrofit2.Call<Response<User>> call, @NonNull retrofit2.Response<Response<User>> response) {
+                    if (response.isSuccessful() && response.body() != null && response.body().getCode() == 201) {
+                        Toast.makeText(AddUserActivity.this, "Thêm người dùng '" + fullName + "' thành công!", Toast.LENGTH_LONG).show();
+                        setResult(RESULT_OK);
+                        finish();
+                    } else if (response.body() != null && response.body().getMessage() != null) {
+                        Toast.makeText(AddUserActivity.this, response.body().getMessage(), Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(AddUserActivity.this, "Lỗi khi thêm người dùng", Toast.LENGTH_SHORT).show();
+                    }
                 }
-            }
 
                 @Override
                 public void onFailure(@NonNull retrofit2.Call<Response<User>> call, @NonNull Throwable t) {
@@ -254,6 +255,7 @@ public class AddUserActivity extends AppCompatActivity {
                 }
             });
 
+        } else {
             httpResquest.callAPI().addUser(token, newUser).enqueue(new retrofit2.Callback<com.example.storehub.model.Response<com.example.storehub.model.User>>() {
                 @Override
                 public void onResponse(@NonNull retrofit2.Call<Response<User>> call, @NonNull retrofit2.Response<Response<User>> response) {
@@ -275,3 +277,4 @@ public class AddUserActivity extends AppCompatActivity {
             });
         }
     }
+}
