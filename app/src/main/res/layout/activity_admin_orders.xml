@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/admin_orders_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/admin_orders_activity"
     android:background="#F9F6F2"
     android:orientation="vertical">
 
@@ -14,9 +14,7 @@
         android:background="#FFFFFF"
         android:elevation="4dp"
         app:navigationIcon="@drawable/ic_back"
-        app:navigationIconTint="#1E2A24"
-        app:title="Quản lý đơn hàng"
-        app:titleTextColor="#1E2A24" />
+        app:title="Quản lý đơn hàng" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -36,7 +34,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="Chưa có đơn hàng nào"
-            android:textColor="#8F8A82"
             android:textSize="16sp"
             android:visibility="gone" />
 

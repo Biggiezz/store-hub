@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -15,20 +14,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.storehub.model.ApiMessageResponse;
+import com.example.storehub.adapter.ProductReviewAdapter;
 import com.example.storehub.model.CartItem;
 import com.example.storehub.model.Product;
-import com.example.storehub.model.ProductColor;
+import com.example.storehub.model.Product.ProductColor;
 import com.example.storehub.model.Response;
-import com.example.storehub.model.User;
-import com.example.storehub.admin.ProductFormManagementActivity;
-import com.example.storehub.utils.SharedPreferencesManager;
 import com.example.storehub.services.ApiServices;
 import com.example.storehub.services.HttpResquest;
 import com.google.android.material.button.MaterialButton;
@@ -49,10 +46,12 @@ public class ProductDetailActivity extends BaseActivity {
     private RatingBar ratingProduct;
     private LinearLayout colorContainer;
     private ProgressBar progressBar;
-    private MaterialButton btnAddToCart, btnEditProduct;
+    private MaterialButton btnAddToCart;
+    private RecyclerView rvProductReviews;
+    private ProductReviewAdapter reviewAdapter;
     private ApiServices apiService;
     private Call<Response<Product>> productCall;
-    private Call<ApiMessageResponse> cartCall;
+    private Call<Response<Void>> cartCall;
     private Product currentProduct;
     private String productId;
     private Object selectedColorId;
@@ -75,11 +74,9 @@ public class ProductDetailActivity extends BaseActivity {
         if (getIntent() != null && getIntent().hasExtra(EXTRA_PRODUCT_ID)) {
             Object extra = getIntent().getExtras().get(EXTRA_PRODUCT_ID);
             productId = extra != null ? String.valueOf(extra) : "";
-            Log.d("ProductDetail", "Received Product ID: " + productId);
         }
 
         if (TextUtils.isEmpty(productId) || "null".equalsIgnoreCase(productId)) {
-            Log.e("ProductDetail", "Invalid Product ID: " + productId);
             Toast.makeText(this, "Mã sản phẩm không hợp lệ", Toast.LENGTH_SHORT).show();
             finish();
             return;
@@ -110,30 +107,15 @@ public class ProductDetailActivity extends BaseActivity {
         colorContainer = findViewById(R.id.colorContainer);
         progressBar = findViewById(R.id.progressBar);
         btnAddToCart = findViewById(R.id.btnAddToCart);
-        btnEditProduct = findViewById(R.id.btnEditProduct);
 
-        checkAdminRole();
-    }
-
-    private void checkAdminRole() {
-        User user = SharedPreferencesManager.getInstance(this).getUser();
-        if (user != null && "admin".equalsIgnoreCase(user.getRole())) {
-            btnEditProduct.setVisibility(View.VISIBLE);
-        } else {
-            btnEditProduct.setVisibility(View.GONE);
-        }
+        rvProductReviews = findViewById(R.id.rvProductReviews);
+        rvProductReviews.setLayoutManager(new LinearLayoutManager(this));
+        reviewAdapter = new ProductReviewAdapter(this);
+        rvProductReviews.setAdapter(reviewAdapter);
     }
 
     private void setUpListener() {
         btnBack.setOnClickListener(view -> finish());
-
-        btnEditProduct.setOnClickListener(v -> {
-            if (currentProduct != null) {
-                String pid = currentProduct.get_id();
-                if (pid == null || pid.isEmpty()) pid = currentProduct.getId();
-                startActivity(ProductFormManagementActivity.createEditIntent(this, pid));
-            }
-        });
 
         tvError.setOnClickListener(view -> loadProduct());
 
@@ -222,7 +204,15 @@ public class ProductDetailActivity extends BaseActivity {
 
         prepareDefaultColor(product.getColors());
         renderColors(product.getColors());
-        tvEmptyReview.setVisibility(View.VISIBLE);
+
+        if (product.getReviews() != null && !product.getReviews().isEmpty()) {
+            tvEmptyReview.setVisibility(View.GONE);
+            rvProductReviews.setVisibility(View.VISIBLE);
+            reviewAdapter.updateData(product.getReviews());
+        } else {
+            tvEmptyReview.setVisibility(View.VISIBLE);
+            rvProductReviews.setVisibility(View.GONE);
+        }
     }
 
     private void prepareDefaultColor(List<ProductColor> colors) {
@@ -328,16 +318,16 @@ public class ProductDetailActivity extends BaseActivity {
 
         cartCall = apiService.addToCart(request);
 
-        cartCall.enqueue(new Callback<ApiMessageResponse>() {
+        cartCall.enqueue(new Callback<Response<Void>>() {
             @Override
-            public void onResponse(@NonNull Call<ApiMessageResponse> call, @NonNull retrofit2.Response<ApiMessageResponse> response) {
+            public void onResponse(@NonNull Call<Response<Void>> call, @NonNull retrofit2.Response<Response<Void>> response) {
                 setCartLoading(false);
                 if (!response.isSuccessful() || response.body() == null) {
                     Toast.makeText(ProductDetailActivity.this, "Không thể thêm sản phẩm vào giỏ", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                ApiMessageResponse result = response.body();
+                Response<Void> result = response.body();
 
                 String message = TextUtils.isEmpty(result.getMessage())
                         ? "Đã thêm sản phẩm vào giỏ"
@@ -349,7 +339,7 @@ public class ProductDetailActivity extends BaseActivity {
             }
 
             @Override
-            public void onFailure(@NonNull Call<ApiMessageResponse> call, @NonNull Throwable throwable) {
+            public void onFailure(@NonNull Call<Response<Void>> call, @NonNull Throwable throwable) {
                 if (call.isCanceled()) {
                     return;
                 }

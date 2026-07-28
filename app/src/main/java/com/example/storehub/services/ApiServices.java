@@ -1,15 +1,11 @@
 package com.example.storehub.services;
 
 import com.example.storehub.model.AdminStats;
-import com.example.storehub.model.ApiMessageResponse;
-import com.example.storehub.model.CancelOrderRequest;
 import com.example.storehub.model.CartItem;
 import com.example.storehub.model.News;
 import com.example.storehub.model.Order;
 import com.example.storehub.model.Product;
-import com.example.storehub.model.ProductReview;
 import com.example.storehub.model.Response;
-import com.example.storehub.model.UpdateStatusRequest;
 import com.example.storehub.model.User;
 
 import java.util.ArrayList;
@@ -80,7 +76,7 @@ public interface ApiServices {
     Call<Response<ArrayList<CartItem>>> getCart();
 
     @POST("api/productsRouter/add-to-cart")
-    Call<ApiMessageResponse> addToCart(@Body CartItem.AddToCartRequest request);
+    Call<Response<Void>> addToCart(@Body CartItem.AddToCartRequest request);
 
     @POST("api/productsRouter/update-cart-quantity")
     Call<Response<ArrayList<CartItem>>> updateCartQuantity(@Body CartItem.UpdateQuantityRequest request);
@@ -89,7 +85,10 @@ public interface ApiServices {
     Call<Response<ArrayList<CartItem>>> deleteCartItem(@Path("id") String id);
 
     @POST("api/productsRouter/add-review")
-    Call<Response<Product>> addReview(@Body ProductReview.AddRequest request);
+    Call<Response<Product>> addReview(@Body Product.ProductReview.AddRequest request);
+
+    @POST("api/productsRouter/reply-review")
+    Call<Response<Product>> replyReview(@Body Product.ProductReview.ReplyRequest request);
 
     @POST("api/oderRouter/create-order")
     Call<Response<Order>> createOrder(@Query("userId") String userId);
@@ -98,10 +97,10 @@ public interface ApiServices {
     Call<Response<ArrayList<Order>>> getOrders(@Query("userId") String userId);
 
     @POST("api/oderRouter/cancel-order")
-    Call<Response<Order>> cancelOrder(@Body CancelOrderRequest request);
+    Call<Response<Order>> cancelOrder(@Body Order.CancelOrderRequest request);
 
     @POST("api/oderRouter/update-status")
-    Call<Response<Order>> updateOrderStatus(@Body UpdateStatusRequest request);
+    Call<Response<Order>> updateOrderStatus(@Body Order.UpdateStatusRequest request);
 
     @POST("api/oderRouter/clear-cart")
     Call<Response<Object>> clearCart();
@@ -119,13 +118,22 @@ public interface ApiServices {
     Call<Response<News>> addNews(@Body News news);
 
     @DELETE("api/newsRouter/delete-news/{id}")
-    Call<ApiMessageResponse> deleteNews(@Path("id") String id);
+    Call<Response<Void>> deleteNews(@Path("id") String id);
 
     @POST("users/register")
     Call<Response<User>> register(@Body User.RegisterRequest request);
 
     @POST("users/login")
     Call<User.LoginResponse> login(@Body User.LoginRequest request);
+
+    @GET("users/get-all-users")
+    Call<Response<ArrayList<User>>> getListUsers(@Header("Authorization") String token);
+
+    @GET("users/get-user-by-id/{id}")
+    Call<Response<User>> getUserById(@Path("id") String id);
+
+    @POST("users/add-user")
+    Call<Response<User>> addUser(@Header("Authorization") String token, @Body User user);
 
     @GET("api/newsRouter/admin/get-all-news")
     Call<Response<ArrayList<News>>> getAdminListNews(@Header("Authorization") String token,
@@ -173,10 +181,4 @@ public interface ApiServices {
 
     @GET("users/admin/revenue-stats")
     Call<Response<AdminStats.RevenueData>> getRevenueStats(@Query("period") int period);
-
-    @GET("users/get-all-users")
-    Call<Response<ArrayList<User>>> getListUsers();
-
-    @POST("users/add-user")
-    Call<Response<User>> addUser(@Body User user);
 }

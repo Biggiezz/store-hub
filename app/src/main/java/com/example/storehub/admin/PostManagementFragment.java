@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.storehub.NewsDetailActivity;
 import com.example.storehub.R;
 import com.example.storehub.adapter.PostManagementAdapter;
-import com.example.storehub.model.ApiMessageResponse;
 import com.example.storehub.model.News;
 import com.example.storehub.model.Response;
 import com.example.storehub.services.ApiServices;
@@ -65,33 +64,39 @@ public class PostManagementFragment extends Fragment implements PostManagementAd
     private void loadNews() {
         apiServices.getListNews(1, 100).enqueue(new Callback<Response<ArrayList<News>>>() {
             @Override
-            public void onResponse(Call<Response<ArrayList<News>>> call, retrofit2.Response<Response<ArrayList<News>>> response) {
+            public void onResponse(@NonNull Call<Response<ArrayList<News>>> call, @NonNull retrofit2.Response<Response<ArrayList<News>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     adapter.updateData(response.body().getData());
                 }
             }
 
             @Override
-            public void onFailure(Call<Response<ArrayList<News>>> call, Throwable t) {
-                Toast.makeText(getContext(), "Lỗi tải dữ liệu", Toast.LENGTH_SHORT).show();
+            public void onFailure(@NonNull Call<Response<ArrayList<News>>> call, @NonNull Throwable t) {
+                if (isAdded() && getContext() != null) {
+                    Toast.makeText(getContext(), "Lỗi tải dữ liệu", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
 
     @Override
     public void onDelete(News news) {
-        apiServices.deleteNews(news.get_id()).enqueue(new Callback<ApiMessageResponse>() {
+        apiServices.deleteNews(news.get_id()).enqueue(new Callback<Response<Void>>() {
             @Override
-            public void onResponse(Call<ApiMessageResponse> call, retrofit2.Response<ApiMessageResponse> response) {
+            public void onResponse(@NonNull Call<Response<Void>> call, @NonNull retrofit2.Response<Response<Void>> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(getContext(), "Đã xóa bài viết", Toast.LENGTH_SHORT).show();
+                    if (isAdded() && getContext() != null) {
+                        Toast.makeText(getContext(), "Đã xóa bài viết", Toast.LENGTH_SHORT).show();
+                    }
                     loadNews();
                 }
             }
 
             @Override
-            public void onFailure(Call<ApiMessageResponse> call, Throwable t) {
-                Toast.makeText(getContext(), "Lỗi khi xóa", Toast.LENGTH_SHORT).show();
+            public void onFailure(@NonNull Call<Response<Void>> call, @NonNull Throwable t) {
+                if (isAdded() && getContext() != null) {
+                    Toast.makeText(getContext(), "Lỗi khi xóa", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

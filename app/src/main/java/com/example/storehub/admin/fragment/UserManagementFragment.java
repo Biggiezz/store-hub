@@ -1,4 +1,4 @@
-package com.example.storehub.fragment;
+package com.example.storehub.admin.fragment;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -25,7 +25,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.storehub.R;
 import com.example.storehub.adapter.UserManagementAdapter;
 import com.example.storehub.admin.AddUserActivity;
+import com.example.storehub.model.Response;
 import com.example.storehub.model.User;
+import com.example.storehub.services.HttpResquest;
+import com.example.storehub.utils.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
@@ -40,12 +43,17 @@ public class UserManagementFragment extends Fragment {
     private FrameLayout btnFilterUser;
     private RecyclerView rvUsers;
     private ProgressBar pbLoadingUsers;
+    private LinearLayout llPagination;
+    private TextView btnPrevPage, btnPage1, btnPage2, btnPage3, btnNextPage;
+
     private UserManagementAdapter userAdapter;
-    private List<User> allStaffList = new ArrayList<>();
-    private List<User> allCustomerList = new ArrayList<>();
+    private final List<User> allStaffList = new ArrayList<>();
+    private final List<User> allCustomerList = new ArrayList<>();
     private List<User> currentList = new ArrayList<>();
 
     private boolean isStaffTabSelected = true;
+    private int currentPage = 1;
+    private static final int PAGE_SIZE = 10;
 
     public UserManagementFragment() {
         // Required empty public constructor
@@ -81,15 +89,26 @@ public class UserManagementFragment extends Fragment {
         rvUsers = view.findViewById(R.id.rvUsers);
         pbLoadingUsers = view.findViewById(R.id.pbLoadingUsers);
         tvEmptyState = view.findViewById(R.id.tvEmptyState);
+        llPagination = view.findViewById(R.id.llPagination);
+        btnPrevPage = view.findViewById(R.id.btnPrevPage);
+        btnPage1 = view.findViewById(R.id.btnPage1);
+        btnPage2 = view.findViewById(R.id.btnPage2);
+        btnPage3 = view.findViewById(R.id.btnPage3);
+        btnNextPage = view.findViewById(R.id.btnNextPage);
     }
 
     private void setUpAdapter() {
-        userAdapter = new UserManagementAdapter(requireContext());
+        SharedPreferencesManager prefManager = new SharedPreferencesManager(requireContext());
+        User currentUser = prefManager.getUser();
+        userAdapter = new UserManagementAdapter(requireContext(), currentUser);
         rvUsers.setLayoutManager(new LinearLayoutManager(requireContext()));
         rvUsers.setAdapter(userAdapter);
     }
 
     private void setUpListener() {
+        SharedPreferencesManager prefManager = new com.example.storehub.utils.SharedPreferencesManager(requireContext());
+        User currentUser = prefManager.getUser();
+
         btnAddNewUser.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), AddUserActivity.class);
             startActivity(intent);
@@ -105,6 +124,7 @@ public class UserManagementFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                currentPage = 1;
                 filterUserList(s.toString());
             }
 
@@ -113,17 +133,67 @@ public class UserManagementFragment extends Fragment {
             }
         });
 
-        btnFilterUser.setOnClickListener(v -> {
-            Toast.makeText(requireContext(), "Bộ lọc nâng cao", Toast.LENGTH_SHORT).show();
-        });
+        btnFilterUser.setOnClickListener(v -> Toast.makeText(requireContext(), "Bộ lọc nâng cao", Toast.LENGTH_SHORT).show());
 
         userAdapter.setOnUserClickListener(user -> {
-            Toast.makeText(requireContext(), "Người dùng: " + user.getName(), Toast.LENGTH_SHORT).show();
+            if (currentUser != null && !currentUser.canManage(user)) {
+                Toast.makeText(requireContext(), "Bạn không có quyền chỉnh sửa/xóa tài khoản Super Admin này!", Toast.LENGTH_LONG).show();
+                return;
+            }
+            new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle("Tùy chọn quản lý")
+                .setMessage("Bạn muốn thực hiện thao tác gì với " + user.getName() + "?")
+                .setPositiveButton("Chỉnh sửa", (dialog, which) -> {
+                    Intent intent = new Intent(requireContext(), AddUserActivity.class);
+                    intent.putExtra("user_edit", new com.google.gson.Gson().toJson(user));
+                    startActivity(intent);
+                })
+                .setNegativeButton("Hủy", null)
+                .show();
+        });
+
+        btnPrevPage.setOnClickListener(v -> {
+            if (currentPage > 1) {
+                currentPage--;
+                String query = etSearchUser.getText().toString();
+                filterUserList(query);
+            }
+        });
+
+        btnNextPage.setOnClickListener(v -> {
+            currentPage++;
+            String query = etSearchUser.getText().toString();
+            filterUserList(query);
+        });
+
+        btnPage1.setOnClickListener(v -> {
+            try {
+                currentPage = Integer.parseInt(btnPage1.getText().toString());
+                String query = etSearchUser.getText().toString();
+                filterUserList(query);
+            } catch (Exception ignored) {}
+        });
+
+        btnPage2.setOnClickListener(v -> {
+            try {
+                currentPage = Integer.parseInt(btnPage2.getText().toString());
+                String query = etSearchUser.getText().toString();
+                filterUserList(query);
+            } catch (Exception ignored) {}
+        });
+
+        btnPage3.setOnClickListener(v -> {
+            try {
+                currentPage = Integer.parseInt(btnPage3.getText().toString());
+                String query = etSearchUser.getText().toString();
+                filterUserList(query);
+            } catch (Exception ignored) {}
         });
     }
 
     private void switchTab(boolean selectStaff) {
         isStaffTabSelected = selectStaff;
+        currentPage = 1;
 
         if (selectStaff) {
             tvStaffTabTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary));
@@ -165,14 +235,99 @@ public class UserManagementFragment extends Fragment {
             }
         }
 
-        userAdapter.updateData(filtered);
+        int totalItems = filtered.size();
+        int totalPages = (totalItems + PAGE_SIZE - 1) / PAGE_SIZE;
+        if (totalPages < 1) totalPages = 1;
 
-        if (filtered.isEmpty()) {
+        if (currentPage > totalPages) {
+            currentPage = totalPages;
+        }
+
+        int start = (currentPage - 1) * PAGE_SIZE;
+        int end = Math.min(start + PAGE_SIZE, totalItems);
+        List<User> pagedList = new ArrayList<>();
+        if (start < totalItems) {
+            pagedList = filtered.subList(start, end);
+        }
+
+        userAdapter.updateData(pagedList);
+
+        if (pagedList.isEmpty()) {
             tvEmptyState.setVisibility(View.VISIBLE);
             rvUsers.setVisibility(View.GONE);
+            llPagination.setVisibility(View.GONE);
         } else {
             tvEmptyState.setVisibility(View.GONE);
             rvUsers.setVisibility(View.VISIBLE);
+            if (totalItems <= PAGE_SIZE) {
+                llPagination.setVisibility(View.GONE);
+            } else {
+                llPagination.setVisibility(View.VISIBLE);
+                updatePaginationUi(currentPage, totalPages);
+            }
+        }
+    }
+
+    private void updatePaginationUi(int page, int totalPages) {
+        int p1, p2, p3;
+        if (totalPages <= 3) {
+            p1 = 1;
+            p2 = 2;
+            p3 = 3;
+            btnPage1.setVisibility(View.VISIBLE);
+            btnPage2.setVisibility(totalPages >= 2 ? View.VISIBLE : View.GONE);
+            btnPage3.setVisibility(totalPages >= 3 ? View.VISIBLE : View.GONE);
+        } else {
+            btnPage1.setVisibility(View.VISIBLE);
+            btnPage2.setVisibility(View.VISIBLE);
+            btnPage3.setVisibility(View.VISIBLE);
+            if (page <= 2) {
+                p1 = 1;
+                p2 = 2;
+                p3 = 3;
+            } else if (page >= totalPages - 1) {
+                p1 = totalPages - 2;
+                p2 = totalPages - 1;
+                p3 = totalPages;
+            } else {
+                p1 = page - 1;
+                p2 = page;
+                p3 = page + 1;
+            }
+        }
+
+        btnPage1.setText(String.valueOf(p1));
+        btnPage2.setText(String.valueOf(p2));
+        btnPage3.setText(String.valueOf(p3));
+
+        setActiveStyle(btnPage1, p1 == page);
+        setActiveStyle(btnPage2, p2 == page);
+        setActiveStyle(btnPage3, p3 == page);
+
+        if (page > 1) {
+            btnPrevPage.setEnabled(true);
+            btnPrevPage.setAlpha(1.0f);
+        } else {
+            btnPrevPage.setEnabled(false);
+            btnPrevPage.setAlpha(0.4f);
+        }
+
+        if (page < totalPages) {
+            btnNextPage.setEnabled(true);
+            btnNextPage.setAlpha(1.0f);
+        } else {
+            btnNextPage.setEnabled(false);
+            btnNextPage.setAlpha(0.4f);
+        }
+    }
+
+    private void setActiveStyle(TextView tv, boolean isActive) {
+        if (isActive) {
+            tv.setBackgroundResource(R.drawable.bg_pagination_active);
+            tv.setTextColor(Color.WHITE);
+        } else {
+            tv.setBackgroundResource(R.drawable.bg_pagination_inactive);
+            tv.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary));
         }
     }
 
@@ -196,21 +351,23 @@ public class UserManagementFragment extends Fragment {
 
     private void fetchUsersFromServer() {
         pbLoadingUsers.setVisibility(View.VISIBLE);
-        com.example.storehub.services.HttpResquest httpResquest = new com.example.storehub.services.HttpResquest();
-        httpResquest.callAPI().getListUsers().enqueue(new retrofit2.Callback<com.example.storehub.model.Response<ArrayList<User>>>() {
+        SharedPreferencesManager prefManager = new SharedPreferencesManager(requireContext());
+        String token = "Bearer " + prefManager.getToken();
+        HttpResquest httpResquest = new HttpResquest();
+        httpResquest.callAPI().getListUsers(token).enqueue(new retrofit2.Callback<Response<ArrayList<User>>>() {
             @Override
-            public void onResponse(@NonNull retrofit2.Call<com.example.storehub.model.Response<ArrayList<User>>> call,
-                                   @NonNull retrofit2.Response<com.example.storehub.model.Response<ArrayList<User>>> response) {
+            public void onResponse(@NonNull retrofit2.Call<Response<ArrayList<User>>> call, @NonNull retrofit2.Response<Response<ArrayList<User>>> response) {
                 pbLoadingUsers.setVisibility(View.GONE);
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null && !response.body().getData().isEmpty()) {
                     ArrayList<User> serverUsers = response.body().getData();
                     allStaffList.clear();
                     allCustomerList.clear();
                     for (User u : serverUsers) {
-                        if (u.getRole() != null && !u.getRole().equalsIgnoreCase("Khách hàng")) {
-                            allStaffList.add(u);
-                        } else {
+                        String role = u.getRole() != null ? u.getRole().toLowerCase() : "";
+                        if (role.contains("khách hàng") || role.contains("customer")) {
                             allCustomerList.add(u);
+                        } else {
+                            allStaffList.add(u);
                         }
                     }
                     tvStaffCount.setText(String.valueOf(allStaffList.size()));

@@ -55,7 +55,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="366dp"
-                android:background="@drawable/bg_admin_form_section"
+                android:background="@drawable/bg_detail_section_warm"
                 android:orientation="vertical"
                 android:padding="24dp">
                 <TextView style="@style/Widget.StoreHub.AdminFormLabel" android:text="HÌNH ẢNH SẢN PHẨM" />
@@ -84,7 +84,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="306dp"
                 android:layout_marginTop="24dp"
-                android:background="@drawable/bg_admin_form_section"
+                android:background="@drawable/bg_detail_section_warm"
                 android:orientation="vertical"
                 android:padding="24dp">
                 <TextView style="@style/Widget.StoreHub.AdminFormLabel" android:text="MÔ TẢ SẢN PHẨM" />
@@ -108,7 +108,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:background="@drawable/bg_admin_form_section"
+                android:background="@drawable/bg_detail_section_warm"
                 android:orientation="vertical"
                 android:padding="24dp">
                 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Thông tin cơ bản" android:textColor="#172C22" android:textSize="30sp" android:textStyle="bold" />
@@ -132,7 +132,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="258dp"
                 android:layout_marginTop="24dp"
-                android:background="@drawable/bg_admin_form_section"
+                android:background="@drawable/bg_detail_section_warm"
                 android:orientation="vertical"
                 android:padding="24dp">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">

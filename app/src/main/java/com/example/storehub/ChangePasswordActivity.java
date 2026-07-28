@@ -8,7 +8,9 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.example.storehub.model.Response;
 import com.example.storehub.model.User;
@@ -40,7 +42,11 @@ public class ChangePasswordActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_change_password);
-
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.change_password_activity), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
         sharedPreferencesManager = new SharedPreferencesManager(this);
 
         initUi();

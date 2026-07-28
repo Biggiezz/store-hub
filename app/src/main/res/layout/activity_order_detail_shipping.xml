@@ -92,7 +92,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/bg_detail_section"
+                android:background="@drawable/bg_card_section"
                 android:orientation="vertical"
                 android:padding="25dp">
 
@@ -246,7 +246,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/bg_detail_section"
+                android:background="@drawable/bg_card_section"
                 android:orientation="vertical">
 
                 <TextView
@@ -273,7 +273,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginTop="24dp"
-                android:background="@drawable/bg_detail_primary_button"
+                android:background="@drawable/bg_button"
                 android:fontFamily="serif"
                 android:gravity="center"
                 android:text="Liên hệ hỗ trợ"

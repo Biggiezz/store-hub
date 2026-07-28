@@ -5,87 +5,85 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Order implements Serializable {
+    // Mã MongoDB ID dạng chuỗi của đơn hàng
     @SerializedName("_id")
     private String orderId;
 
+    // Mã code đơn hàng (ví dụ: SH-12345)
     @SerializedName("orderCode")
     private String orderCode;
 
+    // Danh sách các sản phẩm đặt mua trong đơn hàng
     @SerializedName("items")
     private ArrayList<CartItem> items;
 
+    // Trạng thái đơn hàng (Chờ xác nhận, Đang chuẩn bị hàng, Đang giao hàng, Đã giao hàng, Đã hoàn thành, Đã hủy)
     @SerializedName("status")
     private String status;
 
+    // Tổng số tiền đơn hàng trước phí ship
     @SerializedName("totalPrice")
     private long totalPrice;
 
+    // Phí vận chuyển
     @SerializedName("shippingFee")
     private long shippingFee;
 
+    // Thời điểm tạo đơn hàng
     @SerializedName("createdAt")
     private String createdAt;
 
-    // Restored mock fields for compatibility with mock activities/fragments/adapters
+    // Trường ID bổ trợ phục vụ tương thích với Mock data
     private String id;
-    private String statusText;
-    private String productName;
-    private String productImage;
-    private String productVariant;
-    private int quantity;
-    private double unitPrice;
-    private double subtotal;
-    private double discount;
-    private double totalAmount;
+    // Tên sản phẩm chính (bổ trợ phục vụ tương thích viết đánh giá)
+    private String productName = "";
+    // Hình ảnh sản phẩm chính (bổ trợ phục vụ tương thích viết đánh giá)
+    private String productImage = "";
+    // Tên phân loại màu sắc sản phẩm chính (bổ trợ phục vụ tương thích viết đánh giá)
+    private String productVariant = "";
+
+    // Họ tên người nhận hàng
     @SerializedName("receiverName")
     private String recipientName;
+
+    // Số điện thoại người nhận hàng
     @SerializedName("receiverPhone")
     private String recipientPhone;
+
+    // Địa chỉ giao nhận hàng
     @SerializedName("deliveryAddress")
     private String recipientAddress;
-    private String createdDate;
-    private String estimatedDeliveryDate;
-    private String completedDate;
+
+    // Thời điểm xác nhận đơn hàng
     @SerializedName("confirmedAt")
     private String confirmedAt;
+
+    // Thời điểm đơn hàng nhập kho/đóng gói xong
     @SerializedName("warehouseAt")
     private String warehouseAt;
+
+    // Thời điểm đơn hàng bắt đầu giao hàng
     @SerializedName("deliveringAt")
     private String deliveringAt;
+
+    // Thời điểm đơn hàng được giao thành công / hoàn thành
     @SerializedName("completedAt")
     private String completedAt;
+
+    // Lý do hủy đơn hàng (nếu có)
     @SerializedName("cancelReason")
     private String cancelReason;
+
+    // Trạng thái đã được người dùng nhận xét/đánh giá sản phẩm hay chưa
+    @SerializedName("isReviewed")
+    private boolean isReviewed;
+
+    // Danh sách các bước dòng thời gian giao nhận đơn hàng (Timeline)
     private ArrayList<TimelineStep> timeline;
 
     public Order() {
         items = new ArrayList<>();
         timeline = new ArrayList<>();
-    }
-
-    public Order(String id, String status, String statusText, String productName, String productImage,
-                 String productVariant, int quantity, double unitPrice, double shippingFee, double discount,
-                 String recipientName, String recipientPhone, String recipientAddress, String createdDate,
-                 String estimatedDeliveryDate) {
-        this.id = id;
-        this.status = status;
-        this.statusText = statusText;
-        this.productName = productName;
-        this.productImage = productImage;
-        this.productVariant = productVariant;
-        this.quantity = quantity;
-        this.unitPrice = unitPrice;
-        this.subtotal = unitPrice * quantity;
-        this.shippingFee = (long) shippingFee;
-        this.discount = discount;
-        this.totalAmount = this.subtotal + shippingFee - discount;
-        this.recipientName = recipientName;
-        this.recipientPhone = recipientPhone;
-        this.recipientAddress = recipientAddress;
-        this.createdDate = createdDate;
-        this.estimatedDeliveryDate = estimatedDeliveryDate;
-        this.timeline = new ArrayList<>();
-        this.items = new ArrayList<>();
     }
 
     public String getOrderId() {
@@ -153,14 +151,6 @@ public class Order implements Serializable {
         this.id = id;
     }
 
-    public String getStatusText() {
-        return statusText != null ? statusText : "";
-    }
-
-    public void setStatusText(String statusText) {
-        this.statusText = statusText;
-    }
-
     public String getProductName() {
         return productName != null ? productName : "";
     }
@@ -185,46 +175,6 @@ public class Order implements Serializable {
         this.productVariant = productVariant;
     }
 
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public double getUnitPrice() {
-        return unitPrice;
-    }
-
-    public void setUnitPrice(double unitPrice) {
-        this.unitPrice = unitPrice;
-    }
-
-    public double getSubtotal() {
-        return subtotal;
-    }
-
-    public void setSubtotal(double subtotal) {
-        this.subtotal = subtotal;
-    }
-
-    public double getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(double discount) {
-        this.discount = discount;
-    }
-
-    public double getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(double totalAmount) {
-        this.totalAmount = totalAmount;
-    }
-
     public String getRecipientName() {
         return recipientName != null ? recipientName : "";
     }
@@ -247,30 +197,6 @@ public class Order implements Serializable {
 
     public void setRecipientAddress(String recipientAddress) {
         this.recipientAddress = recipientAddress;
-    }
-
-    public String getCreatedDate() {
-        return createdDate != null ? createdDate : "";
-    }
-
-    public void setCreatedDate(String createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public String getEstimatedDeliveryDate() {
-        return estimatedDeliveryDate != null ? estimatedDeliveryDate : "";
-    }
-
-    public void setEstimatedDeliveryDate(String estimatedDeliveryDate) {
-        this.estimatedDeliveryDate = estimatedDeliveryDate;
-    }
-
-    public String getCompletedDate() {
-        return completedDate != null ? completedDate : "";
-    }
-
-    public void setCompletedDate(String completedDate) {
-        this.completedDate = completedDate;
     }
 
     public String getCancelReason() {
@@ -321,6 +247,14 @@ public class Order implements Serializable {
         this.completedAt = completedAt;
     }
 
+    public boolean isReviewed() {
+        return isReviewed;
+    }
+
+    public void setReviewed(boolean reviewed) {
+        isReviewed = reviewed;
+    }
+
     public static class TimelineStep implements Serializable {
         private final String title;
         private final String time;
@@ -341,5 +275,68 @@ public class Order implements Serializable {
         public String getDescription() { return description; }
         public boolean isCompleted() { return isCompleted; }
         public boolean isCurrent() { return isCurrent; }
+    }
+
+    public static class CancelOrderRequest {
+        @SerializedName("orderId")
+        private String orderId;
+
+        @SerializedName("reason")
+        private String reason;
+
+        public CancelOrderRequest(String orderId) {
+            this.orderId = orderId;
+            this.reason = "";
+        }
+
+        public CancelOrderRequest(String orderId, String reason) {
+            this.orderId = orderId;
+            this.reason = reason;
+        }
+
+        public String getOrderId() {
+            return orderId;
+        }
+
+        public void setOrderId(String orderId) {
+            this.orderId = orderId;
+        }
+
+        public String getReason() {
+            return reason;
+        }
+
+        public void setReason(String reason) {
+            this.reason = reason;
+        }
+    }
+
+    public static class UpdateStatusRequest {
+        @SerializedName("orderId")
+        private String orderId;
+
+        @SerializedName("status")
+        private String status;
+
+        public UpdateStatusRequest(String orderId, String status) {
+            this.orderId = orderId;
+            this.status = status;
+        }
+
+        public String getOrderId() {
+            return orderId;
+        }
+
+        public void setOrderId(String orderId) {
+            this.orderId = orderId;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
     }
 }

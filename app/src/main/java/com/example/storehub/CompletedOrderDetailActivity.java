@@ -109,6 +109,18 @@ public class CompletedOrderDetailActivity extends BaseActivity {
             tvOrderDetailCode.setText("Mã đơn: " + order.getOrderCode());
         }
 
+        if (btnReview != null) {
+            if (order.isReviewed()) {
+                btnReview.setEnabled(false);
+                btnReview.setText("Đã đánh giá");
+                btnReview.setAlpha(0.5f);
+            } else {
+                btnReview.setEnabled(true);
+                btnReview.setText("Đánh giá");
+                btnReview.setAlpha(1.0f);
+            }
+        }
+
         if (tvShippingNamePhone != null) {
             String name = order.getRecipientName();
             String phone = order.getRecipientPhone();

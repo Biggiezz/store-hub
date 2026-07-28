@@ -4,12 +4,19 @@ import java.io.Serializable;
 
 
 public class News implements Serializable {
+    // Mã MongoDB ID dạng chuỗi của bài viết
     private String _id;
+    // Tiêu đề của bài viết tin tức
     private String title;
+    // Nội dung chi tiết của bài viết
     private String content;
+    // Đường dẫn hình ảnh đại diện của bài viết
     private String image;
+    // Trạng thái bài viết (draft, published, hidden)
     private String status;
+    // Tên tác giả bài viết
     private String author;
+    // Ngày giờ tạo bài viết
     private String createdAt;
 
     public News() {
@@ -52,7 +59,7 @@ public class News implements Serializable {
     }
 
     public String getImage() {
-        return image;
+        return com.example.storehub.utils.ImageUtils.getCorrectedImageUrl(image, com.example.storehub.services.HttpResquest.BASE_URL);
     }
 
     public void setImage(String image) {

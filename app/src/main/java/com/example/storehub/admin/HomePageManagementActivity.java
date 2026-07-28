@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -18,6 +17,7 @@ import com.example.storehub.admin.fragment.AdminHomeFragment;
 import com.example.storehub.admin.fragment.NewsFragmentManagement;
 import com.example.storehub.admin.fragment.ProductsFragmentManagement;
 import com.example.storehub.admin.fragment.StatsManagerFragment;
+import com.example.storehub.admin.fragment.UserManagementFragment;
 import com.google.android.material.button.MaterialButton;
 
 public class HomePageManagementActivity extends BaseActivity {
@@ -42,6 +42,11 @@ public class HomePageManagementActivity extends BaseActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentAdminContainer, new PostManagementFragment())
+                    .commit();
+        }
 
         initUi();
         setUpListener();
@@ -87,6 +92,14 @@ public class HomePageManagementActivity extends BaseActivity {
                     return;
                 }
                 showTab(TAB_NEWS, new NewsFragmentManagement());
+            });
+        }
+        if (btnUsers != null) {
+            btnUsers.setOnClickListener(v -> {
+                if (TAB_USERS.equals(currentTabTag)) {
+                    return;
+                }
+                showTab(TAB_USERS, new UserManagementFragment());
             });
         }
 
