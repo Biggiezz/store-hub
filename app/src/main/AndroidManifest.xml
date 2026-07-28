@@ -103,6 +103,11 @@
                 android:value="true" />
         </service>
 
+        <service
+            android:name=".services.AppLifecycleService"
+            android:enabled="true"
+            android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="false" />

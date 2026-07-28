@@ -23,6 +23,9 @@ public class User {
     // Thời điểm hoạt động cuối cùng của người dùng (phục vụ hiển thị Admin)
     private String lastActive;
     private String password;
+    // Trạng thái trực tuyến của người dùng
+    @SerializedName("isOnline")
+    private boolean isOnline = false;
 
     public User() {
     }
@@ -96,7 +99,15 @@ public class User {
     }
 
     public String getLastActive() {
-        return lastActive != null ? lastActive : "Vừa xong";
+        return lastActive;
+    }
+
+    public boolean isOnline() {
+        return isOnline;
+    }
+
+    public void setOnline(boolean online) {
+        this.isOnline = online;
     }
 
     public void setLastActive(String lastActive) {

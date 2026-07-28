@@ -76,14 +76,32 @@ public class AdminHomeFragment extends Fragment {
         if (btnLogout != null) {
             btnLogout.setOnClickListener(v -> {
                 SharedPreferencesManager prefManager = new SharedPreferencesManager(requireContext());
-                prefManager.logout();
-                Toast.makeText(requireContext(), "Đã đăng xuất tài khoản", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(requireContext(), LoginActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                if (getActivity() != null) {
-                    getActivity().finish();
-                }
+                String tokenHeader = "Bearer " + prefManager.getToken();
+
+                HttpResquest httpResquest = new HttpResquest();
+                httpResquest.callAPI().logout(tokenHeader).enqueue(new retrofit2.Callback<Response<Void>>() {
+                    @Override
+                    public void onResponse(@NonNull retrofit2.Call<Response<Void>> call, @NonNull retrofit2.Response<Response<Void>> response) {
+                        prefManager.logout();
+                        navigateToLogin();
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull retrofit2.Call<Response<Void>> call, @NonNull Throwable t) {
+                        prefManager.logout();
+                        navigateToLogin();
+                    }
+
+                    private void navigateToLogin() {
+                        Toast.makeText(requireContext(), "Đã đăng xuất tài khoản", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(requireContext(), LoginActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        if (getActivity() != null) {
+                            getActivity().finish();
+                        }
+                    }
+                });
             });
         }
 

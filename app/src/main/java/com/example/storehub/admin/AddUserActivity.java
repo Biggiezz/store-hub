@@ -36,6 +36,8 @@ import java.util.ArrayList;
 
 public class AddUserActivity extends AppCompatActivity {
 
+    private android.widget.TextView tvHeaderTitle;
+    private User userToEdit = null;
     private ImageButton btnBack;
     private RelativeLayout rlAvatarPicker;
     private ShapeableImageView ivAvatar;
@@ -73,9 +75,49 @@ public class AddUserActivity extends AppCompatActivity {
         initUi();
         setUpAdapter();
         setUpListener();
+        checkEditMode();
+    }
+
+    private void checkEditMode() {
+        if (getIntent().hasExtra("user_edit")) {
+            String json = getIntent().getStringExtra("user_edit");
+            userToEdit = new com.google.gson.Gson().fromJson(json, User.class);
+        }
+
+        if (userToEdit != null) {
+            if (tvHeaderTitle != null) {
+                tvHeaderTitle.setText("Sửa người dùng");
+            }
+            btnSaveUser.setText("Lưu thay đổi");
+            
+            etFullName.setText(userToEdit.getName());
+            etPhone.setText(userToEdit.getPhone());
+            etEmail.setText(userToEdit.getEmail());
+            etAddress.setText(userToEdit.getAddress());
+            etPassword.setHint("Mật khẩu mới (nếu muốn đổi)");
+            
+            // Tìm và chọn vai trò tương ứng trong Spinner
+            for (int i = 0; i < spRole.getCount(); i++) {
+                if (spRole.getItemAtPosition(i).toString().equalsIgnoreCase(userToEdit.getRole())) {
+                    spRole.setSelection(i);
+                    break;
+                }
+            }
+
+            // Tải ảnh đại diện cũ bằng Glide
+            if (userToEdit.getImage() != null && !userToEdit.getImage().isEmpty()) {
+                Glide.with(this)
+                        .load(userToEdit.getImage())
+                        .centerCrop()
+                        .placeholder(R.drawable.ic_avatar)
+                        .error(R.drawable.ic_avatar)
+                        .into(ivAvatar);
+            }
+        }
     }
 
     private void initUi() {
+        tvHeaderTitle = findViewById(R.id.tvHeaderTitle);
         btnBack = findViewById(R.id.btnBack);
         rlAvatarPicker = findViewById(R.id.rlAvatarPicker);
         ivAvatar = findViewById(R.id.ivAvatar);
@@ -169,40 +211,74 @@ public class AddUserActivity extends AppCompatActivity {
             return;
         }
 
-        if (TextUtils.isEmpty(password)) {
+        if (userToEdit == null && TextUtils.isEmpty(password)) {
             etPassword.setError("Vui lòng nhập mật khẩu");
             etPassword.requestFocus();
             return;
         }
 
         User newUser = new User(
-                null, fullName, email, phone, role, selectedImageUri != null ? selectedImageUri.toString() : "", address, "Vừa xong"
+                userToEdit != null ? userToEdit.getId() : null,
+                fullName,
+                email,
+                phone,
+                role,
+                selectedImageUri != null ? selectedImageUri.toString() : (userToEdit != null ? userToEdit.getImage() : ""),
+                address,
+                userToEdit != null ? userToEdit.getLastActive() : "Vừa xong"
         );
-        newUser.setPassword(password);
+        if (!TextUtils.isEmpty(password)) {
+            newUser.setPassword(password);
+        }
 
         SharedPreferencesManager prefManager = new SharedPreferencesManager(this);
         String token = "Bearer " + prefManager.getToken();
         HttpResquest httpResquest = new HttpResquest();
-        httpResquest.callAPI().addUser(token, newUser).enqueue(new retrofit2.Callback<com.example.storehub.model.Response<com.example.storehub.model.User>>() {
-            @Override
-            public void onResponse(@NonNull retrofit2.Call<Response<User>> call,
-                                   @NonNull retrofit2.Response<Response<User>> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().getCode() == 201) {
-                    Toast.makeText(AddUserActivity.this, "Thêm người dùng '" + fullName + "' thành công!", Toast.LENGTH_LONG).show();
-                    setResult(RESULT_OK);
-                    finish();
-                } else if (response.body() != null && response.body().getMessage() != null) {
-                    Toast.makeText(AddUserActivity.this, response.body().getMessage(), Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(AddUserActivity.this, "Lỗi khi thêm người dùng", Toast.LENGTH_SHORT).show();
-                }
-            }
 
-            @Override
-            public void onFailure(@NonNull retrofit2.Call<Response<User>> call,
-                                  @NonNull Throwable t) {
-                Toast.makeText(AddUserActivity.this, "Lỗi kết nối máy chủ: " + t.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
+        if (userToEdit != null) {
+            httpResquest.callAPI().updateUser(token, userToEdit.getId(), newUser).enqueue(new retrofit2.Callback<com.example.storehub.model.Response<com.example.storehub.model.User>>() {
+                @Override
+                public void onResponse(@NonNull retrofit2.Call<Response<User>> call,
+                                       @NonNull retrofit2.Response<Response<User>> response) {
+                    if (response.isSuccessful() && response.body() != null && response.body().getCode() == 200) {
+                        Toast.makeText(AddUserActivity.this, "Cập nhật người dùng '" + fullName + "' thành công!", Toast.LENGTH_LONG).show();
+                        setResult(RESULT_OK);
+                        finish();
+                    } else if (response.body() != null && response.body().getMessage() != null) {
+                        Toast.makeText(AddUserActivity.this, response.body().getMessage(), Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(AddUserActivity.this, "Lỗi khi cập nhật người dùng", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull retrofit2.Call<Response<User>> call,
+                                      @NonNull Throwable t) {
+                    Toast.makeText(AddUserActivity.this, "Lỗi kết nối máy chủ: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
+        } else {
+            httpResquest.callAPI().addUser(token, newUser).enqueue(new retrofit2.Callback<com.example.storehub.model.Response<com.example.storehub.model.User>>() {
+                @Override
+                public void onResponse(@NonNull retrofit2.Call<Response<User>> call,
+                                       @NonNull retrofit2.Response<Response<User>> response) {
+                    if (response.isSuccessful() && response.body() != null && response.body().getCode() == 201) {
+                        Toast.makeText(AddUserActivity.this, "Thêm người dùng '" + fullName + "' thành công!", Toast.LENGTH_LONG).show();
+                        setResult(RESULT_OK);
+                        finish();
+                    } else if (response.body() != null && response.body().getMessage() != null) {
+                        Toast.makeText(AddUserActivity.this, response.body().getMessage(), Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(AddUserActivity.this, "Lỗi khi thêm người dùng", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull retrofit2.Call<Response<User>> call,
+                                      @NonNull Throwable t) {
+                    Toast.makeText(AddUserActivity.this, "Lỗi kết nối máy chủ: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
+        }
     }
 }

@@ -153,6 +153,13 @@ public interface ApiServices {
     @POST("users/add-user")
     Call<Response<User>> addUser(@Header("Authorization") String token, @Body User user);
 
+    @PUT("users/update-user/{id}")
+    Call<Response<User>> updateUser(
+            @Header("Authorization") String token,
+            @Path("id") String userId,
+            @Body User user
+    );
+
     @GET("api/newsRouter/admin/get-all-news")
     Call<Response<ArrayList<News>>> getAdminListNews(@Header("Authorization") String token,
                                                      @Query("page") int page,
@@ -196,6 +203,9 @@ public interface ApiServices {
 
     @POST("users/logout")
     Call<Response<Void>> logout(@Header("Authorization") String authHeader);
+
+    @POST("users/set-offline")
+    Call<Response<Void>> setOffline(@Header("Authorization") String authHeader);
 
     @GET("users/admin/dashboard")
     Call<Response<AdminStats.DashboardData>> getAdminDashboardStats();

@@ -13,6 +13,13 @@ public class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         currentLanguage = SharedPreferencesManager.getInstance(this).getLanguage();
         super.onCreate(savedInstanceState);
+        
+        try {
+            android.content.Intent serviceIntent = new android.content.Intent(this, com.example.storehub.services.AppLifecycleService.class);
+            startService(serviceIntent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -420,7 +420,7 @@ public class UserManagementFragment extends Fragment {
         sb.append("Email: ").append(user.getEmail() != null ? user.getEmail() : "Chưa cập nhật").append("\n\n");
         sb.append("Vai trò: ").append(user.getRole() != null ? user.getRole() : "Chưa cập nhật").append("\n\n");
         sb.append("Địa chỉ: ").append(user.getAddress() != null && !user.getAddress().isEmpty() ? user.getAddress() : "Chưa cập nhật").append("\n\n");
-        sb.append("Hoạt động lần cuối: ").append(user.getLastActive() != null ? user.getLastActive() : "Không khả dụng");
+        sb.append("Hoạt động lần cuối: ").append(com.example.storehub.utils.DateTimeUtils.getRelativeTime(user.getLastActive(), user.isOnline()));
 
         new androidx.appcompat.app.AlertDialog.Builder(requireContext())
             .setTitle("Thông tin khách hàng")

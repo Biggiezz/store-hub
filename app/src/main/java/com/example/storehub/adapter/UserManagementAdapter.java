@@ -82,7 +82,15 @@ public class UserManagementAdapter extends RecyclerView.Adapter<UserManagementAd
 
         holder.tvUserEmail.setText(user.getEmail());
 
-        String lastActive = user.getLastActive();
+        String rawLastActive = user.getLastActive();
+        String lastActive = com.example.storehub.utils.DateTimeUtils.getRelativeTime(rawLastActive, user.isOnline());
+
+        if (lastActive.contains("Đang hoạt động")) {
+            holder.tvUserLastActive.setTextColor(android.graphics.Color.parseColor("#2E7D32")); // Xanh lá cây
+        } else {
+            holder.tvUserLastActive.setTextColor(android.graphics.Color.parseColor("#000000")); // Màu đen
+        }
+
         if (!lastActive.startsWith("Hoạt động")) {
             lastActive = "Hoạt động: " + lastActive;
         }
