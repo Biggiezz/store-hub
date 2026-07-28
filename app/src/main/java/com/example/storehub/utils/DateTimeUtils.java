@@ -147,6 +147,53 @@ public class DateTimeUtils {
         }
     }
 
+    public static String getRelativeTime(String isoString) {
+        return getRelativeTime(isoString, false);
+    }
+
+    public static String getRelativeTime(String isoString, boolean isOnline) {
+        if (isoString == null || isoString.isEmpty()) {
+            return "Chưa hoạt động";
+        }
+        if (isoString.equals("Vừa xong")) {
+            return "Vừa xong";
+        }
+        Date date = parseISO(isoString);
+        if (date == null) {
+            return isoString;
+        }
+        long now = System.currentTimeMillis();
+        long time = date.getTime();
+        long diff = now - time;
+
+        // Trạng thái online: hiển thị "Đang hoạt động" nếu isOnline=true và hoạt động gần đây dưới 5 phút
+        if (isOnline && diff >= 0 && diff < 5 * 60 * 1000) {
+            return "Đang hoạt động";
+        }
+
+        if (diff < 0) {
+            return "Đang hoạt động";
+        }
+        long diffSeconds = diff / 1000;
+        long diffMinutes = diffSeconds / 60;
+        long diffHours = diffMinutes / 60;
+        long diffDays = diffHours / 24;
+
+        if (diffSeconds < 60) {
+            return "Vừa xong";
+        } else if (diffMinutes < 60) {
+            return diffMinutes + " phút trước";
+        } else if (diffHours < 24) {
+            return diffHours + " giờ trước";
+        } else if (diffDays < 7) {
+            return diffDays + " ngày trước";
+        } else {
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
+            formatter.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            return formatter.format(date);
+        }
+    }
+
     public static void showDatePicker(Context context, final TextView targetView) {
         Calendar calendar = Calendar.getInstance();
         new DatePickerDialog(

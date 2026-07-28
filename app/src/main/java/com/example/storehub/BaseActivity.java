@@ -1,8 +1,11 @@
 package com.example.storehub;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.storehub.services.AppLifecycleService;
 import com.example.storehub.utils.LocaleHelper;
 import com.example.storehub.utils.SharedPreferencesManager;
 
@@ -13,6 +16,13 @@ public class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         currentLanguage = SharedPreferencesManager.getInstance(this).getLanguage();
         super.onCreate(savedInstanceState);
+        
+        try {
+            Intent serviceIntent = new Intent(this, AppLifecycleService.class);
+            startService(serviceIntent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

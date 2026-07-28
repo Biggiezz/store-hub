@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.storehub.R;
 import com.example.storehub.model.User;
+import com.example.storehub.utils.DateTimeUtils;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.ArrayList;
@@ -82,7 +83,15 @@ public class UserManagementAdapter extends RecyclerView.Adapter<UserManagementAd
 
         holder.tvUserEmail.setText(user.getEmail());
 
-        String lastActive = user.getLastActive();
+        String rawLastActive = user.getLastActive();
+        String lastActive = DateTimeUtils.getRelativeTime(rawLastActive, user.isOnline());
+
+        if (lastActive.contains("Đang hoạt động")) {
+            holder.tvUserLastActive.setTextColor(Color.parseColor("#2E7D32")); // Xanh lá cây
+        } else {
+            holder.tvUserLastActive.setTextColor(Color.parseColor("#000000")); // Màu đen
+        }
+
         if (!lastActive.startsWith("Hoạt động")) {
             lastActive = "Hoạt động: " + lastActive;
         }

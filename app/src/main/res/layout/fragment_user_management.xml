@@ -85,7 +85,6 @@
                 android:background="@drawable/bg_tab_badge_selected"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="2dp"
-                android:text="12"
                 android:textColor="#172C22"
                 android:textSize="12sp"
                 android:textStyle="bold" />
@@ -121,7 +120,6 @@
                 android:background="@drawable/bg_tab_badge_unselected"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="2dp"
-                android:text="1,492"
                 android:textColor="#8A8077"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -167,23 +165,23 @@
         </LinearLayout>
 
         <!-- Filter Button -->
-        <FrameLayout
-            android:id="@+id/btnFilterUser"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_marginStart="10dp"
-            android:background="@drawable/bg_search_input"
-            android:clickable="true"
-            android:focusable="true">
+<!--        <FrameLayout-->
+<!--            android:id="@+id/btnFilterUser"-->
+<!--            android:layout_width="37dp"-->
+<!--            android:layout_height="44dp"-->
+<!--            android:layout_marginStart="10dp"-->
+<!--            android:background="@drawable/bg_search_input"-->
+<!--            android:clickable="true"-->
+<!--            android:focusable="true">-->
 
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center"
-                android:contentDescription="Filter Icon"
-                android:src="@drawable/ic_sort"
-                app:tint="@color/text_primary" />
-        </FrameLayout>
+<!--            <ImageView-->
+<!--                android:layout_width="20dp"-->
+<!--                android:layout_height="20dp"-->
+<!--                android:layout_gravity="center"-->
+<!--                android:contentDescription="Filter Icon"-->
+<!--                android:src="@drawable/ic_sort"-->
+<!--                app:tint="@color/text_primary" />-->
+<!--        </FrameLayout>-->
     </LinearLayout>
 
     <!-- Loading ProgressBar -->
