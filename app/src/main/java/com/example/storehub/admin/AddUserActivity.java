@@ -12,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -31,12 +32,13 @@ import com.example.storehub.services.HttpResquest;
 import com.example.storehub.utils.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.imageview.ShapeableImageView;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
 public class AddUserActivity extends AppCompatActivity {
 
-    private android.widget.TextView tvHeaderTitle;
+    private TextView tvHeaderTitle;
     private User userToEdit = null;
     private ImageButton btnBack;
     private RelativeLayout rlAvatarPicker;
@@ -81,7 +83,7 @@ public class AddUserActivity extends AppCompatActivity {
     private void checkEditMode() {
         if (getIntent().hasExtra("user_edit")) {
             String json = getIntent().getStringExtra("user_edit");
-            userToEdit = new com.google.gson.Gson().fromJson(json, User.class);
+            userToEdit = new Gson().fromJson(json, User.class);
         }
 
         if (userToEdit != null) {
@@ -133,10 +135,10 @@ public class AddUserActivity extends AppCompatActivity {
     }
 
     private void setUpAdapter() {
-        SharedPreferencesManager prefManager = new com.example.storehub.utils.SharedPreferencesManager(this);
+        SharedPreferencesManager prefManager = new SharedPreferencesManager(this);
         User currentUser = prefManager.getUser();
 
-        ArrayList<String> roleList = new java.util.ArrayList<>();
+        ArrayList<String> roleList = new ArrayList<>();
         roleList.add("Chọn vai trò");
         if (currentUser != null && currentUser.isSuperAdmin()) {
             roleList.add("superadmin");
@@ -238,8 +240,7 @@ public class AddUserActivity extends AppCompatActivity {
         if (userToEdit != null) {
             httpResquest.callAPI().updateUser(token, userToEdit.getId(), newUser).enqueue(new retrofit2.Callback<com.example.storehub.model.Response<com.example.storehub.model.User>>() {
                 @Override
-                public void onResponse(@NonNull retrofit2.Call<Response<User>> call,
-                                       @NonNull retrofit2.Response<Response<User>> response) {
+                public void onResponse(@NonNull retrofit2.Call<Response<User>> call, @NonNull retrofit2.Response<Response<User>> response) {
                     if (response.isSuccessful() && response.body() != null && response.body().getCode() == 200) {
                         Toast.makeText(AddUserActivity.this, "Cập nhật người dùng '" + fullName + "' thành công!", Toast.LENGTH_LONG).show();
                         setResult(RESULT_OK);
@@ -252,16 +253,14 @@ public class AddUserActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onFailure(@NonNull retrofit2.Call<Response<User>> call,
-                                      @NonNull Throwable t) {
+                public void onFailure(@NonNull retrofit2.Call<Response<User>> call, @NonNull Throwable t) {
                     Toast.makeText(AddUserActivity.this, "Lỗi kết nối máy chủ: " + t.getMessage(), Toast.LENGTH_LONG).show();
                 }
             });
         } else {
             httpResquest.callAPI().addUser(token, newUser).enqueue(new retrofit2.Callback<com.example.storehub.model.Response<com.example.storehub.model.User>>() {
                 @Override
-                public void onResponse(@NonNull retrofit2.Call<Response<User>> call,
-                                       @NonNull retrofit2.Response<Response<User>> response) {
+                public void onResponse(@NonNull retrofit2.Call<Response<User>> call, @NonNull retrofit2.Response<Response<User>> response) {
                     if (response.isSuccessful() && response.body() != null && response.body().getCode() == 201) {
                         Toast.makeText(AddUserActivity.this, "Thêm người dùng '" + fullName + "' thành công!", Toast.LENGTH_LONG).show();
                         setResult(RESULT_OK);
@@ -274,8 +273,7 @@ public class AddUserActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onFailure(@NonNull retrofit2.Call<Response<User>> call,
-                                      @NonNull Throwable t) {
+                public void onFailure(@NonNull retrofit2.Call<Response<User>> call, @NonNull Throwable t) {
                     Toast.makeText(AddUserActivity.this, "Lỗi kết nối máy chủ: " + t.getMessage(), Toast.LENGTH_LONG).show();
                 }
             });

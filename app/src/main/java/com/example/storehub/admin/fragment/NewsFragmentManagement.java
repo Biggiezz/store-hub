@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -43,6 +44,7 @@ public class NewsFragmentManagement extends Fragment implements PostAdapter.Post
     private HttpResquest httpRequest;
     private SharedPreferencesManager sharedPreferencesManager;
     private String selectedStatus = "published";
+    private ProgressBar progressBar;
 
     @Nullable
     @Override
@@ -65,6 +67,7 @@ public class NewsFragmentManagement extends Fragment implements PostAdapter.Post
         btnPublished = view.findViewById(R.id.btnPublished);
         btnDraft = view.findViewById(R.id.btnDraft);
         btnPrivate = view.findViewById(R.id.btnPrivate);
+        progressBar = view.findViewById(R.id.progressBar);
         httpRequest = new HttpResquest();
         if (getContext() != null) {
             sharedPreferencesManager = new SharedPreferencesManager(getContext());
@@ -103,20 +106,41 @@ public class NewsFragmentManagement extends Fragment implements PostAdapter.Post
         String token = sharedPreferencesManager != null ? sharedPreferencesManager.getToken() : "";
         String authHeader = "Bearer " + token;
 
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+        if (rvPosts != null) rvPosts.setVisibility(View.GONE);
+        if (tvEmptyPosts != null) tvEmptyPosts.setVisibility(View.GONE);
+
+        long startTime = System.currentTimeMillis();
+
         httpRequest.callAPI().getAdminListNews(authHeader, 1, 50).enqueue(new Callback<Response<ArrayList<News>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<News>>> call, @NonNull retrofit2.Response<Response<ArrayList<News>>> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
-                    newsList = response.body().getData();
-                    filterByStatus(selectedStatus);
-                }
+                long elapsedTime = System.currentTimeMillis() - startTime;
+                long remainingDelay = Math.max(0, 3000 - elapsedTime);
+
+                new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+                    if (!isAdded()) return;
+                    if (progressBar != null) progressBar.setVisibility(View.GONE);
+                    if (rvPosts != null) rvPosts.setVisibility(View.VISIBLE);
+
+                    if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                        newsList = response.body().getData();
+                        filterByStatus(selectedStatus);
+                    }
+                }, remainingDelay);
             }
 
             @Override
             public void onFailure(@NonNull Call<Response<ArrayList<News>>> call, @NonNull Throwable t) {
-                if (isAdded()) {
+                long elapsedTime = System.currentTimeMillis() - startTime;
+                long remainingDelay = Math.max(0, 3000 - elapsedTime);
+
+                new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+                    if (!isAdded()) return;
+                    if (progressBar != null) progressBar.setVisibility(View.GONE);
+                    if (rvPosts != null) rvPosts.setVisibility(View.VISIBLE);
                     Toast.makeText(getContext(), "Lỗi tải danh sách bài viết", Toast.LENGTH_SHORT).show();
-                }
+                }, remainingDelay);
             }
         });
     }

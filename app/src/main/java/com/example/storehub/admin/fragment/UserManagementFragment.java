@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -28,6 +29,7 @@ import com.example.storehub.admin.AddUserActivity;
 import com.example.storehub.model.Response;
 import com.example.storehub.model.User;
 import com.example.storehub.services.HttpResquest;
+import com.example.storehub.utils.DateTimeUtils;
 import com.example.storehub.utils.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
 
@@ -40,7 +42,7 @@ public class UserManagementFragment extends Fragment {
     private LinearLayout btnTabStaff, btnTabCustomer;
     private TextView tvStaffTabTitle, tvCustomerTabTitle, tvStaffCount, tvCustomerCount, tvEmptyState;
     private EditText etSearchUser;
-    private FrameLayout btnFilterUser;
+//    private FrameLayout btnFilterUser;
     private RecyclerView rvUsers;
     private ProgressBar pbLoadingUsers;
     private LinearLayout llPagination;
@@ -96,7 +98,7 @@ public class UserManagementFragment extends Fragment {
         tvStaffCount = view.findViewById(R.id.tvStaffCount);
         tvCustomerCount = view.findViewById(R.id.tvCustomerCount);
         etSearchUser = view.findViewById(R.id.etSearchUser);
-        btnFilterUser = view.findViewById(R.id.btnFilterUser);
+//        btnFilterUser = view.findViewById(R.id.btnFilterUser);
         rvUsers = view.findViewById(R.id.rvUsers);
         pbLoadingUsers = view.findViewById(R.id.pbLoadingUsers);
         tvEmptyState = view.findViewById(R.id.tvEmptyState);
@@ -144,7 +146,7 @@ public class UserManagementFragment extends Fragment {
             }
         });
 
-        btnFilterUser.setOnClickListener(v -> Toast.makeText(requireContext(), "Bộ lọc nâng cao", Toast.LENGTH_SHORT).show());
+//        btnFilterUser.setOnClickListener(v -> Toast.makeText(requireContext(), "Bộ lọc nâng cao", Toast.LENGTH_SHORT).show());
 
         userAdapter.setOnUserClickListener(user -> {
             boolean isSuperAdmin = currentUser != null && currentUser.isSuperAdmin();
@@ -403,7 +405,7 @@ public class UserManagementFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(@NonNull retrofit2.Call<com.example.storehub.model.Response<ArrayList<User>>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull retrofit2.Call<Response<ArrayList<User>>> call, @NonNull Throwable t) {
                 pbLoadingUsers.setVisibility(View.GONE);
                 // Fallback to mock data if network request fails
                 loadMockUserData();
@@ -420,9 +422,9 @@ public class UserManagementFragment extends Fragment {
         sb.append("Email: ").append(user.getEmail() != null ? user.getEmail() : "Chưa cập nhật").append("\n\n");
         sb.append("Vai trò: ").append(user.getRole() != null ? user.getRole() : "Chưa cập nhật").append("\n\n");
         sb.append("Địa chỉ: ").append(user.getAddress() != null && !user.getAddress().isEmpty() ? user.getAddress() : "Chưa cập nhật").append("\n\n");
-        sb.append("Hoạt động lần cuối: ").append(com.example.storehub.utils.DateTimeUtils.getRelativeTime(user.getLastActive(), user.isOnline()));
+        sb.append("Hoạt động lần cuối: ").append(DateTimeUtils.getRelativeTime(user.getLastActive(), user.isOnline()));
 
-        new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+        new AlertDialog.Builder(requireContext())
             .setTitle("Thông tin khách hàng")
             .setMessage(sb.toString())
             .setPositiveButton("Đóng", null)

@@ -1,8 +1,11 @@
 package com.example.storehub;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.storehub.services.AppLifecycleService;
 import com.example.storehub.utils.LocaleHelper;
 import com.example.storehub.utils.SharedPreferencesManager;
 
@@ -15,7 +18,7 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         
         try {
-            android.content.Intent serviceIntent = new android.content.Intent(this, com.example.storehub.services.AppLifecycleService.class);
+            Intent serviceIntent = new Intent(this, AppLifecycleService.class);
             startService(serviceIntent);
         } catch (Exception e) {
             e.printStackTrace();

@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,6 +41,8 @@ public class NewsFragment extends Fragment {
     private Call<Response<ArrayList<News>>> currentCall;
     private int currentPage = 1;
     private boolean isLoading;
+    private ProgressBar progressBarNews;
+    private View llPaginationNews;
 
     // Bộ nhớ đệm Cache lưu danh sách các trang đã và sắp tải (Trải nghiệm chuyển trang 0.0 giây)
     private final Map<Integer, ArrayList<News>> pageCache = new HashMap<>();
@@ -70,6 +73,8 @@ public class NewsFragment extends Fragment {
         btnNewsPage2 = view.findViewById(R.id.btnNewsPage2);
         btnNewsPage3 = view.findViewById(R.id.btnNewsPage3);
         btnNextNewsPage = view.findViewById(R.id.btnNextNewsPage);
+        progressBarNews = view.findViewById(R.id.progressBarNews);
+        llPaginationNews = view.findViewById(R.id.llPaginationNews);
     }
 
     private void setUpAdapter() {
@@ -127,6 +132,10 @@ public class NewsFragment extends Fragment {
         if (pageCache.containsKey(page)) {
             ArrayList<News> cachedNews = pageCache.get(page);
             if (cachedNews != null && !cachedNews.isEmpty()) {
+                if (progressBarNews != null) progressBarNews.setVisibility(View.GONE);
+                if (rvAllNews != null) rvAllNews.setVisibility(View.VISIBLE);
+                if (llPaginationNews != null) llPaginationNews.setVisibility(View.VISIBLE);
+
                 // Hiển thị NGAY TỨC THÌ từ RAM (0ms delay)
                 newsAdapter.updateData(cachedNews);
                 if (rvAllNews != null) {
@@ -176,6 +185,12 @@ public class NewsFragment extends Fragment {
 
     private void loadNews(int page) {
         isLoading = true;
+        if (progressBarNews != null) progressBarNews.setVisibility(View.VISIBLE);
+        if (rvAllNews != null) rvAllNews.setVisibility(View.GONE);
+        if (llPaginationNews != null) llPaginationNews.setVisibility(View.GONE);
+
+        long startTime = System.currentTimeMillis();
+
         if (currentCall != null) currentCall.cancel();
         currentCall = new HttpResquest().callAPI().getListNews(page, LIMIT);
         currentCall.enqueue(new Callback<Response<ArrayList<News>>>() {
@@ -183,36 +198,56 @@ public class NewsFragment extends Fragment {
             public void onResponse(@NonNull Call<Response<ArrayList<News>>> call, @NonNull retrofit2.Response<Response<ArrayList<News>>> response) {
                 if (call.isCanceled() || newsAdapter == null) return;
                 isLoading = false;
-                if (response.isSuccessful() && response.body() != null
-                        && response.body().getCode() == 200 && response.body().getData() != null) {
-                    ArrayList<News> news = response.body().getData();
 
-                    // Lưu dữ liệu vào Cache
-                    pageCache.put(page, news);
+                long elapsedTime = System.currentTimeMillis() - startTime;
+                long remainingDelay = Math.max(0, 3000 - elapsedTime);
 
-                    newsAdapter.updateData(news);
-                    if (rvAllNews != null) {
-                        rvAllNews.animate().alpha(1.0f).setDuration(150).start();
-                        rvAllNews.scrollToPosition(0);
+                new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+                    if (call.isCanceled() || newsAdapter == null || !isAdded()) return;
+
+                    if (progressBarNews != null) progressBarNews.setVisibility(View.GONE);
+                    if (rvAllNews != null) rvAllNews.setVisibility(View.VISIBLE);
+                    if (llPaginationNews != null) llPaginationNews.setVisibility(View.VISIBLE);
+
+                    if (response.isSuccessful() && response.body() != null
+                            && response.body().getCode() == 200 && response.body().getData() != null) {
+                        ArrayList<News> news = response.body().getData();
+
+                        // Lưu dữ liệu vào Cache
+                        pageCache.put(page, news);
+
+                        newsAdapter.updateData(news);
+                        if (rvAllNews != null) {
+                            rvAllNews.setAlpha(1.0f);
+                            rvAllNews.scrollToPosition(0);
+                        }
+
+                        // Tải trước ngầm 3 trang tiếp theo phía sau
+                        prefetchNextPages(page, PREFETCH_PAGES_COUNT);
+                    } else {
+                        Log.e("NewsFragment", "Không thể tải danh sách tin tức");
                     }
-
-                    // Tải trước ngầm 3 trang tiếp theo phía sau
-                    prefetchNextPages(page, PREFETCH_PAGES_COUNT);
-                } else {
-                    if (rvAllNews != null) rvAllNews.setAlpha(1.0f);
-                    Log.e("NewsFragment", "Không thể tải danh sách tin tức");
-                }
+                }, remainingDelay);
             }
 
             @Override
             public void onFailure(@NonNull Call<Response<ArrayList<News>>> call, @NonNull Throwable t) {
                 if (call.isCanceled()) return;
                 isLoading = false;
-                if (rvAllNews != null) rvAllNews.setAlpha(1.0f);
-                Log.e("NewsFragment", "Lỗi tải tin tức", t);
-                if (isAdded()) {
+
+                long elapsedTime = System.currentTimeMillis() - startTime;
+                long remainingDelay = Math.max(0, 3000 - elapsedTime);
+
+                new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+                    if (call.isCanceled() || !isAdded()) return;
+
+                    if (progressBarNews != null) progressBarNews.setVisibility(View.GONE);
+                    if (rvAllNews != null) rvAllNews.setVisibility(View.VISIBLE);
+                    if (llPaginationNews != null) llPaginationNews.setVisibility(View.VISIBLE);
+
+                    Log.e("NewsFragment", "Lỗi tải tin tức", t);
                     Toast.makeText(requireContext(), "Không thể kết nối đến máy chủ!", Toast.LENGTH_SHORT).show();
-                }
+                }, remainingDelay);
             }
         });
     }
