@@ -111,6 +111,9 @@
             android:name=".admin.AdminOrderDetailActivity"
             android:exported="false" />
         <activity
+            android:name=".admin.RecentActivityDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".WriteReviewActivity"
             android:exported="false" />
         <activity

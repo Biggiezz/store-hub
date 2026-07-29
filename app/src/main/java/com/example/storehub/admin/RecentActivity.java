@@ -44,7 +44,7 @@ public class RecentActivity extends AppCompatActivity {
     private RecyclerView rvRecentActivities;
     private View layoutEmpty, layoutPagination;
     private ImageButton btnPreviousPage, btnNextPage;
-    private final RecentActivityAdapter adapter = new RecentActivityAdapter();
+    private RecentActivityAdapter adapter;
     private final ArrayList<AdminStats.RecentActivity> allActivities = new ArrayList<>();
     private final ArrayList<AdminStats.RecentActivity> filteredActivities = new ArrayList<>();
     private Call<Response<AdminStats.RevenueData>> activityCall;
@@ -99,6 +99,8 @@ public class RecentActivity extends AppCompatActivity {
         ImageView imgBack = findViewById(R.id.imgBack);
         imgBack.setOnClickListener(v -> finish());
 
+        adapter = new RecentActivityAdapter(activity ->
+                startActivity(RecentActivityDetailActivity.createIntent(this, activity)));
         rvRecentActivities.setLayoutManager(new LinearLayoutManager(this));
         rvRecentActivities.setAdapter(adapter);
 

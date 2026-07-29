@@ -108,11 +108,27 @@ public class AdminStats {
         private String detail;
         // Thời điểm hoạt động diễn ra
         private String createdAt;
+        // Sản phẩm trong đơn hàng, chỉ có với hoạt động đơn hàng
+        @SerializedName("products")
+        private ArrayList<CartItem> products;
+        @SerializedName("customerName")
+        private String customerName;
+        @SerializedName("customerPhone")
+        private String customerPhone;
+        @SerializedName("paymentMethod")
+        private String paymentMethod;
+        @SerializedName("totalAmount")
+        private long totalAmount;
 
         public String getType() { return type; }
         public String getTitle() { return title; }
         public String getDetail() { return detail; }
         public String getCreatedAt() { return createdAt; }
+        public ArrayList<CartItem> getProducts() { return products; }
+        public String getCustomerName() { return customerName; }
+        public String getCustomerPhone() { return customerPhone; }
+        public String getPaymentMethod() { return paymentMethod; }
+        public long getTotalAmount() { return totalAmount; }
     }
 
     public static class DailyStat {

@@ -21,6 +21,60 @@ import java.util.List;
 
 public class RecentActivityAdapter extends RecyclerView.Adapter<RecentActivityAdapter.ViewHolder> {
     private final ArrayList<AdminStats.RecentActivity> activities = new ArrayList<>();
+    private final OnActivityClickListener listener;
+
+    public interface OnActivityClickListener {
+        void onActivityClick(AdminStats.RecentActivity activity);
+    }
+
+    public RecentActivityAdapter() {
+        this(null);
+    }
+
+    public RecentActivityAdapter(OnActivityClickListener listener) {
+        this.listener = listener;
+    }
+
+    public static int getIcon(String type) {
+        if ("order_created".equals(type)) {
+            return R.drawable.ic_order_shipping;
+        }
+        if ("order_completed".equals(type)) {
+            return R.drawable.ic_check;
+        }
+        if ("order_cancelled".equals(type)) {
+            return R.drawable.ic_order_cancelled;
+        }
+        if ("product_created".equals(type)) {
+            return R.drawable.ic_products;
+        }
+        if ("login_admin".equals(type) || "login_customer".equals(type)) {
+            return R.drawable.ic_user_check;
+        }
+        if ("user_created".equals(type)) {
+            return R.drawable.ic_users;
+        }
+        return R.drawable.ic_check_done;
+    }
+
+    public static int getIconBackground(String type) {
+        if ("order_cancelled".equals(type)) {
+            return Color.parseColor("#F9D8D8");
+        }
+        if ("order_created".equals(type)) {
+            return Color.parseColor("#E6E3DD");
+        }
+        if ("product_created".equals(type)) {
+            return Color.parseColor("#E6E3DD");
+        }
+        if ("login_admin".equals(type) || "login_customer".equals(type)) {
+            return Color.parseColor("#DDE8C0");
+        }
+        if ("user_created".equals(type)) {
+            return Color.parseColor("#E4EAD0");
+        }
+        return Color.parseColor("#DDE8C8");
+    }
 
     public void updateData(List<AdminStats.RecentActivity> newActivities) {
         activities.clear();
@@ -42,6 +96,11 @@ public class RecentActivityAdapter extends RecyclerView.Adapter<RecentActivityAd
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         AdminStats.RecentActivity activity = activities.get(position);
         holder.bind(activity, position == activities.size() - 1);
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onActivityClick(activity);
+            }
+        });
     }
 
     @Override
@@ -66,56 +125,15 @@ public class RecentActivityAdapter extends RecyclerView.Adapter<RecentActivityAd
         }
 
         void bind(AdminStats.RecentActivity activity, boolean isLast) {
-            int iconResource = getIcon(activity.getType());
+            int iconResource = RecentActivityAdapter.getIcon(activity.getType());
 
             ivActivityIcon.setImageResource(iconResource);
-            ivActivityIcon.setBackgroundTintList(ColorStateList.valueOf(getIconBackground(activity.getType())));
+            ivActivityIcon.setBackgroundTintList(ColorStateList.valueOf(RecentActivityAdapter.getIconBackground(activity.getType())));
             ivActivityIcon.setContentDescription(activity.getTitle());
             tvActivityTitle.setText(activity.getTitle());
             tvActivityDetail.setText(activity.getDetail() != null ? activity.getDetail() : "");
             tvActivityTime.setText(DateTimeUtils.formatISOToLocal(activity.getCreatedAt(), "dd/MM/yyyy HH:mm"));
             viewDivider.setVisibility(isLast ? View.GONE : View.VISIBLE);
-        }
-
-        private int getIcon(String type) {
-            if ("order_created".equals(type)) {
-                return R.drawable.ic_order_shipping;
-            }
-            if ("order_completed".equals(type)) {
-                return R.drawable.ic_check;
-            }
-            if ("order_cancelled".equals(type)) {
-                return R.drawable.ic_order_cancelled;
-            }
-            if ("product_created".equals(type)) {
-                return R.drawable.ic_products;
-            }
-            if ("login_admin".equals(type) || "login_customer".equals(type)) {
-                return R.drawable.ic_user_check;
-            }
-            if ("user_created".equals(type)) {
-                return R.drawable.ic_users;
-            }
-            return R.drawable.ic_check_done;
-        }
-
-        private int getIconBackground(String type) {
-            if ("order_cancelled".equals(type)) {
-                return Color.parseColor("#F9D8D8");
-            }
-            if ("order_created".equals(type)) {
-                return Color.parseColor("#E6E3DD");
-            }
-            if ("product_created".equals(type)) {
-                return Color.parseColor("#E6E3DD");
-            }
-            if ("login_admin".equals(type) || "login_customer".equals(type)) {
-                return Color.parseColor("#DDE8C0");
-            }
-            if ("user_created".equals(type)) {
-                return Color.parseColor("#E4EAD0");
-            }
-            return Color.parseColor("#DDE8C8");
         }
     }
 }
