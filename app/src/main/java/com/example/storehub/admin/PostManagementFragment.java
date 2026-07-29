@@ -17,7 +17,7 @@ import com.example.storehub.NewsDetailActivity;
 import com.example.storehub.R;
 import com.example.storehub.adapter.PostManagementAdapter;
 import com.example.storehub.model.News;
-import com.example.storehub.model.Response;
+import com.example.storehub.model.response.Response;
 import com.example.storehub.services.ApiServices;
 import com.example.storehub.services.HttpResquest;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;

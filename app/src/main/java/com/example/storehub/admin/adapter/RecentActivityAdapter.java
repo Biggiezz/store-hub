@@ -13,18 +13,18 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.storehub.R;
-import com.example.storehub.model.AdminStats;
+import com.example.storehub.model.response.RecentActivity;
 import com.example.storehub.utils.DateTimeUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RecentActivityAdapter extends RecyclerView.Adapter<RecentActivityAdapter.ViewHolder> {
-    private final ArrayList<AdminStats.RecentActivity> activities = new ArrayList<>();
+    private final ArrayList<RecentActivity> activities = new ArrayList<>();
     private final OnActivityClickListener listener;
 
     public interface OnActivityClickListener {
-        void onActivityClick(AdminStats.RecentActivity activity);
+        void onActivityClick(RecentActivity activity);
     }
 
     public RecentActivityAdapter() {
@@ -35,48 +35,7 @@ public class RecentActivityAdapter extends RecyclerView.Adapter<RecentActivityAd
         this.listener = listener;
     }
 
-    public static int getIcon(String type) {
-        if ("order_created".equals(type)) {
-            return R.drawable.ic_order_shipping;
-        }
-        if ("order_completed".equals(type)) {
-            return R.drawable.ic_check;
-        }
-        if ("order_cancelled".equals(type)) {
-            return R.drawable.ic_order_cancelled;
-        }
-        if ("product_created".equals(type)) {
-            return R.drawable.ic_products;
-        }
-        if ("login_admin".equals(type) || "login_customer".equals(type)) {
-            return R.drawable.ic_user_check;
-        }
-        if ("user_created".equals(type)) {
-            return R.drawable.ic_users;
-        }
-        return R.drawable.ic_check_done;
-    }
-
-    public static int getIconBackground(String type) {
-        if ("order_cancelled".equals(type)) {
-            return Color.parseColor("#F9D8D8");
-        }
-        if ("order_created".equals(type)) {
-            return Color.parseColor("#E6E3DD");
-        }
-        if ("product_created".equals(type)) {
-            return Color.parseColor("#E6E3DD");
-        }
-        if ("login_admin".equals(type) || "login_customer".equals(type)) {
-            return Color.parseColor("#DDE8C0");
-        }
-        if ("user_created".equals(type)) {
-            return Color.parseColor("#E4EAD0");
-        }
-        return Color.parseColor("#DDE8C8");
-    }
-
-    public void updateData(List<AdminStats.RecentActivity> newActivities) {
+    public void updateData(List<RecentActivity> newActivities) {
         activities.clear();
         if (newActivities != null) {
             activities.addAll(newActivities);
@@ -94,12 +53,10 @@ public class RecentActivityAdapter extends RecyclerView.Adapter<RecentActivityAd
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        AdminStats.RecentActivity activity = activities.get(position);
+        RecentActivity activity = activities.get(position);
         holder.bind(activity, position == activities.size() - 1);
         holder.itemView.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onActivityClick(activity);
-            }
+            if (listener != null) listener.onActivityClick(activity);
         });
     }
 
@@ -124,7 +81,7 @@ public class RecentActivityAdapter extends RecyclerView.Adapter<RecentActivityAd
             viewDivider = itemView.findViewById(R.id.viewDivider);
         }
 
-        void bind(AdminStats.RecentActivity activity, boolean isLast) {
+        void bind(RecentActivity activity, boolean isLast) {
             int iconResource = RecentActivityAdapter.getIcon(activity.getType());
 
             ivActivityIcon.setImageResource(iconResource);
@@ -136,4 +93,45 @@ public class RecentActivityAdapter extends RecyclerView.Adapter<RecentActivityAd
             viewDivider.setVisibility(isLast ? View.GONE : View.VISIBLE);
         }
     }
+
+    public static int getIcon(String type) {
+            if ("order_created".equals(type)) {
+                return R.drawable.ic_order_shipping;
+            }
+            if ("order_completed".equals(type)) {
+                return R.drawable.ic_check;
+            }
+            if ("order_cancelled".equals(type)) {
+                return R.drawable.ic_order_cancelled;
+            }
+            if ("product_created".equals(type)) {
+                return R.drawable.ic_products;
+            }
+            if ("login_admin".equals(type) || "login_customer".equals(type)) {
+                return R.drawable.ic_user_check;
+            }
+            if ("user_created".equals(type)) {
+                return R.drawable.ic_users;
+            }
+            return R.drawable.ic_check_done;
+        }
+
+    public static int getIconBackground(String type) {
+            if ("order_cancelled".equals(type)) {
+                return Color.parseColor("#F9D8D8");
+            }
+            if ("order_created".equals(type)) {
+                return Color.parseColor("#E6E3DD");
+            }
+            if ("product_created".equals(type)) {
+                return Color.parseColor("#E6E3DD");
+            }
+            if ("login_admin".equals(type) || "login_customer".equals(type)) {
+                return Color.parseColor("#DDE8C0");
+            }
+            if ("user_created".equals(type)) {
+                return Color.parseColor("#E4EAD0");
+            }
+            return Color.parseColor("#DDE8C8");
+        }
 }

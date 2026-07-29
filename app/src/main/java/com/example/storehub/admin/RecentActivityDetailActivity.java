@@ -20,8 +20,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.storehub.R;
 import com.example.storehub.adapter.OrderProductAdapter;
 import com.example.storehub.admin.adapter.RecentActivityAdapter;
-import com.example.storehub.model.AdminStats;
 import com.example.storehub.model.CartItem;
+import com.example.storehub.model.response.RecentActivity;
 import com.example.storehub.utils.DateTimeUtils;
 import com.google.android.material.button.MaterialButton;
 
@@ -40,7 +40,7 @@ public class RecentActivityDetailActivity extends AppCompatActivity {
     private static final String EXTRA_PAYMENT_METHOD = "activity_payment_method";
     private static final String EXTRA_TOTAL_AMOUNT = "activity_total_amount";
 
-    public static Intent createIntent(Context context, AdminStats.RecentActivity activity) {
+    public static Intent createIntent(Context context, RecentActivity activity) {
         Intent intent = new Intent(context, RecentActivityDetailActivity.class);
         intent.putExtra(EXTRA_TYPE, value(activity.getType()));
         intent.putExtra(EXTRA_TITLE, value(activity.getTitle()));

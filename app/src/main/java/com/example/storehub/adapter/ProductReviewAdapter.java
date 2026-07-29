@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.storehub.R;
-import com.example.storehub.model.Product.ProductReview;
+import com.example.storehub.model.ProductReview;
 
 import java.util.ArrayList;
 import java.util.List;

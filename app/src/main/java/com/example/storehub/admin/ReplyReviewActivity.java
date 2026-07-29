@@ -15,8 +15,9 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.storehub.R;
 import com.example.storehub.model.Product;
-import com.example.storehub.model.Product.ProductReview;
-import com.example.storehub.model.Response;
+import com.example.storehub.model.ProductReview;
+import com.example.storehub.model.request.ReplyReviewRequest;
+import com.example.storehub.model.response.Response;
 import com.example.storehub.services.HttpResquest;
 
 import retrofit2.Call;
@@ -89,7 +90,7 @@ public class ReplyReviewActivity extends AppCompatActivity {
                 return;
             }
 
-            new HttpResquest().callAPI().replyReview(new ProductReview.ReplyRequest(productId, review.getId(), replyText))
+            new HttpResquest().callAPI().replyReview(new ReplyReviewRequest(productId, review.getId(), replyText))
                     .enqueue(new Callback<Response<Product>>() {
                         @Override
                         public void onResponse(Call<Response<Product>> call, retrofit2.Response<Response<Product>> response) {

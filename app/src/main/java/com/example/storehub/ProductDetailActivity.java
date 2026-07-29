@@ -26,8 +26,9 @@ import com.bumptech.glide.Glide;
 import com.example.storehub.adapter.ProductReviewAdapter;
 import com.example.storehub.model.CartItem;
 import com.example.storehub.model.Product;
-import com.example.storehub.model.Product.ProductColor;
-import com.example.storehub.model.Response;
+import com.example.storehub.model.ProductColor;
+import com.example.storehub.model.request.AddToCartRequest;
+import com.example.storehub.model.response.Response;
 import com.example.storehub.model.User;
 import com.example.storehub.admin.ProductFormManagementActivity;
 import com.example.storehub.utils.SharedPreferencesManager;
@@ -408,7 +409,7 @@ public class ProductDetailActivity extends BaseActivity {
 
         setCartLoading(true);
 
-        CartItem.AddToCartRequest request = new CartItem.AddToCartRequest(
+        AddToCartRequest request = new AddToCartRequest(
                 currentProduct.get_id(),
                 selectedColorId,
                 quantity

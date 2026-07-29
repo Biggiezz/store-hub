@@ -13,7 +13,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.storehub.BaseActivity;
 import com.example.storehub.R;
-import com.example.storehub.model.Response;
+import com.example.storehub.model.response.Response;
+import com.example.storehub.model.request.RegisterRequest;
 import com.example.storehub.model.User;
 import com.example.storehub.services.HttpResquest;
 import com.google.android.material.button.MaterialButton;
@@ -84,7 +85,7 @@ public class RegisterActivity extends BaseActivity {
         }
 
         // Tạo đối tượng Request gửi đi
-        User.RegisterRequest request = new User.RegisterRequest(name, email, phone, password);
+        RegisterRequest request = new RegisterRequest(name, email, phone, password);
 
         // Gọi API
         HttpResquest httpResquest = new HttpResquest();

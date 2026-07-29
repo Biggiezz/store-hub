@@ -21,8 +21,10 @@ import com.bumptech.glide.Glide;
 import com.example.storehub.R;
 import com.example.storehub.admin.RecentActivity;
 import com.example.storehub.admin.adapter.StatsTimeAdapter;
-import com.example.storehub.model.AdminStats;
-import com.example.storehub.model.Response;
+import com.example.storehub.model.response.DailyStat;
+import com.example.storehub.model.response.Response;
+import com.example.storehub.model.response.RevenueData;
+import com.example.storehub.model.response.TopProduct;
 import com.example.storehub.services.HttpResquest;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -114,11 +116,11 @@ public class StatsManagerFragment extends Fragment {
 
     private void onTimeFilterSelected(int position) {
         HttpResquest request = new HttpResquest();
-        request.callAPI().getRevenueStats(position).enqueue(new Callback<Response<AdminStats.RevenueData>>() {
+        request.callAPI().getRevenueStats(position).enqueue(new Callback<Response<RevenueData>>() {
             @Override
-            public void onResponse(@NonNull Call<Response<AdminStats.RevenueData>> call, @NonNull retrofit2.Response<Response<AdminStats.RevenueData>> response) {
+            public void onResponse(@NonNull Call<Response<RevenueData>> call, @NonNull retrofit2.Response<Response<RevenueData>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
-                    AdminStats.RevenueData data = response.body().getData();
+                    RevenueData data = response.body().getData();
                     List<BarEntry> entries = new ArrayList<>();
                     String[] labels = new String[0];
 
@@ -127,7 +129,7 @@ public class StatsManagerFragment extends Fragment {
                     }
 
                     if (data.getDailyStats() != null && !data.getDailyStats().isEmpty()) {
-                        for (AdminStats.DailyStat stat : data.getDailyStats()) {
+                        for (DailyStat stat : data.getDailyStats()) {
                             entries.add(new BarEntry(stat.getIndex(), stat.getRevenue()));
                         }
                     }
@@ -143,7 +145,7 @@ public class StatsManagerFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(@NonNull Call<Response<AdminStats.RevenueData>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<Response<RevenueData>> call, @NonNull Throwable t) {
                 if (isAdded()) {
                     renderChartAndStats(new ArrayList<>(), new String[0], 0L, 0);
                     renderTopProducts(new ArrayList<>());
@@ -214,7 +216,7 @@ public class StatsManagerFragment extends Fragment {
         }
     }
 
-    private void renderTopProducts(List<AdminStats.TopProduct> products) {
+    private void renderTopProducts(List<TopProduct> products) {
         if (layoutTopProduct == null) return;
         layoutTopProduct.removeAllViews();
         if (products == null || products.isEmpty()) {
@@ -222,7 +224,7 @@ public class StatsManagerFragment extends Fragment {
             return;
         }
 
-        for (AdminStats.TopProduct product : products) {
+        for (TopProduct product : products) {
             View item = getLayoutInflater().inflate(R.layout.item_best_product, layoutTopProduct, false);
             ImageView image = item.findViewById(R.id.ivProduct);
             image.setContentDescription(product.getName());
@@ -234,7 +236,7 @@ public class StatsManagerFragment extends Fragment {
         }
     }
 
-    private void renderRecentActivities(List<AdminStats.RecentActivity> activities) {
+    private void renderRecentActivities(List<com.example.storehub.model.response.RecentActivity> activities) {
         if (layoutActivity == null) return;
         layoutActivity.removeAllViews();
         if (activities == null || activities.isEmpty()) {
@@ -243,7 +245,7 @@ public class StatsManagerFragment extends Fragment {
         }
 
         for (int i = 0; i < activities.size(); i++) {
-            AdminStats.RecentActivity activity = activities.get(i);
+            com.example.storehub.model.response.RecentActivity activity = activities.get(i);
             View item = getLayoutInflater().inflate(R.layout.item_recent_activity, layoutActivity, false);
             ImageView icon = item.findViewById(R.id.ivActivityIcon);
             int iconResource = getRecentActivityIcon(activity.getType());

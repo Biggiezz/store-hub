@@ -1,12 +1,22 @@
 package com.example.storehub.services;
 
-import com.example.storehub.model.AdminStats;
 import com.example.storehub.model.CartItem;
 import com.example.storehub.model.News;
 import com.example.storehub.model.Order;
 import com.example.storehub.model.Product;
-import com.example.storehub.model.Response;
 import com.example.storehub.model.User;
+import com.example.storehub.model.request.AddReviewRequest;
+import com.example.storehub.model.request.AddToCartRequest;
+import com.example.storehub.model.request.CancelOrderRequest;
+import com.example.storehub.model.request.LoginRequest;
+import com.example.storehub.model.request.RegisterRequest;
+import com.example.storehub.model.request.ReplyReviewRequest;
+import com.example.storehub.model.request.UpdateQuantityRequest;
+import com.example.storehub.model.request.UpdateStatusRequest;
+import com.example.storehub.model.response.DashboardData;
+import com.example.storehub.model.response.LoginResponse;
+import com.example.storehub.model.response.Response;
+import com.example.storehub.model.response.RevenueData;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -26,11 +36,15 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface ApiServices {
+    @GET("api/productsRouter/get-categories")
+    Call<Response<ArrayList<String>>> getCategories();
+
     @GET("api/productsRouter/get-all-product")
     Call<Response<ArrayList<Product>>> getListProduct(
             @Query("page") int page,
             @Query("limit") int limit,
-            @Query("category") String category
+            @Query("category") String category,
+            @Query("status") String status
     );
 
     @GET("api/productsRouter/search-product")
@@ -38,7 +52,8 @@ public interface ApiServices {
             @Query("page") int page,
             @Query("limit") int limit,
             @Query("keyword") String keyword,
-            @Query("category") String category
+            @Query("category") String category,
+            @Query("status") String status
     );
 
     @GET("api/productsRouter/get-product-by-id/{id}")
@@ -75,19 +90,19 @@ public interface ApiServices {
     Call<Response<ArrayList<CartItem>>> getCart();
 
     @POST("api/productsRouter/add-to-cart")
-    Call<Response<Void>> addToCart(@Body CartItem.AddToCartRequest request);
+    Call<Response<Void>> addToCart(@Body AddToCartRequest request);
 
     @POST("api/productsRouter/update-cart-quantity")
-    Call<Response<ArrayList<CartItem>>> updateCartQuantity(@Body CartItem.UpdateQuantityRequest request);
+    Call<Response<ArrayList<CartItem>>> updateCartQuantity(@Body UpdateQuantityRequest request);
 
     @DELETE("api/productsRouter/delete-cart-item/{id}")
     Call<Response<ArrayList<CartItem>>> deleteCartItem(@Path("id") String id);
 
     @POST("api/productsRouter/add-review")
-    Call<Response<Product>> addReview(@Body Product.ProductReview.AddRequest request);
+    Call<Response<Product>> addReview(@Body AddReviewRequest request);
 
     @POST("api/productsRouter/reply-review")
-    Call<Response<Product>> replyReview(@Body Product.ProductReview.ReplyRequest request);
+    Call<Response<Product>> replyReview(@Body ReplyReviewRequest request);
 
     @POST("api/oderRouter/create-order")
     Call<Response<Order>> createOrder(
@@ -113,14 +128,14 @@ public interface ApiServices {
     Call<Response<Order>> updateAdminOrderStatus(
             @Header("Authorization") String token,
             @Path("id") String orderId,
-            @Body Order.UpdateStatusRequest request
+            @Body UpdateStatusRequest request
     );
 
     @POST("api/oderRouter/cancel-order")
-    Call<Response<Order>> cancelOrder(@Body Order.CancelOrderRequest request);
+    Call<Response<Order>> cancelOrder(@Body CancelOrderRequest request);
 
     @POST("api/oderRouter/update-status")
-    Call<Response<Order>> updateOrderStatus(@Body Order.UpdateStatusRequest request);
+    Call<Response<Order>> updateOrderStatus(@Body UpdateStatusRequest request);
 
     @POST("api/oderRouter/clear-cart")
     Call<Response<Object>> clearCart();
@@ -141,10 +156,10 @@ public interface ApiServices {
     Call<Response<Void>> deleteNews(@Path("id") String id);
 
     @POST("users/register")
-    Call<Response<User>> register(@Body User.RegisterRequest request);
+    Call<Response<User>> register(@Body RegisterRequest request);
 
     @POST("users/login")
-    Call<User.LoginResponse> login(@Body User.LoginRequest request);
+    Call<LoginResponse> login(@Body LoginRequest request);
 
     @GET("users/get-all-users")
     Call<Response<ArrayList<User>>> getListUsers(@Header("Authorization") String token);
@@ -210,13 +225,13 @@ public interface ApiServices {
     Call<Response<Void>> setOffline(@Header("Authorization") String authHeader);
 
     @GET("users/admin/dashboard")
-    Call<Response<AdminStats.DashboardData>> getAdminDashboardStats();
+    Call<Response<DashboardData>> getAdminDashboardStats();
 
     @GET("users/admin/revenue-stats")
-    Call<Response<AdminStats.RevenueData>> getRevenueStats(@Query("period") int period);
+    Call<Response<RevenueData>> getRevenueStats(@Query("period") int period);
 
     @GET("users/admin/revenue-stats")
-    Call<Response<AdminStats.RevenueData>> getRevenueStatsWithLimit(
+    Call<Response<RevenueData>> getRevenueStatsWithLimit(
             @Query("period") int period,
             @Query("activityLimit") int activityLimit
     );

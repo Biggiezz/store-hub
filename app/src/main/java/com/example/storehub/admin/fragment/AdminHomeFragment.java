@@ -18,9 +18,9 @@ import com.example.storehub.R;
 import com.example.storehub.admin.AdminOrdersActivity;
 import com.example.storehub.admin.ManagementReviewsActivity;
 import com.example.storehub.auth.LoginActivity;
-import com.example.storehub.model.AdminStats;
 import com.example.storehub.model.Product;
-import com.example.storehub.model.Response;
+import com.example.storehub.model.response.DashboardData;
+import com.example.storehub.model.response.Response;
 import com.example.storehub.services.HttpResquest;
 import com.example.storehub.utils.SharedPreferencesManager;
 
@@ -93,8 +93,9 @@ public class AdminHomeFragment extends Fragment {
                     }
 
                     private void navigateToLogin() {
-                        Toast.makeText(requireContext(), "Đã đăng xuất tài khoản", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(requireContext(), LoginActivity.class);
+                        android.content.Context appContext = requireContext().getApplicationContext();
+                        Toast.makeText(appContext, "Đã đăng xuất tài khoản", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(appContext, LoginActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                         if (getActivity() != null) {
@@ -141,9 +142,9 @@ public class AdminHomeFragment extends Fragment {
 
     private void fetchDashboardStats() {
         HttpResquest request = new HttpResquest();
-        request.callAPI().getAdminDashboardStats().enqueue(new Callback<Response<AdminStats.DashboardData>>() {
+        request.callAPI().getAdminDashboardStats().enqueue(new Callback<Response<DashboardData>>() {
             @Override
-            public void onResponse(@NonNull Call<Response<AdminStats.DashboardData>> call, @NonNull retrofit2.Response<Response<AdminStats.DashboardData>> response) {
+            public void onResponse(@NonNull Call<Response<DashboardData>> call, @NonNull retrofit2.Response<Response<DashboardData>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     bindData(response.body().getData());
                 } else {
@@ -152,7 +153,7 @@ public class AdminHomeFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(@NonNull Call<Response<AdminStats.DashboardData>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<Response<DashboardData>> call, @NonNull Throwable t) {
                 Log.e("AdminHomeFragment", "Lỗi khi gọi API thống kê", t);
                 if (isAdded()) {
                     Toast.makeText(requireContext(), "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
@@ -162,7 +163,7 @@ public class AdminHomeFragment extends Fragment {
     }
 
     private void fetchProductCount() {
-        new HttpResquest().callAPI().getListProduct(1, 1, "").enqueue(new Callback<Response<ArrayList<Product>>>() {
+        new HttpResquest().callAPI().getListProduct(1, 1, "", "").enqueue(new Callback<Response<ArrayList<Product>>>() {
                     @Override
                     public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
                         if (response.isSuccessful() && response.body() != null
@@ -182,7 +183,7 @@ public class AdminHomeFragment extends Fragment {
                 });
     }
 
-    private void bindData(AdminStats.DashboardData data) {
+    private void bindData(DashboardData data) {
         if (data == null) return;
 
         if (cardSales != null) {

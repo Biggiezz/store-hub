@@ -23,7 +23,8 @@ public class SharedPreferencesManager {
 
     public static synchronized SharedPreferencesManager getInstance(Context context) {
         if (instance == null) {
-            instance = new SharedPreferencesManager(context.getApplicationContext());
+            Context appContext = context.getApplicationContext();
+            instance = new SharedPreferencesManager(appContext != null ? appContext : context);
         }
         return instance;
     }

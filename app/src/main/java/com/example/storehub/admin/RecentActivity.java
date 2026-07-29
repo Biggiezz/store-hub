@@ -21,8 +21,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.storehub.R;
 import com.example.storehub.admin.adapter.RecentActivityAdapter;
-import com.example.storehub.model.AdminStats;
-import com.example.storehub.model.Response;
+import com.example.storehub.model.response.Response;
+import com.example.storehub.model.response.RevenueData;
 import com.example.storehub.services.HttpResquest;
 import com.example.storehub.utils.DateTimeUtils;
 import com.google.android.material.card.MaterialCardView;
@@ -44,10 +44,11 @@ public class RecentActivity extends AppCompatActivity {
     private RecyclerView rvRecentActivities;
     private View layoutEmpty, layoutPagination;
     private ImageButton btnPreviousPage, btnNextPage;
-    private RecentActivityAdapter adapter;
-    private final ArrayList<AdminStats.RecentActivity> allActivities = new ArrayList<>();
-    private final ArrayList<AdminStats.RecentActivity> filteredActivities = new ArrayList<>();
-    private Call<Response<AdminStats.RevenueData>> activityCall;
+    private final RecentActivityAdapter adapter = new RecentActivityAdapter(activity ->
+            startActivity(RecentActivityDetailActivity.createIntent(this, activity)));
+    private final ArrayList<com.example.storehub.model.response.RecentActivity> allActivities = new ArrayList<>();
+    private final ArrayList<com.example.storehub.model.response.RecentActivity> filteredActivities = new ArrayList<>();
+    private Call<Response<RevenueData>> activityCall;
     private int currentPage = 1;
 
     @Override
@@ -99,8 +100,6 @@ public class RecentActivity extends AppCompatActivity {
         ImageView imgBack = findViewById(R.id.imgBack);
         imgBack.setOnClickListener(v -> finish());
 
-        adapter = new RecentActivityAdapter(activity ->
-                startActivity(RecentActivityDetailActivity.createIntent(this, activity)));
         rvRecentActivities.setLayoutManager(new LinearLayoutManager(this));
         rvRecentActivities.setAdapter(adapter);
 
@@ -134,13 +133,13 @@ public class RecentActivity extends AppCompatActivity {
 
     private void loadActivities() {
         activityCall = new HttpResquest().callAPI().getRevenueStatsWithLimit(2, 0);
-        activityCall.enqueue(new Callback<Response<AdminStats.RevenueData>>() {
+        activityCall.enqueue(new Callback<Response<RevenueData>>() {
             @Override
-            public void onResponse(@NonNull Call<Response<AdminStats.RevenueData>> call,
-                                   @NonNull retrofit2.Response<Response<AdminStats.RevenueData>> response) {
+            public void onResponse(@NonNull Call<Response<RevenueData>> call,
+                                   @NonNull retrofit2.Response<Response<RevenueData>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     allActivities.clear();
-                    List<AdminStats.RecentActivity> activities = response.body().getData().getRecentActivities();
+                    List<com.example.storehub.model.response.RecentActivity> activities = response.body().getData().getRecentActivities();
                     if (activities != null) {
                         allActivities.addAll(activities);
                     }
@@ -149,7 +148,7 @@ public class RecentActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(@NonNull Call<Response<AdminStats.RevenueData>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<Response<RevenueData>> call, @NonNull Throwable t) {
                 if (!call.isCanceled()) {
                     allActivities.clear();
                     filterActivities();
@@ -198,7 +197,7 @@ public class RecentActivity extends AppCompatActivity {
 
         filteredActivities.clear();
 
-        for (AdminStats.RecentActivity activity : allActivities) {
+        for (com.example.storehub.model.response.RecentActivity activity : allActivities) {
             String title = activity.getTitle() == null ? "" : activity.getTitle();
             String detail = activity.getDetail() == null ? "" : activity.getDetail();
             boolean matchesKeyword = keyword.isEmpty()
