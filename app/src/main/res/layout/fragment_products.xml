@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/background"
+        app:titleTextColor="@color/dark_green"
         app:menu="@menu/menu_product"
         app:navigationIcon="@drawable/ic_back"
         app:title="@string/product_list_title"
@@ -27,20 +28,34 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingStart="20dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="24dp">
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:startIconDrawable="@drawable/ic_search">
+                app:boxCornerRadiusBottomEnd="14dp"
+                app:boxCornerRadiusBottomStart="14dp"
+                app:boxCornerRadiusTopEnd="14dp"
+                app:boxCornerRadiusTopStart="14dp"
+                app:boxStrokeColor="#BEC3BE"
+                app:boxStrokeWidth="1dp"
+                app:boxStrokeWidthFocused="1dp"
+                app:startIconDrawable="@drawable/ic_search"
+                app:startIconTint="#747B76">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtSearch"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="48dp"
                     android:hint="@string/search_product_hint"
-                    android:inputType="text" />
+                    android:inputType="text"
+                    android:textColor="@color/dark_green"
+                    android:textColorHint="#79807B"
+                    android:textSize="16sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <HorizontalScrollView
@@ -66,31 +81,53 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
                         android:text="@string/sort_by"
-                        android:textStyle="bold" />
+                        android:textColor="#5D625F"
+                        android:textSize="14sp" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnPrice"
-                        style="@style/Widget.Material3.Button.OutlinedButton"
                         android:layout_width="wrap_content"
-                        android:layout_height="40dp"
+                        android:layout_height="36dp"
                         android:layout_marginStart="12dp"
-                        android:text="@string/sort_price_asc" />
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:minWidth="0dp"
+                        android:text="@string/sort_price_asc"
+                        android:textColor="#6B6157"
+                        android:textSize="14sp"
+                        app:backgroundTint="#F0DED2"
+                        app:cornerRadius="20dp"
+                        app:strokeWidth="0dp" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnAZ"
-                        style="@style/Widget.Material3.Button.OutlinedButton"
                         android:layout_width="wrap_content"
-                        android:layout_height="40dp"
+                        android:layout_height="36dp"
                         android:layout_marginStart="8dp"
-                        android:text="@string/sort_a_z" />
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:minWidth="0dp"
+                        android:text="@string/sort_a_z"
+                        android:textColor="#5D625F"
+                        android:textSize="14sp"
+                        app:backgroundTint="#EEEDEA"
+                        app:cornerRadius="20dp"
+                        app:strokeWidth="0dp" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnZA"
-                        style="@style/Widget.Material3.Button.OutlinedButton"
                         android:layout_width="wrap_content"
-                        android:layout_height="40dp"
+                        android:layout_height="36dp"
                         android:layout_marginStart="8dp"
-                        android:text="@string/sort_z_a" />
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:minWidth="0dp"
+                        android:text="@string/sort_z_a"
+                        android:textColor="#5D625F"
+                        android:textSize="14sp"
+                        app:backgroundTint="#EEEDEA"
+                        app:cornerRadius="20dp"
+                        app:strokeWidth="0dp" />
                 </LinearLayout>
             </HorizontalScrollView>
 
@@ -107,7 +144,7 @@
                 android:id="@+id/rvProducts"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="24dp"
                 android:clipToPadding="false"
                 android:nestedScrollingEnabled="false"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"

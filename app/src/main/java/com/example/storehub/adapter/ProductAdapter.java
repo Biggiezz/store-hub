@@ -51,7 +51,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Product product = listProduct.get(position);
-        
+        holder.tvProductCategory.setText(product.getCategory());
         holder.tvProductName.setText(product.getName());
         
         if (product.getStock() <= 0) {
@@ -91,6 +91,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imgProduct;
+        TextView tvProductCategory;
         TextView tvProductName;
         TextView tvProductPrice;
         TextView tvProductStatus;
@@ -98,6 +99,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             imgProduct = itemView.findViewById(R.id.imgProduct);
+            tvProductCategory = itemView.findViewById(R.id.tvProductCategory);
             tvProductName = itemView.findViewById(R.id.tvProductName);
             tvProductPrice = itemView.findViewById(R.id.tvProductPrice);
             tvProductStatus = itemView.findViewById(R.id.tvProductStatus);

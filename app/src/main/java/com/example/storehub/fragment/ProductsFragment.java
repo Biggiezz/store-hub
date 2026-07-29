@@ -18,6 +18,11 @@ import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.storehub.MainActivity;
 import com.example.storehub.R;
 import com.example.storehub.adapter.ProductAdapter;
@@ -28,6 +33,8 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
+
+import android.graphics.drawable.Drawable;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -46,6 +53,7 @@ public class ProductsFragment extends Fragment {
     private String currentSearchKeyword = "";
     private Runnable searchRunnable;
     private Call<Response<ArrayList<Product>>> currentCall;
+    private int loadGeneration;
     private TextView page1, page2, page3, lastPage, tvEllipsis;
     private ProgressBar progressBar;
     private View layoutPagination;
@@ -186,7 +194,7 @@ public class ProductsFragment extends Fragment {
         if (rvProducts != null) rvProducts.setVisibility(View.GONE);
         if (layoutPagination != null) layoutPagination.setVisibility(View.GONE);
 
-        long startTime = System.currentTimeMillis();
+        int requestGeneration = ++loadGeneration;
 
         HttpResquest request = new HttpResquest();
         currentCall = keyword.isEmpty()
@@ -197,50 +205,88 @@ public class ProductsFragment extends Fragment {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call,
                                    @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
-                if (call.isCanceled() || productAdapter == null) return;
+                if (call.isCanceled() || productAdapter == null || requestGeneration != loadGeneration) return;
 
-                long elapsedTime = System.currentTimeMillis() - startTime;
-                long remainingDelay = Math.max(0, 3000 - elapsedTime);
-
-                new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                    if (call.isCanceled() || productAdapter == null || !isAdded()) return;
-
-                    if (progressBar != null) progressBar.setVisibility(View.GONE);
-                    if (rvProducts != null) rvProducts.setVisibility(View.VISIBLE);
-                    if (layoutPagination != null) layoutPagination.setVisibility(View.VISIBLE);
-
-                    if (response.isSuccessful() && response.body() != null
-                            && response.body().getCode() == 200 && response.body().getData() != null) {
-                        ArrayList<Product> newProducts = response.body().getData();
-                        allProducts.clear();
-                        allProducts.addAll(newProducts);
-                        com.example.storehub.model.Pagination pagination = response.body().getPagination();
-                        totalPages = pagination == null ? 1 : Math.max(1, pagination.getTotalPages());
-                        currentPage = pagination == null ? 1 : pagination.getCurrentPage();
-                        productAdapter.updateData(allProducts);
-                        updatePagination();
-                    } else {
-                        Log.e("ProductsFragment", "Không thể tải danh sách sản phẩm");
-                    }
-                }, remainingDelay);
+                if (response.isSuccessful() && response.body() != null
+                        && response.body().getCode() == 200 && response.body().getData() != null) {
+                    ArrayList<Product> products = response.body().getData();
+                    com.example.storehub.model.Pagination pagination = response.body().getPagination();
+                    preloadPageImages(products, requestGeneration,
+                            () -> showProducts(products, pagination, requestGeneration));
+                } else {
+                    showLoadFailure(requestGeneration, "Không thể tải danh sách sản phẩm", null);
+                }
             }
 
             @Override
             public void onFailure(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull Throwable t) {
                 if (call.isCanceled()) return;
 
-                long elapsedTime = System.currentTimeMillis() - startTime;
-                long remainingDelay = Math.max(0, 3000 - elapsedTime);
-
-                new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                    if (call.isCanceled() || !isAdded()) return;
-                    if (progressBar != null) progressBar.setVisibility(View.GONE);
-                    if (rvProducts != null) rvProducts.setVisibility(View.VISIBLE);
-                    if (layoutPagination != null) layoutPagination.setVisibility(View.VISIBLE);
-                    Log.e("ProductsFragment", "Lỗi tải sản phẩm", t);
-                }, remainingDelay);
+                showLoadFailure(requestGeneration, "Lỗi tải sản phẩm", t);
             }
         });
+    }
+
+    private void preloadPageImages(ArrayList<Product> products, int requestGeneration, Runnable onComplete) {
+        if (products.isEmpty()) {
+            onComplete.run();
+            return;
+        }
+
+        int[] remaining = {products.size()};
+        for (Product product : products) {
+            Glide.with(this)
+                    .load(product.getImage())
+                    .placeholder(R.drawable.ic_product)
+                    .error(R.drawable.ic_product)
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model,
+                                                    Target<Drawable> target, boolean isFirstResource) {
+                            finishImagePreload();
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model,
+                                                       Target<Drawable> target,
+                                                       com.bumptech.glide.load.DataSource dataSource,
+                                                       boolean isFirstResource) {
+                            finishImagePreload();
+                            return false;
+                        }
+
+                        private void finishImagePreload() {
+                            if (requestGeneration == loadGeneration && --remaining[0] == 0) {
+                                onComplete.run();
+                            }
+                        }
+                    })
+                    .preload();
+        }
+    }
+
+    private void showProducts(ArrayList<Product> products,
+                              com.example.storehub.model.Pagination pagination,
+                              int requestGeneration) {
+        if (!isAdded() || productAdapter == null || requestGeneration != loadGeneration) return;
+        allProducts.clear();
+        allProducts.addAll(products);
+        totalPages = pagination == null ? 1 : Math.max(1, pagination.getTotalPages());
+        currentPage = pagination == null ? 1 : pagination.getCurrentPage();
+        productAdapter.updateData(allProducts);
+        updatePagination();
+        if (progressBar != null) progressBar.setVisibility(View.GONE);
+        if (rvProducts != null) rvProducts.setVisibility(View.VISIBLE);
+        if (layoutPagination != null) layoutPagination.setVisibility(View.VISIBLE);
+    }
+
+    private void showLoadFailure(int requestGeneration, String message, Throwable error) {
+        if (!isAdded() || requestGeneration != loadGeneration) return;
+        if (progressBar != null) progressBar.setVisibility(View.GONE);
+        if (rvProducts != null) rvProducts.setVisibility(View.VISIBLE);
+        if (layoutPagination != null) layoutPagination.setVisibility(View.VISIBLE);
+        Log.e("ProductsFragment", message, error);
     }
 
     private void updatePagination() {
