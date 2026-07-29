@@ -31,9 +31,22 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/tvOrderPaymentMethod"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_admin_chip"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:text="COD"
+                android:textColor="@color/dark_green"
+                android:textSize="11sp" />
+
+            <TextView
                 android:id="@+id/tvOrderDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:textColor="#8F8A82"
                 android:textSize="12sp" />
         </LinearLayout>

@@ -27,7 +27,7 @@ public class CompletedOrderDetailActivity extends BaseActivity {
     private Toolbar toolbar;
     private RecyclerView rvOrderProducts;
     private OrderProductAdapter adapter;
-    private TextView tvSubtotal, tvShippingFee, tvTotal, tvOrderDetailCode;
+    private TextView tvSubtotal, tvShippingFee, tvTotal, tvPaymentMethod, tvOrderDetailCode;
     private TextView tvShippingNamePhone, tvShippingAddress, btnReview, tvVoucher, tvStatusText, tvCompletedTime;
     private Order order;
 
@@ -62,6 +62,7 @@ public class CompletedOrderDetailActivity extends BaseActivity {
         tvSubtotal = findViewById(R.id.tvSubtotal);
         tvShippingFee = findViewById(R.id.tvShippingFee);
         tvTotal = findViewById(R.id.tvTotal);
+        tvPaymentMethod = findViewById(R.id.tvPaymentMethod);
         tvOrderDetailCode = findViewById(R.id.tvOrderDetailCode);
         tvShippingNamePhone = findViewById(R.id.tvShippingNamePhone);
         tvShippingAddress = findViewById(R.id.tvShippingAddress);
@@ -155,6 +156,8 @@ public class CompletedOrderDetailActivity extends BaseActivity {
         if (tvSubtotal != null) tvSubtotal.setText(formatPrice(subtotal));
         if (tvShippingFee != null) tvShippingFee.setText(formatPrice(shippingFee));
         if (tvTotal != null) tvTotal.setText(formatPrice(total));
+        if (tvPaymentMethod != null) tvPaymentMethod.setText("ZaloPay".equalsIgnoreCase(order.getPaymentMethod())
+                ? "ZaloPay" : "Thanh toán khi nhận hàng (COD)");
 
         TextView tvSubtotalLabel = findViewById(R.id.tvSubtotalLabel);
         if (tvSubtotalLabel != null) {

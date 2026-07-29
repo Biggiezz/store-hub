@@ -70,6 +70,28 @@
             android:textSize="14sp"
         />
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+    >
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Phương thức thanh toán"
+            android:textColor="#434844"
+            android:textSize="14sp"
+        />
+        <TextView
+            android:id="@+id/tvPaymentMethod"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Thanh toán khi nhận hàng (COD)"
+            android:textColor="#434844"
+            android:textSize="14sp"
+        />
+    </LinearLayout>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"

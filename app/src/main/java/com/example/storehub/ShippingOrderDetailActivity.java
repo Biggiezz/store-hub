@@ -51,7 +51,7 @@ public class ShippingOrderDetailActivity extends BaseActivity {
     private ImageView ivConfirmed, ivWarehouse, ivDelivering, ivCompleted;
     private RecyclerView rvOrderProducts;
     private OrderProductAdapter adapter;
-    private TextView tvSubtotal, tvShippingFee, tvTotal, tvOrderDetailCode, tvShippingNamePhone, tvShippingAddress, tvStatusTitle, tvStatusBadge, tvEstimatedDelivery, tvConfirmed, tvWarehouse, tvDelivering, tvCompleted;
+    private TextView tvSubtotal, tvShippingFee, tvTotal, tvPaymentMethod, tvOrderDetailCode, tvShippingNamePhone, tvShippingAddress, tvStatusTitle, tvStatusBadge, tvEstimatedDelivery, tvConfirmed, tvWarehouse, tvDelivering, tvCompleted;
     private ApiServices apiService;
     private Call<Response<ArrayList<CartItem>>> cartCall;
     private static final long DEFAULT_SHIPPING_FEE = 40000L;
@@ -89,6 +89,7 @@ public class ShippingOrderDetailActivity extends BaseActivity {
         tvSubtotal = findViewById(R.id.tvSubtotal);
         tvShippingFee = findViewById(R.id.tvShippingFee);
         tvTotal = findViewById(R.id.tvTotal);
+        tvPaymentMethod = findViewById(R.id.tvPaymentMethod);
         tvOrderDetailCode = findViewById(R.id.tvOrderDetailCode);
         tvShippingNamePhone = findViewById(R.id.tvShippingNamePhone);
         tvShippingAddress = findViewById(R.id.tvShippingAddress);
@@ -173,6 +174,8 @@ public class ShippingOrderDetailActivity extends BaseActivity {
         if (tvSubtotal != null) tvSubtotal.setText(formatPrice(subtotal));
         if (tvShippingFee != null) tvShippingFee.setText(formatPrice(shippingFee));
         if (tvTotal != null) tvTotal.setText(formatPrice(total));
+        if (tvPaymentMethod != null) tvPaymentMethod.setText("ZaloPay".equalsIgnoreCase(order.getPaymentMethod())
+                ? "ZaloPay" : "Thanh toán khi nhận hàng (COD)");
 
         TextView tvSubtotalLabel = findViewById(R.id.tvSubtotalLabel);
         if (tvSubtotalLabel != null) {

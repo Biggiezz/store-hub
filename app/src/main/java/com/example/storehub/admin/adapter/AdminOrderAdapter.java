@@ -60,12 +60,13 @@ public class AdminOrderAdapter extends RecyclerView.Adapter<AdminOrderAdapter.Or
     }
 
     class OrderViewHolder extends RecyclerView.ViewHolder {
-        TextView tvOrderCode, tvOrderDate, tvRecipientNamePhone, tvRecipientAddress, tvItemsCount, tvTotalPrice, tvOrderStatus;
+        TextView tvOrderCode, tvOrderPaymentMethod, tvOrderDate, tvRecipientNamePhone, tvRecipientAddress, tvItemsCount, tvTotalPrice, tvOrderStatus;
         MaterialButton btnViewDetails, btnUpdateStatus;
 
         public OrderViewHolder(@NonNull View itemView) {
             super(itemView);
             tvOrderCode = itemView.findViewById(R.id.tvOrderCode);
+            tvOrderPaymentMethod = itemView.findViewById(R.id.tvOrderPaymentMethod);
             tvOrderDate = itemView.findViewById(R.id.tvOrderDate);
             tvRecipientNamePhone = itemView.findViewById(R.id.tvRecipientNamePhone);
             tvRecipientAddress = itemView.findViewById(R.id.tvRecipientAddress);
@@ -78,6 +79,7 @@ public class AdminOrderAdapter extends RecyclerView.Adapter<AdminOrderAdapter.Or
 
         public void bind(Order order) {
             tvOrderCode.setText(order.getOrderCode() != null ? order.getOrderCode() : "Không có mã");
+            tvOrderPaymentMethod.setText("ZaloPay".equalsIgnoreCase(order.getPaymentMethod()) ? "ZaloPay" : "COD");
             
             // Format created date or fallback
             String dateStr = order.getCreatedAt();

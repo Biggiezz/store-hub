@@ -27,7 +27,7 @@ public class CancelledOrderDetailActivity extends BaseActivity {
     private Order order;
     private RecyclerView rvOrderProducts;
     private OrderProductAdapter adapter;
-    private TextView tvSubtotal, tvShippingFee, tvTotal, tvOrderDetailCode;
+    private TextView tvSubtotal, tvShippingFee, tvTotal, tvPaymentMethod, tvOrderDetailCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +59,7 @@ public class CancelledOrderDetailActivity extends BaseActivity {
         tvSubtotal = findViewById(R.id.tvSubtotal);
         tvShippingFee = findViewById(R.id.tvShippingFee);
         tvTotal = findViewById(R.id.tvTotal);
+        tvPaymentMethod = findViewById(R.id.tvPaymentMethod);
         tvOrderDetailCode = findViewById(R.id.tvOrderDetailCode);
 
         rvOrderProducts = findViewById(R.id.rvOrderProducts);
@@ -97,6 +98,8 @@ public class CancelledOrderDetailActivity extends BaseActivity {
         if (tvSubtotal != null) tvSubtotal.setText(formatPrice(subtotal));
         if (tvShippingFee != null) tvShippingFee.setText(formatPrice(shippingFee));
         if (tvTotal != null) tvTotal.setText(formatPrice(total));
+        if (tvPaymentMethod != null) tvPaymentMethod.setText("ZaloPay".equalsIgnoreCase(order.getPaymentMethod())
+                ? "ZaloPay" : "Thanh toán khi nhận hàng (COD)");
 
         TextView tvSubtotalLabel = findViewById(R.id.tvSubtotalLabel);
         if (tvSubtotalLabel != null) {
