@@ -47,11 +47,11 @@ public class ProductDetailActivity extends BaseActivity {
     public static final String EXTRA_PRODUCT_ID = "product_id";
     private ImageView ivProduct;
     private ImageButton btnBack;
-    private TextView tvCategory, tvProductName, tvPrice, tvRatingSummary, tvDescription, tvEmptyReview, tvError, tvQuantity, btnMinus, btnPlus, tvColorLabel, tvStockStatus;
+    private TextView tvCategory, tvProductName, tvPrice, tvRatingSummary, tvReviewScore, tvDescription, tvEmptyReview, tvError, tvQuantity, btnMinus, btnPlus, tvColorLabel, tvStockStatus;
     private RatingBar ratingProduct;
     private LinearLayout colorContainer;
     private ProgressBar progressBar;
-    private MaterialButton btnAddToCart, btnEditProduct;
+    private MaterialButton btnAddToCart, btnEditProduct, btnReadAllReviews;
     private RecyclerView rvProductReviews;
     private ProductReviewAdapter reviewAdapter;
     private ApiServices apiService;
@@ -102,6 +102,7 @@ public class ProductDetailActivity extends BaseActivity {
         tvProductName = findViewById(R.id.tvProductName);
         tvPrice = findViewById(R.id.tvPrice);
         tvRatingSummary = findViewById(R.id.tvRatingSummary);
+        tvReviewScore = findViewById(R.id.tvReviewScore);
         tvDescription = findViewById(R.id.tvDescription);
         tvEmptyReview = findViewById(R.id.tvEmptyReview);
         tvError = findViewById(R.id.tvError);
@@ -115,10 +116,11 @@ public class ProductDetailActivity extends BaseActivity {
         colorContainer = findViewById(R.id.colorContainer);
         progressBar = findViewById(R.id.progressBar);
         btnAddToCart = findViewById(R.id.btnAddToCart);
+        btnReadAllReviews = findViewById(R.id.btnReadAllReviews);
 
         rvProductReviews = findViewById(R.id.rvProductReviews);
         rvProductReviews.setLayoutManager(new LinearLayoutManager(this));
-        reviewAdapter = new ProductReviewAdapter(this);
+        reviewAdapter = new ProductReviewAdapter();
         rvProductReviews.setAdapter(reviewAdapter);
         btnEditProduct = findViewById(R.id.btnEditProduct);
 
@@ -169,6 +171,11 @@ public class ProductDetailActivity extends BaseActivity {
         });
 
         btnAddToCart.setOnClickListener(view -> addCurrentProductToCart());
+
+        btnReadAllReviews.setOnClickListener(view -> {
+            reviewAdapter.showAll();
+            btnReadAllReviews.setVisibility(View.GONE);
+        });
 
     }
 
@@ -237,6 +244,7 @@ public class ProductDetailActivity extends BaseActivity {
         );
 
         tvRatingSummary.setText(ratingSummary);
+        tvReviewScore.setText(String.format(new Locale("vi", "VN"), "%.1f", product.getRating()));
 
         Glide.with(this)
                 .load(product.getImageUrl())
@@ -252,9 +260,11 @@ public class ProductDetailActivity extends BaseActivity {
             tvEmptyReview.setVisibility(View.GONE);
             rvProductReviews.setVisibility(View.VISIBLE);
             reviewAdapter.updateData(product.getReviews());
+            btnReadAllReviews.setVisibility(product.getReviews().size() > 2 ? View.VISIBLE : View.GONE);
         } else {
             tvEmptyReview.setVisibility(View.VISIBLE);
             rvProductReviews.setVisibility(View.GONE);
+            btnReadAllReviews.setVisibility(View.GONE);
         }
     }
 

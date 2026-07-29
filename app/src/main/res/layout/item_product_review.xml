@@ -4,9 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="16dp"
+    android:layout_marginBottom="14dp"
     app:cardBackgroundColor="#FAF9F6"
-    app:cardCornerRadius="15dp"
+    app:cardCornerRadius="12dp"
     app:cardElevation="0dp"
     app:strokeColor="#E4E2DE"
     app:strokeWidth="1dp">
@@ -15,22 +15,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="22dp">
+        android:padding="20dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal">
-
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/imgReviewAvatar"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginEnd="12dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_avatar"
-                app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Shop.Circle" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -50,7 +41,7 @@
                     android:id="@+id/tvReviewDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="6dp"
                     android:textColor="#737373"
                     android:textSize="13sp" />
 
@@ -74,7 +65,7 @@
             android:id="@+id/tvReviewContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="18dp"
             android:lineSpacingExtra="5dp"
             android:textColor="#626262"
             android:textSize="15sp" />

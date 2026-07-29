@@ -30,7 +30,7 @@
                 <!-- Ảnh sản phẩm -->
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="390dp">
+                    android:layout_height="340dp">
 
                     <ImageView
                         android:id="@+id/ivProduct"
@@ -42,13 +42,14 @@
 
                     <ImageButton
                         android:id="@+id/btnBack"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
                         android:layout_gravity="start|top"
-                        android:layout_marginStart="24dp"
-                        android:layout_marginTop="24dp"
-                        android:background="@drawable/ic_back"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="20dp"
+                        android:background="@drawable/bg_product_detail_back"
                         android:contentDescription="Quay lại"
+                        android:src="@drawable/ic_back"
                         android:padding="14dp"
                         app:tint="#26302B" />
 
@@ -101,6 +102,7 @@
                                 android:paddingTop="6dp"
                                 android:paddingEnd="12dp"
                                 android:paddingBottom="6dp"
+                                android:background="@drawable/bg_product_detail_category"
                                 android:textColor="#466A59"
                                 android:textSize="12sp"
                                 android:textStyle="bold"
@@ -262,6 +264,30 @@
                                 android:textSize="22sp"
                                 android:textStyle="bold" />
 
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="40dp"
+                                android:background="@drawable/bg_product_detail_review_score"
+                                android:gravity="center_vertical"
+                                android:paddingStart="14dp"
+                                android:paddingEnd="12dp">
+
+                                <TextView
+                                    android:id="@+id/tvReviewScore"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="#334039"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold" />
+
+                                <ImageView
+                                    android:layout_width="18dp"
+                                    android:layout_height="18dp"
+                                    android:layout_marginStart="4dp"
+                                    android:src="@drawable/ic_star_fill"
+                                    app:tint="#C62828" />
+                            </LinearLayout>
+
                         </LinearLayout>
 
                         <TextView
@@ -283,6 +309,21 @@
                             android:nestedScrollingEnabled="false"
                             android:overScrollMode="never"
                             android:visibility="gone" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnReadAllReviews"
+                            android:layout_width="match_parent"
+                            android:layout_height="52dp"
+                            android:layout_marginTop="4dp"
+                            android:text="ĐỌC TẤT CẢ ĐÁNH GIÁ"
+                            android:textColor="#4F5752"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:visibility="gone"
+                            app:backgroundTint="@color/background"
+                            app:cornerRadius="8dp"
+                            app:strokeColor="#8A8F8A"
+                            app:strokeWidth="1dp" />
 
                     </LinearLayout>
 
@@ -317,23 +358,24 @@
     <!-- Thanh hành động cố định phía dưới -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="92dp"
-        android:background="#FFFFFF"
+        android:layout_height="88dp"
+        android:background="@drawable/bg_product_detail_bottom_bar"
         android:elevation="14dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingStart="24dp"
-        android:paddingEnd="24dp">
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp">
 
         <LinearLayout
-            android:layout_width="174dp"
-            android:layout_height="58dp"
+            android:layout_width="144dp"
+            android:layout_height="56dp"
+            android:background="@drawable/bg_product_detail_quantity"
             android:gravity="center"
             android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/btnMinus"
-                android:layout_width="54dp"
+                android:layout_width="48dp"
                 android:layout_height="match_parent"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:gravity="center"
@@ -343,7 +385,7 @@
 
             <TextView
                 android:id="@+id/tvQuantity"
-                android:layout_width="54dp"
+                android:layout_width="48dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="1"
@@ -352,7 +394,7 @@
 
             <TextView
                 android:id="@+id/btnPlus"
-                android:layout_width="54dp"
+                android:layout_width="48dp"
                 android:layout_height="match_parent"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:gravity="center"
@@ -365,7 +407,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAddToCart"
             android:layout_width="0dp"
-            android:layout_height="58dp"
+            android:layout_height="56dp"
             android:layout_marginStart="12dp"
             android:layout_weight="1"
             android:enabled="false"

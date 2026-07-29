@@ -1,6 +1,5 @@
 package com.example.storehub.adapter;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,35 +9,39 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.storehub.R;
 import com.example.storehub.model.Product.ProductReview;
-import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProductReviewAdapter extends RecyclerView.Adapter<ProductReviewAdapter.ReviewViewHolder> {
 
-    private final Context context;
     private final ArrayList<ProductReview> reviewsList = new ArrayList<>();
+    private boolean showAllReviews;
 
-    public ProductReviewAdapter(Context context) {
-        this.context = context;
-    }
+    public ProductReviewAdapter() {}
 
     public void updateData(List<ProductReview> newList) {
         reviewsList.clear();
         if (newList != null) {
             reviewsList.addAll(newList);
         }
+        showAllReviews = false;
         notifyDataSetChanged();
+    }
+
+    public void showAll() {
+        if (!showAllReviews) {
+            showAllReviews = true;
+            notifyDataSetChanged();
+        }
     }
 
     @NonNull
     @Override
     public ReviewViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_product_review, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_product_review, parent, false);
         return new ReviewViewHolder(view);
     }
 
@@ -50,11 +53,10 @@ public class ProductReviewAdapter extends RecyclerView.Adapter<ProductReviewAdap
 
     @Override
     public int getItemCount() {
-        return reviewsList.size();
+        return showAllReviews ? reviewsList.size() : Math.min(2, reviewsList.size());
     }
 
     class ReviewViewHolder extends RecyclerView.ViewHolder {
-        ShapeableImageView imgReviewAvatar;
         TextView tvReviewerName, tvReviewDate, tvReviewContent;
         RatingBar ratingReview;
         View layoutAdminReply;
@@ -62,7 +64,6 @@ public class ProductReviewAdapter extends RecyclerView.Adapter<ProductReviewAdap
 
         public ReviewViewHolder(@NonNull View itemView) {
             super(itemView);
-            imgReviewAvatar = itemView.findViewById(R.id.imgReviewAvatar);
             tvReviewerName = itemView.findViewById(R.id.tvReviewerName);
             tvReviewDate = itemView.findViewById(R.id.tvReviewDate);
             tvReviewContent = itemView.findViewById(R.id.tvReviewContent);
@@ -83,13 +84,6 @@ public class ProductReviewAdapter extends RecyclerView.Adapter<ProductReviewAdap
             
             ratingReview.setRating(review.rating);
             tvReviewContent.setText(review.content != null ? review.content : "");
-
-            String avatarUrl = review.getCustomerImage();
-            Glide.with(context)
-                    .load(avatarUrl != null && !avatarUrl.isEmpty() ? avatarUrl : R.drawable.ic_avatar)
-                    .placeholder(R.drawable.ic_avatar)
-                    .error(R.drawable.ic_avatar)
-                    .into(imgReviewAvatar);
 
             // Bind admin reply
             if (review.getReplyContent() != null && !review.getReplyContent().isEmpty()) {
