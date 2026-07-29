@@ -55,6 +55,8 @@ public interface ApiServices {
             @Part("category") RequestBody category,
             @Part("description") RequestBody description,
             @Part("stock") RequestBody stock,
+            @Part("soldQuantity") RequestBody soldQuantity,
+            @Part("status") RequestBody status,
             @Part("colors") RequestBody colors,
             @Part MultipartBody.Part image
     );
@@ -68,6 +70,8 @@ public interface ApiServices {
             @Part("category") RequestBody category,
             @Part("description") RequestBody description,
             @Part("stock") RequestBody stock,
+            @Part("soldQuantity") RequestBody soldQuantity,
+            @Part("status") RequestBody status,
             @Part("colors") RequestBody colors,
             @Part MultipartBody.Part image
     );
@@ -76,7 +80,7 @@ public interface ApiServices {
     Call<Response<ArrayList<CartItem>>> getCart();
 
     @POST("api/productsRouter/add-to-cart")
-    Call<Response<Void>> addToCart(@Body CartItem.AddToCartRequest request);
+    Call<Response<Object>> addToCart(@Body CartItem.AddToCartRequest request);
 
     @POST("api/productsRouter/update-cart-quantity")
     Call<Response<ArrayList<CartItem>>> updateCartQuantity(@Body CartItem.UpdateQuantityRequest request);

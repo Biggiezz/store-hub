@@ -58,6 +58,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
                 .error(R.drawable.ic_product)
                 .into(holder.imgProduct);
 
+        holder.tvSold.setText("Đã bán: " + product.getSold());
+
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, ProductDetailActivity.class);
             String pid = product.get_id();
@@ -77,12 +79,14 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         ImageView imgProduct;
         TextView tvProductName;
         TextView tvProductPrice;
+        TextView tvSold;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             imgProduct = itemView.findViewById(R.id.imgProduct);
             tvProductName = itemView.findViewById(R.id.tvProductName);
             tvProductPrice = itemView.findViewById(R.id.tvProductPrice);
+            tvSold = itemView.findViewById(R.id.tvSold);
         }
     }
 }

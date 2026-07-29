@@ -162,7 +162,16 @@ public class ProductsFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null
                         && response.body().getCode() == 200 && response.body().getData() != null) {
                     ArrayList<Product> newProducts = response.body().getData();
-                    allProducts.addAll(newProducts);
+                    
+                    // Lọc chỉ hiển thị sản phẩm đang kinh doanh (status = true)
+                    ArrayList<Product> filteredProducts = new ArrayList<>();
+                    for (Product p : newProducts) {
+                        if (p.isStatus()) {
+                            filteredProducts.add(p);
+                        }
+                    }
+                    
+                    allProducts.addAll(filteredProducts);
                     isLastPage = response.body().getPagination() != null
                             ? currentPage >= response.body().getPagination().getTotalPages()
                             : newProducts.size() < LIMIT;

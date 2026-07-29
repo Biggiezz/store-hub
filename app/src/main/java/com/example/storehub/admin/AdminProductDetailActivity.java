@@ -23,6 +23,8 @@ import com.example.storehub.services.HttpResquest;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -62,6 +64,11 @@ public class AdminProductDetailActivity extends AppCompatActivity {
         }
 
         setUpListeners();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         loadProductDetail();
     }
 
@@ -79,6 +86,8 @@ public class AdminProductDetailActivity extends AppCompatActivity {
         switchStatus = findViewById(R.id.switchStatus);
         rvColors = findViewById(R.id.rvColors);
         btnEditProduct = findViewById(R.id.btnEditProduct);
+
+        rvColors.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
     }
 
     private void setUpListeners() {
@@ -90,6 +99,61 @@ public class AdminProductDetailActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        switchStatus.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            updateSwitchColors(isChecked);
+            if (currentProduct != null && currentProduct.isStatus() != isChecked) {
+                currentProduct.setStatus(isChecked);
+                updateProductOnServer(isChecked);
+            }
+        });
+    }
+
+    private void updateProductOnServer(boolean status) {
+        if (currentProduct == null) return;
+        
+        MediaType textType = MediaType.parse("text/plain");
+        RequestBody name = RequestBody.create(textType, currentProduct.getName());
+        RequestBody price = RequestBody.create(textType, currentProduct.getPrice());
+        RequestBody category = RequestBody.create(textType, currentProduct.getCategory());
+        RequestBody description = RequestBody.create(textType, currentProduct.getDescription());
+        RequestBody stock = RequestBody.create(textType, String.valueOf(currentProduct.getStock()));
+        RequestBody soldQuantity = RequestBody.create(textType, String.valueOf(currentProduct.getSold()));
+        RequestBody statusBody = RequestBody.create(textType, String.valueOf(status));
+        RequestBody colors = RequestBody.create(textType, new com.google.gson.Gson().toJson(currentProduct.getColors()));
+        okhttp3.MultipartBody.Part imagePart = null;
+
+        HttpResquest request = new HttpResquest();
+        request.callAPI().updateProduct(productId, name, price, category, description, stock, soldQuantity, statusBody, colors, imagePart)
+                .enqueue(new Callback<Response<Product>>() {
+                    @Override
+                    public void onResponse(@NonNull Call<Response<Product>> call, @NonNull retrofit2.Response<Response<Product>> response) {
+                        if (response.isSuccessful()) {
+                            String msg = status ? "Đã chuyển sang Đang bán" : "Đã chuyển sang Ngừng bán";
+                            Toast.makeText(AdminProductDetailActivity.this, msg, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(AdminProductDetailActivity.this, "Không thể cập nhật trạng thái", Toast.LENGTH_SHORT).show();
+                            // Rollback UI
+                            switchStatus.setChecked(!status);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<Response<Product>> call, @NonNull Throwable t) {
+                        Toast.makeText(AdminProductDetailActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                        switchStatus.setChecked(!status);
+                    }
+                });
+    }
+
+    private void updateSwitchColors(boolean isChecked) {
+        int color = isChecked ? 
+                androidx.core.content.ContextCompat.getColor(this, R.color.dark_green) : 
+                androidx.core.content.ContextCompat.getColor(this, R.color.error_red);
+        
+        switchStatus.setThumbTintList(android.content.res.ColorStateList.valueOf(color));
+        switchStatus.setTrackTintList(android.content.res.ColorStateList.valueOf(color));
+        switchStatus.setText(isChecked ? getString(R.string.status_active) : getString(R.string.status_inactive));
     }
 
     private void loadProductDetail() {
@@ -124,8 +188,7 @@ public class AdminProductDetailActivity extends AppCompatActivity {
         
         tvDescription.setText(product.getDescription());
         tvStockValue.setText(String.valueOf(product.getStock()));
-        // Giả lập Sold Value vì model Product có thể chưa có field này
-        tvSoldValue.setText("0"); 
+        tvSoldValue.setText(String.valueOf(product.getSold())); 
         
         ratingBar.setRating(product.getRating());
         tvRatingText.setText(String.format(Locale.getDefault(), "%.1f (%d đánh giá)", product.getRating(), product.getReviewCount()));
@@ -136,7 +199,58 @@ public class AdminProductDetailActivity extends AppCompatActivity {
                 .error(R.drawable.ic_product)
                 .into(ivProductImage);
         
-        // Setup switch status dựa trên stock hoặc field status nếu có
-        switchStatus.setChecked(product.getStock() > 0);
+        switchStatus.setChecked(product.isStatus());
+        updateSwitchColors(product.isStatus());
+
+        if (product.getColors() != null) {
+            AdminColorAdapter colorAdapter = new AdminColorAdapter(product.getColors());
+            rvColors.setAdapter(colorAdapter);
+        }
+    }
+
+    private static class AdminColorAdapter extends RecyclerView.Adapter<AdminColorAdapter.ColorViewHolder> {
+        private final java.util.List<Product.ProductColor> colors;
+
+        AdminColorAdapter(java.util.List<Product.ProductColor> colors) {
+            this.colors = colors;
+        }
+
+        @NonNull
+        @Override
+        public ColorViewHolder onCreateViewHolder(@NonNull android.view.ViewGroup parent, int viewType) {
+            View view = android.view.LayoutInflater.from(parent.getContext()).inflate(R.layout.item_color_circle, parent, false);
+            return new ColorViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ColorViewHolder holder, int position) {
+            Product.ProductColor color = colors.get(position);
+            try {
+                String hex = color.getHex();
+                if (hex != null) {
+                    if (!hex.startsWith("#")) {
+                        hex = "#" + hex;
+                    }
+                    holder.viewColor.setBackgroundColor(android.graphics.Color.parseColor(hex));
+                } else {
+                    holder.viewColor.setBackgroundColor(android.graphics.Color.LTGRAY);
+                }
+            } catch (Exception e) {
+                holder.viewColor.setBackgroundColor(android.graphics.Color.LTGRAY);
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return colors.size();
+        }
+
+        static class ColorViewHolder extends RecyclerView.ViewHolder {
+            View viewColor;
+            ColorViewHolder(@NonNull View itemView) {
+                super(itemView);
+                viewColor = itemView.findViewById(R.id.viewColor);
+            }
+        }
     }
 }

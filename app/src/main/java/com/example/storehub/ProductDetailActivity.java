@@ -47,7 +47,7 @@ public class ProductDetailActivity extends BaseActivity {
     public static final String EXTRA_PRODUCT_ID = "product_id";
     private ImageView ivProduct;
     private ImageButton btnBack;
-    private TextView tvCategory, tvProductName, tvPrice, tvRatingSummary, tvDescription, tvEmptyReview, tvError, tvQuantity, btnMinus, btnPlus, tvColorLabel;
+    private TextView tvCategory, tvProductName, tvPrice, tvRatingSummary, tvSold, tvDescription, tvEmptyReview, tvError, tvQuantity, btnMinus, btnPlus, tvColorLabel;
     private RatingBar ratingProduct;
     private LinearLayout colorContainer;
     private ProgressBar progressBar;
@@ -56,7 +56,7 @@ public class ProductDetailActivity extends BaseActivity {
     private ProductReviewAdapter reviewAdapter;
     private ApiServices apiService;
     private Call<Response<Product>> productCall;
-    private Call<Response<Void>> cartCall;
+    private Call<Response<Object>> cartCall;
     private Product currentProduct;
     private String productId;
     private Object selectedColorId;
@@ -91,6 +91,11 @@ public class ProductDetailActivity extends BaseActivity {
 
         setUpListener();
         updateQuantity();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         loadProduct();
     }
 
@@ -102,6 +107,7 @@ public class ProductDetailActivity extends BaseActivity {
         tvProductName = findViewById(R.id.tvProductName);
         tvPrice = findViewById(R.id.tvPrice);
         tvRatingSummary = findViewById(R.id.tvRatingSummary);
+        tvSold = findViewById(R.id.tvSold);
         tvDescription = findViewById(R.id.tvDescription);
         tvEmptyReview = findViewById(R.id.tvEmptyReview);
         tvError = findViewById(R.id.tvError);
@@ -221,6 +227,7 @@ public class ProductDetailActivity extends BaseActivity {
         );
 
         tvRatingSummary.setText(ratingSummary);
+        tvSold.setText("Đã bán: " + product.getSold());
 
         Glide.with(this)
                 .load(product.getImageUrl())
@@ -390,16 +397,16 @@ public class ProductDetailActivity extends BaseActivity {
 
         cartCall = apiService.addToCart(request);
 
-        cartCall.enqueue(new Callback<Response<Void>>() {
+        cartCall.enqueue(new Callback<Response<Object>>() {
             @Override
-            public void onResponse(@NonNull Call<Response<Void>> call, @NonNull retrofit2.Response<Response<Void>> response) {
+            public void onResponse(@NonNull Call<Response<Object>> call, @NonNull retrofit2.Response<Response<Object>> response) {
                 setCartLoading(false);
                 if (!response.isSuccessful() || response.body() == null) {
                     Toast.makeText(ProductDetailActivity.this, "Không thể thêm sản phẩm vào giỏ", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                Response<Void> result = response.body();
+                Response<Object> result = response.body();
 
                 String message = TextUtils.isEmpty(result.getMessage())
                         ? "Đã thêm sản phẩm vào giỏ"
@@ -411,7 +418,7 @@ public class ProductDetailActivity extends BaseActivity {
             }
 
             @Override
-            public void onFailure(@NonNull Call<Response<Void>> call, @NonNull Throwable throwable) {
+            public void onFailure(@NonNull Call<Response<Object>> call, @NonNull Throwable throwable) {
                 if (call.isCanceled()) {
                     return;
                 }

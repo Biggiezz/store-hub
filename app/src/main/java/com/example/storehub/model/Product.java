@@ -50,6 +50,14 @@ public class Product {
     @SerializedName("stock")
     private int stock;
 
+    // Số lượng sản phẩm đã bán
+    @SerializedName(value = "sold", alternate = {"soldCount", "soldQuantity"})
+    private int sold;
+
+    // Trạng thái kinh doanh (true: đang bán, false: ngừng bán)
+    @SerializedName("status")
+    private boolean status = true;
+
     // Danh sách các tùy chọn màu sắc biến thể của sản phẩm
     @SerializedName("colors")
     private List<ProductColor> colors = new ArrayList<>();
@@ -161,6 +169,22 @@ public class Product {
 
     public void setStock(int stock) {
         this.stock = stock;
+    }
+
+    public int getSold() {
+        return sold;
+    }
+
+    public void setSold(int sold) {
+        this.sold = sold;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 
     public List<ProductColor> getColors() {
