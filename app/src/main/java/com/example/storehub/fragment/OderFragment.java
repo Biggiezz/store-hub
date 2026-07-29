@@ -50,11 +50,25 @@ import retrofit2.Callback;
  */
 public class OderFragment extends Fragment {
 
+    private static final String FILTER_ALL = "Tất cả";
+    private static final String FILTER_PENDING = "Chờ xác nhận";
+    private static final String FILTER_SHIPPING = "Đang giao";
+    private static final String FILTER_COMPLETED = "Hoàn thành";
+    private static final String FILTER_CANCELLED = "Đã hủy";
+
     private LinearLayout ordersContainer;
     private ProgressBar progressBar;
+    private TextView btnFilterAll;
+    private TextView btnFilterPending;
+    private TextView btnFilterShipping;
+    private TextView btnFilterCompleted;
+    private TextView btnFilterCancelled;
     private ApiServices apiService;
     private Call<Response<ArrayList<CartItem>>> cartCall;
     private Call<Response<ArrayList<Order>>> ordersCall;
+    private final ArrayList<CartItem> loadedCartItems = new ArrayList<>();
+    private final ArrayList<Order> loadedOrders = new ArrayList<>();
+    private String selectedFilter = FILTER_ALL;
 
     @Nullable
     @Override
@@ -66,12 +80,28 @@ public class OderFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        initUi(view);
+        initListener();
+
+        loadOrdersAndCart();
+    }
+
+    private void initUi(View view) {
         ordersContainer = view.findViewById(R.id.ordersContainer);
         progressBar = view.findViewById(R.id.progressBar);
+        btnFilterAll = view.findViewById(R.id.btnFilterAll);
+        btnFilterPending = view.findViewById(R.id.btnFilterPending);
+        btnFilterShipping = view.findViewById(R.id.btnFilterShipping);
+        btnFilterCompleted = view.findViewById(R.id.btnFilterCompleted);
+        btnFilterCancelled = view.findViewById(R.id.btnFilterCancelled);
         apiService = new HttpResquest().callAPI();
+    }
 
-        // Bind profile click
-        View btnProfile = view.findViewById(R.id.btnProfile);
+    private void initListener() {
+        View root = getView();
+        if (root == null) return;
+
+        View btnProfile = root.findViewById(R.id.btnProfile);
         if (btnProfile != null) {
             btnProfile.setOnClickListener(v -> {
                 Intent intent = new Intent(requireContext(), ProfileActivity.class);
@@ -79,8 +109,7 @@ public class OderFragment extends Fragment {
             });
         }
 
-        // Bind back button
-        View btnBack = view.findViewById(R.id.btnBack);
+        View btnBack = root.findViewById(R.id.btnBack);
         if (btnBack != null) {
             btnBack.setOnClickListener(v -> {
                 if (getActivity() != null) {
@@ -89,7 +118,11 @@ public class OderFragment extends Fragment {
             });
         }
 
-        loadOrdersAndCart();
+        btnFilterAll.setOnClickListener(v -> selectFilter(FILTER_ALL));
+        btnFilterPending.setOnClickListener(v -> selectFilter(FILTER_PENDING));
+        btnFilterShipping.setOnClickListener(v -> selectFilter(FILTER_SHIPPING));
+        btnFilterCompleted.setOnClickListener(v -> selectFilter(FILTER_COMPLETED));
+        btnFilterCancelled.setOnClickListener(v -> selectFilter(FILTER_CANCELLED));
     }
 
     @Override
@@ -146,7 +179,11 @@ public class OderFragment extends Fragment {
                     orders = response.body().getData();
                     Log.d("OderFragment", "Orders: " + orders);
                 }
-                renderAll(cartItems, orders);
+                loadedCartItems.clear();
+                loadedCartItems.addAll(cartItems);
+                loadedOrders.clear();
+                loadedOrders.addAll(orders);
+                renderFilteredOrders();
             }
 
             @Override
@@ -154,9 +191,60 @@ public class OderFragment extends Fragment {
                 if (call.isCanceled()) return;
                 setLoading(false);
                 Log.e("OderFragment", "Error fetching orders", t);
-                renderAll(cartItems, new ArrayList<>());
+                loadedCartItems.clear();
+                loadedCartItems.addAll(cartItems);
+                loadedOrders.clear();
+                renderFilteredOrders();
             }
         });
+    }
+
+    private void selectFilter(String filter) {
+        selectedFilter = filter;
+        updateFilterButtons();
+        renderFilteredOrders();
+    }
+
+    private void renderFilteredOrders() {
+        ArrayList<Order> filteredOrders = new ArrayList<>();
+        for (Order order : loadedOrders) {
+            if (matchesSelectedFilter(order.getStatus())) {
+                filteredOrders.add(order);
+            }
+        }
+        renderAll(FILTER_ALL.equals(selectedFilter) ? loadedCartItems : new ArrayList<>(), filteredOrders);
+    }
+
+    private boolean matchesSelectedFilter(String status) {
+        if (FILTER_ALL.equals(selectedFilter)) return true;
+        if (FILTER_PENDING.equals(selectedFilter)) return "Chờ xác nhận".equalsIgnoreCase(status);
+        if (FILTER_SHIPPING.equals(selectedFilter)) {
+            return "Đã xác nhận".equalsIgnoreCase(status)
+                    || "Đã rời kho".equalsIgnoreCase(status)
+                    || "Đang giao hàng".equalsIgnoreCase(status);
+        }
+        if (FILTER_COMPLETED.equals(selectedFilter)) {
+            return "Đã giao hàng".equalsIgnoreCase(status)
+                    || "Đã hoàn thành".equalsIgnoreCase(status)
+                    || "completed".equalsIgnoreCase(status);
+        }
+        return "Đã hủy".equalsIgnoreCase(status)
+                || "cancelled".equalsIgnoreCase(status)
+                || "cancel".equalsIgnoreCase(status);
+    }
+
+    private void updateFilterButtons() {
+        updateFilterButton(btnFilterAll, FILTER_ALL);
+        updateFilterButton(btnFilterPending, FILTER_PENDING);
+        updateFilterButton(btnFilterShipping, FILTER_SHIPPING);
+        updateFilterButton(btnFilterCompleted, FILTER_COMPLETED);
+        updateFilterButton(btnFilterCancelled, FILTER_CANCELLED);
+    }
+
+    private void updateFilterButton(TextView button, String filter) {
+        boolean selected = filter.equals(selectedFilter);
+        button.setBackgroundResource(selected ? R.drawable.bg_order_filter_selected : R.drawable.bg_order_filter);
+        button.setTextColor(ContextCompat.getColor(requireContext(), selected ? R.color.text_button : R.color.dark_green));
     }
 
     private void renderAll(ArrayList<CartItem> cartItems, ArrayList<Order> orders) {
@@ -428,32 +516,12 @@ public class OderFragment extends Fragment {
     }
 
     private void createOrderFromTempCart() {
-        setLoading(true);
-        SharedPreferencesManager prefManager = new SharedPreferencesManager(requireContext());
-        String userId = (prefManager.getUser() != null) ? prefManager.getUser().getId() : "";
-        apiService.createOrder(userId).enqueue(new Callback<Response<Order>>() {
-            @Override
-            public void onResponse(@NonNull Call<Response<Order>> call, @NonNull retrofit2.Response<Response<Order>> response) {
-                setLoading(false);
-                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
-                    Order createdOrder = response.body().getData();
-                    Toast.makeText(requireContext(), "Đặt hàng thành công!", Toast.LENGTH_SHORT).show();
-
-                    Intent intent = new Intent(requireContext(), com.example.storehub.ShippingOrderDetailActivity.class);
-                    intent.putExtra("order_data", createdOrder);
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(requireContext(), "Đặt hàng thất bại. Vui lòng thử lại", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<Response<Order>> call, @NonNull Throwable t) {
-                setLoading(false);
-                Log.e("OderFragment", "Error creating order", t);
-                Toast.makeText(requireContext(), "Không thể kết nối đến máy chủ", Toast.LENGTH_SHORT).show();
-            }
-        });
+        if (loadedCartItems.isEmpty()) {
+            Toast.makeText(requireContext(), "Giỏ hàng đang trống", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        startActivity(com.example.storehub.PaymentConfirmationActivity.createIntent(
+                requireContext(), new ArrayList<>(loadedCartItems)));
     }
 
     private void setLoading(boolean loading) {

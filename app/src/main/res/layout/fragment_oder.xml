@@ -80,26 +80,31 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/btnFilterAll"
                     style="@style/Widget.StoreHub.OrderFilter"
                     android:background="@drawable/bg_order_filter_selected"
                     android:text="@string/order_filter_all" />
 
                 <TextView
+                    android:id="@+id/btnFilterPending"
                     style="@style/Widget.StoreHub.OrderFilter"
                     android:layout_marginStart="10dp"
                     android:text="@string/order_filter_pending" />
 
                 <TextView
+                    android:id="@+id/btnFilterShipping"
                     style="@style/Widget.StoreHub.OrderFilter"
                     android:layout_marginStart="10dp"
                     android:text="@string/order_filter_shipping" />
 
                 <TextView
+                    android:id="@+id/btnFilterCompleted"
                     style="@style/Widget.StoreHub.OrderFilter"
                     android:layout_marginStart="10dp"
                     android:text="@string/order_filter_completed" />
 
                 <TextView
+                    android:id="@+id/btnFilterCancelled"
                     style="@style/Widget.StoreHub.OrderFilter"
                     android:layout_marginStart="10dp"
                     android:text="@string/order_filter_cancelled" />
