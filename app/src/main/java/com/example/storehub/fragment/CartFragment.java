@@ -1,6 +1,5 @@
 package com.example.storehub.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -21,11 +20,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.storehub.MainActivity;
+import com.example.storehub.PaymentConfirmationActivity;
 import com.example.storehub.R;
-import com.example.storehub.ShippingOrderDetailActivity;
 import com.example.storehub.adapter.CartAdapter;
 import com.example.storehub.model.CartItem;
-import com.example.storehub.model.Order;
 import com.example.storehub.model.Response;
 import com.example.storehub.model.User;
 import com.example.storehub.services.ApiServices;
@@ -54,6 +52,7 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartChangeLi
     private ApiServices apiService;
     private Call<Response<ArrayList<CartItem>>> cartCall;
     private long subtotalAmount = 0L;
+    private final ArrayList<CartItem> cartItems = new ArrayList<>();
     private static final long DEFAULT_SHIPPING_FEE = 40000L;
     private final long discountAmount = 0L;
 
@@ -153,35 +152,11 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartChangeLi
 
         if (btnCheckout != null) {
             btnCheckout.setOnClickListener(v -> {
-                if (cartAdapter == null || cartAdapter.getItemCount() == 0) {
+                if (cartItems.isEmpty()) {
                     Toast.makeText(requireContext(), "Giỏ hàng đang trống", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                btnCheckout.setEnabled(false);
-                SharedPreferencesManager prefManager = new SharedPreferencesManager(requireContext());
-                String userId = (prefManager.getUser() != null) ? prefManager.getUser().getId() : "";
-                apiService.createOrder(userId).enqueue(new retrofit2.Callback<Response<Order>>() {
-                    @Override
-                    public void onResponse(@NonNull retrofit2.Call<Response<Order>> call, @NonNull retrofit2.Response<Response<Order>> response) {
-                        btnCheckout.setEnabled(true);
-                        if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
-                            Order createdOrder = response.body().getData();
-                            Toast.makeText(requireContext(), "Đặt hàng thành công!", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(requireContext(), ShippingOrderDetailActivity.class);
-                            intent.putExtra("order_data", createdOrder);
-                            startActivity(intent);
-                        } else {
-                            Toast.makeText(requireContext(), "Đặt hàng thất bại. Vui lòng thử lại", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull retrofit2.Call<Response<Order>> call, @NonNull Throwable t) {
-                        btnCheckout.setEnabled(true);
-                        Log.e("CartFragment", "Error creating order", t);
-                        Toast.makeText(requireContext(), "Không thể kết nối đến máy chủ", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                startActivity(PaymentConfirmationActivity.createIntent(requireContext(), cartItems));
             });
         }
     }
@@ -216,6 +191,8 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartChangeLi
     }
 
     private void updateCartUi(List<CartItem> cartItems) {
+        this.cartItems.clear();
+        if (cartItems != null) this.cartItems.addAll(cartItems);
         if (cartItems == null || cartItems.isEmpty()) {
             if (emptyCartLayout != null) emptyCartLayout.setVisibility(View.VISIBLE);
             if (rvCartItems != null) rvCartItems.setVisibility(View.GONE);

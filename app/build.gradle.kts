@@ -56,4 +56,8 @@ dependencies {
 
     // uCrop
     implementation(libs.ucrop)
+    // Zalopay
+    implementation(libs.okhttp)
+    implementation(libs.commons.codec)
+    implementation(files("libs/zpdk-release-v3.1.aar"))
 }

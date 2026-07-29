@@ -90,7 +90,10 @@ public interface ApiServices {
     Call<Response<Product>> replyReview(@Body Product.ProductReview.ReplyRequest request);
 
     @POST("api/oderRouter/create-order")
-    Call<Response<Order>> createOrder(@Query("userId") String userId);
+    Call<Response<Order>> createOrder(
+            @Query("userId") String userId,
+            @Query("paymentMethod") String paymentMethod
+    );
 
     @GET("api/oderRouter/get-orders")
     Call<Response<ArrayList<Order>>> getOrders(@Query("userId") String userId);

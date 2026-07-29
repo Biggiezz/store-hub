@@ -3,6 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <queries>
+        <package android:name="vn.com.vng.zalopay.sb1" />
+        <package android:name="vn.com.vng.zalopay" />
+    </queries>
 
     <application
         android:allowBackup="true"
@@ -15,6 +21,22 @@
         android:theme="@style/Theme.StoreHub"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".PaymentConfirmationActivity"
+            android:exported="true"
+            android:label="Merchant Demo"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="app"
+                    android:scheme="merchant-deeplink" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".admin.RecentActivity"
             android:exported="false" />

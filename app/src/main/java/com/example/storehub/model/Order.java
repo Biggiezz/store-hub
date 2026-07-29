@@ -29,6 +29,9 @@ public class Order implements Serializable {
     @SerializedName("shippingFee")
     private long shippingFee;
 
+    @SerializedName("paymentMethod")
+    private String paymentMethod;
+
     // Thời điểm tạo đơn hàng
     @SerializedName("createdAt")
     private String createdAt;
@@ -132,6 +135,14 @@ public class Order implements Serializable {
 
     public void setShippingFee(long shippingFee) {
         this.shippingFee = shippingFee;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod != null ? paymentMethod : "COD";
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 
     public String getCreatedAt() {

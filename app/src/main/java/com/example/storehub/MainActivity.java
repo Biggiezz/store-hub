@@ -244,7 +244,7 @@ public class MainActivity extends BaseActivity {
     }
 
     public void showOder() {
-        selectedTab = TAB_CART;
+        selectedTab = TAB_ORDERS;
         findViewById(R.id.mainScrollView).setVisibility(View.GONE);
         findViewById(R.id.fragmentContainer).setVisibility(View.VISIBLE);
         getSupportFragmentManager().beginTransaction()
