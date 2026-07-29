@@ -143,10 +143,12 @@
                         android:layout_height="wrap_content"
                         android:text="@string/phone"
                         android:textAllCaps="false"
-                        android:textColor="@color/white"
+                        android:textColor="@color/text_primary"
                         android:textSize="12sp"
-                        app:backgroundTint="@color/dark_green"
-                        app:cornerRadius="99dp" />
+                        app:backgroundTint="#ECDDD1"
+                        app:cornerRadius="99dp"
+                        app:strokeColor="#D8D5CF"
+                        app:strokeWidth="1dp" />
 
                     <Space
                         android:layout_width="24dp"
@@ -159,8 +161,10 @@
                         android:text="@string/laptop"
                         android:textColor="@color/text_primary"
                         android:textSize="12sp"
-                        app:backgroundTint="#F1E3D7"
-                        app:cornerRadius="99dp" />
+                        app:backgroundTint="@color/background"
+                        app:cornerRadius="99dp"
+                        app:strokeColor="#D8D5CF"
+                        app:strokeWidth="1dp" />
 
                     <Space
                         android:layout_width="24dp"
@@ -173,8 +177,10 @@
                         android:text="@string/headphone"
                         android:textColor="@color/text_primary"
                         android:textSize="13sp"
-                        app:backgroundTint="#F1E3D7"
-                        app:cornerRadius="99dp" />
+                        app:backgroundTint="@color/background"
+                        app:cornerRadius="99dp"
+                        app:strokeColor="#D8D5CF"
+                        app:strokeWidth="1dp" />
 
                 </LinearLayout>
 

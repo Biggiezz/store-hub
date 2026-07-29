@@ -1,6 +1,7 @@
 package com.example.storehub.fragment;
 
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +17,10 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.storehub.MainActivity;
 import com.example.storehub.R;
 import com.example.storehub.adapter.NewsAdapter;
@@ -24,29 +29,22 @@ import com.example.storehub.model.Response;
 import com.example.storehub.services.HttpResquest;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 
 public class NewsFragment extends Fragment {
     private static final int LIMIT = 5;
-    private static final int PREFETCH_PAGES_COUNT = 3; // Số lượng trang tải ngầm trước (Tải trước 3 trang tiếp theo)
 
     private RecyclerView rvAllNews;
     private View btnBackNews;
     private TextView btnPrevNewsPage, btnNewsPage1, btnNewsPage2, btnNewsPage3, btnNextNewsPage;
     private NewsAdapter newsAdapter;
     private Call<Response<ArrayList<News>>> currentCall;
+    private int loadGeneration;
     private int currentPage = 1;
-    private boolean isLoading;
     private ProgressBar progressBarNews;
     private View llPaginationNews;
-
-    // Bộ nhớ đệm Cache lưu danh sách các trang đã và sắp tải (Trải nghiệm chuyển trang 0.0 giây)
-    private final Map<Integer, ArrayList<News>> pageCache = new HashMap<>();
-    private boolean isLastPage;
 
     @Nullable
     @Override
@@ -125,34 +123,7 @@ public class NewsFragment extends Fragment {
         if (page < 1) return;
         this.currentPage = page;
 
-        // Phản hồi giao diện thanh phân trang NGAY LẬP TỨC (0.0s delay)
         updatePaginationUi(page);
-
-        // Kiểm tra xem trang này đã được Cache/Pre-fetch trước đó chưa
-        if (pageCache.containsKey(page)) {
-            ArrayList<News> cachedNews = pageCache.get(page);
-            if (cachedNews != null && !cachedNews.isEmpty()) {
-                if (progressBarNews != null) progressBarNews.setVisibility(View.GONE);
-                if (rvAllNews != null) rvAllNews.setVisibility(View.VISIBLE);
-                if (llPaginationNews != null) llPaginationNews.setVisibility(View.VISIBLE);
-
-                // Hiển thị NGAY TỨC THÌ từ RAM (0ms delay)
-                newsAdapter.updateData(cachedNews);
-                if (rvAllNews != null) {
-                    rvAllNews.setAlpha(1.0f);
-                    rvAllNews.scrollToPosition(0);
-                }
-                // Tải trước ngầm 3 trang tiếp theo phía sau
-                prefetchNextPages(page, PREFETCH_PAGES_COUNT);
-                return;
-            }
-        }
-
-        // Nếu chưa có trong Cache -> Làm mờ nhẹ giao diện cũ để người dùng thấy ứng dụng phản hồi ngay
-        if (rvAllNews != null) {
-            rvAllNews.animate().alpha(0.4f).setDuration(100).start();
-        }
-
         loadNews(page);
     }
 
@@ -184,103 +155,90 @@ public class NewsFragment extends Fragment {
     }
 
     private void loadNews(int page) {
-        isLoading = true;
         if (progressBarNews != null) progressBarNews.setVisibility(View.VISIBLE);
         if (rvAllNews != null) rvAllNews.setVisibility(View.GONE);
         if (llPaginationNews != null) llPaginationNews.setVisibility(View.GONE);
 
-        long startTime = System.currentTimeMillis();
-
         if (currentCall != null) currentCall.cancel();
+        int requestGeneration = ++loadGeneration;
         currentCall = new HttpResquest().callAPI().getListNews(page, LIMIT);
         currentCall.enqueue(new Callback<Response<ArrayList<News>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<News>>> call, @NonNull retrofit2.Response<Response<ArrayList<News>>> response) {
-                if (call.isCanceled() || newsAdapter == null) return;
-                isLoading = false;
-
-                long elapsedTime = System.currentTimeMillis() - startTime;
-                long remainingDelay = Math.max(0, 3000 - elapsedTime);
-
-                new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
-                    if (call.isCanceled() || newsAdapter == null || !isAdded()) return;
-
-                    if (progressBarNews != null) progressBarNews.setVisibility(View.GONE);
-                    if (rvAllNews != null) rvAllNews.setVisibility(View.VISIBLE);
-                    if (llPaginationNews != null) llPaginationNews.setVisibility(View.VISIBLE);
-
-                    if (response.isSuccessful() && response.body() != null
-                            && response.body().getCode() == 200 && response.body().getData() != null) {
-                        ArrayList<News> news = response.body().getData();
-
-                        // Lưu dữ liệu vào Cache
-                        pageCache.put(page, news);
-
-                        newsAdapter.updateData(news);
-                        if (rvAllNews != null) {
-                            rvAllNews.setAlpha(1.0f);
-                            rvAllNews.scrollToPosition(0);
-                        }
-
-                        // Tải trước ngầm 3 trang tiếp theo phía sau
-                        prefetchNextPages(page, PREFETCH_PAGES_COUNT);
-                    } else {
-                        Log.e("NewsFragment", "Không thể tải danh sách tin tức");
-                    }
-                }, remainingDelay);
+                if (call.isCanceled() || newsAdapter == null || requestGeneration != loadGeneration) return;
+                if (response.isSuccessful() && response.body() != null
+                        && response.body().getCode() == 200 && response.body().getData() != null) {
+                    ArrayList<News> news = response.body().getData();
+                    preloadNewsImages(news, () -> showNewsPage(news, requestGeneration));
+                } else {
+                    showLoadFailure(requestGeneration, "Không thể tải danh sách tin tức", null);
+                }
             }
 
             @Override
             public void onFailure(@NonNull Call<Response<ArrayList<News>>> call, @NonNull Throwable t) {
                 if (call.isCanceled()) return;
-                isLoading = false;
-
-                long elapsedTime = System.currentTimeMillis() - startTime;
-                long remainingDelay = Math.max(0, 3000 - elapsedTime);
-
-                new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
-                    if (call.isCanceled() || !isAdded()) return;
-
-                    if (progressBarNews != null) progressBarNews.setVisibility(View.GONE);
-                    if (rvAllNews != null) rvAllNews.setVisibility(View.VISIBLE);
-                    if (llPaginationNews != null) llPaginationNews.setVisibility(View.VISIBLE);
-
-                    Log.e("NewsFragment", "Lỗi tải tin tức", t);
-                    Toast.makeText(requireContext(), "Không thể kết nối đến máy chủ!", Toast.LENGTH_SHORT).show();
-                }, remainingDelay);
+                showLoadFailure(requestGeneration, "Lỗi tải tin tức", t);
             }
         });
     }
 
-    /**
-     * Tải trước ngầm (Pre-fetch) N trang tiếp theo phía sau khi người dùng đang ở trang hiện tại.
-     * Khi người dùng bấm Next '>', hoặc bấm vào các số trang tiếp theo, dữ liệu đã có sẵn trên RAM nên sẽ hiển thị LẬP TỨC (0.0s delay).
-     */
-    private void prefetchNextPages(int startPage, int count) {
-        for (int i = 1; i <= count; i++) {
-            int targetPage = startPage + i;
-            if (pageCache.containsKey(targetPage)) continue; // Đã có trong cache
-
-            final int pageToFetch = targetPage;
-            new HttpResquest().callAPI().getListNews(pageToFetch, LIMIT).enqueue(new Callback<Response<ArrayList<News>>>() {
-                @Override
-                public void onResponse(@NonNull Call<Response<ArrayList<News>>> call,
-                                       @NonNull retrofit2.Response<Response<ArrayList<News>>> response) {
-                    if (response.isSuccessful() && response.body() != null
-                            && response.body().getCode() == 200 && response.body().getData() != null) {
-                        ArrayList<News> nextNews = response.body().getData();
-                        if (!nextNews.isEmpty()) {
-                            pageCache.put(pageToFetch, nextNews);
-                        }
-                    }
-                }
-
-                @Override
-                public void onFailure(@NonNull Call<Response<ArrayList<News>>> call, @NonNull Throwable t) {
-                    // Bỏ qua lỗi tải ngầm phía sau
-                }
-            });
+    private void preloadNewsImages(ArrayList<News> news, Runnable onComplete) {
+        if (news.isEmpty()) {
+            onComplete.run();
+            return;
         }
+
+        int[] remaining = {news.size()};
+        for (News item : news) {
+            Glide.with(this)
+                    .load(item.getImage())
+                    .placeholder(R.drawable.ic_new)
+                    .error(R.drawable.ic_new)
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model,
+                                                    Target<Drawable> target, boolean isFirstResource) {
+                            finishPreload();
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model,
+                                                       Target<Drawable> target,
+                                                       com.bumptech.glide.load.DataSource dataSource,
+                                                       boolean isFirstResource) {
+                            finishPreload();
+                            return false;
+                        }
+
+                        private void finishPreload() {
+                            if (--remaining[0] == 0) onComplete.run();
+                        }
+                    })
+                    .preload();
+        }
+    }
+
+    private void showNewsPage(ArrayList<News> news, int requestGeneration) {
+        if (!isAdded() || newsAdapter == null || requestGeneration != loadGeneration) return;
+        newsAdapter.updateData(news);
+        if (progressBarNews != null) progressBarNews.setVisibility(View.GONE);
+        if (rvAllNews != null) {
+            rvAllNews.setVisibility(View.VISIBLE);
+            rvAllNews.setAlpha(1.0f);
+            rvAllNews.scrollToPosition(0);
+        }
+        if (llPaginationNews != null) llPaginationNews.setVisibility(View.VISIBLE);
+    }
+
+    private void showLoadFailure(int requestGeneration, String message, Throwable error) {
+        if (!isAdded() || requestGeneration != loadGeneration) return;
+        if (progressBarNews != null) progressBarNews.setVisibility(View.GONE);
+        if (rvAllNews != null) rvAllNews.setVisibility(View.VISIBLE);
+        if (llPaginationNews != null) llPaginationNews.setVisibility(View.VISIBLE);
+        Log.e("NewsFragment", message, error);
+        if (error != null) Toast.makeText(requireContext(), "Không thể kết nối đến máy chủ!", Toast.LENGTH_SHORT).show();
     }
 
     @Override

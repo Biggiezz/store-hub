@@ -2,6 +2,7 @@ package com.example.storehub.auth;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.widget.TextView;
@@ -23,6 +24,10 @@ import com.example.storehub.model.Response;
 import com.example.storehub.model.User;
 import com.example.storehub.services.HttpResquest;
 import com.example.storehub.utils.SharedPreferencesManager;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -41,6 +46,7 @@ public class LoginActivity extends BaseActivity {
     private ArrayList<Product> preloadedProducts = null;
     private ArrayList<News> preloadedNews = null;
     private boolean isProductsCallDone = false, isNewsCallDone = false;
+    private static final int FEATURED_PRODUCT_LIMIT = 6;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,7 +152,7 @@ public class LoginActivity extends BaseActivity {
                         preloadedProducts = apiResponse.getData();
                     }
                 }
-                checkPreloadComplete(progressDialog);
+                preloadProductImages(progressDialog);
             }
 
             @Override
@@ -167,7 +173,7 @@ public class LoginActivity extends BaseActivity {
                         preloadedNews = apiResponse.getData();
                     }
                 }
-                checkPreloadComplete(progressDialog);
+                preloadNewsImages(progressDialog);
             }
 
             @Override
@@ -176,6 +182,66 @@ public class LoginActivity extends BaseActivity {
                 checkPreloadComplete(progressDialog);
             }
         });
+    }
+
+    private void preloadProductImages(ProgressDialog progressDialog) {
+        ArrayList<String> imageUrls = new ArrayList<>();
+        if (preloadedProducts != null) {
+            for (Product product : preloadedProducts) {
+                imageUrls.add(product.getImage());
+                if (imageUrls.size() == FEATURED_PRODUCT_LIMIT) break;
+            }
+        }
+        preloadImages(imageUrls, () -> {
+            isProductsCallDone = true;
+            checkPreloadComplete(progressDialog);
+        });
+    }
+
+    private void preloadNewsImages(ProgressDialog progressDialog) {
+        ArrayList<String> imageUrls = new ArrayList<>();
+        if (preloadedNews != null) {
+            for (News news : preloadedNews) imageUrls.add(news.getImage());
+        }
+        preloadImages(imageUrls, () -> {
+            isNewsCallDone = true;
+            checkPreloadComplete(progressDialog);
+        });
+    }
+
+    private void preloadImages(ArrayList<String> imageUrls, Runnable onComplete) {
+        if (imageUrls.isEmpty()) {
+            onComplete.run();
+            return;
+        }
+
+        int[] remaining = {imageUrls.size()};
+        for (String imageUrl : imageUrls) {
+            Glide.with(this)
+                    .load(imageUrl)
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(GlideException e, Object model,
+                                                    Target<Drawable> target, boolean isFirstResource) {
+                            finishPreload();
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model,
+                                                       Target<Drawable> target,
+                                                       com.bumptech.glide.load.DataSource dataSource,
+                                                       boolean isFirstResource) {
+                            finishPreload();
+                            return false;
+                        }
+
+                        private void finishPreload() {
+                            if (--remaining[0] == 0) onComplete.run();
+                        }
+                    })
+                    .preload();
+        }
     }
 
     private void checkPreloadComplete(ProgressDialog progressDialog) {

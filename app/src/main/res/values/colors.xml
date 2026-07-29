@@ -7,6 +7,8 @@
     <color name="text_primary">#41413F</color>
     <color name="text_secondary">#50504D</color>
     <color name="subtext_primary">#675C53</color>
+    <color name="text_button">#6B6157</color>
+
 
     <color name="input_border">#BDC4C0</color>
     <color name="hint">#B5B7B4</color>

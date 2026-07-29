@@ -48,6 +48,7 @@ public class MainActivity extends BaseActivity {
     public static final String TAB_NEWS = "news";
     public static final String TAB_CART = "cart";
     public static final String TAB_ORDERS = "orders";
+    private static final int FEATURED_PRODUCT_LIMIT = 6;
     private static final String STATE_TAB = "selected_tab";
     public static ArrayList<Product> preloadedProducts = null;
     public static boolean shouldOpenCartOnResume = false;
@@ -82,7 +83,7 @@ public class MainActivity extends BaseActivity {
         if (preloadedProducts != null) {
             allProductsList = preloadedProducts;
             preloadedProducts = null;
-            updateCategorySelection("Điện thoại");
+            showFeaturedProducts();
         } else {
             fetchProducts();
         }
@@ -291,19 +292,21 @@ public class MainActivity extends BaseActivity {
     }
 
     private void updateCategorySelection(String activeCategory) {
-        int activeBgColor = Color.parseColor("#14291F"); // dark_green
-        int activeTextColor = Color.parseColor("#FFFFFF"); // white
-
-        int inactiveBgColor = Color.parseColor("#F1E3D7");
-        int inactiveTextColor = Color.parseColor("#41413F"); // text_primary
+        int activeBgColor = Color.parseColor("#F0DED2");
+        int activeTextColor = ContextCompat.getColor(this, R.color.text_button);
+        int inactiveBgColor = ContextCompat.getColor(this, R.color.background);
+        int inactiveTextColor = ContextCompat.getColor(this, R.color.dark_green);
+        int inactiveStrokeColor = Color.parseColor("#D8D5CF");
 
         if (btnPhone != null) {
             if ("Điện thoại".equals(activeCategory)) {
                 btnPhone.setBackgroundTintList(android.content.res.ColorStateList.valueOf(activeBgColor));
                 btnPhone.setTextColor(activeTextColor);
+                btnPhone.setStrokeColor(ColorStateList.valueOf(Color.TRANSPARENT));
             } else {
                 btnPhone.setBackgroundTintList(android.content.res.ColorStateList.valueOf(inactiveBgColor));
                 btnPhone.setTextColor(inactiveTextColor);
+                btnPhone.setStrokeColor(ColorStateList.valueOf(inactiveStrokeColor));
             }
         }
 
@@ -311,9 +314,11 @@ public class MainActivity extends BaseActivity {
             if ("Laptop".equals(activeCategory)) {
                 btnComputer.setBackgroundTintList(android.content.res.ColorStateList.valueOf(activeBgColor));
                 btnComputer.setTextColor(activeTextColor);
+                btnComputer.setStrokeColor(ColorStateList.valueOf(Color.TRANSPARENT));
             } else {
                 btnComputer.setBackgroundTintList(android.content.res.ColorStateList.valueOf(inactiveBgColor));
                 btnComputer.setTextColor(inactiveTextColor);
+                btnComputer.setStrokeColor(ColorStateList.valueOf(inactiveStrokeColor));
             }
         }
 
@@ -321,9 +326,11 @@ public class MainActivity extends BaseActivity {
             if ("Tai nghe".equals(activeCategory)) {
                 btnHeadphone.setBackgroundTintList(android.content.res.ColorStateList.valueOf(activeBgColor));
                 btnHeadphone.setTextColor(activeTextColor);
+                btnHeadphone.setStrokeColor(ColorStateList.valueOf(Color.TRANSPARENT));
             } else {
                 btnHeadphone.setBackgroundTintList(android.content.res.ColorStateList.valueOf(inactiveBgColor));
                 btnHeadphone.setTextColor(inactiveTextColor);
+                btnHeadphone.setStrokeColor(ColorStateList.valueOf(inactiveStrokeColor));
             }
         }
 
@@ -335,9 +342,19 @@ public class MainActivity extends BaseActivity {
         for (Product product : allProductsList) {
             if (category != null && category.equals(product.getCategory())) {
                 filteredList.add(product);
+                if (filteredList.size() == FEATURED_PRODUCT_LIMIT) break;
             }
         }
         productAdapter.updateData(filteredList);
+    }
+
+    private void showFeaturedProducts() {
+        ArrayList<Product> featuredProducts = new ArrayList<>();
+        for (Product product : allProductsList) {
+            featuredProducts.add(product);
+            if (featuredProducts.size() == FEATURED_PRODUCT_LIMIT) break;
+        }
+        productAdapter.updateData(featuredProducts);
     }
 
     private void fetchProducts() {
@@ -349,7 +366,7 @@ public class MainActivity extends BaseActivity {
                     Response<ArrayList<Product>> apiResponse = response.body();
                     if (apiResponse.getCode() == 200 && apiResponse.getData() != null) {
                         allProductsList = apiResponse.getData();
-                        updateCategorySelection("Điện thoại");
+                        showFeaturedProducts();
                     } else {
                         Log.e("MainActivity", "Server response error: " + apiResponse.getMessage());
                     }
