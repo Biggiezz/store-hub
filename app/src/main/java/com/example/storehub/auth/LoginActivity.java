@@ -19,7 +19,9 @@ import com.example.storehub.R;
 import com.example.storehub.admin.HomePageManagementActivity;
 import com.example.storehub.model.News;
 import com.example.storehub.model.Product;
-import com.example.storehub.model.Response;
+import com.example.storehub.model.response.LoginResponse;
+import com.example.storehub.model.response.Response;
+import com.example.storehub.model.request.LoginRequest;
 import com.example.storehub.model.User;
 import com.example.storehub.services.HttpResquest;
 import com.example.storehub.utils.SharedPreferencesManager;
@@ -97,14 +99,14 @@ public class LoginActivity extends BaseActivity {
         progressDialog.setCancelable(false);
         progressDialog.show();
 
-        User.LoginRequest request = new User.LoginRequest(email, password);
+        LoginRequest request = new LoginRequest(email, password);
 
         HttpResquest httpResquest = new HttpResquest();
-        httpResquest.callAPI().login(request).enqueue(new Callback<User.LoginResponse>() {
+        httpResquest.callAPI().login(request).enqueue(new Callback<LoginResponse>() {
             @Override
-            public void onResponse(@NonNull Call<User.LoginResponse> call, @NonNull retrofit2.Response<User.LoginResponse> response) {
+            public void onResponse(@NonNull Call<LoginResponse> call, @NonNull retrofit2.Response<LoginResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    User.LoginResponse apiResponse = response.body();
+                    LoginResponse apiResponse = response.body();
                     if (apiResponse.getCode() == 200) {
                         prefManager.saveUserSession(apiResponse.getToken(), apiResponse.getData());
                         progressDialog.setMessage("Đang tải dữ liệu sản phẩm...");
@@ -120,7 +122,7 @@ public class LoginActivity extends BaseActivity {
             }
 
             @Override
-            public void onFailure(@NonNull Call<User.LoginResponse> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable t) {
                 progressDialog.dismiss();
                 Toast.makeText(LoginActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -136,7 +138,7 @@ public class LoginActivity extends BaseActivity {
         preloadedNews = null;
 
         // Tải danh sách sản phẩm (50 sản phẩm để phục vụ lọc danh mục)
-        httpResquest.callAPI().getListProduct(1, 50, "").enqueue(new Callback<Response<ArrayList<Product>>>() {
+        httpResquest.callAPI().getListProduct(1, 50, "", "active").enqueue(new Callback<Response<ArrayList<Product>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
                 isProductsCallDone = true;

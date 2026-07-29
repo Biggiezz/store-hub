@@ -22,7 +22,7 @@ import com.example.storehub.MainActivity;
 import com.example.storehub.R;
 import com.example.storehub.adapter.ProductAdapter;
 import com.example.storehub.model.Product;
-import com.example.storehub.model.Response;
+import com.example.storehub.model.response.Response;
 import com.example.storehub.services.HttpResquest;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -190,8 +190,8 @@ public class ProductsFragment extends Fragment {
 
         HttpResquest request = new HttpResquest();
         currentCall = keyword.isEmpty()
-                ? request.apiServices.getListProduct(page, LIMIT, "")
-                : request.apiServices.searchProduct(page, LIMIT, keyword, "");
+                ? request.apiServices.getListProduct(page, LIMIT, "", "active")
+                : request.apiServices.searchProduct(page, LIMIT, keyword, "", "active");
 
         currentCall.enqueue(new Callback<Response<ArrayList<Product>>>() {
             @Override

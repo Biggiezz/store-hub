@@ -31,8 +31,8 @@ import com.example.storehub.R;
 import com.example.storehub.ShippingOrderDetailActivity;
 import com.example.storehub.model.CartItem;
 import com.example.storehub.model.Order;
-import com.example.storehub.model.Order.CancelOrderRequest;
-import com.example.storehub.model.Response;
+import com.example.storehub.model.request.CancelOrderRequest;
+import com.example.storehub.model.response.Response;
 import com.example.storehub.services.ApiServices;
 import com.example.storehub.services.HttpResquest;
 import com.example.storehub.utils.SharedPreferencesManager;
@@ -321,10 +321,7 @@ public class OderFragment extends Fragment {
         if (getActivity() == null || !isAdded()) return;
         final android.app.Dialog dialog = new android.app.Dialog(requireContext());
         dialog.setContentView(R.layout.dialog_cancel_order);
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().setLayout(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-            dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
-        }
+
 
         final android.widget.RadioGroup rgCancelReasons = dialog.findViewById(R.id.rgCancelReasons);
         final android.widget.EditText edtCancelNote = dialog.findViewById(R.id.edtCancelNote);
@@ -370,6 +367,10 @@ public class OderFragment extends Fragment {
         }
 
         dialog.show();
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setLayout(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+            dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+        }
     }
 
     private void executeCancelOrder(Order order, String reason) {

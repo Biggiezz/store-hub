@@ -1,4 +1,6 @@
-package com.example.storehub.model;
+package com.example.storehub.model.response;
+
+import com.example.storehub.model.Pagination;
 
 public class Response<T> {
     // Mã trạng thái phản hồi HTTP (ví dụ: 200, 400, 404, 500)

@@ -22,7 +22,8 @@ import com.example.storehub.R;
 import com.example.storehub.adapter.OrderProductAdapter;
 import com.example.storehub.model.CartItem;
 import com.example.storehub.model.Order;
-import com.example.storehub.model.Response;
+import com.example.storehub.model.response.Response;
+import com.example.storehub.model.request.UpdateStatusRequest;
 import com.example.storehub.model.User;
 import com.example.storehub.services.ApiServices;
 import com.example.storehub.services.HttpResquest;
@@ -224,7 +225,7 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
 
     private void updateOrderStatus(String status) {
         setLoading(true);
-        Order.UpdateStatusRequest request = new Order.UpdateStatusRequest(orderId, status);
+        UpdateStatusRequest request = new UpdateStatusRequest(orderId, status);
         currentCall = apiService.updateAdminOrderStatus(
                 getAuthHeader(), orderId, request);
         currentCall.enqueue(new Callback<Response<Order>>() {

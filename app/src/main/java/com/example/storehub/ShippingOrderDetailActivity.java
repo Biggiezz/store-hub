@@ -21,8 +21,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.storehub.adapter.OrderProductAdapter;
 import com.example.storehub.model.CartItem;
 import com.example.storehub.model.Order;
-import com.example.storehub.model.Order.CancelOrderRequest;
-import com.example.storehub.model.Response;
+import com.example.storehub.model.request.CancelOrderRequest;
+import com.example.storehub.model.response.Response;
 import com.example.storehub.services.ApiServices;
 import com.example.storehub.services.HttpResquest;
 import com.example.storehub.utils.DateTimeUtils;
@@ -229,10 +229,7 @@ public class ShippingOrderDetailActivity extends BaseActivity {
     private void showCancelOrderDialog(final Order order) {
         final android.app.Dialog dialog = new android.app.Dialog(this);
         dialog.setContentView(R.layout.dialog_cancel_order);
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().setLayout(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-            dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
-        }
+
 
         final RadioGroup rgCancelReasons = dialog.findViewById(R.id.rgCancelReasons);
         final EditText edtCancelNote = dialog.findViewById(R.id.edtCancelNote);
@@ -278,6 +275,10 @@ public class ShippingOrderDetailActivity extends BaseActivity {
         }
 
         dialog.show();
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setLayout(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+            dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+        }
     }
 
     private void executeCancelOrder(Order order, String reason) {

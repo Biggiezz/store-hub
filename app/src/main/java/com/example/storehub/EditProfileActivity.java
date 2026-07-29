@@ -17,9 +17,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.storehub.model.Response;
+import com.example.storehub.model.response.Response;
 import com.example.storehub.model.User;
 import com.example.storehub.services.HttpResquest;
+import com.bumptech.glide.Glide;
 import com.example.storehub.utils.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
 import com.yalantis.ucrop.UCrop;
@@ -113,6 +114,14 @@ public class EditProfileActivity extends BaseActivity {
         edtProfileEmail.setText(currentUser.getEmail());
         edtProfilePhone.setText(currentUser.getPhone());
         edtProfileAddress.setText(currentUser.getAddress());
+
+        if (currentUser.getImage() != null && !currentUser.getImage().isEmpty()) {
+            Glide.with(this)
+                    .load(currentUser.getImage())
+                    .placeholder(R.drawable.ic_avatar)
+                    .error(R.drawable.ic_avatar)
+                    .into(imgLargeAvatar);
+        }
     }
 
     private void setupClickListeners() {

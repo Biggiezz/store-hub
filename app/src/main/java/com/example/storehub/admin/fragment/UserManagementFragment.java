@@ -26,7 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.storehub.R;
 import com.example.storehub.adapter.UserManagementAdapter;
 import com.example.storehub.admin.AddUserActivity;
-import com.example.storehub.model.Response;
+import com.example.storehub.model.response.Response;
 import com.example.storehub.model.User;
 import com.example.storehub.services.HttpResquest;
 import com.example.storehub.utils.DateTimeUtils;

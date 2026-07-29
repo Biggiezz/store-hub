@@ -1,5 +1,6 @@
 package com.example.storehub.model;
 
+import com.example.storehub.model.response.TimelineStep;
 import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -254,89 +255,5 @@ public class Order implements Serializable {
     public void setReviewed(boolean reviewed) {
         isReviewed = reviewed;
     }
-
-    public static class TimelineStep implements Serializable {
-        private final String title;
-        private final String time;
-        private final String description;
-        private final boolean isCompleted;
-        private final boolean isCurrent;
-
-        public TimelineStep(String title, String time, String description, boolean isCompleted, boolean isCurrent) {
-            this.title = title;
-            this.time = time;
-            this.description = description;
-            this.isCompleted = isCompleted;
-            this.isCurrent = isCurrent;
-        }
-
-        public String getTitle() { return title; }
-        public String getTime() { return time; }
-        public String getDescription() { return description; }
-        public boolean isCompleted() { return isCompleted; }
-        public boolean isCurrent() { return isCurrent; }
-    }
-
-    public static class CancelOrderRequest {
-        @SerializedName("orderId")
-        private String orderId;
-
-        @SerializedName("reason")
-        private String reason;
-
-        public CancelOrderRequest(String orderId) {
-            this.orderId = orderId;
-            this.reason = "";
-        }
-
-        public CancelOrderRequest(String orderId, String reason) {
-            this.orderId = orderId;
-            this.reason = reason;
-        }
-
-        public String getOrderId() {
-            return orderId;
-        }
-
-        public void setOrderId(String orderId) {
-            this.orderId = orderId;
-        }
-
-        public String getReason() {
-            return reason;
-        }
-
-        public void setReason(String reason) {
-            this.reason = reason;
-        }
-    }
-
-    public static class UpdateStatusRequest {
-        @SerializedName("orderId")
-        private String orderId;
-
-        @SerializedName("status")
-        private String status;
-
-        public UpdateStatusRequest(String orderId, String status) {
-            this.orderId = orderId;
-            this.status = status;
-        }
-
-        public String getOrderId() {
-            return orderId;
-        }
-
-        public void setOrderId(String orderId) {
-            this.orderId = orderId;
-        }
-
-        public String getStatus() {
-            return status;
-        }
-
-        public void setStatus(String status) {
-            this.status = status;
-        }
-    }
 }
+

@@ -26,7 +26,8 @@ import com.example.storehub.ShippingOrderDetailActivity;
 import com.example.storehub.adapter.CartAdapter;
 import com.example.storehub.model.CartItem;
 import com.example.storehub.model.Order;
-import com.example.storehub.model.Response;
+import com.example.storehub.model.response.Response;
+import com.example.storehub.model.request.UpdateQuantityRequest;
 import com.example.storehub.model.User;
 import com.example.storehub.services.ApiServices;
 import com.example.storehub.services.HttpResquest;
@@ -262,7 +263,7 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartChangeLi
     @Override
     public void onQuantityChange(CartItem cartItem, int newQuantity) {
         setLoading(true);
-        CartItem.UpdateQuantityRequest request = new CartItem.UpdateQuantityRequest(cartItem.getId(), newQuantity);
+        UpdateQuantityRequest request = new UpdateQuantityRequest(cartItem.getId(), newQuantity);
         apiService.updateCartQuantity(request).enqueue(new Callback<Response<ArrayList<CartItem>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<CartItem>>> call, @NonNull retrofit2.Response<Response<ArrayList<CartItem>>> response) {

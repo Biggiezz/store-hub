@@ -31,7 +31,7 @@ import com.example.storehub.admin.ProductFormManagementActivity;
 import com.example.storehub.admin.adapter.AdminProductAdapter;
 import com.example.storehub.model.Pagination;
 import com.example.storehub.model.Product;
-import com.example.storehub.model.Response;
+import com.example.storehub.model.response.Response;
 import com.example.storehub.services.HttpResquest;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -225,8 +225,8 @@ public class ProductsFragmentManagement extends Fragment {
         String keyword = searchInput == null ? "" : searchInput.getText().toString().trim();
         HttpResquest request = new HttpResquest();
         currentCall = keyword.isEmpty()
-                ? request.callAPI().getListProduct(currentPage, PAGE_SIZE, selectedCategory)
-                : request.callAPI().searchProduct(currentPage, PAGE_SIZE, keyword, selectedCategory);
+                ? request.callAPI().getListProduct(currentPage, PAGE_SIZE, selectedCategory, "")
+                : request.callAPI().searchProduct(currentPage, PAGE_SIZE, keyword, selectedCategory, "");
         currentCall.enqueue(new Callback<Response<ArrayList<Product>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {

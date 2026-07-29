@@ -20,7 +20,7 @@ import com.example.storehub.MainActivity;
 import com.example.storehub.R;
 import com.example.storehub.adapter.NewsAdapter;
 import com.example.storehub.model.News;
-import com.example.storehub.model.Response;
+import com.example.storehub.model.response.Response;
 import com.example.storehub.services.HttpResquest;
 
 import java.util.ArrayList;

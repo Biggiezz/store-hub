@@ -31,7 +31,7 @@ import com.example.storehub.fragment.OderFragment;
 import com.example.storehub.fragment.ProductsFragment;
 import com.example.storehub.model.News;
 import com.example.storehub.model.Product;
-import com.example.storehub.model.Response;
+import com.example.storehub.model.response.Response;
 import com.example.storehub.model.User;
 import com.example.storehub.services.HttpResquest;
 import com.example.storehub.utils.SharedPreferencesManager;
@@ -377,7 +377,7 @@ public class MainActivity extends BaseActivity {
 
     private void fetchProducts() {
         HttpResquest httpResquest = new HttpResquest();
-        httpResquest.callAPI().getListProduct(1, 50, "").enqueue(new Callback<Response<ArrayList<Product>>>() {
+        httpResquest.callAPI().getListProduct(1, 50, "", "active").enqueue(new Callback<Response<ArrayList<Product>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
                 if (response.isSuccessful() && response.body() != null) {

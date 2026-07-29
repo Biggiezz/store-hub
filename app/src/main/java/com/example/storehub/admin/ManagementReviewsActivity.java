@@ -21,8 +21,8 @@ import com.example.storehub.R;
 import com.example.storehub.admin.adapter.AdminReviewAdapter;
 import com.example.storehub.admin.adapter.AdminReviewAdapter.ReviewWithProduct;
 import com.example.storehub.model.Product;
-import com.example.storehub.model.Product.ProductReview;
-import com.example.storehub.model.Response;
+import com.example.storehub.model.ProductReview;
+import com.example.storehub.model.response.Response;
 import com.example.storehub.services.ApiServices;
 import com.example.storehub.services.HttpResquest;
 
@@ -135,7 +135,7 @@ public class ManagementReviewsActivity extends AppCompatActivity {
     }
 
     private void loadReviews() {
-        apiServices.getListProduct(1, 1000, "").enqueue(new Callback<Response<ArrayList<Product>>>() {
+        apiServices.getListProduct(1, 1000, "", "").enqueue(new Callback<Response<ArrayList<Product>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {

@@ -13,16 +13,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.storehub.R;
-import com.example.storehub.model.AdminStats;
+import com.example.storehub.model.response.RecentActivity;
 import com.example.storehub.utils.DateTimeUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RecentActivityAdapter extends RecyclerView.Adapter<RecentActivityAdapter.ViewHolder> {
-    private final ArrayList<AdminStats.RecentActivity> activities = new ArrayList<>();
+    private final ArrayList<RecentActivity> activities = new ArrayList<>();
 
-    public void updateData(List<AdminStats.RecentActivity> newActivities) {
+    public void updateData(List<RecentActivity> newActivities) {
         activities.clear();
         if (newActivities != null) {
             activities.addAll(newActivities);
@@ -40,7 +40,7 @@ public class RecentActivityAdapter extends RecyclerView.Adapter<RecentActivityAd
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        AdminStats.RecentActivity activity = activities.get(position);
+        RecentActivity activity = activities.get(position);
         holder.bind(activity, position == activities.size() - 1);
     }
 
@@ -65,7 +65,7 @@ public class RecentActivityAdapter extends RecyclerView.Adapter<RecentActivityAd
             viewDivider = itemView.findViewById(R.id.viewDivider);
         }
 
-        void bind(AdminStats.RecentActivity activity, boolean isLast) {
+        void bind(RecentActivity activity, boolean isLast) {
             int iconResource = getIcon(activity.getType());
 
             ivActivityIcon.setImageResource(iconResource);

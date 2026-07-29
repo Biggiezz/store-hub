@@ -1,12 +1,13 @@
 package com.example.storehub;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import androidx.appcompat.app.AlertDialog;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,7 +22,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.storehub.auth.LoginActivity;
-import com.example.storehub.model.Response;
+import com.example.storehub.model.response.Response;
 import com.example.storehub.model.User;
 import com.example.storehub.services.HttpResquest;
 import com.example.storehub.utils.DateTimeUtils;
@@ -225,20 +226,13 @@ public class ProfileActivity extends BaseActivity {
     }
 
     private void showCustomLogoutDialog() {
-        Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.dialog_logout);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_logout, null);
+        builder.setView(dialogView);
 
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
-            params.width = WindowManager.LayoutParams.MATCH_PARENT;
-            params.height = WindowManager.LayoutParams.WRAP_CONTENT;
-            dialog.getWindow().setAttributes(params);
-        }
-
-        MaterialButton btnConfirmLogout = dialog.findViewById(R.id.btnConfirmLogout);
-        MaterialButton btnCancelLogout = dialog.findViewById(R.id.btnCancelLogout);
+        AlertDialog dialog = builder.create();
+        MaterialButton btnConfirmLogout = dialogView.findViewById(R.id.btnConfirmLogout);
+        MaterialButton btnCancelLogout = dialogView.findViewById(R.id.btnCancelLogout);
 
         btnConfirmLogout.setOnClickListener(v -> {
             dialog.dismiss();
@@ -248,6 +242,11 @@ public class ProfileActivity extends BaseActivity {
         btnCancelLogout.setOnClickListener(v -> dialog.dismiss());
 
         dialog.show();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        }
     }
 
     private void performServerLogout() {
@@ -259,8 +258,8 @@ public class ProfileActivity extends BaseActivity {
             public void onResponse(@NonNull Call<Response<Void>> call, @NonNull retrofit2.Response<Response<Void>> response) {
                 // Wipe local preferences anyway
                 sharedPreferencesManager.logout();
-                Toast.makeText(ProfileActivity.this, "Đã đăng xuất thành công", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+                Toast.makeText(getApplicationContext(), "Đã đăng xuất thành công", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 finish();
@@ -269,8 +268,8 @@ public class ProfileActivity extends BaseActivity {
             @Override
             public void onFailure(@NonNull Call<Response<Void>> call, @NonNull Throwable t) {
                 sharedPreferencesManager.logout();
-                Toast.makeText(ProfileActivity.this, "Đã đăng xuất", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+                Toast.makeText(getApplicationContext(), "Đã đăng xuất", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 finish();

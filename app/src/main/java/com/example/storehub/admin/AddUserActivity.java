@@ -24,7 +24,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.storehub.R;
-import com.example.storehub.model.Response;
+import com.example.storehub.model.response.Response;
 import com.example.storehub.model.User;
 import com.example.storehub.services.HttpResquest;
 import com.example.storehub.utils.SharedPreferencesManager;
@@ -256,7 +256,7 @@ public class AddUserActivity extends AppCompatActivity {
             });
 
         } else {
-            httpResquest.callAPI().addUser(token, newUser).enqueue(new retrofit2.Callback<com.example.storehub.model.Response<com.example.storehub.model.User>>() {
+            httpResquest.callAPI().addUser(token, newUser).enqueue(new retrofit2.Callback<com.example.storehub.model.response.Response<com.example.storehub.model.User>>() {
                 @Override
                 public void onResponse(@NonNull retrofit2.Call<Response<User>> call, @NonNull retrofit2.Response<Response<User>> response) {
                     if (response.isSuccessful() && response.body() != null && response.body().getCode() == 201) {

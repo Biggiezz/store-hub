@@ -22,7 +22,7 @@ import com.example.storehub.R;
 import com.example.storehub.adapter.PostAdapter;
 import com.example.storehub.admin.AddNewsManagementActivity;
 import com.example.storehub.model.News;
-import com.example.storehub.model.Response;
+import com.example.storehub.model.response.Response;
 import com.example.storehub.services.HttpResquest;
 import com.example.storehub.utils.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
