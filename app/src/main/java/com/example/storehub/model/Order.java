@@ -37,8 +37,6 @@ public class Order implements Serializable {
     @SerializedName("createdAt")
     private String createdAt;
 
-    // Trường ID bổ trợ phục vụ tương thích với Mock data
-    private String id;
     // Tên sản phẩm chính (bổ trợ phục vụ tương thích viết đánh giá)
     private String productName = "";
     // Hình ảnh sản phẩm chính (bổ trợ phục vụ tương thích viết đánh giá)
@@ -154,13 +152,8 @@ public class Order implements Serializable {
         this.createdAt = createdAt;
     }
 
-    // Getters and Setters for mock fields
     public String getId() {
-        return id != null ? id : (orderId != null ? orderId : "");
-    }
-
-    public void setId(String id) {
-        this.id = id;
+        return getOrderId();
     }
 
     public String getProductName() {

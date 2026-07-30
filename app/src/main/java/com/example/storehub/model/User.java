@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
 public class User {
     // Mã MongoDB ID dạng chuỗi của tài khoản
     @SerializedName("_id")
-    private String id;
+    private String mongoId;
     // Họ và tên người dùng
     private String name;
     // Địa chỉ email người dùng
@@ -32,8 +32,8 @@ public class User {
     public User() {
     }
 
-    public User(String id, String name, String email, String phone, String role, String image, String address,String lastActive) {
-        this.id = id;
+    public User(String mongoId, String name, String email, String phone, String role, String image, String address,String lastActive) {
+        this.mongoId = mongoId;
         this.name = name;
         this.email = email;
         this.phone = phone;
@@ -45,11 +45,11 @@ public class User {
     }
 
     public String getId() {
-        return id;
+        return mongoId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setId(String mongoId) {
+        this.mongoId = mongoId;
     }
 
     public String getName() {

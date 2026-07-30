@@ -7,17 +7,9 @@ public class CartItem implements java.io.Serializable {
     @SerializedName("_id")
     private String mongoId;
 
-    // Mã ID định dạng chung (kiểu Object hỗ trợ String/Number)
-    @SerializedName("id")
-    private Object id;
-
     // ID của sản phẩm
     @SerializedName("productId")
     private String productId;
-
-    // ID tham chiếu đến sản phẩm (phòng trường hợp Schema Server trả về dạng product)
-    @SerializedName("product")
-    private String productRefId;
 
     // Tên của sản phẩm
     @SerializedName("productName")
@@ -50,17 +42,12 @@ public class CartItem implements java.io.Serializable {
     }
 
     public String getId() {
-        if (mongoId != null) return mongoId;
-        if (id != null) return String.valueOf(id);
-        return "";
+        return mongoId != null ? mongoId : "";
     }
 
     public String getProductId() {
         if (productId != null && !productId.isEmpty()) {
             return productId;
-        }
-        if (productRefId != null && !productRefId.isEmpty()) {
-            return productRefId;
         }
         return "";
     }

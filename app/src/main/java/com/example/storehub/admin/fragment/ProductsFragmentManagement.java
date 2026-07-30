@@ -73,7 +73,6 @@ public class ProductsFragmentManagement extends Fragment {
         adapter = new AdminProductAdapter(product -> {
             Intent intent = new Intent(requireContext(), AdminProductDetailActivity.class);
             String pid = product.get_id();
-            if (pid == null || pid.isEmpty()) pid = product.getId();
             intent.putExtra(AdminProductDetailActivity.EXTRA_PRODUCT_ID, pid);
             startActivity(intent);
         });

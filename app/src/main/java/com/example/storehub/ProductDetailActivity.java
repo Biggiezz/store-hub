@@ -24,7 +24,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.storehub.adapter.ProductReviewAdapter;
-import com.example.storehub.model.CartItem;
 import com.example.storehub.model.Product;
 import com.example.storehub.model.ProductColor;
 import com.example.storehub.model.request.AddToCartRequest;
@@ -142,9 +141,7 @@ public class ProductDetailActivity extends BaseActivity {
 
         btnEditProduct.setOnClickListener(v -> {
             if (currentProduct != null) {
-                String pid = currentProduct.get_id();
-                if (pid == null || pid.isEmpty()) pid = currentProduct.getId();
-                startActivity(ProductFormManagementActivity.createEditIntent(this, pid));
+                startActivity(ProductFormManagementActivity.createEditIntent(this, currentProduct.get_id()));
             }
         });
 
@@ -276,15 +273,13 @@ public class ProductDetailActivity extends BaseActivity {
         }
         for (ProductColor color : colors) {
             if (color.isDefault()) {
-                String idVal = color.getId();
-                selectedColorId = !TextUtils.isEmpty(idVal) ? idVal : color.getMongoId();
+                selectedColorId = color.getId();
                 break;
             }
         }
         if (selectedColorId == null && !colors.isEmpty()) {
             ProductColor first = colors.get(0);
-            String idVal = first.getId();
-            selectedColorId = !TextUtils.isEmpty(idVal) ? idVal : first.getMongoId();
+            selectedColorId = first.getId();
         }
     }
 
@@ -302,8 +297,7 @@ public class ProductDetailActivity extends BaseActivity {
 
         String selectedColorName = "";
         for (ProductColor productColor : colors) {
-            String idVal = productColor.getId();
-            Object currentColorId = !TextUtils.isEmpty(idVal) ? idVal : productColor.getMongoId();
+            String currentColorId = productColor.getId();
             if (selectedColorId != null && selectedColorId.toString().equals(String.valueOf(currentColorId))) {
                 selectedColorName = productColor.getName();
                 break;
@@ -326,8 +320,7 @@ public class ProductDetailActivity extends BaseActivity {
             params.setMarginEnd(dpToPx(12));
             frameLayout.setLayoutParams(params);
 
-            String idVal = productColor.getId();
-            Object currentColorId = !TextUtils.isEmpty(idVal) ? idVal : productColor.getMongoId();
+            String currentColorId = productColor.getId();
             boolean selected = selectedColorId != null
                     && selectedColorId.toString().equals(String.valueOf(currentColorId));
 

@@ -77,7 +77,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, ProductDetailActivity.class);
             String pid = product.get_id();
-            if (pid == null || pid.isEmpty()) pid = product.getId();
             Log.d("ProductAdapter", "Opening detail for ID: " + pid);
             intent.putExtra(ProductDetailActivity.EXTRA_PRODUCT_ID, pid);
             context.startActivity(intent);

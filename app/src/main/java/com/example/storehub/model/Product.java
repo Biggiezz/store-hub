@@ -12,10 +12,6 @@ public class Product {
     @SerializedName("_id")
     private String _id;
 
-    // Mã ID bổ trợ phục vụ tương thích với Mock data
-    @SerializedName("id")
-    private String id;
-
     // Tên của sản phẩm
     @SerializedName("name")
     private String name;
@@ -76,7 +72,7 @@ public class Product {
     }
 
     public String get_id() {
-        return _id != null ? _id : (id != null ? id : "");
+        return _id != null ? _id : "";
     }
 
     public void set_id(String _id) {

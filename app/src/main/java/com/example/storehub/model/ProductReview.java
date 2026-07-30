@@ -3,10 +3,6 @@ package com.example.storehub.model;
 import com.google.gson.annotations.SerializedName;
 
 public class ProductReview implements java.io.Serializable {
-    // Mã định danh nhận xét dạng Object
-    @SerializedName("id")
-    public Object id;
-
     // Mã MongoDB ID dạng chuỗi của nhận xét
     @SerializedName("_id")
     public String mongoId;
@@ -47,9 +43,7 @@ public class ProductReview implements java.io.Serializable {
     }
 
     public String getId() {
-        if (id != null) return String.valueOf(id);
-        if (mongoId != null) return mongoId;
-        return "";
+        return mongoId != null ? mongoId : "";
     }
 
     public String getCustomerName() {

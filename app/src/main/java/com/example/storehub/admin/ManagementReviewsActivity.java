@@ -145,7 +145,7 @@ public class ManagementReviewsActivity extends AppCompatActivity {
                     for (Product product : products) {
                         if (product.getReviews() != null) {
                             for (ProductReview review : product.getReviews()) {
-                                allReviews.add(new ReviewWithProduct(review, product.getName(), product.getId()));
+                                allReviews.add(new ReviewWithProduct(review, product.getName(), product.get_id()));
                             }
                         }
                     }

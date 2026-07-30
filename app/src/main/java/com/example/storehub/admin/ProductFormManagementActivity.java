@@ -458,7 +458,6 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         }
 
         ProductColor target = editing ? color : new ProductColor();
-        if (!editing) target.setId(String.valueOf(System.currentTimeMillis()));
         if (defaultCheck.isChecked()) {
             for (ProductColor item : productColors) item.setDefault(false);
         }

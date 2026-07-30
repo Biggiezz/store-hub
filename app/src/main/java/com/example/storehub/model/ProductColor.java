@@ -3,10 +3,6 @@ package com.example.storehub.model;
 import com.google.gson.annotations.SerializedName;
 
 public class ProductColor {
-    // Mã định danh màu sắc dạng Object
-    @SerializedName("id")
-    public Object id;
-
     // Mã MongoDB ID dạng chuỗi của màu sắc
     @SerializedName("_id")
     public String mongoId;
@@ -26,21 +22,15 @@ public class ProductColor {
     public ProductColor() {
     }
 
-    public ProductColor(Object id, String name, String hex, boolean isDefault) {
-        this.id = id;
+    public ProductColor(String mongoId, String name, String hex, boolean isDefault) {
+        this.mongoId = mongoId;
         this.name = name;
         this.hex = hex;
         this.isDefault = isDefault;
     }
 
     public String getId() {
-        if (id != null) return String.valueOf(id);
-        if (mongoId != null) return mongoId;
-        return "";
-    }
-
-    public void setId(Object id) {
-        this.id = id;
+        return mongoId != null ? mongoId : "";
     }
 
     public String getMongoId() {
