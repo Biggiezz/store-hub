@@ -16,4 +16,5 @@
     <color name="register_input_border">#68768B</color>
     <color name="button_disabled">#8B9690</color>
     <color name="bottom_nav_active">#ECDDD1</color>
+    <color name="error_red">#D1160D</color>
 </resources>

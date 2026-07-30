@@ -22,12 +22,21 @@ import java.util.Locale;
 
 public class OrderProductAdapter extends RecyclerView.Adapter<OrderProductAdapter.ViewHolder> {
 
+    public interface OnItemClickListener {
+        void onQuantityEdit(CartItem item);
+    }
+
     private final Context context;
     private List<CartItem> listItems;
+    private OnItemClickListener listener;
 
     public OrderProductAdapter(Context context) {
         this.context = context;
         this.listItems = new ArrayList<>();
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
     }
 
     public void updateData(List<CartItem> items) {
@@ -63,6 +72,12 @@ public class OrderProductAdapter extends RecyclerView.Adapter<OrderProductAdapte
                 .placeholder(R.drawable.ic_product)
                 .error(R.drawable.ic_product)
                 .into(holder.imgProduct);
+
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onQuantityEdit(item);
+            }
+        });
     }
 
     @Override

@@ -48,6 +48,10 @@ public class Product {
     @SerializedName("stock")
     private int stock;
 
+    // Số lượng sản phẩm đã bán
+    @SerializedName(value = "sold", alternate = {"soldCount", "soldQuantity"})
+    private int sold;
+
     @SerializedName("status")
     private String status;
 
@@ -162,6 +166,14 @@ public class Product {
 
     public void setStock(int stock) {
         this.stock = stock;
+    }
+
+    public int getSold() {
+        return sold;
+    }
+
+    public void setSold(int sold) {
+        this.sold = sold;
     }
 
     public String getStatus() {

@@ -19,7 +19,6 @@
             android:id="@+id/imgProduct"
             android:layout_width="match_parent"
             android:layout_height="190dp"
-            android:contentDescription="Ảnh sản phẩm"
             android:scaleType="centerCrop" />
 
         <View
@@ -62,6 +61,15 @@
                 android:textColor="@color/dark_green"
                 android:textSize="18sp"
                 android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvSold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Đã bán: 0"
+                android:textColor="#888888"
+                android:textSize="13sp" />
 
             <TextView
                 android:id="@+id/tvProductStatus"

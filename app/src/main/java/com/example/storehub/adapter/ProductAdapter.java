@@ -53,7 +53,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         Product product = listProduct.get(position);
         holder.tvProductCategory.setText(product.getCategory());
         holder.tvProductName.setText(product.getName());
-        
+
         if (product.getStock() <= 0) {
             holder.tvProductStatus.setVisibility(View.VISIBLE);
             holder.tvProductStatus.setText("HẾT HÀNG");
@@ -74,6 +74,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
                 .error(R.drawable.ic_product)
                 .into(holder.imgProduct);
 
+        holder.tvSold.setText("Đã bán: " + product.getSold());
+
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, ProductDetailActivity.class);
             String pid = product.get_id();
@@ -90,10 +92,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imgProduct;
-        TextView tvProductCategory;
-        TextView tvProductName;
-        TextView tvProductPrice;
-        TextView tvProductStatus;
+        TextView tvProductCategory, tvProductName, tvProductPrice, tvProductStatus;
+        TextView tvSold;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -102,6 +102,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             tvProductName = itemView.findViewById(R.id.tvProductName);
             tvProductPrice = itemView.findViewById(R.id.tvProductPrice);
             tvProductStatus = itemView.findViewById(R.id.tvProductStatus);
+            tvSold = itemView.findViewById(R.id.tvSold);
         }
     }
 }

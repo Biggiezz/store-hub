@@ -5,6 +5,7 @@ import com.example.storehub.model.News;
 import com.example.storehub.model.Order;
 import com.example.storehub.model.Product;
 import com.example.storehub.model.User;
+import com.example.storehub.model.request.AddToCartRequest;
 import com.example.storehub.model.request.AddReviewRequest;
 import com.example.storehub.model.request.AddToCartRequest;
 import com.example.storehub.model.request.CancelOrderRequest;
@@ -67,8 +68,9 @@ public interface ApiServices {
             @Part("category") RequestBody category,
             @Part("description") RequestBody description,
             @Part("stock") RequestBody stock,
-            @Part("colors") RequestBody colors,
+            @Part("soldQuantity") RequestBody soldQuantity,
             @Part("status") RequestBody status,
+            @Part("colors") RequestBody colors,
             @Part MultipartBody.Part image
     );
 
@@ -81,8 +83,9 @@ public interface ApiServices {
             @Part("category") RequestBody category,
             @Part("description") RequestBody description,
             @Part("stock") RequestBody stock,
-            @Part("colors") RequestBody colors,
+            @Part("soldQuantity") RequestBody soldQuantity,
             @Part("status") RequestBody status,
+            @Part("colors") RequestBody colors,
             @Part MultipartBody.Part image
     );
 
@@ -90,7 +93,7 @@ public interface ApiServices {
     Call<Response<ArrayList<CartItem>>> getCart();
 
     @POST("api/productsRouter/add-to-cart")
-    Call<Response<Void>> addToCart(@Body AddToCartRequest request);
+    Call<Response<Object>> addToCart(@Body AddToCartRequest request);
 
     @POST("api/productsRouter/update-cart-quantity")
     Call<Response<ArrayList<CartItem>>> updateCartQuantity(@Body UpdateQuantityRequest request);

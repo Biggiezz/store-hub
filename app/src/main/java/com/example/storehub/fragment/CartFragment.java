@@ -28,12 +28,16 @@ import com.example.storehub.adapter.CartAdapter;
 import com.example.storehub.model.CartItem;
 import com.example.storehub.model.response.Response;
 import com.example.storehub.model.request.UpdateQuantityRequest;
+import com.example.storehub.model.Order;
+import com.example.storehub.model.Product;
 import com.example.storehub.model.User;
 import com.example.storehub.services.ApiServices;
 import com.example.storehub.services.HttpResquest;
 import com.example.storehub.utils.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
 
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -191,6 +195,58 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartChangeLi
                 updateCartUi(new ArrayList<>());
             }
         });
+    }
+
+    private void updateProductsStockAfterOrder(List<CartItem> items) {
+        if (items == null) return;
+        for (CartItem item : items) {
+            final int quantityPurchased = item.getQuantity();
+            apiService.getProductDetail(item.getProductId()).enqueue(new Callback<Response<Product>>() {
+                @Override
+                public void onResponse(@NonNull Call<Response<Product>> call, @NonNull retrofit2.Response<Response<Product>> response) {
+                    if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                        Product product = response.body().getData();
+                        int newStock = Math.max(0, product.getStock() - quantityPurchased);
+                        int newSold = product.getSold() + quantityPurchased;
+
+                        updateSingleProductOnServer(product, newStock, newSold);
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<Response<Product>> call, @NonNull Throwable t) {
+                    Log.e("CartFragment", "Failed to get product for stock update", t);
+                }
+            });
+        }
+    }
+
+    private void updateSingleProductOnServer(Product product, int newStock, int newSold) {
+        MediaType textType = MediaType.parse("text/plain");
+        RequestBody name = RequestBody.create(textType, product.getName());
+        RequestBody price = RequestBody.create(textType, product.getPrice());
+        RequestBody category = RequestBody.create(textType, product.getCategory());
+        RequestBody description = RequestBody.create(textType, product.getDescription());
+        RequestBody stock = RequestBody.create(textType, String.valueOf(newStock));
+        RequestBody soldQuantity = RequestBody.create(textType, String.valueOf(newSold));
+        RequestBody status = RequestBody.create(textType, String.valueOf(product.isStatus()));
+        RequestBody colors = RequestBody.create(textType, new com.google.gson.Gson().toJson(product.getColors()));
+
+        apiService.updateProduct(product.get_id(), name, price, category,
+                description, stock, soldQuantity, status, colors, null)
+                .enqueue(new Callback<Response<Product>>() {
+                    @Override
+                    public void onResponse(@NonNull Call<Response<Product>> call, @NonNull retrofit2.Response<Response<Product>> response) {
+                        if (response.isSuccessful()) {
+                            Log.d("CartFragment", "Stock updated for product: " + product.getName());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<Response<Product>> call, @NonNull Throwable t) {
+                        Log.e("CartFragment", "Failed to update stock", t);
+                    }
+                });
     }
 
     private void updateCartUi(List<CartItem> cartItems) {

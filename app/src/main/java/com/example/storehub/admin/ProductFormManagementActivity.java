@@ -71,6 +71,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
     private Button submitButton;
     private View backButton, cancelButton, imagePickerLayout, categoryPickerLayout, addColorLayout;
     private String productId;
+    private Product currentProduct;
     private Uri selectedImageUri;
     private Call<Response<Product>> currentCall;
     private LinearLayout adminColorContainer;
@@ -185,6 +186,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
     }
 
     private void bindProduct(Product product) {
+        this.currentProduct = product;
         nameInput.setText(product.getName());
         descriptionInput.setText(product.getDescription());
         stockInput.setText(String.valueOf(product.getStock()));
@@ -242,6 +244,8 @@ public class ProductFormManagementActivity extends AppCompatActivity {
 
         ensureDefaultColor();
         String colorsJson = new Gson().toJson(productColors);
+        boolean currentStatus = currentProduct != null ? currentProduct.isStatus() : true;
+        int currentSold = currentProduct != null ? currentProduct.getSold() : 0;
         setLoading(true);
         HttpResquest request = new HttpResquest();
         currentCall = editMode

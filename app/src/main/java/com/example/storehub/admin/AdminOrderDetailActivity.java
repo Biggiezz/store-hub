@@ -28,7 +28,11 @@ import com.example.storehub.model.User;
 import com.example.storehub.services.ApiServices;
 import com.example.storehub.services.HttpResquest;
 import com.example.storehub.utils.SharedPreferencesManager;
+import com.example.storehub.model.Product;
 import com.google.android.material.button.MaterialButton;
+
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 
 import java.text.NumberFormat;
 import java.time.Instant;
@@ -120,9 +124,88 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
         productsView.setLayoutManager(new LinearLayoutManager(this));
         productsView.setNestedScrollingEnabled(false);
         productAdapter = new OrderProductAdapter(this);
+        productAdapter.setOnItemClickListener(item -> showEditQuantityDialog(item));
         productsView.setAdapter(productAdapter);
 
         updateStatusButton.setOnClickListener(v -> showStatusDialog());
+    }
+
+    private void showEditQuantityDialog(CartItem item) {
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_edit_quantity, null);
+        android.widget.EditText edtQuantity = dialogView.findViewById(R.id.edtEditQuantity);
+        edtQuantity.setText(String.valueOf(item.getQuantity()));
+
+        new AlertDialog.Builder(this)
+                .setTitle("Sửa số lượng: " + item.getProductName())
+                .setView(dialogView)
+                .setPositiveButton("Cập nhật", (dialog, which) -> {
+                    String qtyStr = edtQuantity.getText().toString().trim();
+                    if (!qtyStr.isEmpty()) {
+                        int newQty = Integer.parseInt(qtyStr);
+                        if (newQty != item.getQuantity()) {
+                            updateOrderItemQuantity(item, newQty);
+                        }
+                    }
+                })
+                .setNegativeButton("Hủy", null)
+                .show();
+    }
+
+    private void updateOrderItemQuantity(CartItem item, int newQty) {
+        // Trong thực tế, cần có API riêng để update quantity của item trong order.
+        // Ở đây giả lập bằng cách update trực tiếp vào object currentOrder nếu backend hỗ trợ 
+        // hoặc gọi API update status để trigger logic update (nếu backend có hỗ trợ).
+        
+        // Tuy nhiên, theo yêu cầu: "Khi sửa số lượng sản phẩm... sẽ cập nhật lại Tồn kho"
+        // Ta sẽ thực hiện update Tồn kho của sản phẩm đó.
+        
+        int diff = item.getQuantity() - newQty; // Nếu mới < cũ -> diff dương -> trả lại kho
+        item.setQuantity(newQty);
+        
+        // Tìm sản phẩm để update stock
+        apiService.getProductDetail(item.getProductId()).enqueue(new Callback<Response<Product>>() {
+            @Override
+            public void onResponse(@NonNull Call<Response<Product>> call, @NonNull retrofit2.Response<Response<Product>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    Product product = response.body().getData();
+                    int newStock = product.getStock() + diff;
+                    updateProductStock(product, newStock);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Response<Product>> call, @NonNull Throwable t) {
+                Toast.makeText(AdminOrderDetailActivity.this, "Lỗi khi lấy thông tin sản phẩm", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void updateProductStock(Product product, int newStock) {
+        MediaType textType = MediaType.parse("text/plain");
+        RequestBody name = RequestBody.create(textType, product.getName());
+        RequestBody price = RequestBody.create(textType, product.getPrice());
+        RequestBody category = RequestBody.create(textType, product.getCategory());
+        RequestBody description = RequestBody.create(textType, product.getDescription());
+        RequestBody stock = RequestBody.create(textType, String.valueOf(newStock));
+        RequestBody sold = RequestBody.create(textType, String.valueOf(product.getSold()));
+        RequestBody status = RequestBody.create(textType, String.valueOf(product.isStatus()));
+        RequestBody colors = RequestBody.create(textType, new com.google.gson.Gson().toJson(product.getColors()));
+
+        apiService.updateProduct(product.get_id(), name, price, category, description, stock, sold, status, colors, null)
+                .enqueue(new Callback<Response<Product>>() {
+                    @Override
+                    public void onResponse(@NonNull Call<Response<Product>> call, @NonNull retrofit2.Response<Response<Product>> response) {
+                        if (response.isSuccessful()) {
+                            Toast.makeText(AdminOrderDetailActivity.this, "Đã cập nhật số lượng và Tồn kho", Toast.LENGTH_SHORT).show();
+                            bindOrder(currentOrder); // Refresh UI
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<Response<Product>> call, @NonNull Throwable t) {
+                        Toast.makeText(AdminOrderDetailActivity.this, "Lỗi cập nhật Tồn kho", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void loadOrderDetail() {

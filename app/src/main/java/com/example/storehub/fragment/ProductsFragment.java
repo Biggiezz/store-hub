@@ -26,6 +26,7 @@ import com.bumptech.glide.request.transition.Transition;
 import com.example.storehub.MainActivity;
 import com.example.storehub.R;
 import com.example.storehub.adapter.ProductAdapter;
+import com.example.storehub.model.Pagination;
 import com.example.storehub.model.Product;
 import com.example.storehub.model.response.Response;
 import com.example.storehub.services.HttpResquest;
@@ -210,7 +211,7 @@ public class ProductsFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null
                         && response.body().getCode() == 200 && response.body().getData() != null) {
                     ArrayList<Product> products = response.body().getData();
-                    com.example.storehub.model.Pagination pagination = response.body().getPagination();
+                    Pagination pagination = response.body().getPagination();
                     preloadPageImages(products, requestGeneration,
                             () -> showProducts(products, pagination, requestGeneration));
                 } else {
@@ -293,7 +294,7 @@ public class ProductsFragment extends Fragment {
         if (lastPage == null) return;
         lastPage.setText(String.valueOf(totalPages));
         lastPage.setVisibility(totalPages > 3 ? View.VISIBLE : View.GONE);
-        
+
         int p1, p2, p3;
         if (totalPages <= 3) {
             p1 = 1;
@@ -318,7 +319,7 @@ public class ProductsFragment extends Fragment {
                 p3 = currentPage + 1;
             }
         }
-        
+
         if (page1 != null) page1.setText(String.valueOf(p1));
         if (page2 != null) page2.setText(String.valueOf(p2));
         if (page3 != null) page3.setText(String.valueOf(p3));

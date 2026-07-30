@@ -179,6 +179,21 @@
                                     android:textColor="#5D5D5D"
                                     android:textSize="15sp" />
 
+                                <View
+                                    android:layout_width="1dp"
+                                    android:layout_height="14dp"
+                                    android:layout_marginStart="12dp"
+                                    android:layout_marginEnd="12dp"
+                                    android:background="#DDDDDD" />
+
+                                <TextView
+                                    android:id="@+id/tvSold"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Đã bán: 0"
+                                    android:textColor="#5D5D5D"
+                                    android:textSize="15sp" />
+
                             </LinearLayout>
 
 
