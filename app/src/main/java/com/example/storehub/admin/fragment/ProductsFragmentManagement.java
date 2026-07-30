@@ -224,8 +224,8 @@ public class ProductsFragmentManagement extends Fragment {
         String keyword = searchInput == null ? "" : searchInput.getText().toString().trim();
         HttpResquest request = new HttpResquest();
         currentCall = keyword.isEmpty()
-                ? request.callAPI().getListProduct(currentPage, PAGE_SIZE, selectedCategory, "")
-                : request.callAPI().searchProduct(currentPage, PAGE_SIZE, keyword, selectedCategory, "");
+                ? request.callAPI().getListProduct(currentPage, PAGE_SIZE, selectedCategory, true)
+                : request.callAPI().searchProduct(currentPage, PAGE_SIZE, keyword, selectedCategory, true);
         currentCall.enqueue(new Callback<Response<ArrayList<Product>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {

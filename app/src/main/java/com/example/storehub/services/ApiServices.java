@@ -45,7 +45,7 @@ public interface ApiServices {
             @Query("page") int page,
             @Query("limit") int limit,
             @Query("category") String category,
-            @Query("status") String status
+            @Query("showInactive") boolean showInactive
     );
 
     @GET("api/productsRouter/search-product")
@@ -54,7 +54,7 @@ public interface ApiServices {
             @Query("limit") int limit,
             @Query("keyword") String keyword,
             @Query("category") String category,
-            @Query("status") String status
+            @Query("showInactive") boolean showInactive
     );
 
     @GET("api/productsRouter/get-product-by-id/{id}")
@@ -69,7 +69,7 @@ public interface ApiServices {
             @Part("description") RequestBody description,
             @Part("stock") RequestBody stock,
             @Part("soldQuantity") RequestBody soldQuantity,
-            @Part("status") RequestBody status,
+            @Part("isActive") RequestBody isActive,
             @Part("colors") RequestBody colors,
             @Part MultipartBody.Part image
     );
@@ -84,7 +84,7 @@ public interface ApiServices {
             @Part("description") RequestBody description,
             @Part("stock") RequestBody stock,
             @Part("soldQuantity") RequestBody soldQuantity,
-            @Part("status") RequestBody status,
+            @Part("isActive") RequestBody isActive,
             @Part("colors") RequestBody colors,
             @Part MultipartBody.Part image
     );

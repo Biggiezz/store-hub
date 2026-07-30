@@ -199,8 +199,8 @@ public class ProductsFragment extends Fragment {
 
         HttpResquest request = new HttpResquest();
         currentCall = keyword.isEmpty()
-                ? request.apiServices.getListProduct(page, LIMIT, "", "active")
-                : request.apiServices.searchProduct(page, LIMIT, keyword, "", "active");
+                ? request.apiServices.getListProduct(page, LIMIT, "", false)
+                : request.apiServices.searchProduct(page, LIMIT, keyword, "", false);
 
         currentCall.enqueue(new Callback<Response<ArrayList<Product>>>() {
             @Override

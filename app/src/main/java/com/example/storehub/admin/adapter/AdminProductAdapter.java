@@ -48,8 +48,7 @@ public class AdminProductAdapter extends RecyclerView.Adapter<AdminProductAdapte
         
         holder.name.setText(product.getName());
         
-        boolean isInactive = "inactive".equalsIgnoreCase(product.getStatus()) || "Ngừng bán".equalsIgnoreCase(product.getStatus()) || "hidden".equalsIgnoreCase(product.getStatus());
-        if (isInactive) {
+        if (!product.isActive()) {
             holder.status.setVisibility(View.VISIBLE);
             holder.status.setText("ĐÃ ẨN");
             holder.status.setBackgroundResource(R.drawable.bg_status_hidden);

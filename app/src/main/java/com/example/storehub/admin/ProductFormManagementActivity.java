@@ -76,7 +76,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
     private Call<Response<Product>> currentCall;
     private LinearLayout adminColorContainer;
     private final List<ProductColor> productColors = new ArrayList<>();
-    private String originalStatus = "active";
+    private boolean originalIsActive = true;
 
     private final ActivityResultLauncher<String> imagePicker = registerForActivityResult(
             new ActivityResultContracts.GetContent(), uri -> {
@@ -200,7 +200,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         if (product.getColors() != null) {
             productColors.addAll(product.getColors());
         }
-        originalStatus = product.getStatus();
+        originalIsActive = product.isActive();
         renderAdminColors();
     }
 
@@ -244,15 +244,15 @@ public class ProductFormManagementActivity extends AppCompatActivity {
 
         ensureDefaultColor();
         String colorsJson = new Gson().toJson(productColors);
-        boolean currentStatus = currentProduct != null ? currentProduct.isStatus() : true;
         int currentSold = currentProduct != null ? currentProduct.getSold() : 0;
         setLoading(true);
         HttpResquest request = new HttpResquest();
         currentCall = editMode
                 ? request.callAPI().updateProduct(productId, text(name), text(price), text(category),
-                text(description), text(stock), text(colorsJson), text(originalStatus), imagePart)
+                text(description), text(stock), text(String.valueOf(currentSold)), text(String.valueOf(originalIsActive)),
+                text(colorsJson), imagePart)
                 : request.callAPI().addProduct(text(name), text(price), text(category),
-                text(description), text(stock), text(colorsJson), text("active"), imagePart);
+                text(description), text(stock), text("0"), text("true"), text(colorsJson), imagePart);
         currentCall.enqueue(new Callback<Response<Product>>() {
             @Override
             public void onResponse(@NonNull Call<Response<Product>> call, @NonNull retrofit2.Response<Response<Product>> response) {

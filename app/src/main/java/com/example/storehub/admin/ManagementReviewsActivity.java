@@ -135,7 +135,7 @@ public class ManagementReviewsActivity extends AppCompatActivity {
     }
 
     private void loadReviews() {
-        apiServices.getListProduct(1, 1000, "", "").enqueue(new Callback<Response<ArrayList<Product>>>() {
+        apiServices.getListProduct(1, 1000, "", false).enqueue(new Callback<Response<ArrayList<Product>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {

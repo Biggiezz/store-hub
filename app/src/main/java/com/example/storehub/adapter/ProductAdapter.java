@@ -32,7 +32,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         this.listProduct = new ArrayList<>();
         if (list != null) {
             for (Product p : list) {
-                boolean isActive = !"inactive".equalsIgnoreCase(p.getStatus()) && !"Ngừng bán".equalsIgnoreCase(p.getStatus()) && !"hidden".equalsIgnoreCase(p.getStatus());
+                boolean isActive = p.isActive();
                 if (isActive) {
                     this.listProduct.add(p);
                 }

@@ -3,6 +3,7 @@ package com.example.storehub.admin;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -11,11 +12,14 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.storehub.R;
+import com.example.storehub.admin.adapter.AdminColorAdapter;
 import com.example.storehub.model.Product;
+import com.example.storehub.model.ProductColor;
 import com.example.storehub.model.response.Response;
 import com.example.storehub.services.HttpResquest;
 import com.google.android.material.button.MaterialButton;
@@ -23,6 +27,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.gson.Gson;
 
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.Locale;
 
 import okhttp3.MediaType;
@@ -98,8 +103,8 @@ public class AdminProductDetailActivity extends AppCompatActivity {
 
         switchStatus.setOnCheckedChangeListener((buttonView, isChecked) -> {
             updateSwitchColors(isChecked);
-            if (currentProduct != null && currentProduct.isStatus() != isChecked) {
-                currentProduct.setStatus(isChecked);
+            if (currentProduct != null && currentProduct.isActive() != isChecked) {
+                currentProduct.setActive(isChecked);
                 updateProductOnServer(isChecked);
             }
         });
@@ -195,8 +200,8 @@ public class AdminProductDetailActivity extends AppCompatActivity {
                 .error(R.drawable.ic_product)
                 .into(ivProductImage);
         
-        switchStatus.setChecked(product.isStatus());
-        updateSwitchColors(product.isStatus());
+        switchStatus.setChecked(product.isActive());
+        updateSwitchColors(product.isActive());
 
         if (product.getColors() != null) {
             AdminColorAdapter colorAdapter = new AdminColorAdapter(product.getColors());
@@ -204,49 +209,4 @@ public class AdminProductDetailActivity extends AppCompatActivity {
         }
     }
 
-    private static class AdminColorAdapter extends RecyclerView.Adapter<AdminColorAdapter.ColorViewHolder> {
-        private final java.util.List<Product.ProductColor> colors;
-
-        AdminColorAdapter(java.util.List<Product.ProductColor> colors) {
-            this.colors = colors;
-        }
-
-        @NonNull
-        @Override
-        public ColorViewHolder onCreateViewHolder(@NonNull android.view.ViewGroup parent, int viewType) {
-            View view = android.view.LayoutInflater.from(parent.getContext()).inflate(R.layout.item_color_circle, parent, false);
-            return new ColorViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull ColorViewHolder holder, int position) {
-            Product.ProductColor color = colors.get(position);
-            try {
-                String hex = color.getHex();
-                if (hex != null) {
-                    if (!hex.startsWith("#")) {
-                        hex = "#" + hex;
-                    }
-                    holder.viewColor.setBackgroundColor(android.graphics.Color.parseColor(hex));
-                } else {
-                    holder.viewColor.setBackgroundColor(android.graphics.Color.LTGRAY);
-                }
-            } catch (Exception e) {
-                holder.viewColor.setBackgroundColor(android.graphics.Color.LTGRAY);
-            }
-        }
-
-        @Override
-        public int getItemCount() {
-            return colors.size();
-        }
-
-        static class ColorViewHolder extends RecyclerView.ViewHolder {
-            View viewColor;
-            ColorViewHolder(@NonNull View itemView) {
-                super(itemView);
-                viewColor = itemView.findViewById(R.id.viewColor);
-            }
-        }
-    }
 }
