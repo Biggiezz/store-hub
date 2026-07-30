@@ -22,7 +22,6 @@ import com.example.storehub.model.Order;
 import com.example.storehub.model.response.Response;
 import com.example.storehub.services.ApiServices;
 import com.example.storehub.services.HttpResquest;
-import com.example.storehub.utils.SharedPreferencesManager;
 import com.example.storehub.zalopay.Api.CreateOrder;
 import com.example.storehub.zalopay.Constant.AppInfo;
 import com.google.android.material.button.MaterialButton;
@@ -190,9 +189,7 @@ public class PaymentConfirmationActivity extends BaseActivity {
         final boolean paidWithZaloPay = rbZaloPay.isChecked();
         btnConfirmPayment.setEnabled(false);
         btnConfirmPayment.setText(paidWithZaloPay ? "Đang tạo đơn hàng..." : "Xác nhận thanh toán");
-        SharedPreferencesManager preferences = new SharedPreferencesManager(this);
-        String userId = preferences.getUser() == null ? "" : preferences.getUser().getId();
-        apiService.createOrder(userId, paidWithZaloPay ? "ZaloPay" : "COD").enqueue(new Callback<Response<Order>>() {
+        apiService.createOrder(HttpResquest.authorizationHeader(this), paidWithZaloPay ? "ZaloPay" : "COD").enqueue(new Callback<Response<Order>>() {
             @Override
             public void onResponse(@NonNull Call<Response<Order>> call, @NonNull retrofit2.Response<Response<Order>> response) {
                 btnConfirmPayment.setEnabled(true);

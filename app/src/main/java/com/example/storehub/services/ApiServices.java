@@ -90,16 +90,16 @@ public interface ApiServices {
     );
 
     @GET("api/productsRouter/get-cart")
-    Call<Response<ArrayList<CartItem>>> getCart();
+    Call<Response<ArrayList<CartItem>>> getCart(@Header("Authorization") String token);
 
     @POST("api/productsRouter/add-to-cart")
-    Call<Response<Object>> addToCart(@Body AddToCartRequest request);
+    Call<Response<Object>> addToCart(@Header("Authorization") String token, @Body AddToCartRequest request);
 
     @POST("api/productsRouter/update-cart-quantity")
-    Call<Response<ArrayList<CartItem>>> updateCartQuantity(@Body UpdateQuantityRequest request);
+    Call<Response<ArrayList<CartItem>>> updateCartQuantity(@Header("Authorization") String token, @Body UpdateQuantityRequest request);
 
     @DELETE("api/productsRouter/delete-cart-item/{id}")
-    Call<Response<ArrayList<CartItem>>> deleteCartItem(@Path("id") String id);
+    Call<Response<ArrayList<CartItem>>> deleteCartItem(@Header("Authorization") String token, @Path("id") String id);
 
     @POST("api/productsRouter/add-review")
     Call<Response<Product>> addReview(@Body AddReviewRequest request);
@@ -109,12 +109,12 @@ public interface ApiServices {
 
     @POST("api/oderRouter/create-order")
     Call<Response<Order>> createOrder(
-            @Query("userId") String userId,
+            @Header("Authorization") String token,
             @Query("paymentMethod") String paymentMethod
     );
 
     @GET("api/oderRouter/get-orders")
-    Call<Response<ArrayList<Order>>> getOrders(@Query("userId") String userId);
+    Call<Response<ArrayList<Order>>> getOrders(@Header("Authorization") String token);
 
     @GET("api/oderRouter/admin/orders")
     Call<Response<ArrayList<Order>>> getAdminOrders(
@@ -141,7 +141,7 @@ public interface ApiServices {
     Call<Response<Order>> updateOrderStatus(@Body UpdateStatusRequest request);
 
     @POST("api/oderRouter/clear-cart")
-    Call<Response<Object>> clearCart();
+    Call<Response<Object>> clearCart(@Header("Authorization") String token);
 
     // Lấy danh sách toàn bộ tin tức đã xuất bản
     @GET("api/newsRouter/get-all-news")

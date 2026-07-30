@@ -1,5 +1,9 @@
 package com.example.storehub.services;
 
+import android.content.Context;
+
+import com.example.storehub.utils.SharedPreferencesManager;
+
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -21,5 +25,10 @@ public class HttpResquest {
 
     public ApiServices callAPI() {
         return apiServices;
+    }
+
+    public static String authorizationHeader(Context context) {
+        String token = new SharedPreferencesManager(context).getToken();
+        return token == null || token.trim().isEmpty() ? null : "Bearer " + token;
     }
 }

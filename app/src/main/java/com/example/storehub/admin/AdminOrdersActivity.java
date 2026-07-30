@@ -88,8 +88,6 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
         }
 
         ordersCall = apiService.getAdminOrders(getAuthHeader());
-        // Passing null as userId retrieves all customer orders
-        ordersCall = apiService.getOrders(null);
         ordersCall.enqueue(new Callback<Response<ArrayList<Order>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<Order>>> call, @NonNull retrofit2.Response<Response<ArrayList<Order>>> response) {

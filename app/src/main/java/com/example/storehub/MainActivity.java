@@ -67,7 +67,7 @@ public class MainActivity extends BaseActivity {
     private ArrayList<Product> allProductsList = new ArrayList<>();
     private ArrayList<News> newsList;
     private String selectedTab = TAB_HOME;
-    private String activeCategory = "Điện thoại";
+    private String activeCategory = "Máy tính";
     private List<String> categoriesList = new ArrayList<>();
     private final ArrayList<MaterialButton> dynamicCategoryButtons = new ArrayList<>();
 
@@ -90,7 +90,7 @@ public class MainActivity extends BaseActivity {
         if (preloadedProducts != null) {
             allProductsList = preloadedProducts;
             preloadedProducts = null;
-            updateCategorySelection("Điện thoại");
+            updateCategorySelection("Máy tính");
         } else {
             fetchProducts();
         }
@@ -291,7 +291,7 @@ public class MainActivity extends BaseActivity {
             public void onResponse(@NonNull Call<Response<ArrayList<String>>> call, @NonNull retrofit2.Response<Response<ArrayList<String>>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     categoriesList = response.body().getData();
-                    if (!categoriesList.contains("Điện thoại") && categoriesList.size() > 0) {
+                    if (!categoriesList.contains("Máy tính") && categoriesList.size() > 0) {
                         activeCategory = categoriesList.get(0);
                     }
                     renderCategoryButtons(categoriesList);

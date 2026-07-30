@@ -191,7 +191,7 @@ public class ShippingOrderDetailActivity extends BaseActivity {
             cartCall.cancel();
         }
 
-        cartCall = apiService.getCart();
+        cartCall = apiService.getCart(HttpResquest.authorizationHeader(this));
         cartCall.enqueue(new Callback<Response<ArrayList<CartItem>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<CartItem>>> call,

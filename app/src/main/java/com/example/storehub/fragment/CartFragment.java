@@ -175,7 +175,7 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartChangeLi
             cartCall.cancel();
         }
 
-        cartCall = apiService.getCart();
+        cartCall = apiService.getCart(HttpResquest.authorizationHeader(requireContext()));
         cartCall.enqueue(new Callback<Response<ArrayList<CartItem>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<CartItem>>> call, @NonNull retrofit2.Response<Response<ArrayList<CartItem>>> response) {
@@ -299,7 +299,7 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartChangeLi
     public void onQuantityChange(CartItem cartItem, int newQuantity) {
         setLoading(true);
         UpdateQuantityRequest request = new UpdateQuantityRequest(cartItem.getId(), newQuantity);
-        apiService.updateCartQuantity(request).enqueue(new Callback<Response<ArrayList<CartItem>>>() {
+        apiService.updateCartQuantity(HttpResquest.authorizationHeader(requireContext()), request).enqueue(new Callback<Response<ArrayList<CartItem>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<CartItem>>> call, @NonNull retrofit2.Response<Response<ArrayList<CartItem>>> response) {
                 setLoading(false);
@@ -322,7 +322,7 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartChangeLi
     @Override
     public void onDeleteItem(CartItem cartItem) {
         setLoading(true);
-        apiService.deleteCartItem(cartItem.getId()).enqueue(new Callback<Response<ArrayList<CartItem>>>() {
+        apiService.deleteCartItem(HttpResquest.authorizationHeader(requireContext()), cartItem.getId()).enqueue(new Callback<Response<ArrayList<CartItem>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<CartItem>>> call, @NonNull retrofit2.Response<Response<ArrayList<CartItem>>> response) {
                 setLoading(false);

@@ -143,7 +143,7 @@ public class OderFragment extends Fragment {
         }
 
         // 1. Lấy dữ liệu Giỏ hàng để kiểm tra mục tạm
-        cartCall = apiService.getCart();
+        cartCall = apiService.getCart(HttpResquest.authorizationHeader(requireContext()));
         cartCall.enqueue(new Callback<Response<ArrayList<CartItem>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<CartItem>>> call,
@@ -166,9 +166,7 @@ public class OderFragment extends Fragment {
     }
 
     private void fetchRealOrders(final ArrayList<CartItem> cartItems) {
-        SharedPreferencesManager prefManager = new SharedPreferencesManager(requireContext());
-        String userId = (prefManager.getUser() != null) ? prefManager.getUser().getId() : "";
-        ordersCall = apiService.getOrders(userId);
+        ordersCall = apiService.getOrders(HttpResquest.authorizationHeader(requireContext()));
 
         ordersCall.enqueue(new Callback<Response<ArrayList<Order>>>() {
             @Override
@@ -496,7 +494,7 @@ public class OderFragment extends Fragment {
 
     private void executeClearCart() {
         setLoading(true);
-        apiService.clearCart().enqueue(new Callback<Response<Object>>() {
+        apiService.clearCart(HttpResquest.authorizationHeader(requireContext())).enqueue(new Callback<Response<Object>>() {
             @Override
             public void onResponse(@NonNull Call<Response<Object>> call, @NonNull retrofit2.Response<Response<Object>> response) {
                 setLoading(false);

@@ -415,7 +415,7 @@ public class ProductDetailActivity extends BaseActivity {
                 quantity
         );
 
-        cartCall = apiService.addToCart(request);
+        cartCall = apiService.addToCart(HttpResquest.authorizationHeader(this), request);
 
         cartCall.enqueue(new Callback<Response<Object>>() {
             @Override
