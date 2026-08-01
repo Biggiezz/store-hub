@@ -184,7 +184,7 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
         MediaType textType = MediaType.parse("text/plain");
         RequestBody name = RequestBody.create(textType, product.getName());
         RequestBody price = RequestBody.create(textType, product.getPrice());
-        RequestBody category = RequestBody.create(textType, product.getCategory());
+        RequestBody category = RequestBody.create(textType, product.getCategory() != null ? product.getCategory().get_id() : "");
         RequestBody description = RequestBody.create(textType, product.getDescription());
         RequestBody stock = RequestBody.create(textType, String.valueOf(newStock));
         RequestBody sold = RequestBody.create(textType, String.valueOf(product.getSold()));

@@ -30,7 +30,7 @@ public class Product {
 
     // Phân loại danh mục sản phẩm
     @SerializedName("category")
-    private String category;
+    private Category category;
 
     // Mô tả thông tin chi tiết sản phẩm
     @SerializedName("description")
@@ -66,7 +66,7 @@ public class Product {
     public Product() {
     }
 
-    public Product(String _id, String name, String price, String image, String category, String description) {
+    public Product(String _id, String name, String price, String image, Category category, String description) {
         this._id = _id;
         this.name = name;
         this.rawPrice = price;
@@ -128,11 +128,11 @@ public class Product {
         this.image = image;
     }
 
-    public String getCategory() {
-        return category != null ? category : "";
+    public Category getCategory() {
+        return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(Category category) {
         this.category = category;
     }
 

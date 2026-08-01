@@ -37,6 +37,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.bumptech.glide.Glide;
 import com.example.storehub.R;
 import com.example.storehub.model.Product;
+import com.example.storehub.model.Category;
 import com.example.storehub.model.ProductColor;
 import com.example.storehub.model.response.Response;
 import com.example.storehub.services.HttpResquest;
@@ -77,6 +78,8 @@ public class ProductFormManagementActivity extends AppCompatActivity {
     private LinearLayout adminColorContainer;
     private final List<ProductColor> productColors = new ArrayList<>();
     private boolean originalIsActive = true;
+    private List<Category> categoriesList = new ArrayList<>();
+    private Category selectedCategory = null;
 
     private final ActivityResultLauncher<String> imagePicker = registerForActivityResult(
             new ActivityResultContracts.GetContent(), uri -> {
@@ -117,7 +120,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         ViewGroup.LayoutParams submitLayout = submitButton.getLayoutParams();
         submitLayout.width = dp(editMode ? 174 : 110);
         submitButton.setLayoutParams(submitLayout);
-
+        loadCategories();
         if (editMode) loadProductDetail();
     }
 
@@ -149,12 +152,46 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         submitButton.setOnClickListener(v -> submitProduct());
     }
 
+    private void loadCategories() {
+        new HttpResquest().callAPI().getCategories().enqueue(new Callback<Response<ArrayList<Category>>>() {
+            @Override
+            public void onResponse(@NonNull Call<Response<ArrayList<Category>>> call, @NonNull retrofit2.Response<Response<ArrayList<Category>>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    categoriesList = response.body().getData();
+                } else {
+                    useFallbackCategories();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Response<ArrayList<Category>>> call, @NonNull Throwable t) {
+                useFallbackCategories();
+            }
+        });
+    }
+
+    private void useFallbackCategories() {
+        categoriesList = java.util.Arrays.asList(
+                new Category("1", "Điện thoại"),
+                new Category("2", "Máy tính"),
+                new Category("3", "Tai nghe"),
+                new Category("4", "Đồng hồ")
+        );
+    }
+
     private void showCategoryMenu(View anchor) {
+        if (categoriesList.isEmpty()) {
+            Toast.makeText(this, "Đang tải danh mục, vui lòng thử lại sau", Toast.LENGTH_SHORT).show();
+            return;
+        }
         PopupMenu menu = new PopupMenu(this, anchor);
-        List<String> categories = Arrays.asList("Điện thoại", "Máy tính", "Tai nghe", "Đồng hồ");
-        for (String category : categories) menu.getMenu().add(category);
+        for (int i = 0; i < categoriesList.size(); i++) {
+            menu.getMenu().add(0, i, 0, categoriesList.get(i).getName());
+        }
         menu.setOnMenuItemClickListener(item -> {
-            categoryValue.setText(item.getTitle());
+            int index = item.getItemId();
+            selectedCategory = categoriesList.get(index);
+            categoryValue.setText(selectedCategory.getName());
             return true;
         });
         menu.show();
@@ -191,7 +228,13 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         descriptionInput.setText(product.getDescription());
         stockInput.setText(String.valueOf(product.getStock()));
         priceInput.setText(String.valueOf(product.getPriceAsLong()));
-        categoryValue.setText(product.getCategory());
+        if (product.getCategory() != null) {
+            this.selectedCategory = product.getCategory();
+            categoryValue.setText(product.getCategory().getName());
+        } else {
+            this.selectedCategory = null;
+            categoryValue.setText("Chọn danh mục");
+        }
         selectedImage.setVisibility(View.VISIBLE);
         uploadPrompt.setVisibility(View.GONE);
         Glide.with(this).load(product.getImage()).centerCrop().into(selectedImage);
@@ -210,17 +253,17 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         String description = descriptionInput.getText().toString().trim();
         String stock = stockInput.getText().toString().trim();
         String price = priceInput.getText().toString().replaceAll("[^0-9]", "");
-        String category = categoryValue.getText().toString().trim();
         boolean editMode = productId != null && !productId.isBlank();
 
         if (name.isEmpty()) {
             nameInput.setError("Vui lòng nhập tên sản phẩm");
             return;
         }
-        if (category.equals("Chọn danh mục")) {
+        if (selectedCategory == null) {
             Toast.makeText(this, "Vui lòng chọn danh mục", Toast.LENGTH_SHORT).show();
             return;
         }
+        String categoryId = selectedCategory.get_id();
         if (stock.isEmpty()) {
             stockInput.setError("Vui lòng nhập tồn kho");
             return;
@@ -248,10 +291,10 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         setLoading(true);
         HttpResquest request = new HttpResquest();
         currentCall = editMode
-                ? request.callAPI().updateProduct(productId, text(name), text(price), text(category),
+                ? request.callAPI().updateProduct(productId, text(name), text(price), text(categoryId),
                 text(description), text(stock), text(String.valueOf(currentSold)), text(String.valueOf(originalIsActive)),
                 text(colorsJson), imagePart)
-                : request.callAPI().addProduct(text(name), text(price), text(category),
+                : request.callAPI().addProduct(text(name), text(price), text(categoryId),
                 text(description), text(stock), text("0"), text("true"), text(colorsJson), imagePart);
         currentCall.enqueue(new Callback<Response<Product>>() {
             @Override

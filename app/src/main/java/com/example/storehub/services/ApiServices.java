@@ -1,6 +1,7 @@
 package com.example.storehub.services;
 
 import com.example.storehub.model.CartItem;
+import com.example.storehub.model.Category;
 import com.example.storehub.model.News;
 import com.example.storehub.model.Order;
 import com.example.storehub.model.Product;
@@ -38,7 +39,7 @@ import retrofit2.http.Query;
 
 public interface ApiServices {
     @GET("api/productsRouter/get-categories")
-    Call<Response<ArrayList<String>>> getCategories();
+    Call<Response<ArrayList<Category>>> getCategories();
 
     @GET("api/productsRouter/get-all-product")
     Call<Response<ArrayList<Product>>> getListProduct(

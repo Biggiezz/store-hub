@@ -233,11 +233,11 @@ public class ProductDetailActivity extends BaseActivity {
             }
         }
 
-        if (TextUtils.isEmpty(product.getCategory())) {
+        if (product.getCategory() == null || TextUtils.isEmpty(product.getCategory().getName())) {
             tvCategory.setVisibility(View.GONE);
         } else {
             tvCategory.setVisibility(View.VISIBLE);
-            tvCategory.setText(product.getCategory().toUpperCase(new Locale("vi", "VN")));
+            tvCategory.setText(product.getCategory().getName().toUpperCase(new Locale("vi", "VN")));
         }
 
         ratingProduct.setRating(product.getRating());

@@ -31,6 +31,7 @@ import com.example.storehub.fragment.OderFragment;
 import com.example.storehub.fragment.ProductsFragment;
 import com.example.storehub.model.News;
 import com.example.storehub.model.Product;
+import com.example.storehub.model.Category;
 import com.example.storehub.model.response.Response;
 import com.example.storehub.model.User;
 import com.example.storehub.services.HttpResquest;
@@ -67,8 +68,8 @@ public class MainActivity extends BaseActivity {
     private ArrayList<Product> allProductsList = new ArrayList<>();
     private ArrayList<News> newsList;
     private String selectedTab = TAB_HOME;
-    private String activeCategory = "Máy tính";
-    private List<String> categoriesList = new ArrayList<>();
+    private String activeCategory = "";
+    private List<Category> categoriesList = new ArrayList<>();
     private final ArrayList<MaterialButton> dynamicCategoryButtons = new ArrayList<>();
 
     @Override
@@ -90,7 +91,7 @@ public class MainActivity extends BaseActivity {
         if (preloadedProducts != null) {
             allProductsList = preloadedProducts;
             preloadedProducts = null;
-            updateCategorySelection("Máy tính");
+            fetchCategories();
         } else {
             fetchProducts();
         }
@@ -286,13 +287,13 @@ public class MainActivity extends BaseActivity {
     }
 
     private void fetchCategories() {
-        new HttpResquest().callAPI().getCategories().enqueue(new Callback<Response<ArrayList<String>>>() {
+        new HttpResquest().callAPI().getCategories().enqueue(new Callback<Response<ArrayList<Category>>>() {
             @Override
-            public void onResponse(@NonNull Call<Response<ArrayList<String>>> call, @NonNull retrofit2.Response<Response<ArrayList<String>>> response) {
+            public void onResponse(@NonNull Call<Response<ArrayList<Category>>> call, @NonNull retrofit2.Response<Response<ArrayList<Category>>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     categoriesList = response.body().getData();
-                    if (!categoriesList.contains("Máy tính") && categoriesList.size() > 0) {
-                        activeCategory = categoriesList.get(0);
+                    if (!categoriesList.isEmpty()) {
+                        activeCategory = categoriesList.get(0).get_id();
                     }
                     renderCategoryButtons(categoriesList);
                 } else {
@@ -301,18 +302,24 @@ public class MainActivity extends BaseActivity {
             }
 
             @Override
-            public void onFailure(@NonNull Call<Response<ArrayList<String>>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<Response<ArrayList<Category>>> call, @NonNull Throwable t) {
                 useFallbackCategories();
             }
         });
     }
 
     private void useFallbackCategories() {
-        categoriesList = java.util.Arrays.asList("Điện thoại", "Máy tính", "Tai nghe", "Đồng hồ");
+        categoriesList = java.util.Arrays.asList(
+                new Category("1", "Điện thoại"),
+                new Category("2", "Máy tính"),
+                new Category("3", "Tai nghe"),
+                new Category("4", "Đồng hồ")
+        );
+        activeCategory = "2"; // Máy tính
         renderCategoryButtons(categoriesList);
     }
 
-    private void renderCategoryButtons(List<String> categories) {
+    private void renderCategoryButtons(List<Category> categories) {
         if (layoutCategories == null) return;
         layoutCategories.removeAllViews();
         dynamicCategoryButtons.clear();
@@ -324,20 +331,20 @@ public class MainActivity extends BaseActivity {
         int inactiveStrokeColor = Color.parseColor("#D8D5CF");
 
         for (int i = 0; i < categories.size(); i++) {
-            String category = categories.get(i);
+            Category category = categories.get(i);
             MaterialButton btn = new MaterialButton(this);
-            btn.setText(category);
+            btn.setText(category.getName());
             btn.setTextSize(12f);
             btn.setCornerRadius(99);
             btn.setAllCaps(false);
             btn.setPadding(35, 15, 35, 15);
 
-            boolean isActive = category.equals(activeCategory);
+            boolean isActive = category.get_id().equals(activeCategory);
             btn.setBackgroundTintList(ColorStateList.valueOf(isActive ? activeBgColor : inactiveBgColor));
             btn.setTextColor(isActive ? activeTextColor : inactiveTextColor);
             btn.setStrokeColor(ColorStateList.valueOf(isActive ? Color.TRANSPARENT : inactiveStrokeColor));
 
-            btn.setOnClickListener(v -> updateCategorySelection(category));
+            btn.setOnClickListener(v -> updateCategorySelection(category.get_id()));
 
             layoutCategories.addView(btn);
             dynamicCategoryButtons.add(btn);
@@ -352,16 +359,18 @@ public class MainActivity extends BaseActivity {
         filterProductsByCategory(activeCategory);
     }
 
-    private void updateCategorySelection(String selectedCategory) {
-        activeCategory = selectedCategory;
+    private void updateCategorySelection(String selectedCategoryId) {
+        activeCategory = selectedCategoryId;
         int activeBgColor = Color.parseColor("#F0DED2");
         int activeTextColor = ContextCompat.getColor(this, R.color.text_button);
         int inactiveBgColor = ContextCompat.getColor(this, R.color.background);
         int inactiveTextColor = ContextCompat.getColor(this, R.color.dark_green);
         int inactiveStrokeColor = Color.parseColor("#D8D5CF");
 
-        for (MaterialButton btn : dynamicCategoryButtons) {
-            boolean isActive = btn.getText().toString().equals(activeCategory);
+        for (int i = 0; i < dynamicCategoryButtons.size(); i++) {
+            MaterialButton btn = dynamicCategoryButtons.get(i);
+            Category cat = categoriesList.get(i);
+            boolean isActive = cat.get_id().equals(activeCategory);
             btn.setBackgroundTintList(ColorStateList.valueOf(isActive ? activeBgColor : inactiveBgColor));
             btn.setTextColor(isActive ? activeTextColor : inactiveTextColor);
             btn.setStrokeColor(ColorStateList.valueOf(isActive ? Color.TRANSPARENT : inactiveStrokeColor));
@@ -370,10 +379,10 @@ public class MainActivity extends BaseActivity {
         filterProductsByCategory(activeCategory);
     }
 
-    private void filterProductsByCategory(String category) {
+    private void filterProductsByCategory(String categoryId) {
         ArrayList<Product> filteredList = new ArrayList<>();
         for (Product product : allProductsList) {
-            if (category != null && category.equals(product.getCategory())) {
+            if (categoryId != null && product.getCategory() != null && categoryId.equals(product.getCategory().get_id())) {
                 filteredList.add(product);
                 if (filteredList.size() == FEATURED_PRODUCT_LIMIT) break;
             }

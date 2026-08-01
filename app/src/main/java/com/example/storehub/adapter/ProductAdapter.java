@@ -51,7 +51,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Product product = listProduct.get(position);
-        holder.tvProductCategory.setText(product.getCategory());
+        holder.tvProductCategory.setText(product.getCategory() != null ? product.getCategory().getName() : "");
         holder.tvProductName.setText(product.getName());
 
         if (product.getStock() <= 0) {
