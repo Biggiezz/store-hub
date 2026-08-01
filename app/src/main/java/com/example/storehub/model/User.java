@@ -88,6 +88,10 @@ public class User {
         return ImageUtils.getCorrectedImageUrl(image, HttpResquest.BASE_URL);
     }
 
+    public String getRawImage() {
+        return image;
+    }
+
     public void setImage(String image) {
         this.image = image;
     }
