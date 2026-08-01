@@ -163,7 +163,7 @@ public class AdminHomeFragment extends Fragment {
     }
 
     private void fetchProductCount() {
-        new HttpResquest().callAPI().getListProduct(1, 1, "", false).enqueue(new Callback<Response<ArrayList<Product>>>() {
+        new HttpResquest().callAPI().getListProduct(1, 1, "", false, "").enqueue(new Callback<Response<ArrayList<Product>>>() {
                     @Override
                     public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
                         if (response.isSuccessful() && response.body() != null

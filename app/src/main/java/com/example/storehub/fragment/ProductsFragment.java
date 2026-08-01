@@ -5,6 +5,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +33,7 @@ import com.example.storehub.model.Product;
 import com.example.storehub.model.response.Response;
 import com.example.storehub.services.HttpResquest;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
@@ -52,12 +55,14 @@ public class ProductsFragment extends Fragment {
     private int currentPage = 1;
     private int totalPages = 1;
     private String currentSearchKeyword = "";
+    private String currentSort = "";
     private Runnable searchRunnable;
     private Call<Response<ArrayList<Product>>> currentCall;
     private int loadGeneration;
     private TextView page1, page2, page3, lastPage, tvEllipsis;
     private ProgressBar progressBar;
     private View layoutPagination;
+    private MaterialButton btnPrice, btnAZ, btnZA;
 
     @Nullable
     @Override
@@ -88,6 +93,10 @@ public class ProductsFragment extends Fragment {
         tvEllipsis = view.findViewById(R.id.tvEllipsis);
         progressBar = view.findViewById(R.id.progressBar);
         layoutPagination = view.findViewById(R.id.layoutPagination);
+        btnPrice = view.findViewById(R.id.btnPrice);
+        btnAZ = view.findViewById(R.id.btnAZ);
+        btnZA = view.findViewById(R.id.btnZA);
+        updateSortButtons();
     }
 
     private void setUpAdapter() {
@@ -128,6 +137,10 @@ public class ProductsFragment extends Fragment {
                 public void afterTextChanged(Editable s) {}
             });
         }
+
+        btnPrice.setOnClickListener(v -> changeSort("price_asc"));
+        btnAZ.setOnClickListener(v -> changeSort("name_asc"));
+        btnZA.setOnClickListener(v -> changeSort("name_desc"));
 
         if (page1 != null) {
             page1.setOnClickListener(v -> {
@@ -182,6 +195,24 @@ public class ProductsFragment extends Fragment {
         fetchProducts(currentPage, "");
     }
 
+    private void changeSort(String sort) {
+        currentSort = currentSort.equals(sort) ? "" : sort;
+        updateSortButtons();
+        loadFirstPage();
+    }
+
+    private void updateSortButtons() {
+        updateSortButton(btnPrice, "price_asc");
+        updateSortButton(btnAZ, "name_asc");
+        updateSortButton(btnZA, "name_desc");
+    }
+
+    private void updateSortButton(MaterialButton button, String sort) {
+        boolean selected = sort.equals(currentSort);
+        button.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(selected ? "#F0DED2" : "#EEEDEA")));
+        button.setTextColor(Color.parseColor(selected ? "#6B6157" : "#5D625F"));
+    }
+
     private void goToPage(int page) {
         if (page < 1 || page > totalPages || page == currentPage) return;
         currentPage = page;
@@ -199,8 +230,8 @@ public class ProductsFragment extends Fragment {
 
         HttpResquest request = new HttpResquest();
         currentCall = keyword.isEmpty()
-                ? request.apiServices.getListProduct(page, LIMIT, "", false)
-                : request.apiServices.searchProduct(page, LIMIT, keyword, "", false);
+                ? request.apiServices.getListProduct(page, LIMIT, "", false, currentSort)
+                : request.apiServices.searchProduct(page, LIMIT, keyword, "", false, currentSort);
 
         currentCall.enqueue(new Callback<Response<ArrayList<Product>>>() {
             @Override

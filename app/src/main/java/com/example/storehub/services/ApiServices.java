@@ -45,7 +45,8 @@ public interface ApiServices {
             @Query("page") int page,
             @Query("limit") int limit,
             @Query("category") String category,
-            @Query("showInactive") boolean showInactive
+            @Query("showInactive") boolean showInactive,
+            @Query("sort") String sort
     );
 
     @GET("api/productsRouter/search-product")
@@ -54,7 +55,8 @@ public interface ApiServices {
             @Query("limit") int limit,
             @Query("keyword") String keyword,
             @Query("category") String category,
-            @Query("showInactive") boolean showInactive
+            @Query("showInactive") boolean showInactive,
+            @Query("sort") String sort
     );
 
     @GET("api/productsRouter/get-product-by-id/{id}")

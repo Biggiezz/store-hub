@@ -383,7 +383,7 @@ public class MainActivity extends BaseActivity {
 
     private void fetchProducts() {
         HttpResquest httpResquest = new HttpResquest();
-        httpResquest.callAPI().getListProduct(1, 50, "", false).enqueue(new Callback<Response<ArrayList<Product>>>() {
+        httpResquest.callAPI().getListProduct(1, 50, "", false, "").enqueue(new Callback<Response<ArrayList<Product>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
