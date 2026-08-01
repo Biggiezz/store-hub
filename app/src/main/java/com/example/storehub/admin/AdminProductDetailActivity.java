@@ -116,7 +116,7 @@ public class AdminProductDetailActivity extends AppCompatActivity {
         MediaType textType = MediaType.parse("text/plain");
         RequestBody name = RequestBody.create(textType, currentProduct.getName());
         RequestBody price = RequestBody.create(textType, currentProduct.getPrice());
-        RequestBody category = RequestBody.create(textType, currentProduct.getCategory());
+        RequestBody category = RequestBody.create(textType, currentProduct.getCategory() != null ? currentProduct.getCategory().get_id() : "");
         RequestBody description = RequestBody.create(textType, currentProduct.getDescription());
         RequestBody stock = RequestBody.create(textType, String.valueOf(currentProduct.getStock()));
         RequestBody soldQuantity = RequestBody.create(textType, String.valueOf(currentProduct.getSold()));
@@ -182,7 +182,7 @@ public class AdminProductDetailActivity extends AppCompatActivity {
         if (product == null) return;
 
         tvProductName.setText(product.getName());
-        tvCategory.setText(product.getCategory());
+        tvCategory.setText(product.getCategory() != null ? product.getCategory().getName() : "");
         
         NumberFormat formatter = NumberFormat.getInstance(new Locale("vi", "VN"));
         tvProductPrice.setText(formatter.format(product.getPriceAsLong()) + "đ");

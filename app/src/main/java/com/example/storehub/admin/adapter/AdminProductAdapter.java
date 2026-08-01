@@ -44,7 +44,7 @@ public class AdminProductAdapter extends RecyclerView.Adapter<AdminProductAdapte
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
         Product product = products.get(position);
-        holder.category.setText(product.getCategory());
+        holder.category.setText(product.getCategory() != null ? product.getCategory().getName() : "");
         
         holder.name.setText(product.getName());
         

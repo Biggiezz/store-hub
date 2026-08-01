@@ -225,7 +225,7 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartChangeLi
         MediaType textType = MediaType.parse("text/plain");
         RequestBody name = RequestBody.create(textType, product.getName());
         RequestBody price = RequestBody.create(textType, product.getPrice());
-        RequestBody category = RequestBody.create(textType, product.getCategory());
+        RequestBody category = RequestBody.create(textType, product.getCategory() != null ? product.getCategory().get_id() : "");
         RequestBody description = RequestBody.create(textType, product.getDescription());
         RequestBody stock = RequestBody.create(textType, String.valueOf(newStock));
         RequestBody soldQuantity = RequestBody.create(textType, String.valueOf(newSold));

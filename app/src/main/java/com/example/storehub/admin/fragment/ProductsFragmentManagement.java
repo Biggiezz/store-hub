@@ -31,6 +31,7 @@ import com.example.storehub.admin.ProductFormManagementActivity;
 import com.example.storehub.admin.adapter.AdminProductAdapter;
 import com.example.storehub.model.Pagination;
 import com.example.storehub.model.Product;
+import com.example.storehub.model.Category;
 import com.example.storehub.model.response.Response;
 import com.example.storehub.services.HttpResquest;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -54,7 +55,7 @@ public class ProductsFragmentManagement extends Fragment {
     private ProgressBar progressBar;
     private View layoutPagination;
     private RecyclerView grid;
-    private List<String> categoriesList = new ArrayList<>();
+    private List<Category> categoriesList = new ArrayList<>();
     private final ArrayList<TextView> dynamicChips = new ArrayList<>();
     private final ArrayList<String> dynamicChipValues = new ArrayList<>();
 
@@ -88,7 +89,7 @@ public class ProductsFragmentManagement extends Fragment {
         progressBar = view.findViewById(R.id.progressBar);
         layoutPagination = view.findViewById(R.id.layoutPagination);
 
-        fetchCategories();
+        loadCategoriesFromServer();
 
         searchInput.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
@@ -124,10 +125,10 @@ public class ProductsFragmentManagement extends Fragment {
 
     @Override public void onResume() { super.onResume(); loadProducts(); }
 
-    private void fetchCategories() {
-        new HttpResquest().callAPI().getCategories().enqueue(new Callback<Response<ArrayList<String>>>() {
+    private void loadCategoriesFromServer() {
+        new HttpResquest().callAPI().getCategories().enqueue(new Callback<Response<ArrayList<Category>>>() {
             @Override
-            public void onResponse(@NonNull Call<Response<ArrayList<String>>> call, @NonNull retrofit2.Response<Response<ArrayList<String>>> response) {
+            public void onResponse(@NonNull Call<Response<ArrayList<Category>>> call, @NonNull retrofit2.Response<Response<ArrayList<Category>>> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     categoriesList = response.body().getData();
                     renderAdminChips(categoriesList);
@@ -137,18 +138,23 @@ public class ProductsFragmentManagement extends Fragment {
             }
 
             @Override
-            public void onFailure(@NonNull Call<Response<ArrayList<String>>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<Response<ArrayList<Category>>> call, @NonNull Throwable t) {
                 useFallbackCategories();
             }
         });
     }
 
     private void useFallbackCategories() {
-        categoriesList = java.util.Arrays.asList("Điện thoại", "Máy tính", "Tai nghe", "Đồng hồ");
+        categoriesList = java.util.Arrays.asList(
+                new Category("1", "Điện thoại"),
+                new Category("2", "Máy tính"),
+                new Category("3", "Tai nghe"),
+                new Category("4", "Đồng hồ")
+        );
         renderAdminChips(categoriesList);
     }
 
-    private void renderAdminChips(List<String> categories) {
+    private void renderAdminChips(List<Category> categories) {
         if (layoutAdminChips == null || !isAdded()) return;
         layoutAdminChips.removeAllViews();
         dynamicChips.clear();
@@ -158,8 +164,8 @@ public class ProductsFragmentManagement extends Fragment {
         addChip(getString(R.string.all), "");
 
         // Thêm các chip danh mục động
-        for (String category : categories) {
-            addChip(category, category);
+        for (Category category : categories) {
+            addChip(category.getName(), category.get_id());
         }
 
         updateCategoryChips();
