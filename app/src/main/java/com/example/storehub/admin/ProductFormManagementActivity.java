@@ -397,11 +397,24 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         EditText hexInput = dialogView.findViewById(R.id.edtAdminColorHex);
         View preview = dialogView.findViewById(R.id.viewAdminColorPreview);
         CheckBox defaultCheck = dialogView.findViewById(R.id.chkAdminDefaultColor);
+        Button customColorPicker = dialogView.findViewById(R.id.btnAdminCustomColorPicker);
         colorNameInput.setFocusable(false);
         hexInput.setFocusable(false);
         setColor(preview, editing ? parseColorSafely(color.getHex()) : Color.LTGRAY);
         if (editing) bindColorDialog(color, colorNameInput, hexInput, defaultCheck);
         addColorPalette(colorNameInput, hexInput, preview, dialogView.findViewById(R.id.adminColorPalette));
+        customColorPicker.setOnClickListener(v -> new com.skydoves.colorpickerview.ColorPickerDialog.Builder(this)
+                .setTitle("Chọn màu")
+                .setPositiveButton("Chọn", (com.skydoves.colorpickerview.listeners.ColorEnvelopeListener) (envelope, fromUser) -> {
+                    colorNameInput.setText("Màu tùy chỉnh");
+                    hexInput.setText(String.format("#%06X", 0xFFFFFF & envelope.getColor()));
+                    setColor(preview, envelope.getColor());
+                })
+                .setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss())
+                .attachAlphaSlideBar(false)
+                .attachBrightnessSlideBar(true)
+                .setBottomSpace(12)
+                .show());
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle(editing ? "Chỉnh sửa màu sắc" : "Thêm biến thể màu sắc")

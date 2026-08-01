@@ -34,6 +34,14 @@
             android:layout_marginTop="12dp"
             android:background="@drawable/bg_admin_color_preview" />
 
+        <Button
+            android:id="@+id/btnAdminCustomColorPicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="12dp"
+            android:text="Chọn từ bảng màu" />
+
         <TextView
             android:id="@+id/tvAdminColorPaletteLabel"
             android:layout_width="match_parent"
