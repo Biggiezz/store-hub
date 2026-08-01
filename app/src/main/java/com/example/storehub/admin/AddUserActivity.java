@@ -10,6 +10,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,7 +37,7 @@ import java.util.ArrayList;
 
 public class AddUserActivity extends AppCompatActivity {
 
-    private TextView tvHeaderTitle;
+    private TextView tvHeaderTitle, tvAvatarHint;
     private User userToEdit = null;
     private ImageButton btnBack;
     private RelativeLayout rlAvatarPicker;
@@ -53,6 +54,9 @@ public class AddUserActivity extends AppCompatActivity {
             uri -> {
                 if (uri != null) {
                     selectedImageUri = uri;
+                    ivAvatar.setPadding(0, 0, 0, 0);
+                    ivAvatar.setImageTintList(null);
+                    ivAvatar.setScaleType(ImageView.ScaleType.CENTER_CROP);
                     Glide.with(this)
                             .load(selectedImageUri)
                             .centerCrop()
@@ -93,8 +97,26 @@ public class AddUserActivity extends AppCompatActivity {
             etFullName.setText(userToEdit.getName());
             etPhone.setText(userToEdit.getPhone());
             etEmail.setText(userToEdit.getEmail());
+            etEmail.setEnabled(false);
+            etEmail.setFocusable(false);
+            etEmail.setFocusableInTouchMode(false);
+
+            rlAvatarPicker.setEnabled(false);
+            rlAvatarPicker.setClickable(false);
+            if (tvAvatarHint != null) {
+                tvAvatarHint.setVisibility(View.GONE);
+            }
+
             etAddress.setText(userToEdit.getAddress());
-            etPassword.setHint("Mật khẩu mới (nếu muốn đổi)");
+            etPassword.setText("********");
+            etPassword.setEnabled(false);
+            etPassword.setFocusable(false);
+            etPassword.setFocusableInTouchMode(false);
+            etPassword.setHint("Mật khẩu được bảo mật");
+            if (ivTogglePassword != null) {
+                ivTogglePassword.setEnabled(false);
+                ivTogglePassword.setVisibility(View.GONE);
+            }
 
             // Tìm và chọn vai trò tương ứng trong Spinner
             for (int i = 0; i < spRole.getCount(); i++) {
@@ -106,6 +128,9 @@ public class AddUserActivity extends AppCompatActivity {
 
             // Tải ảnh đại diện cũ bằng Glide
             if (userToEdit.getImage() != null && !userToEdit.getImage().isEmpty()) {
+                ivAvatar.setPadding(0, 0, 0, 0);
+                ivAvatar.setImageTintList(null);
+                ivAvatar.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 Glide.with(this)
                         .load(userToEdit.getImage())
                         .centerCrop()
@@ -118,6 +143,7 @@ public class AddUserActivity extends AppCompatActivity {
 
     private void initUi() {
         tvHeaderTitle = findViewById(R.id.tvHeaderTitle);
+        tvAvatarHint = findViewById(R.id.tvAvatarHint);
         btnBack = findViewById(R.id.btnBack);
         rlAvatarPicker = findViewById(R.id.rlAvatarPicker);
         ivAvatar = findViewById(R.id.ivAvatar);
@@ -223,11 +249,12 @@ public class AddUserActivity extends AppCompatActivity {
                 email,
                 phone,
                 role,
-                selectedImageUri != null ? selectedImageUri.toString() : (userToEdit != null ? userToEdit.getImage() : ""),
+                selectedImageUri != null ? selectedImageUri.toString() : (userToEdit != null ? userToEdit.getRawImage() : ""),
                 address,
                 userToEdit != null ? userToEdit.getLastActive() : "Vừa xong"
         );
-        if (!TextUtils.isEmpty(password)) {
+        // Mật khẩu chỉ được gán khi thêm mới người dùng (không cho phép sửa)
+        if (userToEdit == null && !TextUtils.isEmpty(password)) {
             newUser.setPassword(password);
         }
 

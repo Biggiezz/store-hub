@@ -80,17 +80,11 @@
                         app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
                         app:tint="#675C53" />
 
-                    <!-- Edit Badge Badge Icon -->
-                    <ImageView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentBottom="true"
-                        android:contentDescription="Edit Badge"
-                        android:src="@drawable/ic_edit_badge" />
+
                 </RelativeLayout>
 
                 <TextView
+                    android:id="@+id/tvAvatarHint"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"

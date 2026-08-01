@@ -29,6 +29,9 @@ import com.example.storehub.model.response.Response;
 import com.example.storehub.services.HttpResquest;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -45,6 +48,8 @@ public class NewsFragment extends Fragment {
     private int currentPage = 1;
     private ProgressBar progressBarNews;
     private View llPaginationNews;
+    private final Map<Integer, ArrayList<News>> pageCache = new HashMap<>();
+    private final List<Call<Response<ArrayList<News>>>> prefetchCalls = new ArrayList<>();
 
     @Nullable
     @Override
@@ -124,7 +129,50 @@ public class NewsFragment extends Fragment {
         this.currentPage = page;
 
         updatePaginationUi(page);
-        loadNews(page);
+
+        if (pageCache.containsKey(page)) {
+            // Có cache → hiển thị ngay, không loading, không gọi API
+            showNewsPage(pageCache.get(page), loadGeneration);
+        } else {
+            // Chưa có cache → gọi API bình thường
+            loadNews(page);
+        }
+
+        // Luôn prefetch ngầm trang liền kề
+        prefetchAdjacentPages(page);
+    }
+
+    private void prefetchAdjacentPages(int currentPage) {
+        int[] pagesToPrefetch = {currentPage - 1, currentPage + 1};
+
+        for (int targetPage : pagesToPrefetch) {
+            if (targetPage < 1 || pageCache.containsKey(targetPage)) continue;
+
+            Call<Response<ArrayList<News>>> call =
+                    new HttpResquest().callAPI().getListNews(targetPage, LIMIT);
+            prefetchCalls.add(call);
+
+            final int page = targetPage;
+            call.enqueue(new Callback<Response<ArrayList<News>>>() {
+                @Override
+                public void onResponse(@NonNull Call<Response<ArrayList<News>>> call,
+                                       @NonNull retrofit2.Response<Response<ArrayList<News>>> response) {
+                    if (call.isCanceled()) return;
+                    if (response.isSuccessful() && response.body() != null
+                            && response.body().getCode() == 200
+                            && response.body().getData() != null) {
+                        // Lưu vào cache ngầm, không hiển thị gì lên UI
+                        pageCache.put(page, response.body().getData());
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<Response<ArrayList<News>>> call,
+                                      @NonNull Throwable t) {
+                    // Im lặng — prefetch thất bại không ảnh hưởng gì đến UX
+                }
+            });
+        }
     }
 
     private void updatePaginationUi(int page) {
@@ -169,6 +217,8 @@ public class NewsFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null
                         && response.body().getCode() == 200 && response.body().getData() != null) {
                     ArrayList<News> news = response.body().getData();
+                    // Lưu vào cache sau khi nhận được data từ API
+                    pageCache.put(page, news);
                     preloadNewsImages(news, () -> showNewsPage(news, requestGeneration));
                 } else {
                     showLoadFailure(requestGeneration, "Không thể tải danh sách tin tức", null);
@@ -244,6 +294,11 @@ public class NewsFragment extends Fragment {
     @Override
     public void onDestroyView() {
         if (currentCall != null) currentCall.cancel();
+        // Hủy tất cả prefetch calls đang chạy ngầm
+        for (Call<Response<ArrayList<News>>> call : prefetchCalls) call.cancel();
+        prefetchCalls.clear();
+        // Giải phóng bộ nhớ cache khi thoát khỏi màn hình
+        pageCache.clear();
         newsAdapter = null;
         super.onDestroyView();
     }
