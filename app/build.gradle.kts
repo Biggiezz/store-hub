@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.storehub"
+    namespace = "com.nguyenmanhphuc.storehubapp"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.storehub"
+        applicationId = "com.nguyenmanhphuc.storehubapp"
         minSdk = 29
         targetSdk = 35
         versionCode = 1
