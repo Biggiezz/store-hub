@@ -34,6 +34,8 @@ import com.nguyenmanhphuc.storehubapp.utils.SharedPreferencesManager;
 import com.nguyenmanhphuc.storehubapp.services.ApiServices;
 import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
 import com.google.android.material.button.MaterialButton;
+import android.content.Intent;
+import com.nguyenmanhphuc.storehubapp.auth.LoginActivity;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -400,6 +402,14 @@ public class ProductDetailActivity extends BaseActivity {
 
     private void addCurrentProductToCart() {
         if (currentProduct == null) {
+            return;
+        }
+
+        SharedPreferencesManager pref = new SharedPreferencesManager(this);
+        if (!pref.isLoggedIn()) {
+            Toast.makeText(this, "Vui lòng đăng nhập để mua hàng", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
             return;
         }
         if (currentProduct.getColors() != null && !currentProduct.getColors().isEmpty() && selectedColorId == null) {

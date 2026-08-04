@@ -267,6 +267,7 @@ public class LoginActivity extends BaseActivity {
                 intent = new Intent(LoginActivity.this, HomePageManagementActivity.class);
             } else {
                 intent = new Intent(LoginActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             }
 
             startActivity(intent);

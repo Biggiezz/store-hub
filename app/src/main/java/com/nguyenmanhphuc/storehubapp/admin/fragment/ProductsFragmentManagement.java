@@ -221,11 +221,13 @@ public class ProductsFragmentManagement extends Fragment {
         if (!isAdded() || adapter == null) return;
         if (currentCall != null) currentCall.cancel();
         
-        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
-        if (grid != null) grid.setVisibility(View.GONE);
-        if (layoutPagination != null) layoutPagination.setVisibility(View.GONE);
-
-        long startTime = System.currentTimeMillis();
+        // Chỉ hiện Loading Spinner và ẩn danh sách ở lần đầu tiên tải (khi danh sách đang trống)
+        boolean isFirstLoad = adapter.getItemCount() == 0;
+        if (isFirstLoad) {
+            if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+            if (grid != null) grid.setVisibility(View.GONE);
+            if (layoutPagination != null) layoutPagination.setVisibility(View.GONE);
+        }
 
         String keyword = searchInput == null ? "" : searchInput.getText().toString().trim();
         HttpResquest request = new HttpResquest();
@@ -237,42 +239,28 @@ public class ProductsFragmentManagement extends Fragment {
             public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
                 if (!isAdded() || call.isCanceled()) return;
 
-                long elapsedTime = System.currentTimeMillis() - startTime;
-                long remainingDelay = Math.max(0, 3000 - elapsedTime);
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
+                if (grid != null) grid.setVisibility(View.VISIBLE);
+                if (layoutPagination != null) layoutPagination.setVisibility(View.VISIBLE);
 
-                new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                    if (!isAdded() || call.isCanceled()) return;
-
-                    if (progressBar != null) progressBar.setVisibility(View.GONE);
-                    if (grid != null) grid.setVisibility(View.VISIBLE);
-                    if (layoutPagination != null) layoutPagination.setVisibility(View.VISIBLE);
-
-                    if (response.isSuccessful() && response.body() != null) {
-                        adapter.submitList(response.body().getData());
-                        Pagination pagination = response.body().getPagination();
-                        totalPages = pagination == null ? 1 : Math.max(1, pagination.getTotalPages());
-                        currentPage = pagination == null ? 1 : pagination.getCurrentPage();
-                        updatePagination();
-                    } else {
-                        Toast.makeText(requireContext(), "Không thể tải danh sách sản phẩm", Toast.LENGTH_SHORT).show();
-                    }
-                }, remainingDelay);
+                if (response.isSuccessful() && response.body() != null) {
+                    adapter.submitList(response.body().getData());
+                    Pagination pagination = response.body().getPagination();
+                    totalPages = pagination == null ? 1 : Math.max(1, pagination.getTotalPages());
+                    currentPage = pagination == null ? 1 : pagination.getCurrentPage();
+                    updatePagination();
+                } else {
+                    Toast.makeText(requireContext(), "Không thể tải danh sách sản phẩm", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
             public void onFailure(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull Throwable throwable) {
                 if (!isAdded() || call.isCanceled()) return;
-
-                long elapsedTime = System.currentTimeMillis() - startTime;
-                long remainingDelay = Math.max(0, 3000 - elapsedTime);
-
-                new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                    if (!isAdded() || call.isCanceled()) return;
-                    if (progressBar != null) progressBar.setVisibility(View.GONE);
-                    if (grid != null) grid.setVisibility(View.VISIBLE);
-                    if (layoutPagination != null) layoutPagination.setVisibility(View.VISIBLE);
-                    Toast.makeText(requireContext(), "Lỗi kết nối server", Toast.LENGTH_SHORT).show();
-                }, remainingDelay);
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
+                if (grid != null) grid.setVisibility(View.VISIBLE);
+                if (layoutPagination != null) layoutPagination.setVisibility(View.VISIBLE);
+                Toast.makeText(requireContext(), "Lỗi kết nối server", Toast.LENGTH_SHORT).show();
             }
         });
     }

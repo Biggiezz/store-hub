@@ -106,41 +106,33 @@ public class NewsFragmentManagement extends Fragment implements PostAdapter.Post
         String token = sharedPreferencesManager != null ? sharedPreferencesManager.getToken() : "";
         String authHeader = "Bearer " + token;
 
-        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
-        if (rvPosts != null) rvPosts.setVisibility(View.GONE);
-        if (tvEmptyPosts != null) tvEmptyPosts.setVisibility(View.GONE);
-
-        long startTime = System.currentTimeMillis();
+        // Chỉ hiển thị loading và ẩn danh sách ở lần tải đầu tiên (danh sách rỗng)
+        boolean isFirstLoad = newsList.isEmpty();
+        if (isFirstLoad) {
+            if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+            if (rvPosts != null) rvPosts.setVisibility(View.GONE);
+            if (tvEmptyPosts != null) tvEmptyPosts.setVisibility(View.GONE);
+        }
 
         httpRequest.callAPI().getAdminListNews(authHeader, 1, 50).enqueue(new Callback<Response<ArrayList<News>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<News>>> call, @NonNull retrofit2.Response<Response<ArrayList<News>>> response) {
-                long elapsedTime = System.currentTimeMillis() - startTime;
-                long remainingDelay = Math.max(0, 3000 - elapsedTime);
+                if (!isAdded()) return;
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
+                if (rvPosts != null) rvPosts.setVisibility(View.VISIBLE);
 
-                new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
-                    if (!isAdded()) return;
-                    if (progressBar != null) progressBar.setVisibility(View.GONE);
-                    if (rvPosts != null) rvPosts.setVisibility(View.VISIBLE);
-
-                    if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
-                        newsList = response.body().getData();
-                        filterByStatus(selectedStatus);
-                    }
-                }, remainingDelay);
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    newsList = response.body().getData();
+                    filterByStatus(selectedStatus);
+                }
             }
 
             @Override
             public void onFailure(@NonNull Call<Response<ArrayList<News>>> call, @NonNull Throwable t) {
-                long elapsedTime = System.currentTimeMillis() - startTime;
-                long remainingDelay = Math.max(0, 3000 - elapsedTime);
-
-                new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
-                    if (!isAdded()) return;
-                    if (progressBar != null) progressBar.setVisibility(View.GONE);
-                    if (rvPosts != null) rvPosts.setVisibility(View.VISIBLE);
-                    Toast.makeText(getContext(), "Lỗi tải danh sách bài viết", Toast.LENGTH_SHORT).show();
-                }, remainingDelay);
+                if (!isAdded()) return;
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
+                if (rvPosts != null) rvPosts.setVisibility(View.VISIBLE);
+                Toast.makeText(getContext(), "Lỗi tải danh sách bài viết", Toast.LENGTH_SHORT).show();
             }
         });
     }

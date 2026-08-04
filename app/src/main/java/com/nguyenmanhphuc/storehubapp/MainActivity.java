@@ -38,6 +38,8 @@ import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
 import com.nguyenmanhphuc.storehubapp.utils.SharedPreferencesManager;
 import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
+import android.widget.Toast;
+import com.nguyenmanhphuc.storehubapp.auth.LoginActivity;
 
 import java.util.ArrayList;
 
@@ -113,8 +115,15 @@ public class MainActivity extends BaseActivity {
         // Initialize avatar & load user image
         imgAvatar = findViewById(R.id.imgAvatar);
         imgAvatar.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
-            startActivity(intent);
+            SharedPreferencesManager prefManager = new SharedPreferencesManager(MainActivity.this);
+            if (!prefManager.isLoggedIn()) {
+                Toast.makeText(MainActivity.this, "Vui lòng đăng nhập để xem thông tin cá nhân", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                startActivity(intent);
+            }
         });
         loadAvatar();
 
@@ -230,6 +239,13 @@ public class MainActivity extends BaseActivity {
     }
 
     public void showCart() {
+        SharedPreferencesManager prefManager = new SharedPreferencesManager(this);
+        if (!prefManager.isLoggedIn()) {
+            Toast.makeText(this, "Vui lòng đăng nhập để xem giỏ hàng", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            return;
+        }
         selectedTab = TAB_CART;
         findViewById(R.id.mainScrollView).setVisibility(View.GONE);
         findViewById(R.id.fragmentContainer).setVisibility(View.VISIBLE);
@@ -240,6 +256,13 @@ public class MainActivity extends BaseActivity {
     }
 
     public void showOder() {
+        SharedPreferencesManager prefManager = new SharedPreferencesManager(this);
+        if (!prefManager.isLoggedIn()) {
+            Toast.makeText(this, "Vui lòng đăng nhập để xem đơn hàng", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            return;
+        }
         selectedTab = TAB_ORDERS;
         findViewById(R.id.mainScrollView).setVisibility(View.GONE);
         findViewById(R.id.fragmentContainer).setVisibility(View.VISIBLE);
