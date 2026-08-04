@@ -79,6 +79,16 @@ public class RegisterActivity extends BaseActivity {
             return;
         }
 
+        if (!phone.matches("^[0-9]{10,11}$")) {
+            Toast.makeText(this, "Số điện thoại phải từ 10-11 chữ số", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (password.length() < 6) {
+            Toast.makeText(this, "Mật khẩu phải có ít nhất 6 ký tự", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (!password.equals(confirmPassword)) {
             Toast.makeText(this, "Mật khẩu nhập lại không khớp", Toast.LENGTH_SHORT).show();
             return;

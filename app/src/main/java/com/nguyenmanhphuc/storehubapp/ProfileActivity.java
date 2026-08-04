@@ -255,8 +255,10 @@ public class ProfileActivity extends BaseActivity {
         httpResquest.callAPI().logout(tokenHeader).enqueue(new Callback<Response<Void>>() {
             @Override
             public void onResponse(@NonNull Call<Response<Void>> call, @NonNull retrofit2.Response<Response<Void>> response) {
-                // Wipe local preferences anyway
+                // Wipe local preferences and static cache
                 sharedPreferencesManager.logout();
+                MainActivity.preloadedProducts = null;
+                MainActivity.preloadedNews = null;
                 Toast.makeText(getApplicationContext(), "Đã đăng xuất thành công", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -267,6 +269,8 @@ public class ProfileActivity extends BaseActivity {
             @Override
             public void onFailure(@NonNull Call<Response<Void>> call, @NonNull Throwable t) {
                 sharedPreferencesManager.logout();
+                MainActivity.preloadedProducts = null;
+                MainActivity.preloadedNews = null;
                 Toast.makeText(getApplicationContext(), "Đã đăng xuất", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

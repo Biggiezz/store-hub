@@ -1,5 +1,6 @@
 package com.nguyenmanhphuc.storehubapp.admin;
 
+import android.graphics.Color;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -95,13 +96,50 @@ public class RecentActivityDetailActivity extends AppCompatActivity {
         imgActivityIcon.setBackgroundTintList(ColorStateList.valueOf(RecentActivityAdapter.getIconBackground(type)));
 
         tvActivityTitle.setText(value(title));
-        tvActivityTime.setText(DateTimeUtils.formatISOToLocal(createdAt, "HH:mm, dd/MM/yyyy"));
-        tvCustomerName.setText(value(customerName).isEmpty() ? "Khách hàng" : value(customerName));
+        String resolvedName = value(customerName);
+        if (resolvedName.isEmpty() && title != null) {
+            resolvedName = title.replace(" vừa đăng nhập", "")
+                    .replace("Quản trị viên ", "")
+                    .replace("Khách hàng ", "")
+                    .replace("Người dùng mới: ", "")
+                    .replace("Sản phẩm mới: ", "")
+                    .trim();
+        }
+        if (resolvedName.isEmpty()) {
+            resolvedName = "Tài khoản hệ thống";
+        }
+        tvCustomerName.setText(resolvedName);
         tvCustomerPhone.setText(value(customerPhone));
         tvPaymentMethod.setText(value(paymentMethod).isEmpty() ? "Thanh toán khi nhận hàng" : value(paymentMethod));
         tvTotalAmount.setText(formatPrice(totalAmount));
 
+        View layoutCustomerPhone = findViewById(R.id.layoutCustomerPhone);
+        View layoutPaymentMethod = findViewById(R.id.layoutPaymentMethod);
+        View layoutTotalAmount = findViewById(R.id.layoutTotalAmount);
+        View dividerPhone = findViewById(R.id.dividerPhone);
+        View dividerPayment = findViewById(R.id.dividerPayment);
+        View dividerTotal = findViewById(R.id.dividerTotal);
+
         boolean isOrder = type != null && type.startsWith("order_");
+
+        if (!isOrder) {
+            // Đối với các hoạt động đăng nhập/người dùng: Chỉ giữ lại Tên người dùng và Thời gian
+            if (layoutCustomerPhone != null) layoutCustomerPhone.setVisibility(View.GONE);
+            if (layoutPaymentMethod != null) layoutPaymentMethod.setVisibility(View.GONE);
+            if (layoutTotalAmount != null) layoutTotalAmount.setVisibility(View.GONE);
+            if (dividerPhone != null) dividerPhone.setVisibility(View.GONE);
+            if (dividerPayment != null) dividerPayment.setVisibility(View.GONE);
+            if (dividerTotal != null) dividerTotal.setVisibility(View.GONE);
+        } else {
+            boolean hasPhone = customerPhone != null && !customerPhone.trim().isEmpty();
+            if (layoutCustomerPhone != null) layoutCustomerPhone.setVisibility(hasPhone ? View.VISIBLE : View.GONE);
+            if (dividerPhone != null) dividerPhone.setVisibility(hasPhone ? View.VISIBLE : View.GONE);
+            if (layoutPaymentMethod != null) layoutPaymentMethod.setVisibility(View.VISIBLE);
+            if (dividerPayment != null) dividerPayment.setVisibility(View.VISIBLE);
+            if (layoutTotalAmount != null) layoutTotalAmount.setVisibility(View.VISIBLE);
+            if (dividerTotal != null) dividerTotal.setVisibility(View.VISIBLE);
+        }
+
         boolean hasProducts = products != null && !products.isEmpty();
         cardProducts.setVisibility(isOrder && hasProducts ? View.VISIBLE : View.GONE);
         if (isOrder && hasProducts) {

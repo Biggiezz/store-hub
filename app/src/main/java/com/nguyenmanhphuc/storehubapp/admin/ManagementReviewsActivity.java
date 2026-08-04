@@ -138,6 +138,7 @@ public class ManagementReviewsActivity extends AppCompatActivity {
         apiServices.getListProduct(1, 1000, "", false, "").enqueue(new Callback<Response<ArrayList<Product>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
+                if (isFinishing() || isDestroyed()) return;
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     allReviews.clear();
                     ArrayList<Product> products = response.body().getData();
@@ -159,6 +160,7 @@ public class ManagementReviewsActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull Throwable t) {
+                if (isFinishing() || isDestroyed()) return;
                 Toast.makeText(ManagementReviewsActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 tvEmptyState.setVisibility(View.VISIBLE);
                 rvReviews.setVisibility(View.GONE);

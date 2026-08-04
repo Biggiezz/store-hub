@@ -23,7 +23,7 @@ public class Helpers {
         }
 
         transIdDefault += 1;
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat formatDateTime = new SimpleDateFormat("yyMMdd_hhmmss");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat formatDateTime = new SimpleDateFormat("yyMMdd_HHmmss", java.util.Locale.US);
         String timeString = formatDateTime.format(new Date());
         return String.format("%s%06d", timeString, transIdDefault);
     }
