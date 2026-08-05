@@ -14,7 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ProgressBar;
-import android.view.Gravity;
 import java.util.List;
 
 
@@ -172,11 +171,8 @@ public class ProductsFragmentManagement extends Fragment {
     }
 
     private void addChip(String label, String value) {
-        TextView chip = new TextView(requireContext());
+        TextView chip = new TextView(requireContext(), null, 0, R.style.AdminChipStyle);
         chip.setText(label);
-        chip.setTextSize(14f);
-        chip.setGravity(Gravity.CENTER);
-        chip.setPadding(35, 15, 35, 15);
 
         // Đặt LayoutParams và margins
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(

@@ -355,12 +355,8 @@ public class MainActivity extends BaseActivity {
 
         for (int i = 0; i < categories.size(); i++) {
             Category category = categories.get(i);
-            MaterialButton btn = new MaterialButton(this);
+            MaterialButton btn = new MaterialButton(this, null, R.style.CategoryChipStyle);
             btn.setText(category.getName());
-            btn.setTextSize(12f);
-            btn.setCornerRadius(99);
-            btn.setAllCaps(false);
-            btn.setPadding(35, 15, 35, 15);
 
             boolean isActive = category.get_id().equals(activeCategory);
             btn.setBackgroundTintList(ColorStateList.valueOf(isActive ? activeBgColor : inactiveBgColor));

@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
 import com.nguyenmanhphuc.storehubapp.MainActivity;
 import com.nguyenmanhphuc.storehubapp.PaymentConfirmationActivity;
 import com.nguyenmanhphuc.storehubapp.R;
@@ -227,7 +228,7 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartChangeLi
         RequestBody stock = RequestBody.create(textType, String.valueOf(newStock));
         RequestBody soldQuantity = RequestBody.create(textType, String.valueOf(newSold));
         RequestBody isActive = RequestBody.create(textType, String.valueOf(product.isActive()));
-        RequestBody colors = RequestBody.create(textType, new com.google.gson.Gson().toJson(product.getColors()));
+        RequestBody colors = RequestBody.create(textType, new Gson().toJson(product.getColors()));
 
         apiService.updateProduct(product.get_id(), name, price, category,
                 description, stock, soldQuantity, isActive, colors, null)
@@ -343,6 +344,12 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartChangeLi
     private void setLoading(boolean loading) {
         if (progressBar != null) {
             progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
+        }
+        if (loading) {
+            if (cartScrollView != null) cartScrollView.setVisibility(View.GONE);
+            if (emptyCartLayout != null) emptyCartLayout.setVisibility(View.GONE);
+        } else {
+            if (cartScrollView != null) cartScrollView.setVisibility(View.VISIBLE);
         }
     }
 

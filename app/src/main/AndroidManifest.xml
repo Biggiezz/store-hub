@@ -38,7 +38,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".admin.RecentActivity"
+            android:name=".admin.AdminRecentActivity"
             android:exported="false" />
         <activity
             android:name=".admin.ReplyReviewActivity"

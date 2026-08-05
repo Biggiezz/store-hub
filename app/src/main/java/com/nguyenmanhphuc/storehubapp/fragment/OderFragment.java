@@ -373,18 +373,14 @@ public class OderFragment extends Fragment {
         }
 
         if (cartItems.isEmpty() && orders.isEmpty()) {
-            TextView emptyText = new TextView(requireContext());
+            TextView emptyText = new TextView(requireContext(), null, 0, R.style.OrderEmptyStateStyle);
             emptyText.setText("Không có đơn hàng nào.");
-            emptyText.setGravity(android.view.Gravity.CENTER);
-            emptyText.setPadding(0, 48, 0, 0);
             ordersContainer.addView(emptyText);
         }
     }
 
     private void openCartScreen() {
-        if (getActivity() instanceof MainActivity) {
-            ((MainActivity) getActivity()).showCart();
-        }
+        if (getActivity() instanceof MainActivity) ((MainActivity) getActivity()).showCart();
     }
 
     private void openOrderDetail(Order order) {
@@ -525,6 +521,11 @@ public class OderFragment extends Fragment {
     private void setLoading(boolean loading) {
         if (progressBar != null) {
             progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
+        }
+        if (loading) {
+            if (ordersContainer != null) ordersContainer.setVisibility(View.GONE);
+        } else {
+            if (ordersContainer != null) ordersContainer.setVisibility(View.VISIBLE);
         }
     }
 

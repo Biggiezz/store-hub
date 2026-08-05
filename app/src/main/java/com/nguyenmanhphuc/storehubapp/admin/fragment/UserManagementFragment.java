@@ -354,6 +354,9 @@ public class UserManagementFragment extends Fragment {
 
     private void fetchUsersFromServer() {
         pbLoadingUsers.setVisibility(View.VISIBLE);
+        if (rvUsers != null) rvUsers.setVisibility(View.GONE);
+        if (tvEmptyState != null) tvEmptyState.setVisibility(View.GONE);
+        if (llPagination != null) llPagination.setVisibility(View.GONE);
         SharedPreferencesManager prefManager = new SharedPreferencesManager(requireContext());
         String token = "Bearer " + prefManager.getToken();
         HttpResquest httpResquest = new HttpResquest();

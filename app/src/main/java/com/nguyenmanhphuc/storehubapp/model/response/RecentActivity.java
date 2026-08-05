@@ -24,6 +24,14 @@ public class RecentActivity {
     private String paymentMethod;
     @SerializedName("totalAmount")
     private long totalAmount;
+    @SerializedName("productImage")
+    private String productImage;
+    @SerializedName("productStock")
+    private Integer productStock;
+    @SerializedName("productPrice")
+    private Long productPrice;
+    @SerializedName("productStatus")
+    private String productStatus;
 
     public String getType() { return type; }
     public String getTitle() { return title; }
@@ -34,4 +42,8 @@ public class RecentActivity {
     public String getCustomerPhone() { return customerPhone; }
     public String getPaymentMethod() { return paymentMethod; }
     public long getTotalAmount() { return totalAmount; }
+    public String getProductImage() { return productImage; }
+    public Integer getProductStock() { return productStock; }
+    public Long getProductPrice() { return productPrice; }
+    public String getProductStatus() { return productStatus; }
 }

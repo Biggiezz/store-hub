@@ -363,6 +363,15 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="24dp"
+                android:indeterminateTint="#2F4238"
+                android:visibility="gone" />
+
             <!-- Trạng thái không có dữ liệu -->
             <LinearLayout
                 android:id="@+id/layoutEmpty"

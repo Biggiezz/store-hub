@@ -18,6 +18,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.nguyenmanhphuc.storehubapp.R;
 import com.nguyenmanhphuc.storehubapp.adapter.OrderProductAdapter;
 import com.nguyenmanhphuc.storehubapp.admin.adapter.RecentActivityAdapter;
@@ -40,6 +41,44 @@ public class RecentActivityDetailActivity extends AppCompatActivity {
     private static final String EXTRA_CUSTOMER_PHONE = "activity_customer_phone";
     private static final String EXTRA_PAYMENT_METHOD = "activity_payment_method";
     private static final String EXTRA_TOTAL_AMOUNT = "activity_total_amount";
+    private static final String EXTRA_PRODUCT_IMAGE = "activity_product_image";
+    private static final String EXTRA_PRODUCT_STOCK = "activity_product_stock";
+    private static final String EXTRA_PRODUCT_PRICE = "activity_product_price";
+    private static final String EXTRA_PRODUCT_STATUS = "activity_product_status";
+
+    private ImageView imgBack;
+    private ImageView imgActivityIcon;
+    private TextView tvActivityTitle;
+    private TextView tvActivityTime;
+    private TextView tvCustomerName;
+    private TextView tvCustomerPhone;
+    private TextView tvPaymentMethod;
+    private TextView tvTotalAmount;
+    private View cardProducts;
+    private RecyclerView rvPurchasedProducts;
+    private MaterialButton btnViewOrders;
+//    private MaterialButton btnBack;
+    private TextView tvSectionHeader;
+    private TextView tvNameLabel;
+
+    private View layoutProductStock;
+    private TextView tvProductStock;
+    private View dividerProductStock;
+
+    private View layoutProductPrice;
+    private TextView tvProductPrice;
+    private View dividerProductPrice;
+
+    private View layoutProductStatus;
+    private TextView tvProductStatus;
+    private View dividerProductStatus;
+
+    private View layoutCustomerPhone;
+    private View layoutPaymentMethod;
+    private View layoutTotalAmount;
+    private View dividerPhone;
+    private View dividerPayment;
+    private View dividerTotal;
 
     public static Intent createIntent(Context context, RecentActivity activity) {
         Intent intent = new Intent(context, RecentActivityDetailActivity.class);
@@ -52,6 +91,10 @@ public class RecentActivityDetailActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_CUSTOMER_PHONE, value(activity.getCustomerPhone()));
         intent.putExtra(EXTRA_PAYMENT_METHOD, value(activity.getPaymentMethod()));
         intent.putExtra(EXTRA_TOTAL_AMOUNT, activity.getTotalAmount());
+        intent.putExtra(EXTRA_PRODUCT_IMAGE, value(activity.getProductImage()));
+        intent.putExtra(EXTRA_PRODUCT_STOCK, activity.getProductStock() != null ? activity.getProductStock() : -1);
+        intent.putExtra(EXTRA_PRODUCT_PRICE, activity.getProductPrice() != null ? activity.getProductPrice() : -1L);
+        intent.putExtra(EXTRA_PRODUCT_STATUS, value(activity.getProductStatus()));
         return intent;
     }
 
@@ -66,6 +109,8 @@ public class RecentActivityDetailActivity extends AppCompatActivity {
             return insets;
         });
 
+        initUi();
+
         String type = getIntent().getStringExtra(EXTRA_TYPE);
         String title = getIntent().getStringExtra(EXTRA_TITLE);
         String detail = getIntent().getStringExtra(EXTRA_DETAIL);
@@ -75,27 +120,26 @@ public class RecentActivityDetailActivity extends AppCompatActivity {
         String customerPhone = getIntent().getStringExtra(EXTRA_CUSTOMER_PHONE);
         String paymentMethod = getIntent().getStringExtra(EXTRA_PAYMENT_METHOD);
         long totalAmount = getIntent().getLongExtra(EXTRA_TOTAL_AMOUNT, 0L);
-
-        ImageView imgBack = findViewById(R.id.imgBack);
-        ImageView imgActivityIcon = findViewById(R.id.imgActivityIcon);
-        TextView tvActivityTitle = findViewById(R.id.tvActivityTitle);
-        TextView tvActivityTime = findViewById(R.id.tvActivityTime);
-        TextView tvCustomerName = findViewById(R.id.tvCustomerName);
-        TextView tvCustomerPhone = findViewById(R.id.tvCustomerPhone);
-        TextView tvPaymentMethod = findViewById(R.id.tvPaymentMethod);
-        TextView tvTotalAmount = findViewById(R.id.tvTotalAmount);
-        View cardProducts = findViewById(R.id.cardProducts);
-        RecyclerView rvPurchasedProducts = findViewById(R.id.rvPurchasedProducts);
-        MaterialButton btnViewOrders = findViewById(R.id.btnViewOrders);
-        MaterialButton btnBack = findViewById(R.id.btnBack);
+        String productImage = getIntent().getStringExtra(EXTRA_PRODUCT_IMAGE);
+        int productStock = getIntent().getIntExtra(EXTRA_PRODUCT_STOCK, -1);
+        long productPrice = getIntent().getLongExtra(EXTRA_PRODUCT_PRICE, -1L);
+        String productStatus = getIntent().getStringExtra(EXTRA_PRODUCT_STATUS);
 
         imgBack.setOnClickListener(v -> finish());
-        btnBack.setOnClickListener(v -> finish());
+//        btnBack.setOnClickListener(v -> finish());
 
         imgActivityIcon.setImageResource(RecentActivityAdapter.getIcon(type));
         imgActivityIcon.setBackgroundTintList(ColorStateList.valueOf(RecentActivityAdapter.getIconBackground(type)));
 
         tvActivityTitle.setText(value(title));
+
+        if (tvActivityTime != null) {
+            String formattedTime = DateTimeUtils.formatISOToVN(createdAt, "HH:mm, dd/MM/yyyy");
+            if (formattedTime.isEmpty()) {
+                formattedTime = value(createdAt);
+            }
+            tvActivityTime.setText(formattedTime);
+        }
         String resolvedName = value(customerName);
         if (resolvedName.isEmpty() && title != null) {
             resolvedName = title.replace(" vừa đăng nhập", "")
@@ -113,31 +157,102 @@ public class RecentActivityDetailActivity extends AppCompatActivity {
         tvPaymentMethod.setText(value(paymentMethod).isEmpty() ? "Thanh toán khi nhận hàng" : value(paymentMethod));
         tvTotalAmount.setText(formatPrice(totalAmount));
 
-        View layoutCustomerPhone = findViewById(R.id.layoutCustomerPhone);
-        View layoutPaymentMethod = findViewById(R.id.layoutPaymentMethod);
-        View layoutTotalAmount = findViewById(R.id.layoutTotalAmount);
-        View dividerPhone = findViewById(R.id.dividerPhone);
-        View dividerPayment = findViewById(R.id.dividerPayment);
-        View dividerTotal = findViewById(R.id.dividerTotal);
-
         boolean isOrder = type != null && type.startsWith("order_");
+        boolean isProduct = type != null && type.startsWith("product_");
 
-        if (!isOrder) {
-            // Đối với các hoạt động đăng nhập/người dùng: Chỉ giữ lại Tên người dùng và Thời gian
+        if (isProduct) {
+            if (tvSectionHeader != null) tvSectionHeader.setText("THÔNG TIN SẢN PHẨM");
+            if (tvNameLabel != null) tvNameLabel.setText("Tên sản phẩm");
+
+            // Ẩn các trường thông tin đơn hàng/khách hàng không thuộc về sản phẩm
             if (layoutCustomerPhone != null) layoutCustomerPhone.setVisibility(View.GONE);
             if (layoutPaymentMethod != null) layoutPaymentMethod.setVisibility(View.GONE);
             if (layoutTotalAmount != null) layoutTotalAmount.setVisibility(View.GONE);
             if (dividerPhone != null) dividerPhone.setVisibility(View.GONE);
             if (dividerPayment != null) dividerPayment.setVisibility(View.GONE);
             if (dividerTotal != null) dividerTotal.setVisibility(View.GONE);
+            // Xử lý tồn kho fallback từ detail nếu stock == -1
+            int finalStock = productStock;
+            if (finalStock == -1 && detail != null && detail.contains("Tồn kho: ")) {
+                try {
+                    String sub = detail.substring(detail.indexOf("Tồn kho: ") + 9).trim();
+                    finalStock = Integer.parseInt(sub);
+                } catch (Exception ignored) {}
+            }
+
+            // Load hình ảnh sản phẩm vào imgActivityIcon ở phần header (được bo góc 8dp tự động qua XML)
+            if (productImage != null && !productImage.isEmpty() && imgActivityIcon != null) {
+                Glide.with(this)
+                        .load(productImage)
+                        .placeholder(R.drawable.ic_product)
+                        .error(R.drawable.ic_product)
+                        .into(imgActivityIcon);
+            }
+
+            if (finalStock >= 0) {
+                if (layoutProductStock != null) layoutProductStock.setVisibility(View.VISIBLE);
+                if (dividerProductStock != null) dividerProductStock.setVisibility(View.VISIBLE);
+                if (tvProductStock != null) tvProductStock.setText(finalStock + " sản phẩm");
+            } else {
+                if (layoutProductStock != null) layoutProductStock.setVisibility(View.GONE);
+                if (dividerProductStock != null) dividerProductStock.setVisibility(View.GONE);
+            }
+
+            if (productPrice >= 0) {
+                if (layoutProductPrice != null) layoutProductPrice.setVisibility(View.VISIBLE);
+                if (dividerProductPrice != null) dividerProductPrice.setVisibility(View.VISIBLE);
+                if (tvProductPrice != null) tvProductPrice.setText(formatPrice(productPrice));
+            } else {
+                if (layoutProductPrice != null) layoutProductPrice.setVisibility(View.GONE);
+                if (dividerProductPrice != null) dividerProductPrice.setVisibility(View.GONE);
+            }
+
+            String finalStatus = productStatus;
+            if ((finalStatus == null || finalStatus.isEmpty()) && finalStock >= 0) {
+                finalStatus = finalStock > 0 ? "Đang bán" : "Hết hàng";
+            }
+
+            if (finalStatus != null && !finalStatus.isEmpty()) {
+                if (layoutProductStatus != null) layoutProductStatus.setVisibility(View.VISIBLE);
+                if (dividerProductStatus != null) dividerProductStatus.setVisibility(View.VISIBLE);
+                if (tvProductStatus != null) {
+                    tvProductStatus.setText(finalStatus);
+                    boolean isAvailable = "Đang bán".equalsIgnoreCase(finalStatus);
+                    tvProductStatus.setTextColor(Color.parseColor(isAvailable ? "#2E7D32" : "#E53935"));
+                }
+            } else {
+                if (layoutProductStatus != null) layoutProductStatus.setVisibility(View.GONE);
+                if (dividerProductStatus != null) dividerProductStatus.setVisibility(View.GONE);
+            }
         } else {
-            boolean hasPhone = customerPhone != null && !customerPhone.trim().isEmpty();
-            if (layoutCustomerPhone != null) layoutCustomerPhone.setVisibility(hasPhone ? View.VISIBLE : View.GONE);
-            if (dividerPhone != null) dividerPhone.setVisibility(hasPhone ? View.VISIBLE : View.GONE);
-            if (layoutPaymentMethod != null) layoutPaymentMethod.setVisibility(View.VISIBLE);
-            if (dividerPayment != null) dividerPayment.setVisibility(View.VISIBLE);
-            if (layoutTotalAmount != null) layoutTotalAmount.setVisibility(View.VISIBLE);
-            if (dividerTotal != null) dividerTotal.setVisibility(View.VISIBLE);
+            if (tvSectionHeader != null) tvSectionHeader.setText("THÔNG TIN KHÁCH HÀNG");
+            if (tvNameLabel != null) tvNameLabel.setText("Tên người dùng");
+
+            // Ẩn các trường sản phẩm đối với sự kiện khác
+            if (layoutProductStock != null) layoutProductStock.setVisibility(View.GONE);
+            if (dividerProductStock != null) dividerProductStock.setVisibility(View.GONE);
+            if (layoutProductPrice != null) layoutProductPrice.setVisibility(View.GONE);
+            if (dividerProductPrice != null) dividerProductPrice.setVisibility(View.GONE);
+            if (layoutProductStatus != null) layoutProductStatus.setVisibility(View.GONE);
+            if (dividerProductStatus != null) dividerProductStatus.setVisibility(View.GONE);
+
+            if (!isOrder) {
+                // Đối với các hoạt động đăng nhập/người dùng: Chỉ giữ lại Tên người dùng và Thời gian
+                if (layoutCustomerPhone != null) layoutCustomerPhone.setVisibility(View.GONE);
+                if (layoutPaymentMethod != null) layoutPaymentMethod.setVisibility(View.GONE);
+                if (layoutTotalAmount != null) layoutTotalAmount.setVisibility(View.GONE);
+                if (dividerPhone != null) dividerPhone.setVisibility(View.GONE);
+                if (dividerPayment != null) dividerPayment.setVisibility(View.GONE);
+                if (dividerTotal != null) dividerTotal.setVisibility(View.GONE);
+            } else {
+                boolean hasPhone = customerPhone != null && !customerPhone.trim().isEmpty();
+                if (layoutCustomerPhone != null) layoutCustomerPhone.setVisibility(hasPhone ? View.VISIBLE : View.GONE);
+                if (dividerPhone != null) dividerPhone.setVisibility(hasPhone ? View.VISIBLE : View.GONE);
+                if (layoutPaymentMethod != null) layoutPaymentMethod.setVisibility(View.VISIBLE);
+                if (dividerPayment != null) dividerPayment.setVisibility(View.VISIBLE);
+                if (layoutTotalAmount != null) layoutTotalAmount.setVisibility(View.VISIBLE);
+                if (dividerTotal != null) dividerTotal.setVisibility(View.VISIBLE);
+            }
         }
 
         boolean hasProducts = products != null && !products.isEmpty();
@@ -153,19 +268,45 @@ public class RecentActivityDetailActivity extends AppCompatActivity {
         btnViewOrders.setOnClickListener(v -> startActivity(new Intent(this, AdminOrdersActivity.class)));
     }
 
-    private static String value(String text) {
-        return text == null ? "" : text;
+    private void initUi() {
+        imgBack = findViewById(R.id.imgBack);
+        imgActivityIcon = findViewById(R.id.imgActivityIcon);
+        tvActivityTitle = findViewById(R.id.tvActivityTitle);
+        tvActivityTime = findViewById(R.id.tvActivityTime);
+        tvCustomerName = findViewById(R.id.tvCustomerName);
+        tvCustomerPhone = findViewById(R.id.tvCustomerPhone);
+        tvPaymentMethod = findViewById(R.id.tvPaymentMethod);
+        tvTotalAmount = findViewById(R.id.tvTotalAmount);
+        cardProducts = findViewById(R.id.cardProducts);
+        rvPurchasedProducts = findViewById(R.id.rvPurchasedProducts);
+        btnViewOrders = findViewById(R.id.btnViewOrders);
+//        btnBack = findViewById(R.id.btnBack);
+
+        tvSectionHeader = findViewById(R.id.tvSectionHeader);
+        tvNameLabel = findViewById(R.id.tvNameLabel);
+
+        layoutProductStock = findViewById(R.id.layoutProductStock);
+        tvProductStock = findViewById(R.id.tvProductStock);
+        dividerProductStock = findViewById(R.id.dividerProductStock);
+
+        layoutProductPrice = findViewById(R.id.layoutProductPrice);
+        tvProductPrice = findViewById(R.id.tvProductPrice);
+        dividerProductPrice = findViewById(R.id.dividerProductPrice);
+
+        layoutProductStatus = findViewById(R.id.layoutProductStatus);
+        tvProductStatus = findViewById(R.id.tvProductStatus);
+        dividerProductStatus = findViewById(R.id.dividerProductStatus);
+
+        layoutCustomerPhone = findViewById(R.id.layoutCustomerPhone);
+        layoutPaymentMethod = findViewById(R.id.layoutPaymentMethod);
+        layoutTotalAmount = findViewById(R.id.layoutTotalAmount);
+        dividerPhone = findViewById(R.id.dividerPhone);
+        dividerPayment = findViewById(R.id.dividerPayment);
+        dividerTotal = findViewById(R.id.dividerTotal);
     }
 
-    private static String formatType(String type) {
-        if ("order_completed".equals(type)) return "Đơn hàng hoàn thành";
-        if ("order_cancelled".equals(type)) return "Đơn hàng đã hủy";
-        if ("order_created".equals(type)) return "Đơn hàng mới";
-        if ("user_created".equals(type)) return "Người dùng mới";
-        if ("login_admin".equals(type)) return "Đăng nhập quản trị";
-        if ("login_customer".equals(type)) return "Đăng nhập khách hàng";
-        if ("product_created".equals(type)) return "Sản phẩm mới";
-        return value(type);
+    private static String value(String text) {
+        return text == null ? "" : text;
     }
 
     private static String formatPrice(long amount) {

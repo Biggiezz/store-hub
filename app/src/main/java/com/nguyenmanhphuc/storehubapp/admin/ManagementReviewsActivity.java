@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +43,7 @@ public class ManagementReviewsActivity extends AppCompatActivity {
     private final ArrayList<ReviewWithProduct> allReviews = new ArrayList<>();
     private final ArrayList<ReviewWithProduct> filteredReviews = new ArrayList<>();
     
+    private ProgressBar progressBar;
     private int currentTab = 0; // 0: Tất cả, 1: Chưa trả lời, 2: Đã trả lời
     private ApiServices apiServices;
 
@@ -68,6 +70,7 @@ public class ManagementReviewsActivity extends AppCompatActivity {
         btnBack = findViewById(R.id.btnBack);
         rvReviews = findViewById(R.id.rvReviews);
         tvEmptyState = findViewById(R.id.tvEmptyState);
+        progressBar = findViewById(R.id.progressBar);
         tvFilterAll = findViewById(R.id.tvFilterAll);
         tvFilterUnanswered = findViewById(R.id.tvFilterUnanswered);
         tvFilterAnswered = findViewById(R.id.tvFilterAnswered);
@@ -135,10 +138,15 @@ public class ManagementReviewsActivity extends AppCompatActivity {
     }
 
     private void loadReviews() {
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+        if (rvReviews != null) rvReviews.setVisibility(View.GONE);
+        if (tvEmptyState != null) tvEmptyState.setVisibility(View.GONE);
+
         apiServices.getListProduct(1, 1000, "", false, "").enqueue(new Callback<Response<ArrayList<Product>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
                 if (isFinishing() || isDestroyed()) return;
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     allReviews.clear();
                     ArrayList<Product> products = response.body().getData();
@@ -161,6 +169,7 @@ public class ManagementReviewsActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull Throwable t) {
                 if (isFinishing() || isDestroyed()) return;
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
                 Toast.makeText(ManagementReviewsActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 tvEmptyState.setVisibility(View.VISIBLE);
                 rvReviews.setVisibility(View.GONE);

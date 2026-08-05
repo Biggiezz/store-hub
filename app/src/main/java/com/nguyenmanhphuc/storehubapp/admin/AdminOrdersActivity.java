@@ -35,6 +35,7 @@ import retrofit2.Callback;
 
 public class AdminOrdersActivity extends AppCompatActivity implements AdminOrderAdapter.OnOrderClickListener {
 
+    private RecyclerView rvAdminOrders;
     private TextView tvEmptyState;
     private ProgressBar progressBar;
     private AdminOrderAdapter adapter;
@@ -59,7 +60,7 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
         }
 
         // Bind Views
-        RecyclerView rvAdminOrders = findViewById(R.id.rvAdminOrders);
+        rvAdminOrders = findViewById(R.id.rvAdminOrders);
         tvEmptyState = findViewById(R.id.tvEmptyState);
         progressBar = findViewById(R.id.progressBar);
 
@@ -96,9 +97,11 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
                     ArrayList<Order> orderList = response.body().getData();
                     if (orderList == null || orderList.isEmpty()) {
                         tvEmptyState.setVisibility(View.VISIBLE);
+                        if (rvAdminOrders != null) rvAdminOrders.setVisibility(View.GONE);
                         adapter.updateData(new ArrayList<>());
                     } else {
                         tvEmptyState.setVisibility(View.GONE);
+                        if (rvAdminOrders != null) rvAdminOrders.setVisibility(View.VISIBLE);
                         adapter.updateData(orderList);
                     }
                 } else {
@@ -126,6 +129,12 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
     private void setLoading(boolean loading) {
         if (progressBar != null) {
             progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
+        }
+        if (loading) {
+            if (rvAdminOrders != null) rvAdminOrders.setVisibility(View.GONE);
+            if (tvEmptyState != null) tvEmptyState.setVisibility(View.GONE);
+        } else {
+            if (rvAdminOrders != null) rvAdminOrders.setVisibility(View.VISIBLE);
         }
     }
 
@@ -168,8 +177,7 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
         apiService.updateAdminOrderStatus(getAuthHeader(), orderId, request)
                 .enqueue(new Callback<Response<Order>>() {
                     @Override
-                    public void onResponse(@NonNull Call<Response<Order>> call,
-                                           @NonNull retrofit2.Response<Response<Order>> response) {
+                    public void onResponse(@NonNull Call<Response<Order>> call, @NonNull retrofit2.Response<Response<Order>> response) {
                         setLoading(false);
                         if (response.isSuccessful() && response.body() != null) {
                             Toast.makeText(AdminOrdersActivity.this, "Cập nhật trạng thái thành công!", Toast.LENGTH_SHORT).show();

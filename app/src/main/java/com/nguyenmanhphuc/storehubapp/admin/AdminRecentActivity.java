@@ -8,11 +8,13 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -21,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.nguyenmanhphuc.storehubapp.R;
 import com.nguyenmanhphuc.storehubapp.admin.adapter.RecentActivityAdapter;
+import com.nguyenmanhphuc.storehubapp.model.response.RecentActivity;
 import com.nguyenmanhphuc.storehubapp.model.response.Response;
 import com.nguyenmanhphuc.storehubapp.model.response.RevenueData;
 import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
@@ -36,20 +39,23 @@ import java.util.Locale;
 import retrofit2.Call;
 import retrofit2.Callback;
 
-public class RecentActivity extends AppCompatActivity {
+public class AdminRecentActivity extends AppCompatActivity {
     private static final int ITEMS_PER_PAGE = 5;
     private MaterialCardView cardFromDate, cardToDate;
     private TextView tvFromDate, tvToDate, tvPage1, tvPage2, tvPage3, tvPage4;
+    private TextView tvFilterAll, tvFilterOrder, tvFilterProduct, tvFilterEmployee;
     private EditText edtSearchOrder;
     private RecyclerView rvRecentActivities;
     private View layoutEmpty, layoutPagination;
     private ImageButton btnPreviousPage, btnNextPage;
     private final RecentActivityAdapter adapter = new RecentActivityAdapter(activity ->
             startActivity(RecentActivityDetailActivity.createIntent(this, activity)));
-    private final ArrayList<com.nguyenmanhphuc.storehubapp.model.response.RecentActivity> allActivities = new ArrayList<>();
-    private final ArrayList<com.nguyenmanhphuc.storehubapp.model.response.RecentActivity> filteredActivities = new ArrayList<>();
+    private final ArrayList<RecentActivity> allActivities = new ArrayList<>();
+    private final ArrayList<RecentActivity> filteredActivities = new ArrayList<>();
+    private ProgressBar progressBar;
     private Call<Response<RevenueData>> activityCall;
     private int currentPage = 1;
+    private String selectedTabFilter = "all"; // "all", "order", "product", "user"
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +93,7 @@ public class RecentActivity extends AppCompatActivity {
         rvRecentActivities = findViewById(R.id.rvRecentActivities);
         layoutEmpty = findViewById(R.id.layoutEmpty);
         layoutPagination = findViewById(R.id.layoutPagination);
+        progressBar = findViewById(R.id.progressBar);
 
         tvFromDate = findViewById(R.id.tvFromDate);
         tvToDate = findViewById(R.id.tvToDate);
@@ -96,6 +103,18 @@ public class RecentActivity extends AppCompatActivity {
         tvPage4 = findViewById(R.id.tvPage4);
         btnPreviousPage = findViewById(R.id.btnPreviousPage);
         btnNextPage = findViewById(R.id.btnNextPage);
+
+        tvFilterAll = findViewById(R.id.tvFilterAll);
+        tvFilterOrder = findViewById(R.id.tvFilterOrder);
+        tvFilterProduct = findViewById(R.id.tvFilterProduct);
+        tvFilterEmployee = findViewById(R.id.tvFilterEmployee);
+
+        if (tvFilterAll != null) tvFilterAll.setOnClickListener(v -> selectTab("all"));
+        if (tvFilterOrder != null) tvFilterOrder.setOnClickListener(v -> selectTab("order"));
+        if (tvFilterProduct != null) tvFilterProduct.setOnClickListener(v -> selectTab("product"));
+        if (tvFilterEmployee != null) tvFilterEmployee.setOnClickListener(v -> selectTab("user"));
+
+        updateTabUi();
 
         ImageView imgBack = findViewById(R.id.imgBack);
         imgBack.setOnClickListener(v -> finish());
@@ -131,15 +150,41 @@ public class RecentActivity extends AppCompatActivity {
         tvPage4.setOnClickListener(v -> goToPage(readPage(tvPage4)));
     }
 
+    private void selectTab(String tab) {
+        selectedTabFilter = tab;
+        updateTabUi();
+        filterActivities();
+    }
+
+    private void updateTabUi() {
+        updateTabButton(tvFilterAll, "all");
+        updateTabButton(tvFilterOrder, "order");
+        updateTabButton(tvFilterProduct, "product");
+        updateTabButton(tvFilterEmployee, "user");
+    }
+
+    private void updateTabButton(TextView tv, String tab) {
+        if (tv == null) return;
+        boolean selected = tab.equals(selectedTabFilter);
+        tv.setBackgroundResource(selected ? R.drawable.bg_order_filter_selected : R.drawable.bg_order_filter);
+        tv.setTextColor(ContextCompat.getColor(this, selected ? R.color.text_button : R.color.dark_green));
+    }
+
     private void loadActivities() {
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+        if (rvRecentActivities != null) rvRecentActivities.setVisibility(View.GONE);
+        if (layoutEmpty != null) layoutEmpty.setVisibility(View.GONE);
+        if (layoutPagination != null) layoutPagination.setVisibility(View.GONE);
+
         activityCall = new HttpResquest().callAPI().getRevenueStatsWithLimit(2, 0);
         activityCall.enqueue(new Callback<Response<RevenueData>>() {
             @Override
             public void onResponse(@NonNull Call<Response<RevenueData>> call,
                                    @NonNull retrofit2.Response<Response<RevenueData>> response) {
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     allActivities.clear();
-                    List<com.nguyenmanhphuc.storehubapp.model.response.RecentActivity> activities = response.body().getData().getRecentActivities();
+                    List<RecentActivity> activities = response.body().getData().getRecentActivities();
                     if (activities != null) {
                         allActivities.addAll(activities);
                     }
@@ -150,6 +195,7 @@ public class RecentActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Call<Response<RevenueData>> call, @NonNull Throwable t) {
                 if (!call.isCanceled()) {
+                    if (progressBar != null) progressBar.setVisibility(View.GONE);
                     allActivities.clear();
                     filterActivities();
                 }
@@ -197,9 +243,21 @@ public class RecentActivity extends AppCompatActivity {
 
         filteredActivities.clear();
 
-        for (com.nguyenmanhphuc.storehubapp.model.response.RecentActivity activity : allActivities) {
+        for (RecentActivity activity : allActivities) {
             String title = activity.getTitle() == null ? "" : activity.getTitle();
             String detail = activity.getDetail() == null ? "" : activity.getDetail();
+            String type = activity.getType() == null ? "" : activity.getType().toLowerCase(Locale.getDefault());
+
+            if ("order".equals(selectedTabFilter) && !type.startsWith("order")) {
+                continue;
+            }
+            if ("product".equals(selectedTabFilter) && !type.startsWith("product")) {
+                continue;
+            }
+            if ("user".equals(selectedTabFilter) && (!type.startsWith("user") && !type.startsWith("login"))) {
+                continue;
+            }
+
             boolean matchesKeyword = keyword.isEmpty()
                     || title.toLowerCase(Locale.getDefault()).contains(keyword)
                     || detail.toLowerCase(Locale.getDefault()).contains(keyword);
@@ -266,7 +324,6 @@ public class RecentActivity extends AppCompatActivity {
             return currentPage;
         }
     }
-
 
     private void updatePaginationUi(int totalPages) {
         layoutPagination.setVisibility(totalPages > 1 ? View.VISIBLE : View.GONE);

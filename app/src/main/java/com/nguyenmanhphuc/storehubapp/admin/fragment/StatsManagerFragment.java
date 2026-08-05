@@ -19,9 +19,10 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.nguyenmanhphuc.storehubapp.R;
-import com.nguyenmanhphuc.storehubapp.admin.RecentActivity;
+import com.nguyenmanhphuc.storehubapp.admin.AdminRecentActivity;
 import com.nguyenmanhphuc.storehubapp.admin.adapter.StatsTimeAdapter;
 import com.nguyenmanhphuc.storehubapp.model.response.DailyStat;
+import com.nguyenmanhphuc.storehubapp.model.response.RecentActivity;
 import com.nguyenmanhphuc.storehubapp.model.response.Response;
 import com.nguyenmanhphuc.storehubapp.model.response.RevenueData;
 import com.nguyenmanhphuc.storehubapp.model.response.TopProduct;
@@ -49,6 +50,8 @@ public class StatsManagerFragment extends Fragment {
     private View layoutRevenue, layoutOrder;
     private LinearLayout layoutTopProduct, layoutActivity;
     private TextView tvSeeAll;
+    private View progressBarStats, layoutStatsContent;
+
     public StatsManagerFragment() {
     }
 
@@ -75,6 +78,8 @@ public class StatsManagerFragment extends Fragment {
         layoutTopProduct = view.findViewById(R.id.layoutTopProduct);
         layoutActivity = view.findViewById(R.id.layoutActivity);
         tvSeeAll = view.findViewById(R.id.tvSeeAll);
+        progressBarStats = view.findViewById(R.id.progressBarStats);
+        layoutStatsContent = view.findViewById(R.id.layoutStatsContent);
 
         if (barChart != null) {
             // Mặc định hiển thị thông báo chưa có dữ liệu thống kê nếu không có dữ liệu
@@ -109,16 +114,21 @@ public class StatsManagerFragment extends Fragment {
             });
         }
         tvSeeAll.setOnClickListener(v -> {
-            Intent intent = new Intent(requireContext(), RecentActivity.class);
+            Intent intent = new Intent(requireContext(), AdminRecentActivity.class);
             startActivity(intent);
         });
     }
 
     private void onTimeFilterSelected(int position) {
+        if (progressBarStats != null) progressBarStats.setVisibility(View.VISIBLE);
+        if (layoutStatsContent != null) layoutStatsContent.setVisibility(View.GONE);
+
         HttpResquest request = new HttpResquest();
         request.callAPI().getRevenueStats(position).enqueue(new Callback<Response<RevenueData>>() {
             @Override
             public void onResponse(@NonNull Call<Response<RevenueData>> call, @NonNull retrofit2.Response<Response<RevenueData>> response) {
+                if (progressBarStats != null) progressBarStats.setVisibility(View.GONE);
+                if (layoutStatsContent != null) layoutStatsContent.setVisibility(View.VISIBLE);
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     RevenueData data = response.body().getData();
                     List<BarEntry> entries = new ArrayList<>();
@@ -146,6 +156,8 @@ public class StatsManagerFragment extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<Response<RevenueData>> call, @NonNull Throwable t) {
+                if (progressBarStats != null) progressBarStats.setVisibility(View.GONE);
+                if (layoutStatsContent != null) layoutStatsContent.setVisibility(View.VISIBLE);
                 if (isAdded()) {
                     renderChartAndStats(new ArrayList<>(), new String[0], 0L, 0);
                     renderTopProducts(new ArrayList<>());
@@ -236,7 +248,7 @@ public class StatsManagerFragment extends Fragment {
         }
     }
 
-    private void renderRecentActivities(List<com.nguyenmanhphuc.storehubapp.model.response.RecentActivity> activities) {
+    private void renderRecentActivities(List<RecentActivity> activities) {
         if (layoutActivity == null) return;
         layoutActivity.removeAllViews();
         if (activities == null || activities.isEmpty()) {
@@ -245,7 +257,7 @@ public class StatsManagerFragment extends Fragment {
         }
 
         for (int i = 0; i < activities.size(); i++) {
-            com.nguyenmanhphuc.storehubapp.model.response.RecentActivity activity = activities.get(i);
+            RecentActivity activity = activities.get(i);
             View item = getLayoutInflater().inflate(R.layout.item_recent_activity, layoutActivity, false);
             ImageView icon = item.findViewById(R.id.ivActivityIcon);
             int iconResource = getRecentActivityIcon(activity.getType());
@@ -305,10 +317,8 @@ public class StatsManagerFragment extends Fragment {
     }
 
     private void addEmptyText(LinearLayout container, String message) {
-        TextView text = new TextView(requireContext());
+        TextView text = new TextView(requireContext(), null, 0, R.style.EmptyStateTextStyle);
         text.setText(message);
-        text.setTextColor(Color.parseColor("#676863"));
-        text.setPadding(0, 16, 0, 16);
         container.addView(text);
     }
 

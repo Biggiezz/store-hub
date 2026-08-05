@@ -54,7 +54,6 @@ public class AddUserActivity extends AppCompatActivity {
             uri -> {
                 if (uri != null) {
                     selectedImageUri = uri;
-                    ivAvatar.setPadding(0, 0, 0, 0);
                     ivAvatar.setImageTintList(null);
                     ivAvatar.setScaleType(ImageView.ScaleType.CENTER_CROP);
                     Glide.with(this)
@@ -128,7 +127,6 @@ public class AddUserActivity extends AppCompatActivity {
 
             // Tải ảnh đại diện cũ bằng Glide
             if (userToEdit.getImage() != null && !userToEdit.getImage().isEmpty()) {
-                ivAvatar.setPadding(0, 0, 0, 0);
                 ivAvatar.setImageTintList(null);
                 ivAvatar.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 Glide.with(this)
@@ -283,7 +281,7 @@ public class AddUserActivity extends AppCompatActivity {
             });
 
         } else {
-            httpResquest.callAPI().addUser(token, newUser).enqueue(new retrofit2.Callback<com.nguyenmanhphuc.storehubapp.model.response.Response<com.nguyenmanhphuc.storehubapp.model.User>>() {
+            httpResquest.callAPI().addUser(token, newUser).enqueue(new retrofit2.Callback<Response<User>>() {
                 @Override
                 public void onResponse(@NonNull retrofit2.Call<Response<User>> call, @NonNull retrofit2.Response<Response<User>> response) {
                     if (response.isSuccessful() && response.body() != null && response.body().getCode() == 201) {

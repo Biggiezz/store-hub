@@ -36,11 +36,26 @@
                 android:src="@drawable/ic_product_review" />
         </LinearLayout>
 
-        <!-- Revenue -->
+        <ProgressBar
+            android:id="@+id/progressBarStats"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="40dp"
+            android:indeterminateTint="#203028"
+            android:visibility="gone" />
 
-        <include
-            android:id="@+id/layoutRevenue"
-            layout="@layout/item_stat_card" />
+        <LinearLayout
+            android:id="@+id/layoutStatsContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Revenue -->
+
+            <include
+                android:id="@+id/layoutRevenue"
+                layout="@layout/item_stat_card" />
 
         <!-- Order -->
 
@@ -144,6 +159,8 @@
                 android:orientation="vertical" />
 
         </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
 
     </LinearLayout>
 
