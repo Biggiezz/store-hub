@@ -7,6 +7,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.nguyenmanhphuc.storehubapp.R;
@@ -59,6 +60,7 @@ public class ProductReviewAdapter extends RecyclerView.Adapter<ProductReviewAdap
     class ReviewViewHolder extends RecyclerView.ViewHolder {
         TextView tvReviewerName, tvReviewDate, tvReviewContent;
         RatingBar ratingReview;
+        RecyclerView rvReviewMedia;
         View layoutAdminReply;
         TextView tvReplyTime, tvAdminReply;
 
@@ -68,6 +70,7 @@ public class ProductReviewAdapter extends RecyclerView.Adapter<ProductReviewAdap
             tvReviewDate = itemView.findViewById(R.id.tvReviewDate);
             tvReviewContent = itemView.findViewById(R.id.tvReviewContent);
             ratingReview = itemView.findViewById(R.id.ratingReview);
+            rvReviewMedia = itemView.findViewById(R.id.rvReviewMedia);
             layoutAdminReply = itemView.findViewById(R.id.layoutAdminReply);
             tvReplyTime = itemView.findViewById(R.id.tvReplyTime);
             tvAdminReply = itemView.findViewById(R.id.tvAdminReply);
@@ -84,6 +87,16 @@ public class ProductReviewAdapter extends RecyclerView.Adapter<ProductReviewAdap
             
             ratingReview.setRating(review.rating);
             tvReviewContent.setText(review.content != null ? review.content : "");
+
+            // Bind media files (images/videos)
+            if (review.getMedia() != null && !review.getMedia().isEmpty()) {
+                rvReviewMedia.setVisibility(View.VISIBLE);
+                rvReviewMedia.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL, false));
+                ReviewMediaAdapter mediaAdapter = new ReviewMediaAdapter(itemView.getContext(), review.getMedia());
+                rvReviewMedia.setAdapter(mediaAdapter);
+            } else {
+                rvReviewMedia.setVisibility(View.GONE);
+            }
 
             // Bind admin reply
             if (review.getReplyContent() != null && !review.getReplyContent().isEmpty()) {

@@ -130,7 +130,7 @@ public class PaymentConfirmationActivity extends BaseActivity {
         if (rbZaloPay.isChecked()) {
             createZaloPayOrder();
         } else {
-            createStoreOrder();
+            createStoreOrder(null);
         }
     }
 
@@ -167,7 +167,7 @@ public class PaymentConfirmationActivity extends BaseActivity {
                     public void onPaymentSucceeded(String transactionId, String transToken, String appTransID) {
                         runOnUiThread(() -> {
                             Toast.makeText(PaymentConfirmationActivity.this, "Thanh toán ZaloPay thành công", Toast.LENGTH_SHORT).show();
-                            createStoreOrder();
+                            createStoreOrder(appTransID);
                         });
                     }
 
@@ -185,11 +185,11 @@ public class PaymentConfirmationActivity extends BaseActivity {
         );
     }
 
-    private void createStoreOrder() {
+    private void createStoreOrder(String appTransId) {
         final boolean paidWithZaloPay = rbZaloPay.isChecked();
         btnConfirmPayment.setEnabled(false);
         btnConfirmPayment.setText(paidWithZaloPay ? "Đang tạo đơn hàng..." : "Xác nhận thanh toán");
-        apiService.createOrder(HttpResquest.authorizationHeader(this), paidWithZaloPay ? "ZaloPay" : "COD").enqueue(new Callback<Response<Order>>() {
+        apiService.createOrder(HttpResquest.authorizationHeader(this), paidWithZaloPay ? "ZaloPay" : "COD", appTransId).enqueue(new Callback<Response<Order>>() {
             @Override
             public void onResponse(@NonNull Call<Response<Order>> call, @NonNull retrofit2.Response<Response<Order>> response) {
                 btnConfirmPayment.setEnabled(true);

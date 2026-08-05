@@ -30,6 +30,9 @@ public class Order implements Serializable {
     @SerializedName("shippingFee")
     private long shippingFee;
 
+    @SerializedName("discount")
+    private long discount;
+
     @SerializedName("paymentMethod")
     private String paymentMethod;
 
@@ -134,6 +137,14 @@ public class Order implements Serializable {
 
     public void setShippingFee(long shippingFee) {
         this.shippingFee = shippingFee;
+    }
+
+    public long getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(long discount) {
+        this.discount = discount;
     }
 
     public String getPaymentMethod() {

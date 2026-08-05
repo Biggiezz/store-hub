@@ -7,10 +7,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.nguyenmanhphuc.storehubapp.R;
+import com.nguyenmanhphuc.storehubapp.adapter.ReviewMediaAdapter;
 import com.nguyenmanhphuc.storehubapp.model.ProductReview;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.imageview.ShapeableImageView;
@@ -86,8 +88,11 @@ public class AdminReviewAdapter extends RecyclerView.Adapter<AdminReviewAdapter.
     }
 
     abstract class ReviewViewHolder extends RecyclerView.ViewHolder {
+        RecyclerView rvReviewMedia;
+
         public ReviewViewHolder(@NonNull View itemView) {
             super(itemView);
+            rvReviewMedia = itemView.findViewById(R.id.rvReviewMedia);
         }
         public abstract void bind(ReviewWithProduct item);
 
@@ -117,6 +122,16 @@ public class AdminReviewAdapter extends RecyclerView.Adapter<AdminReviewAdapter.
             tvProductName.setText(item.productName != null ? item.productName : "Sản phẩm");
             tvRating.setText(getStarString(review.rating));
             tvReviewContent.setText(review.content != null ? review.content : "");
+
+            // Bind media files (images/videos)
+            if (review.getMedia() != null && !review.getMedia().isEmpty()) {
+                rvReviewMedia.setVisibility(View.VISIBLE);
+                rvReviewMedia.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+                ReviewMediaAdapter mediaAdapter = new ReviewMediaAdapter(context, review.getMedia());
+                rvReviewMedia.setAdapter(mediaAdapter);
+            } else {
+                rvReviewMedia.setVisibility(View.GONE);
+            }
 
             String avatarUrl = review.getCustomerImage();
             Glide.with(context)
