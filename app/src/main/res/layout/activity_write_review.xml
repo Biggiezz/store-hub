@@ -32,8 +32,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_weight="1"
-            android:fontFamily="serif"
-            android:text="Đánh giá"
+            android:fontFamily="@font/shopee_display"
+            android:text="@string/review"
             android:textColor="@color/dark_green"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -122,7 +122,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
-                        android:text="✔ Đã mua hàng"
+                        android:text="@string/purchased_tag"
                         android:textColor="@color/dark_green"
                         android:textSize="12sp"
                         android:textStyle="bold" />
@@ -144,8 +144,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="serif"
-                    android:text="Mức độ hài lòng của bạn?"
+                    android:fontFamily="@font/shopee_display"
+                    android:text="@string/satisfaction_question"
                     android:textColor="@color/dark_green"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -204,8 +204,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:fontFamily="serif"
-                android:text="Viết nhận xét"
+                android:fontFamily="@font/shopee_display"
+                android:text="@string/write_comment_title"
                 android:textColor="@color/dark_green"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -217,7 +217,7 @@
                 android:layout_marginTop="8dp"
                 android:background="@drawable/bg_input"
                 android:gravity="top"
-                android:hint="Chia sẻ trải nghiệm của bạn về sản phẩm này nhé..."
+                android:hint="@string/review_hint"
                 android:importantForAutofill="no"
                 android:inputType="textMultiLine"
                 android:padding="14dp"
@@ -237,8 +237,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:fontFamily="serif"
-                    android:text="Thêm hình ảnh/video"
+                    android:fontFamily="@font/shopee_display"
+                    android:text="@string/add_media_title"
                     android:textColor="@color/dark_green"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -246,7 +246,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tối đa 5 ảnh"
+                    android:text="@string/max_images_label"
                     android:textColor="#675C53"
                     android:textSize="12sp" />
 
@@ -275,7 +275,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Tải lên"
+                        android:text="@string/upload_label"
                         android:textColor="#675C53"
                         android:textSize="11sp" />
 
@@ -300,7 +300,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
                 android:layout_marginTop="28dp"
-                android:text="Gửi đánh giá"
+                android:text="@string/submit_review_button"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="15sp"

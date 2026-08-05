@@ -41,7 +41,7 @@
                     android:id="@+id/tvSliderTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/libre_caslon_text"
+                    android:fontFamily="@font/shopee_display"
                     android:gravity="center"
                     android:text="Đỉnh Cao Công Nghệ"
                     android:textColor="@color/white"

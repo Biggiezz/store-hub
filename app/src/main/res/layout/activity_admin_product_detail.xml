@@ -85,7 +85,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentStart="true"
                             android:layout_toStartOf="@+id/tvProductPrice"
-                            android:fontFamily="@font/libre_caslon_text"
+                            android:fontFamily="@font/shopee_display"
                             android:textColor="@color/text_primary"
                             android:textSize="32sp"
                             android:textStyle="bold"

@@ -77,12 +77,12 @@ public class NewsDetailActivity extends BaseActivity {
      */
     private void displayNewsDetails(News news) {
         tvDetailNewsTitle.setText(news.getTitle());
-        tvDetailNewsAuthor.setText("Tác giả: " + (news.getAuthor() != null ? news.getAuthor() : "Admin"));
+        tvDetailNewsAuthor.setText(getString(R.string.author_prefix, (news.getAuthor() != null ? news.getAuthor() : "Admin")));
         tvDetailNewsContent.setText(news.getContent());
 
         // Định dạng thời gian hiển thị trực quan
         String formattedDate = formatDateString(news.getCreatedAt());
-        tvDetailNewsTime.setText("Đăng lúc: " + formattedDate);
+        tvDetailNewsTime.setText(getString(R.string.published_at_prefix, formattedDate));
 
         // Sử dụng Glide để tải hình ảnh từ URL server vào ImageView
         Glide.with(this)

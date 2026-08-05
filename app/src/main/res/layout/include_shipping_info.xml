@@ -9,8 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
-        android:fontFamily="serif"
-        android:text="Thông tin giao hàng"
+        android:fontFamily="@font/shopee_display"
+        android:text="@string/shipping_info_title"
         android:textColor="#1A2821"
         android:textSize="20sp"
         android:textStyle="bold" />

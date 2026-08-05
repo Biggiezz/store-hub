@@ -14,7 +14,7 @@
         android:background="@color/background"
         app:navigationIcon="@drawable/ic_back"
         app:navigationIconTint="#1A2821"
-        app:title="Chi tiết đơn hàng"
+        app:title="@string/order_detail_title"
         app:titleTextColor="#1A2821" />
 
 
@@ -61,7 +61,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_weight="1"
-                        android:text="Đã hủy"
+                        android:text="@string/status_cancelled"
                         android:textColor="#1A2821"
                         android:textSize="20sp"
                         android:textStyle="bold" />
@@ -72,7 +72,7 @@
                         android:background="@drawable/bg_order_filter_selected"
                         android:gravity="center"
                         android:paddingHorizontal="14dp"
-                        android:text="Đã hoàn tiền"
+                        android:text="@string/refunded"
                         android:textStyle="bold"
                         android:textColor="#675C53"
                         android:textSize="12sp" />
@@ -111,7 +111,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="16dp"
-                android:text="│  Sản phẩm đã chọn"
+                android:text="@string/products_selected_label"
                 android:textColor="#1A2821"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -145,9 +145,9 @@
                 android:layout_height="56dp"
                 android:layout_marginTop="40dp"
                 android:background="@drawable/bg_button"
-                android:fontFamily="serif"
+                android:fontFamily="@font/shopee_display"
                 android:gravity="center"
-                android:text="Mua lại sản phẩm"
+                android:text="@string/reorder_products"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -158,7 +158,7 @@
                 android:layout_marginTop="12dp"
                 android:background="@drawable/bg_detail_secondary_button"
                 android:gravity="center"
-                android:text="Liên hệ hỗ trợ"
+                android:text="@string/contact_support"
                 android:textColor="#434844"
                 android:textSize="16sp"
                 android:textStyle="bold" />

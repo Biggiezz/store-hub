@@ -80,7 +80,7 @@ public class CancelledOrderDetailActivity extends BaseActivity {
 
     private void bindOrderData(Order order) {
         if (tvOrderDetailCode != null) {
-            tvOrderDetailCode.setText("MÃ ĐƠN: " + order.getOrderCode());
+            tvOrderDetailCode.setText(getString(R.string.order_code_prefix, order.getOrderCode()));
         }
 
         adapter.updateData(order.getItems());
@@ -99,11 +99,11 @@ public class CancelledOrderDetailActivity extends BaseActivity {
         if (tvShippingFee != null) tvShippingFee.setText(formatPrice(shippingFee));
         if (tvTotal != null) tvTotal.setText(formatPrice(total));
         if (tvPaymentMethod != null) tvPaymentMethod.setText("ZaloPay".equalsIgnoreCase(order.getPaymentMethod())
-                ? "ZaloPay" : "Thanh toán khi nhận hàng (COD)");
+                ? "ZaloPay" : getString(R.string.payment_cod));
 
         TextView tvSubtotalLabel = findViewById(R.id.tvSubtotalLabel);
         if (tvSubtotalLabel != null) {
-            tvSubtotalLabel.setText("Tạm tính (" + totalQty + " sản phẩm)");
+            tvSubtotalLabel.setText(String.format(getString(R.string.subtotal_label_template), totalQty));
         }
 
         TextView tvVoucher = findViewById(R.id.tvVoucher);
@@ -113,9 +113,9 @@ public class CancelledOrderDetailActivity extends BaseActivity {
         if (tvCancelReason != null) {
             String reason = order.getCancelReason();
             if (reason == null || reason.isEmpty()) {
-                reason = "Thay đổi ý định";
+                reason = getString(R.string.reason_changed_mind);
             }
-            tvCancelReason.setText("Lý do hủy: " + reason);
+            tvCancelReason.setText(getString(R.string.cancel_reason_prefix, reason));
         }
     }
 

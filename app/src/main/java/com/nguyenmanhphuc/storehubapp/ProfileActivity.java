@@ -216,12 +216,11 @@ public class ProfileActivity extends BaseActivity {
         String lang = isVI ? "vi" : "en";
         LocaleHelper.setLocale(this, lang);
 
-        // Cập nhật UI ngay lập tức bằng cách khởi động lại activity
-        Intent intent = getIntent();
-        finish();
-        overridePendingTransition(0, 0);
+        // Khởi động lại ứng dụng về MainActivity để cập nhật ngôn ngữ toàn hệ thống
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
-        overridePendingTransition(0, 0);
+        finish();
     }
 
     private void showCustomLogoutDialog() {
@@ -255,7 +254,7 @@ public class ProfileActivity extends BaseActivity {
         httpResquest.callAPI().logout(tokenHeader).enqueue(new Callback<Response<Void>>() {
             @Override
             public void onResponse(@NonNull Call<Response<Void>> call, @NonNull retrofit2.Response<Response<Void>> response) {
-                // Wipe local preferences and static cache
+                // Wipe local preferences anyway
                 sharedPreferencesManager.logout();
                 MainActivity.preloadedProducts = null;
                 MainActivity.preloadedNews = null;
