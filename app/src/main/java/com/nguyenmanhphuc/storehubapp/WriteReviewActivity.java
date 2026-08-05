@@ -62,11 +62,11 @@ public class WriteReviewActivity extends BaseActivity {
         btnSubmitReview.setOnClickListener(v -> {
             String content = edtReviewContent.getText().toString().trim();
             if (content.isEmpty()) {
-                Toast.makeText(this, "Vui lòng nhập nội dung nhận xét!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.toast_enter_comment), Toast.LENGTH_SHORT).show();
                 return;
             }
             if (order == null || order.getItems() == null || order.getItems().isEmpty()) {
-                Toast.makeText(this, "Không có thông tin sản phẩm để đánh giá!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.toast_no_product_info), Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -74,11 +74,11 @@ public class WriteReviewActivity extends BaseActivity {
             CartItem firstItem = order.getItems().get(0);
             String productId = firstItem.getProductId();
             if (productId.isEmpty()) {
-                Toast.makeText(this, "Không tìm thấy mã sản phẩm!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.toast_no_product_id), Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            String customerName = "Khách hàng";
+            String customerName = getString(R.string.role_customer);
             String customerImage = "";
             User user = SharedPreferencesManager.getInstance(this).getUser();
             if (user != null) {
@@ -95,16 +95,17 @@ public class WriteReviewActivity extends BaseActivity {
                 @Override
                 public void onResponse(@NonNull Call<com.nguyenmanhphuc.storehubapp.model.response.Response<Product>> call, @NonNull Response<com.nguyenmanhphuc.storehubapp.model.response.Response<Product>> response) {
                     if (response.isSuccessful() && response.body() != null && response.body().getCode() == 200) {
-                        Toast.makeText(WriteReviewActivity.this, "Gửi đánh giá thành công!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(WriteReviewActivity.this, getString(R.string.toast_submit_success), Toast.LENGTH_SHORT).show();
                         finish();
                     } else {
-                        Toast.makeText(WriteReviewActivity.this, "Gửi đánh giá thất bại: " + (response.body() != null ? response.body().getMessage() : "Lỗi server"), Toast.LENGTH_SHORT).show();
+                        String errMsg = (response.body() != null ? response.body().getMessage() : getString(R.string.toast_server_error));
+                        Toast.makeText(WriteReviewActivity.this, String.format(getString(R.string.toast_submit_failed_prefix), errMsg), Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 @Override
                 public void onFailure(@NonNull Call<com.nguyenmanhphuc.storehubapp.model.response.Response<Product>> call, @NonNull Throwable t) {
-                    Toast.makeText(WriteReviewActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(WriteReviewActivity.this, String.format(getString(R.string.toast_connection_error_prefix), t.getMessage()), Toast.LENGTH_SHORT).show();
                 }
             });
         });

@@ -8,224 +8,261 @@
     android:background="@color/background"
     android:orientation="vertical">
 
-    <!-- Nội dung có thể cuộn -->
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/mainScrollView"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:fillViewport="true"
-        android:overScrollMode="never">
+        android:layout_weight="1">
 
-        <LinearLayout
+        <!-- Nội dung có thể cuộn -->
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/mainScrollView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="14dp">
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:overScrollMode="never"
+            android:visibility="gone">
 
-            <!-- Header -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="26dp"
-                android:paddingEnd="26dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/libre_caslon_text"
-                    android:text="StoreHub"
-                    android:textColor="@color/dark_green"
-                    android:textSize="38sp"
-                    android:textStyle="bold" />
-
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:cardCornerRadius="23dp"
-                    app:cardElevation="0dp"
-                    app:strokeColor="#DDD8D2"
-                    app:strokeWidth="1dp">
-
-                    <ImageView
-                        android:id="@+id/imgAvatar"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:contentDescription="Ảnh đại diện"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/ic_avatar" />
-
-                </com.google.android.material.card.MaterialCardView>
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:background="#C3C8C3" />
-
-            <!-- Nội dung chính có padding ngang, đường kẻ phía trên vẫn full màn hình -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingHorizontal="26dp"
-                android:paddingBottom="24dp">
+                android:paddingTop="14dp">
 
-                <!-- Slider Container to overlay indicators inside it -->
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="286dp"
-                    android:layout_marginTop="16dp">
-
-                    <androidx.viewpager2.widget.ViewPager2
-                        android:id="@+id/sliderBanner"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:clipToPadding="false" />
-
-                    <!-- Indicator -->
-                    <LinearLayout
-                        android:id="@+id/sliderIndicator"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom|center_horizontal"
-                        android:layout_marginBottom="16dp"
-                        android:gravity="center"
-                        android:orientation="horizontal"
-                        android:paddingHorizontal="12dp"
-                        android:paddingVertical="2dp">
-
-                        <TextView
-                            android:id="@+id/dotOne"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="●"
-                            android:textColor="@color/white"
-                            android:textSize="18sp" />
-
-                        <TextView
-                            android:id="@+id/dotTwo"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="4dp"
-                            android:text="●"
-                            android:textColor="#B8B7B2"
-                            android:textSize="18sp" />
-
-                        <TextView
-                            android:id="@+id/dotThree"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="4dp"
-                            android:text="●"
-                            android:textColor="#B8B7B2"
-                            android:textSize="18sp" />
-
-                    </LinearLayout>
-                </FrameLayout>
-
-                <!-- Danh mục động -->
-                <HorizontalScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:paddingTop="16dp"
-                    android:scrollbars="none">
-
-                    <LinearLayout
-                        android:id="@+id/layoutCategories"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:paddingStart="24dp"
-                        android:paddingEnd="24dp"
-                        android:gravity="center_vertical" />
-                </HorizontalScrollView>
-
-                <!-- Tiêu đề sản phẩm -->
+                <!-- Header -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="22dp"
-                    android:gravity="bottom"
-                    android:orientation="horizontal">
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="26dp"
+                    android:paddingEnd="26dp">
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:fontFamily="@font/libre_caslon_text"
-                        android:text="@string/featured_products"
+                        android:fontFamily="@font/shopee_display"
+                        android:text="StoreHub"
                         android:textColor="@color/dark_green"
-                        android:textSize="24sp"
+                        android:textSize="38sp"
                         android:textStyle="bold" />
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnViewAllProducts"
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="bottom|end"
-                        android:text="@string/view_all"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="13sp"
-                        app:backgroundTint="@android:color/transparent"
-                        app:icon="@drawable/ic_right"
-                        app:iconGravity="textEnd"
-                        app:iconTint="@color/text_secondary" />
+                        app:cardCornerRadius="23dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="#DDD8D2"
+                        app:strokeWidth="1dp">
+
+                        <ImageView
+                            android:id="@+id/imgAvatar"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:contentDescription="Ảnh đại diện"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_avatar" />
+
+                    </com.google.android.material.card.MaterialCardView>
 
                 </LinearLayout>
 
-                <!-- Danh sách sản phẩm từ server -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="#C3C8C3" />
 
-                <!-- Tin tức -->
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvProducts"
+                <!-- Nội dung chính có padding ngang, đường kẻ phía trên vẫn full màn hình -->
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:clipToPadding="false"
-                    android:nestedScrollingEnabled="false"
-                    android:overScrollMode="never"
-                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                    app:spanCount="2"
-                    tools:listitem="@layout/item_product" />
+                    android:orientation="vertical"
+                    android:paddingHorizontal="26dp"
+                    android:paddingBottom="24dp">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="28dp"
-                    android:fontFamily="@font/libre_caslon_text"
-                    android:text="Tin tức"
-                    android:textColor="@color/dark_green"
-                    android:textSize="28sp"
-                    android:textStyle="bold" />
+                    <!-- Slider Container to overlay indicators inside it -->
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="286dp"
+                        android:layout_marginTop="16dp">
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvNews"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:nestedScrollingEnabled="false"
-                    android:overScrollMode="never"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/item_new" />
+                        <androidx.viewpager2.widget.ViewPager2
+                            android:id="@+id/sliderBanner"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:clipToPadding="false" />
+
+                        <!-- Indicator -->
+                        <LinearLayout
+                            android:id="@+id/sliderIndicator"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom|center_horizontal"
+                            android:layout_marginBottom="16dp"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="2dp">
+
+                            <TextView
+                                android:id="@+id/dotOne"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="●"
+                                android:textColor="@color/white"
+                                android:textSize="18sp" />
+
+                            <TextView
+                                android:id="@+id/dotTwo"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:text="●"
+                                android:textColor="#B8B7B2"
+                                android:textSize="18sp" />
+
+                            <TextView
+                                android:id="@+id/dotThree"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:text="●"
+                                android:textColor="#B8B7B2"
+                                android:textSize="18sp" />
+
+                        </LinearLayout>
+                    </FrameLayout>
+
+                    <!-- Danh mục động -->
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:paddingTop="16dp"
+                        android:scrollbars="none">
+
+                        <LinearLayout
+                            android:id="@+id/layoutCategories"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingStart="24dp"
+                            android:paddingEnd="24dp"
+                            android:gravity="center_vertical" />
+                    </HorizontalScrollView>
+
+                    <!-- Tiêu đề sản phẩm -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="22dp"
+                        android:gravity="bottom"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/shopee_display"
+                            android:text="@string/featured_products"
+                            android:textColor="@color/dark_green"
+                            android:textSize="24sp"
+                            android:textStyle="bold" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnViewAllProducts"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom|end"
+                            android:text="@string/view_all"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="13sp"
+                            app:backgroundTint="@android:color/transparent"
+                            app:icon="@drawable/ic_right"
+                            app:iconGravity="textEnd"
+                            app:iconTint="@color/text_secondary" />
+
+                    </LinearLayout>
+
+                    <!-- Danh sách sản phẩm từ server -->
+
+                    <!-- Tin tức -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvProducts"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:clipToPadding="false"
+                        android:nestedScrollingEnabled="false"
+                        android:overScrollMode="never"
+                        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                        app:spanCount="2"
+                        tools:listitem="@layout/item_product" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="28dp"
+                        android:fontFamily="@font/shopee_display"
+                        android:text="Tin tức"
+                        android:textColor="@color/dark_green"
+                        android:textSize="28sp"
+                        android:textStyle="bold" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvNews"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:nestedScrollingEnabled="false"
+                        android:overScrollMode="never"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:listitem="@layout/item_new" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
+        </androidx.core.widget.NestedScrollView>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragmentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+        <!-- Màn hình Loading khi mở ứng dụng -->
+        <LinearLayout
+            android:id="@+id/layoutLoading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/background"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ProgressBar
+                android:id="@+id/pbLoading"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:indeterminateTint="@color/dark_green" />
+
+            <TextView
+                android:id="@+id/tvLoadingText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:fontFamily="@font/shopee_display"
+                android:text="Đang tải dữ liệu StoreHub..."
+                android:textColor="@color/dark_green"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
         </LinearLayout>
 
-    </androidx.core.widget.NestedScrollView>
-
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragmentContainer"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:visibility="gone" />
+    </FrameLayout>
 
     <!-- Thanh điều hướng dưới -->
     <LinearLayout

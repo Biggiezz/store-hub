@@ -38,7 +38,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:fontFamily="serif"
+                android:fontFamily="@font/shopee_display"
                 android:text="@string/my_orders_title"
                 android:textColor="@color/dark_green"
                 android:textSize="20sp"

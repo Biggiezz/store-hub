@@ -34,7 +34,17 @@ public class Category implements Serializable {
     }
 
     public String getName() {
-        return name != null ? name : "";
+        if (name == null) return "";
+        try {
+            java.util.Locale current = java.util.Locale.getDefault();
+            if ("en".equalsIgnoreCase(current.getLanguage())) {
+                if ("Tai nghe".equalsIgnoreCase(name)) return "Headphones";
+                if ("Điện thoại".equalsIgnoreCase(name)) return "Phones";
+                if ("Máy tính".equalsIgnoreCase(name)) return "Laptops";
+                if ("Đồng hồ".equalsIgnoreCase(name)) return "Watches";
+            }
+        } catch (Exception ignored) {}
+        return name;
     }
 
     public void setName(String name) {

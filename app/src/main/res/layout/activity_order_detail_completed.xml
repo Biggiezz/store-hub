@@ -14,7 +14,7 @@
         android:background="@color/background"
         app:navigationIcon="@drawable/ic_back"
         app:navigationIconTint="#1A2821"
-        app:title="Chi tiết đơn hàng"
+        app:title="@string/order_detail_title"
         app:titleTextColor="#1A2821" />
 
     <androidx.core.widget.NestedScrollView
@@ -112,7 +112,7 @@
                         android:background="#F5F3EF"
                         android:gravity="center_vertical"
                         android:padding="16dp"
-                        android:text="Sản phẩm"
+                        android:text="@string/products_label"
                         android:textColor="#1A2821"
                         android:textSize="20sp"
                         android:textStyle="bold" />
@@ -144,9 +144,9 @@
                 android:layout_height="64dp"
                 android:layout_marginTop="32dp"
                 android:background="@drawable/bg_button"
-                android:fontFamily="serif"
+                android:fontFamily="@font/shopee_display"
                 android:gravity="center"
-                android:text="Đánh giá"
+                android:text="@string/review"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -157,7 +157,7 @@
                 android:layout_marginTop="16dp"
                 android:background="@drawable/bg_detail_secondary_button"
                 android:gravity="center"
-                android:text="Mua lại"
+                android:text="@string/reorder"
                 android:textColor="#434844"
                 android:textSize="16sp"
                 android:textStyle="bold" />

@@ -57,7 +57,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:fontFamily="serif"
+                android:fontFamily="@font/shopee_display"
                 android:textColor="@color/dark_green"
                 android:textSize="18sp"
                 android:textStyle="bold" />

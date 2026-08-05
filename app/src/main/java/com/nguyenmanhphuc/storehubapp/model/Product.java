@@ -52,8 +52,11 @@ public class Product {
     @SerializedName(value = "sold", alternate = {"soldCount", "soldQuantity"})
     private int sold;
 
+    @SerializedName("status")
+    private String status;
+
     @SerializedName("isActive")
-    private boolean isActive;
+    private Boolean isActive;
 
     // Danh sách các tùy chọn màu sắc biến thể của sản phẩm
     @SerializedName("colors")
@@ -177,10 +180,12 @@ public class Product {
     }
 
     public boolean isActive() {
-        return isActive;
+        if (isActive != null) return isActive;
+        if (status != null) return "active".equalsIgnoreCase(status);
+        return true;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         isActive = active;
     }
 

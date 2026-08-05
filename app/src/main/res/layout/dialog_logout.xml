@@ -13,7 +13,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="serif"
+        android:fontFamily="@font/shopee_display"
         android:gravity="center"
         android:text="@string/logout_dialog_title"
         android:textColor="@color/dark_green"

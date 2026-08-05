@@ -1,5 +1,7 @@
 package com.nguyenmanhphuc.storehubapp;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -9,8 +11,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import java.util.List;
-
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
@@ -22,26 +23,27 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.bumptech.glide.Glide;
+import com.google.android.material.button.MaterialButton;
 import com.nguyenmanhphuc.storehubapp.adapter.NewsAdapter;
 import com.nguyenmanhphuc.storehubapp.adapter.ProductAdapter;
 import com.nguyenmanhphuc.storehubapp.adapter.SlideShowAdapter;
+import com.nguyenmanhphuc.storehubapp.auth.LoginActivity;
 import com.nguyenmanhphuc.storehubapp.fragment.CartFragment;
 import com.nguyenmanhphuc.storehubapp.fragment.NewsFragment;
 import com.nguyenmanhphuc.storehubapp.fragment.OderFragment;
 import com.nguyenmanhphuc.storehubapp.fragment.ProductsFragment;
+import com.nguyenmanhphuc.storehubapp.model.Category;
 import com.nguyenmanhphuc.storehubapp.model.News;
 import com.nguyenmanhphuc.storehubapp.model.Product;
-import com.nguyenmanhphuc.storehubapp.model.Category;
-import com.nguyenmanhphuc.storehubapp.model.response.Response;
 import com.nguyenmanhphuc.storehubapp.model.User;
+import com.nguyenmanhphuc.storehubapp.model.response.Response;
 import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
 import com.nguyenmanhphuc.storehubapp.utils.SharedPreferencesManager;
-import com.bumptech.glide.Glide;
-import com.google.android.material.button.MaterialButton;
-import android.widget.Toast;
-import com.nguyenmanhphuc.storehubapp.auth.LoginActivity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -59,6 +61,7 @@ public class MainActivity extends BaseActivity {
     public static ArrayList<Product> preloadedProducts = null;
     public static boolean shouldOpenCartOnResume = false;
     public static ArrayList<News> preloadedNews = null;
+
     private ViewPager2 sliderBanner;
     private TextView dotOne, dotTwo, dotThree;
     private RecyclerView rvProducts, rvNews;
@@ -67,12 +70,19 @@ public class MainActivity extends BaseActivity {
     private NewsAdapter newsAdapter;
     private MaterialButton btnViewAllProducts, btnHome, btnProducts, btnCart, btnNews;
     private LinearLayout layoutCategories;
+    private View layoutLoading, mainScrollView;
+    private TextView tvLoadingText;
+
     private ArrayList<Product> allProductsList = new ArrayList<>();
     private ArrayList<News> newsList;
     private String selectedTab = TAB_HOME;
     private String activeCategory = "";
     private List<Category> categoriesList = new ArrayList<>();
     private final ArrayList<MaterialButton> dynamicCategoryButtons = new ArrayList<>();
+
+    private boolean isProductsLoaded = false;
+    private boolean isCategoriesLoaded = false;
+    private boolean isNewsLoaded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +103,7 @@ public class MainActivity extends BaseActivity {
         if (preloadedProducts != null) {
             allProductsList = preloadedProducts;
             preloadedProducts = null;
+            isProductsLoaded = true;
             fetchCategories();
         } else {
             fetchProducts();
@@ -101,17 +112,28 @@ public class MainActivity extends BaseActivity {
         if (preloadedNews != null) {
             newsAdapter.updateData(preloadedNews);
             preloadedNews = null;
+            isNewsLoaded = true;
         } else {
             fetchNews();
         }
 
         if (savedInstanceState != null) openTab(savedInstanceState.getString(STATE_TAB, TAB_HOME));
         else handleRequestedTab(getIntent());
-
-
     }
 
     private void initUi() {
+        layoutLoading = findViewById(R.id.layoutLoading);
+        tvLoadingText = findViewById(R.id.tvLoadingText);
+        mainScrollView = findViewById(R.id.mainScrollView);
+
+        if (tvLoadingText != null) {
+            ObjectAnimator pulse = ObjectAnimator.ofFloat(tvLoadingText, "alpha", 0.3f, 1.0f);
+            pulse.setDuration(800);
+            pulse.setRepeatCount(ValueAnimator.INFINITE);
+            pulse.setRepeatMode(ValueAnimator.REVERSE);
+            pulse.start();
+        }
+
         // Initialize avatar & load user image
         imgAvatar = findViewById(R.id.imgAvatar);
         imgAvatar.setOnClickListener(v -> {
@@ -148,6 +170,29 @@ public class MainActivity extends BaseActivity {
         btnCart = findViewById(R.id.btnCart);
         btnNews = findViewById(R.id.btnNews);
         layoutCategories = findViewById(R.id.layoutCategories);
+    }
+
+    private synchronized void checkLoadingComplete() {
+        if (isProductsLoaded && isCategoriesLoaded && isNewsLoaded) {
+            runOnUiThread(this::hideLoadingScreen);
+        }
+    }
+
+    private void hideLoadingScreen() {
+        if (layoutLoading != null && layoutLoading.getVisibility() == View.VISIBLE) {
+            layoutLoading.animate()
+                    .alpha(0f)
+                    .setDuration(400)
+                    .withEndAction(() -> {
+                        layoutLoading.setVisibility(View.GONE);
+                        if (TAB_HOME.equals(selectedTab) && mainScrollView != null) {
+                            mainScrollView.setAlpha(0f);
+                            mainScrollView.setVisibility(View.VISIBLE);
+                            mainScrollView.animate().alpha(1f).setDuration(300).start();
+                        }
+                    })
+                    .start();
+        }
     }
 
     private void setUpAdapter() {
@@ -221,14 +266,21 @@ public class MainActivity extends BaseActivity {
 
     public void showHome() {
         selectedTab = TAB_HOME;
-        findViewById(R.id.mainScrollView).setVisibility(View.VISIBLE);
+        if (layoutLoading != null && layoutLoading.getVisibility() == View.VISIBLE) {
+            return;
+        }
+        if (mainScrollView != null) {
+            mainScrollView.setVisibility(View.VISIBLE);
+        }
         findViewById(R.id.fragmentContainer).setVisibility(View.GONE);
         updateBottomNavigation(btnHome);
     }
 
     private void showProducts() {
         selectedTab = TAB_PRODUCTS;
-        findViewById(R.id.mainScrollView).setVisibility(View.GONE);
+        if (mainScrollView != null) {
+            mainScrollView.setVisibility(View.GONE);
+        }
         findViewById(R.id.fragmentContainer).setVisibility(View.VISIBLE);
         if (getSupportFragmentManager().findFragmentByTag("products") == null) {
             getSupportFragmentManager().beginTransaction()
@@ -247,7 +299,9 @@ public class MainActivity extends BaseActivity {
             return;
         }
         selectedTab = TAB_CART;
-        findViewById(R.id.mainScrollView).setVisibility(View.GONE);
+        if (mainScrollView != null) {
+            mainScrollView.setVisibility(View.GONE);
+        }
         findViewById(R.id.fragmentContainer).setVisibility(View.VISIBLE);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragmentContainer, new CartFragment(), "cart")
@@ -264,7 +318,9 @@ public class MainActivity extends BaseActivity {
             return;
         }
         selectedTab = TAB_ORDERS;
-        findViewById(R.id.mainScrollView).setVisibility(View.GONE);
+        if (mainScrollView != null) {
+            mainScrollView.setVisibility(View.GONE);
+        }
         findViewById(R.id.fragmentContainer).setVisibility(View.VISIBLE);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragmentContainer, new OderFragment(), "oder")
@@ -278,7 +334,9 @@ public class MainActivity extends BaseActivity {
 
     private void showNews() {
         selectedTab = TAB_NEWS;
-        findViewById(R.id.mainScrollView).setVisibility(View.GONE);
+        if (mainScrollView != null) {
+            mainScrollView.setVisibility(View.GONE);
+        }
         findViewById(R.id.fragmentContainer).setVisibility(View.VISIBLE);
         if (getSupportFragmentManager().findFragmentByTag("news") == null) {
             getSupportFragmentManager().beginTransaction()
@@ -287,8 +345,6 @@ public class MainActivity extends BaseActivity {
         }
         updateBottomNavigation(btnNews);
     }
-
-
 
     private void updateBottomNavigation(MaterialButton activeButton) {
         View bottomNav = findViewById(R.id.bottomNavigation);
@@ -322,17 +378,21 @@ public class MainActivity extends BaseActivity {
                 } else {
                     useFallbackCategories();
                 }
+                isCategoriesLoaded = true;
+                checkLoadingComplete();
             }
 
             @Override
             public void onFailure(@NonNull Call<Response<ArrayList<Category>>> call, @NonNull Throwable t) {
                 useFallbackCategories();
+                isCategoriesLoaded = true;
+                checkLoadingComplete();
             }
         });
     }
 
     private void useFallbackCategories() {
-        categoriesList = java.util.Arrays.asList(
+        categoriesList = Arrays.asList(
                 new Category("1", "Điện thoại"),
                 new Category("2", "Máy tính"),
                 new Category("3", "Tai nghe"),
@@ -355,7 +415,7 @@ public class MainActivity extends BaseActivity {
 
         for (int i = 0; i < categories.size(); i++) {
             Category category = categories.get(i);
-            MaterialButton btn = new MaterialButton(this, null, R.style.CategoryChipStyle);
+            MaterialButton btn = (MaterialButton) getLayoutInflater().inflate(R.layout.item_category_button, layoutCategories, false);
             btn.setText(category.getName());
 
             boolean isActive = category.get_id().equals(activeCategory);
@@ -406,6 +466,12 @@ public class MainActivity extends BaseActivity {
                 if (filteredList.size() == FEATURED_PRODUCT_LIMIT) break;
             }
         }
+        if (filteredList.isEmpty() && !allProductsList.isEmpty()) {
+            for (Product product : allProductsList) {
+                filteredList.add(product);
+                if (filteredList.size() == FEATURED_PRODUCT_LIMIT) break;
+            }
+        }
         productAdapter.updateData(filteredList);
     }
 
@@ -429,11 +495,15 @@ public class MainActivity extends BaseActivity {
                 } else {
                     Log.e("MainActivity", "Failed to fetch products: " + response.message());
                 }
+                isProductsLoaded = true;
+                checkLoadingComplete();
             }
 
             @Override
             public void onFailure(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull Throwable t) {
                 Log.e("MainActivity", "Error fetching products", t);
+                isProductsLoaded = true;
+                checkLoadingComplete();
             }
         });
     }
@@ -454,11 +524,15 @@ public class MainActivity extends BaseActivity {
                 } else {
                     Log.e("MainActivity", "Failed to fetch news: " + response.message());
                 }
+                isNewsLoaded = true;
+                checkLoadingComplete();
             }
 
             @Override
             public void onFailure(@NonNull Call<Response<ArrayList<News>>> call, @NonNull Throwable t) {
                 Log.e("MainActivity", "Error fetching news", t);
+                isNewsLoaded = true;
+                checkLoadingComplete();
             }
         });
     }

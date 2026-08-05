@@ -119,9 +119,32 @@ public class ShippingOrderDetailActivity extends BaseActivity {
         rvOrderProducts.setAdapter(adapter);
     }
 
+    private String getLocalizedStatus(String status) {
+        if (status == null) return "";
+        if ("Chờ xác nhận".equalsIgnoreCase(status) || "Pending".equalsIgnoreCase(status)) {
+            return getString(R.string.status_pending);
+        }
+        if ("Đã xác nhận".equalsIgnoreCase(status) || "Confirmed".equalsIgnoreCase(status)) {
+            return getString(R.string.status_confirmed_at, "").trim();
+        }
+        if ("Đã rời kho".equalsIgnoreCase(status) || "Left Warehouse".equalsIgnoreCase(status)) {
+            return getString(R.string.status_dispatched);
+        }
+        if ("Đang giao hàng".equalsIgnoreCase(status) || "Shipping".equalsIgnoreCase(status)) {
+            return getString(R.string.status_shipping);
+        }
+        if ("Đã giao hàng".equalsIgnoreCase(status) || "Đã hoàn thành".equalsIgnoreCase(status) || "Completed".equalsIgnoreCase(status)) {
+            return getString(R.string.status_completed);
+        }
+        if ("Đã hủy".equalsIgnoreCase(status) || "Cancelled".equalsIgnoreCase(status)) {
+            return getString(R.string.status_cancelled);
+        }
+        return status;
+    }
+
     private void bindOrderData(Order order) {
         if (tvOrderDetailCode != null) {
-            tvOrderDetailCode.setText("Mã đơn: " + order.getOrderCode());
+            tvOrderDetailCode.setText(getString(R.string.order_code_prefix, order.getOrderCode()));
         }
 
         String status = order.getStatus();
@@ -129,13 +152,13 @@ public class ShippingOrderDetailActivity extends BaseActivity {
             status = "Chờ xác nhận";
         }
         if (tvStatusTitle != null) {
-            tvStatusTitle.setText(status);
+            tvStatusTitle.setText(getLocalizedStatus(status));
         }
         if (tvStatusBadge != null) {
-            tvStatusBadge.setText(status);
+            tvStatusBadge.setText(getLocalizedStatus(status));
         }
         if (tvEstimatedDelivery != null) {
-            tvEstimatedDelivery.setText("Dự kiến giao: " + DateTimeUtils.calculateVNEstimatedDelivery(order.getCreatedAt()));
+            tvEstimatedDelivery.setText(getString(R.string.estimated_delivery_prefix, DateTimeUtils.calculateVNEstimatedDelivery(order.getCreatedAt())));
         }
 
         updateTimeline(order);
@@ -144,7 +167,7 @@ public class ShippingOrderDetailActivity extends BaseActivity {
             String name = order.getRecipientName();
             String phone = order.getRecipientPhone();
             if (name.isEmpty() && phone.isEmpty()) {
-                tvShippingNamePhone.setText("Không có thông tin người nhận");
+                tvShippingNamePhone.setText(getString(R.string.no_recipient_info));
             } else {
                 tvShippingNamePhone.setText(name + "  •  " + phone);
             }
@@ -153,7 +176,7 @@ public class ShippingOrderDetailActivity extends BaseActivity {
         if (tvShippingAddress != null) {
             String address = order.getRecipientAddress();
             if (address.isEmpty()) {
-                tvShippingAddress.setText("Chưa cung cấp địa chỉ nhận hàng");
+                tvShippingAddress.setText(getString(R.string.no_shipping_address));
             } else {
                 tvShippingAddress.setText(address);
             }
@@ -175,11 +198,11 @@ public class ShippingOrderDetailActivity extends BaseActivity {
         if (tvShippingFee != null) tvShippingFee.setText(formatPrice(shippingFee));
         if (tvTotal != null) tvTotal.setText(formatPrice(total));
         if (tvPaymentMethod != null) tvPaymentMethod.setText("ZaloPay".equalsIgnoreCase(order.getPaymentMethod())
-                ? "ZaloPay" : "Thanh toán khi nhận hàng (COD)");
+                ? "ZaloPay" : getString(R.string.payment_cod));
 
         TextView tvSubtotalLabel = findViewById(R.id.tvSubtotalLabel);
         if (tvSubtotalLabel != null) {
-            tvSubtotalLabel.setText("Tạm tính (" + totalQty + " sản phẩm)");
+            tvSubtotalLabel.setText(String.format(getString(R.string.subtotal_label_template), totalQty));
         }
 
         TextView tvVoucher = findViewById(R.id.tvVoucher);
@@ -372,30 +395,30 @@ public class ShippingOrderDetailActivity extends BaseActivity {
 
         // Set text label content
         if ("Chờ xác nhận".equalsIgnoreCase(status)) {
-            tvConfirmed.setText("Chờ xác nhận");
-            tvWarehouse.setText("Đã rời kho");
-            tvDelivering.setText("Đang giao hàng\nĐơn hàng đang được shipper vận chuyển đến bạn.");
-            tvCompleted.setText("Đã giao hàng\nDự kiến: " + (estimatedDateStr.isEmpty() ? "Sau 5 ngày" : estimatedDateStr));
+            tvConfirmed.setText(getString(R.string.status_pending));
+            tvWarehouse.setText(getString(R.string.status_dispatched));
+            tvDelivering.setText(getString(R.string.status_shipping_desc));
+            tvCompleted.setText(getString(R.string.status_completed_desc, (estimatedDateStr.isEmpty() ? getString(R.string.after_5_days) : estimatedDateStr)));
         } else if ("Đã xác nhận".equalsIgnoreCase(status)) {
-            tvConfirmed.setText("Đã xác nhận\n" + confirmedTime);
-            tvWarehouse.setText("Đã rời kho");
-            tvDelivering.setText("Đang giao hàng\nĐơn hàng đang được shipper vận chuyển đến bạn.");
-            tvCompleted.setText("Đã giao hàng\nDự kiến: " + (estimatedDateStr.isEmpty() ? "Sau 5 ngày" : estimatedDateStr));
+            tvConfirmed.setText(getString(R.string.status_confirmed_at, confirmedTime));
+            tvWarehouse.setText(getString(R.string.status_dispatched));
+            tvDelivering.setText(getString(R.string.status_shipping_desc));
+            tvCompleted.setText(getString(R.string.status_completed_desc, (estimatedDateStr.isEmpty() ? getString(R.string.after_5_days) : estimatedDateStr)));
         } else if ("Đã rời kho".equalsIgnoreCase(status)) {
-            tvConfirmed.setText("Đã xác nhận\n" + confirmedTime);
-            tvWarehouse.setText("Đã rời kho\n" + warehouseTime);
-            tvDelivering.setText("Đang giao hàng\nĐơn hàng đang được shipper vận chuyển đến bạn.");
-            tvCompleted.setText("Đã giao hàng\nDự kiến: " + (estimatedDateStr.isEmpty() ? "Sau 5 ngày" : estimatedDateStr));
+            tvConfirmed.setText(getString(R.string.status_confirmed_at, confirmedTime));
+            tvWarehouse.setText(getString(R.string.status_warehouse_at, warehouseTime));
+            tvDelivering.setText(getString(R.string.status_shipping_desc));
+            tvCompleted.setText(getString(R.string.status_completed_desc, (estimatedDateStr.isEmpty() ? getString(R.string.after_5_days) : estimatedDateStr)));
         } else if ("Đang giao hàng".equalsIgnoreCase(status)) {
-            tvConfirmed.setText("Đã xác nhận\n" + confirmedTime);
-            tvWarehouse.setText("Đã rời kho\n" + warehouseTime);
-            tvDelivering.setText("Đang giao hàng\n" + deliveringTime + "\nĐơn hàng đang được shipper vận chuyển đến bạn.");
-            tvCompleted.setText("Đã giao hàng\nDự kiến: " + (estimatedDateStr.isEmpty() ? "Sau 5 ngày" : estimatedDateStr));
+            tvConfirmed.setText(getString(R.string.status_confirmed_at, confirmedTime));
+            tvWarehouse.setText(getString(R.string.status_warehouse_at, warehouseTime));
+            tvDelivering.setText(getString(R.string.status_shipping) + "\n" + deliveringTime + "\n" + (getString(R.string.status_shipping_desc).contains("\n") ? getString(R.string.status_shipping_desc).substring(getString(R.string.status_shipping_desc).indexOf("\n") + 1) : ""));
+            tvCompleted.setText(getString(R.string.status_completed_desc, (estimatedDateStr.isEmpty() ? getString(R.string.after_5_days) : estimatedDateStr)));
         } else if ("Đã giao hàng".equalsIgnoreCase(status) || "Đã hoàn thành".equalsIgnoreCase(status)) {
-            tvConfirmed.setText("Đã xác nhận\n" + confirmedTime);
-            tvWarehouse.setText("Đã rời kho\n" + warehouseTime);
-            tvDelivering.setText("Đang giao hàng\n" + deliveringTime + "\nĐơn hàng đang được shipper vận chuyển đến bạn.");
-            tvCompleted.setText("Đã giao hàng\n" + completedTime);
+            tvConfirmed.setText(getString(R.string.status_confirmed_at, confirmedTime));
+            tvWarehouse.setText(getString(R.string.status_warehouse_at, warehouseTime));
+            tvDelivering.setText(getString(R.string.status_shipping) + "\n" + deliveringTime + "\n" + (getString(R.string.status_shipping_desc).contains("\n") ? getString(R.string.status_shipping_desc).substring(getString(R.string.status_shipping_desc).indexOf("\n") + 1) : ""));
+            tvCompleted.setText(getString(R.string.status_delivered_at, completedTime));
         }
 
         if ("Đã xác nhận".equalsIgnoreCase(status)) {

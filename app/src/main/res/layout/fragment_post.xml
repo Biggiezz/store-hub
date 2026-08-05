@@ -18,12 +18,17 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="serif"
+                android:fontFamily="@font/shopee_display"
                 android:text="Quản trị Bài viết"
                 android:textColor="@color/dark_green"
                 android:textSize="16sp"
                 android:textStyle="bold" />
         </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#DEDCD7" />
 
         <LinearLayout
             android:layout_width="match_parent"

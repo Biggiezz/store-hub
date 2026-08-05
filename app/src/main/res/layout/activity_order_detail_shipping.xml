@@ -14,7 +14,7 @@
         android:background="@color/background"
         app:navigationIcon="@drawable/ic_back"
         app:navigationIconTint="#1A2821"
-        app:title="Chi tiết đơn hàng"
+        app:title="@string/order_detail_title"
         app:titleTextColor="#1A2821" />
 
     <androidx.core.widget.NestedScrollView
@@ -100,7 +100,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Lộ trình vận chuyển"
+                    android:text="@string/shipping_timeline"
                     android:textColor="#1A2821"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -254,7 +254,7 @@
                         android:background="#F5F3EF"
                         android:gravity="center_vertical"
                         android:padding="16dp"
-                        android:text="Sản phẩm"
+                        android:text="@string/products_label"
                         android:textColor="#1A2821"
                         android:textSize="20sp"
                         android:textStyle="bold" />
@@ -286,9 +286,9 @@
                 android:layout_height="56dp"
                 android:layout_marginTop="24dp"
                 android:background="@drawable/bg_button"
-                android:fontFamily="serif"
+                android:fontFamily="@font/shopee_display"
                 android:gravity="center"
-                android:text="Liên hệ hỗ trợ"
+                android:text="@string/contact_support"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -300,7 +300,7 @@
                 android:layout_marginTop="12dp"
                 android:background="@drawable/bg_detail_secondary_button"
                 android:gravity="center"
-                android:text="Hủy đơn hàng"
+                android:text="@string/cancel_order"
                 android:textColor="#434844"
                 android:textSize="16sp"
                 android:textStyle="bold" />

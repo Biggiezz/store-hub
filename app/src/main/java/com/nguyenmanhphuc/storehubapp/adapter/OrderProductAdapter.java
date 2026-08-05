@@ -61,10 +61,10 @@ public class OrderProductAdapter extends RecyclerView.Adapter<OrderProductAdapte
             holder.tvProductColor.setVisibility(View.GONE);
         } else {
             holder.tvProductColor.setVisibility(View.VISIBLE);
-            holder.tvProductColor.setText("Phân loại: " + item.getColorName());
+            holder.tvProductColor.setText(context.getString(R.string.variant_prefix, item.getColorName()));
         }
 
-        holder.tvProductQty.setText("Số lượng: " + item.getQuantity());
+        holder.tvProductQty.setText(context.getString(R.string.qty_prefix, item.getQuantity()));
         holder.tvProductPrice.setText(formatPrice(item.getPrice()));
 
         Glide.with(context)

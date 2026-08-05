@@ -13,7 +13,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Tạm tính"
+            android:text="@string/subtotal"
             android:textColor="#434844"
             android:textSize="14sp"
         />
@@ -35,7 +35,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Phí vận chuyển"
+            android:text="@string/shipping_fee"
             android:textColor="#434844"
             android:textSize="14sp"
         />
@@ -57,7 +57,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Giảm giá (Voucher)"
+            android:text="@string/discount_voucher"
             android:textColor="#BA1A1A"
             android:textSize="14sp"
         />
@@ -79,7 +79,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Phương thức thanh toán"
+            android:text="@string/payment_method_label"
             android:textColor="#434844"
             android:textSize="14sp"
         />
@@ -87,7 +87,7 @@
             android:id="@+id/tvPaymentMethod"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Thanh toán khi nhận hàng (COD)"
+            android:text="@string/payment_cod"
             android:textColor="#434844"
             android:textSize="14sp"
         />
@@ -108,7 +108,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Tổng cộng"
+            android:text="@string/total_label_no_colon"
             android:textColor="#1A2821"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -117,7 +117,7 @@
             android:id="@+id/tvTotal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="serif"
+            android:fontFamily="@font/shopee_display"
             android:text="0đ"
             android:textColor="#1A2821"
             android:textSize="22sp"

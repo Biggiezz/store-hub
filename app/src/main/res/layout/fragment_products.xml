@@ -17,6 +17,11 @@
         app:title="@string/product_list_title"
         app:titleCentered="true" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#DEDCD7" />
+
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
@@ -150,56 +155,14 @@
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 app:spanCount="2" />
 
-            <LinearLayout
-                android:id="@+id/layoutPagination"
-                android:layout_width="match_parent"
+            <ProgressBar
+                android:id="@+id/progressBarLoadMore"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/btnPreviousPage"
-                    style="@style/Widget.StoreHub.AdminPageButton"
-                    android:text="‹"
-                    android:textSize="28sp" />
-
-                <TextView
-                    android:id="@+id/btnPage1"
-                    style="@style/Widget.StoreHub.AdminPageButton"
-                    android:background="@drawable/bg_admin_chip_active"
-                    android:text="1"
-                    android:textColor="#FFFFFF" />
-
-                <TextView
-                    android:id="@+id/btnPage2"
-                    style="@style/Widget.StoreHub.AdminPageButton"
-                    android:text="2" />
-
-                <TextView
-                    android:id="@+id/btnPage3"
-                    style="@style/Widget.StoreHub.AdminPageButton"
-                    android:text="3" />
-
-                 <TextView
-                     android:id="@+id/tvEllipsis"
-                     android:layout_width="34dp"
-                     android:layout_height="42dp"
-                     android:gravity="center"
-                     android:text="..."
-                     android:textColor="#5D625F" />
-
-                <TextView
-                    android:id="@+id/tvLastPage"
-                    style="@style/Widget.StoreHub.AdminPageButton"
-                    android:text="1" />
-
-                <TextView
-                    android:id="@+id/btnNextPage"
-                    style="@style/Widget.StoreHub.AdminPageButton"
-                    android:text="›"
-                    android:textSize="28sp" />
-            </LinearLayout>
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="24dp"
+                android:visibility="gone" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </LinearLayout>

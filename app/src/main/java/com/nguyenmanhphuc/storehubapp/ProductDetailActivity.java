@@ -203,10 +203,10 @@ public class ProductDetailActivity extends BaseActivity {
                 bindProduct(currentProduct);
                 if (currentProduct.getStock() <= 0) {
                     btnAddToCart.setEnabled(false);
-                    btnAddToCart.setText("Đã hết hàng");
+                    btnAddToCart.setText(getString(R.string.out_of_stock));
                 } else {
                     btnAddToCart.setEnabled(true);
-                    btnAddToCart.setText("Thêm vào giỏ");
+                    btnAddToCart.setText(getString(R.string.add_to_cart));
                 }
             }
 
@@ -229,7 +229,7 @@ public class ProductDetailActivity extends BaseActivity {
         if (tvStockStatus != null) {
             if (product.getStock() <= 0) {
                 tvStockStatus.setVisibility(View.VISIBLE);
-                tvStockStatus.setText("ĐÃ HẾT HÀNG");
+                tvStockStatus.setText(getString(R.string.out_of_stock).toUpperCase(Locale.getDefault()));
             } else {
                 tvStockStatus.setVisibility(View.GONE);
             }
@@ -244,13 +244,13 @@ public class ProductDetailActivity extends BaseActivity {
 
         ratingProduct.setRating(product.getRating());
 
-        String ratingSummary = String.format(new Locale("vi", "VN"), "%.1f (%d đánh giá)",
+        String ratingSummary = String.format(Locale.getDefault(), getString(R.string.rating_format),
                 product.getRating(),
                 product.getReviewCount()
         );
 
         tvRatingSummary.setText(ratingSummary);
-        tvSold.setText("Đã bán: " + product.getSold());
+        tvSold.setText(getString(R.string.sold_label) + " " + product.getSold());
         tvReviewScore.setText(String.format(new Locale("vi", "VN"), "%.1f", product.getRating()));
 
         Glide.with(this)
@@ -313,9 +313,9 @@ public class ProductDetailActivity extends BaseActivity {
             }
         }
         if (!selectedColorName.isEmpty()) {
-            tvColorLabel.setText("MÀU SẮC: " + selectedColorName);
+            tvColorLabel.setText(getString(R.string.colors_label) + ": " + selectedColorName);
         } else {
-            tvColorLabel.setText("MÀU SẮC");
+            tvColorLabel.setText(getString(R.string.colors_label));
         }
 
         for (ProductColor productColor : colors) {
@@ -468,8 +468,7 @@ public class ProductDetailActivity extends BaseActivity {
     private void setCartLoading(boolean loading) {
         btnAddToCart.setEnabled(!loading);
 
-        btnAddToCart.setText(loading ? "Đang thêm..." : "Thêm vào giỏ"
-        );
+        btnAddToCart.setText(loading ? getString(R.string.adding) : getString(R.string.add_to_cart));
     }
 
     private void showLoadError() {

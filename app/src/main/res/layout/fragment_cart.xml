@@ -30,7 +30,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:fontFamily="@font/hanken_grotesk_semibold"
+            android:fontFamily="@font/shopee_display"
             android:gravity="center"
             android:text="@string/cart_title"
             android:textColor="#17271F"
@@ -47,7 +47,7 @@
 
     <View
         android:id="@+id/toolbarDivider"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#E4E2DE" />
 
@@ -439,7 +439,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="66dp"
                             android:layout_marginTop="28dp"
-                            android:fontFamily="@font/libre_caslon_text"
+                            android:fontFamily="@font/shopee_display"
                             android:text="@string/checkout_now_button"
                             android:textAllCaps="false"
                             android:textColor="#FFFFFF"

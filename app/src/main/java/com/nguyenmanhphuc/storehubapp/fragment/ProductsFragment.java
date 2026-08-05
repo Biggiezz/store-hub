@@ -1,28 +1,27 @@
 package com.nguyenmanhphuc.storehubapp.fragment;
 
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 import com.nguyenmanhphuc.storehubapp.MainActivity;
 import com.nguyenmanhphuc.storehubapp.R;
 import com.nguyenmanhphuc.storehubapp.adapter.ProductAdapter;
@@ -30,13 +29,8 @@ import com.nguyenmanhphuc.storehubapp.model.Pagination;
 import com.nguyenmanhphuc.storehubapp.model.Product;
 import com.nguyenmanhphuc.storehubapp.model.response.Response;
 import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
-import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
-
-import android.graphics.drawable.Drawable;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -46,21 +40,23 @@ public class ProductsFragment extends Fragment {
     private MaterialToolbar toolbar;
     private ProductAdapter productAdapter;
     private TextInputEditText edtSearch;
+    private NestedScrollView nestedScrollView;
+    private ProgressBar progressBar, progressBarLoadMore;
+    private MaterialButton btnPrice, btnAZ, btnZA;
+
     private final ArrayList<Product> allProducts = new ArrayList<>();
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
     private static final int LIMIT = 6;
     private static final long SEARCH_DEBOUNCE_MS = 400;
+
     private int currentPage = 1;
     private int totalPages = 1;
+    private boolean isLoading = false;
     private String currentSearchKeyword = "";
     private String currentSort = "";
     private Runnable searchRunnable;
     private Call<Response<ArrayList<Product>>> currentCall;
     private int loadGeneration;
-    private TextView page1, page2, page3, lastPage, tvEllipsis;
-    private ProgressBar progressBar;
-    private View layoutPagination;
-    private MaterialButton btnPrice, btnAZ, btnZA;
 
     @Nullable
     @Override
@@ -75,7 +71,7 @@ public class ProductsFragment extends Fragment {
 
         initUi(view);
         setUpAdapter();
-        setUpListener(view);
+        setUpListener();
 
         loadFirstPage();
     }
@@ -84,13 +80,9 @@ public class ProductsFragment extends Fragment {
         rvProducts = view.findViewById(R.id.rvProducts);
         toolbar = view.findViewById(R.id.toolbar);
         edtSearch = view.findViewById(R.id.edtSearch);
-        page1 = view.findViewById(R.id.btnPage1);
-        page2 = view.findViewById(R.id.btnPage2);
-        page3 = view.findViewById(R.id.btnPage3);
-        lastPage = view.findViewById(R.id.tvLastPage);
-        tvEllipsis = view.findViewById(R.id.tvEllipsis);
+        nestedScrollView = view.findViewById(R.id.nestedScrollView);
         progressBar = view.findViewById(R.id.progressBar);
-        layoutPagination = view.findViewById(R.id.layoutPagination);
+        progressBarLoadMore = view.findViewById(R.id.progressBarLoadMore);
         btnPrice = view.findViewById(R.id.btnPrice);
         btnAZ = view.findViewById(R.id.btnAZ);
         btnZA = view.findViewById(R.id.btnZA);
@@ -104,7 +96,7 @@ public class ProductsFragment extends Fragment {
         }
     }
 
-    private void setUpListener(View view) {
+    private void setUpListener() {
         if (toolbar != null) {
             toolbar.setNavigationOnClickListener(v -> ((MainActivity) requireActivity()).showHome());
             toolbar.setOnMenuItemClickListener(item -> {
@@ -140,39 +132,17 @@ public class ProductsFragment extends Fragment {
         btnAZ.setOnClickListener(v -> changeSort("name_asc"));
         btnZA.setOnClickListener(v -> changeSort("name_desc"));
 
-        if (page1 != null) {
-            page1.setOnClickListener(v -> {
-                try {
-                    goToPage(Integer.parseInt(page1.getText().toString()));
-                } catch (Exception ignored) {}
+        if (nestedScrollView != null) {
+            nestedScrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+                if (scrollY > oldScrollY && !isLoading && currentPage < totalPages) {
+                    if (v.getChildAt(0) != null) {
+                        int diff = v.getChildAt(0).getMeasuredHeight() - (v.getHeight() + scrollY);
+                        if (diff <= 400) {
+                            loadNextPage();
+                        }
+                    }
+                }
             });
-        }
-        if (page2 != null) {
-            page2.setOnClickListener(v -> {
-                try {
-                    goToPage(Integer.parseInt(page2.getText().toString()));
-                } catch (Exception ignored) {}
-            });
-        }
-        if (page3 != null) {
-            page3.setOnClickListener(v -> {
-                try {
-                    goToPage(Integer.parseInt(page3.getText().toString()));
-                } catch (Exception ignored) {}
-            });
-        }
-        if (lastPage != null) {
-            lastPage.setOnClickListener(v -> goToPage(totalPages));
-        }
-
-        View prevBtn = view.findViewById(R.id.btnPreviousPage);
-        if (prevBtn != null) {
-            prevBtn.setOnClickListener(v -> goToPage(currentPage - 1));
-        }
-
-        View nextBtn = view.findViewById(R.id.btnNextPage);
-        if (nextBtn != null) {
-            nextBtn.setOnClickListener(v -> goToPage(currentPage + 1));
         }
     }
 
@@ -180,17 +150,25 @@ public class ProductsFragment extends Fragment {
         cancelCurrentCall();
         currentSearchKeyword = keyword;
         currentPage = 1;
+        isLoading = false;
         allProducts.clear();
         productAdapter.updateData(allProducts);
-        fetchProducts(currentPage, keyword);
+        fetchProducts(currentPage, keyword, false);
     }
 
     private void loadFirstPage() {
         cancelCurrentCall();
         currentPage = 1;
+        isLoading = false;
         allProducts.clear();
         productAdapter.updateData(allProducts);
-        fetchProducts(currentPage, "");
+        fetchProducts(currentPage, "", false);
+    }
+
+    private void loadNextPage() {
+        if (isLoading || currentPage >= totalPages) return;
+        isLoading = true;
+        fetchProducts(currentPage + 1, currentSearchKeyword, true);
     }
 
     private void changeSort(String sort) {
@@ -211,18 +189,13 @@ public class ProductsFragment extends Fragment {
         button.setTextColor(Color.parseColor(selected ? "#6B6157" : "#5D625F"));
     }
 
-    private void goToPage(int page) {
-        if (page < 1 || page > totalPages || page == currentPage) return;
-        currentPage = page;
-        allProducts.clear();
-        productAdapter.updateData(allProducts);
-        fetchProducts(currentPage, currentSearchKeyword);
-    }
-
-    private void fetchProducts(int page, String keyword) {
-        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
-        if (rvProducts != null) rvProducts.setVisibility(View.GONE);
-        if (layoutPagination != null) layoutPagination.setVisibility(View.GONE);
+    private void fetchProducts(int page, String keyword, boolean isLoadMore) {
+        if (!isLoadMore) {
+            if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+            if (rvProducts != null) rvProducts.setVisibility(View.GONE);
+        } else {
+            if (progressBarLoadMore != null) progressBarLoadMore.setVisibility(View.VISIBLE);
+        }
 
         int requestGeneration = ++loadGeneration;
 
@@ -241,10 +214,9 @@ public class ProductsFragment extends Fragment {
                         && response.body().getCode() == 200 && response.body().getData() != null) {
                     ArrayList<Product> products = response.body().getData();
                     Pagination pagination = response.body().getPagination();
-                    preloadPageImages(products, requestGeneration,
-                            () -> showProducts(products, pagination, requestGeneration));
+                    showProducts(products, pagination, requestGeneration, isLoadMore);
                 } else {
-                    showLoadFailure(requestGeneration, "Không thể tải danh sách sản phẩm", null);
+                    showLoadFailure(requestGeneration, "Không thể tải danh sách sản phẩm");
                 }
             }
 
@@ -252,121 +224,43 @@ public class ProductsFragment extends Fragment {
             public void onFailure(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull Throwable t) {
                 if (call.isCanceled()) return;
 
-                showLoadFailure(requestGeneration, "Lỗi tải sản phẩm", t);
+                showLoadFailure(requestGeneration, "Lỗi tải sản phẩm");
             }
         });
     }
 
-    private void preloadPageImages(ArrayList<Product> products, int requestGeneration, Runnable onComplete) {
-        if (products.isEmpty()) {
-            onComplete.run();
-            return;
-        }
-
-        int[] remaining = {products.size()};
-        for (Product product : products) {
-            Glide.with(this)
-                    .load(product.getImage())
-                    .placeholder(R.drawable.ic_product)
-                    .error(R.drawable.ic_product)
-                    .listener(new RequestListener<Drawable>() {
-                        @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model,
-                                                    Target<Drawable> target, boolean isFirstResource) {
-                            finishImagePreload();
-                            return false;
-                        }
-
-                        @Override
-                        public boolean onResourceReady(Drawable resource, Object model,
-                                                       Target<Drawable> target,
-                                                       com.bumptech.glide.load.DataSource dataSource,
-                                                       boolean isFirstResource) {
-                            finishImagePreload();
-                            return false;
-                        }
-
-                        private void finishImagePreload() {
-                            if (requestGeneration == loadGeneration && --remaining[0] == 0) {
-                                onComplete.run();
-                            }
-                        }
-                    })
-                    .preload();
-        }
-    }
-
-    private void showProducts(ArrayList<Product> products,
-                              com.nguyenmanhphuc.storehubapp.model.Pagination pagination,
-                              int requestGeneration) {
+    private void showProducts(ArrayList<Product> products, Pagination pagination, int requestGeneration, boolean isLoadMore) {
         if (!isAdded() || productAdapter == null || requestGeneration != loadGeneration) return;
-        allProducts.clear();
+
+        if (!isLoadMore) {
+            allProducts.clear();
+        }
         allProducts.addAll(products);
-        totalPages = pagination == null ? 1 : Math.max(1, pagination.getTotalPages());
-        currentPage = pagination == null ? 1 : pagination.getCurrentPage();
-        productAdapter.updateData(allProducts);
-        updatePagination();
-        if (progressBar != null) progressBar.setVisibility(View.GONE);
-        if (rvProducts != null) rvProducts.setVisibility(View.VISIBLE);
-        if (layoutPagination != null) layoutPagination.setVisibility(View.VISIBLE);
-    }
 
-    private void showLoadFailure(int requestGeneration, String message, Throwable error) {
-        if (!isAdded() || requestGeneration != loadGeneration) return;
-        if (progressBar != null) progressBar.setVisibility(View.GONE);
-        if (rvProducts != null) rvProducts.setVisibility(View.VISIBLE);
-        if (layoutPagination != null) layoutPagination.setVisibility(View.VISIBLE);
-        Log.e("ProductsFragment", message, error);
-    }
-
-    private void updatePagination() {
-        if (lastPage == null) return;
-        lastPage.setText(String.valueOf(totalPages));
-        lastPage.setVisibility(totalPages > 3 ? View.VISIBLE : View.GONE);
-
-        int p1, p2, p3;
-        if (totalPages <= 3) {
-            p1 = 1;
-            p2 = 2;
-            p3 = 3;
-            if (page2 != null) page2.setVisibility(totalPages >= 2 ? View.VISIBLE : View.GONE);
-            if (page3 != null) page3.setVisibility(totalPages >= 3 ? View.VISIBLE : View.GONE);
+        if (pagination != null) {
+            totalPages = Math.max(1, pagination.getTotalPages());
+            currentPage = pagination.getCurrentPage();
         } else {
-            if (page2 != null) page2.setVisibility(View.VISIBLE);
-            if (page3 != null) page3.setVisibility(View.VISIBLE);
-            if (currentPage <= 2) {
-                p1 = 1;
-                p2 = 2;
-                p3 = 3;
-            } else if (currentPage >= totalPages - 1) {
-                p1 = totalPages - 3;
-                p2 = totalPages - 2;
-                p3 = totalPages - 1;
-            } else {
-                p1 = currentPage - 1;
-                p2 = currentPage;
-                p3 = currentPage + 1;
+            if (products.size() < LIMIT) {
+                totalPages = currentPage;
             }
         }
+        isLoading = false;
 
-        if (page1 != null) page1.setText(String.valueOf(p1));
-        if (page2 != null) page2.setText(String.valueOf(p2));
-        if (page3 != null) page3.setText(String.valueOf(p3));
+        productAdapter.updateData(allProducts);
 
-        if (tvEllipsis != null) {
-            tvEllipsis.setVisibility(totalPages > p3 + 1 ? View.VISIBLE : View.GONE);
-        }
+        if (progressBar != null) progressBar.setVisibility(View.GONE);
+        if (progressBarLoadMore != null) progressBarLoadMore.setVisibility(View.GONE);
+        if (rvProducts != null) rvProducts.setVisibility(View.VISIBLE);
+    }
 
-        TextView[] pages = {page1, page2, page3, lastPage};
-        for (TextView tv : pages) {
-            if (tv == null) continue;
-            try {
-                int val = Integer.parseInt(tv.getText().toString());
-                boolean active = currentPage == val;
-                tv.setBackgroundResource(active ? R.drawable.bg_admin_chip_active : R.drawable.bg_circle_button);
-                tv.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), active ? R.color.white : R.color.text_secondary));
-            } catch (Exception ignored) {}
-        }
+    private void showLoadFailure(int requestGeneration, String message) {
+        if (!isAdded() || requestGeneration != loadGeneration) return;
+        isLoading = false;
+        if (progressBar != null) progressBar.setVisibility(View.GONE);
+        if (progressBarLoadMore != null) progressBarLoadMore.setVisibility(View.GONE);
+        if (rvProducts != null) rvProducts.setVisibility(View.VISIBLE);
+        Log.e("ProductsFragment", message);
     }
 
     private void cancelCurrentCall() {

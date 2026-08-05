@@ -107,17 +107,17 @@ public class CompletedOrderDetailActivity extends BaseActivity {
 
     private void bindOrderData(Order order) {
         if (tvOrderDetailCode != null) {
-            tvOrderDetailCode.setText("Mã đơn: " + order.getOrderCode());
+            tvOrderDetailCode.setText(getString(R.string.order_code_prefix, order.getOrderCode()));
         }
 
         if (btnReview != null) {
             if (order.isReviewed()) {
                 btnReview.setEnabled(false);
-                btnReview.setText("Đã đánh giá");
+                btnReview.setText(getString(R.string.reviewed));
                 btnReview.setAlpha(0.5f);
             } else {
                 btnReview.setEnabled(true);
-                btnReview.setText("Đánh giá");
+                btnReview.setText(getString(R.string.review));
                 btnReview.setAlpha(1.0f);
             }
         }
@@ -126,7 +126,7 @@ public class CompletedOrderDetailActivity extends BaseActivity {
             String name = order.getRecipientName();
             String phone = order.getRecipientPhone();
             if (name.isEmpty() && phone.isEmpty()) {
-                tvShippingNamePhone.setText("Không có thông tin người nhận");
+                tvShippingNamePhone.setText(getString(R.string.no_recipient_info));
             } else {
                 tvShippingNamePhone.setText(name + "  •  " + phone);
             }
@@ -135,7 +135,7 @@ public class CompletedOrderDetailActivity extends BaseActivity {
         if (tvShippingAddress != null) {
             String address = order.getRecipientAddress();
             if (address.isEmpty()) {
-                tvShippingAddress.setText("Chưa cung cấp địa chỉ nhận hàng");
+                tvShippingAddress.setText(getString(R.string.no_shipping_address));
             } else {
                 tvShippingAddress.setText(address);
             }
@@ -157,11 +157,11 @@ public class CompletedOrderDetailActivity extends BaseActivity {
         if (tvShippingFee != null) tvShippingFee.setText(formatPrice(shippingFee));
         if (tvTotal != null) tvTotal.setText(formatPrice(total));
         if (tvPaymentMethod != null) tvPaymentMethod.setText("ZaloPay".equalsIgnoreCase(order.getPaymentMethod())
-                ? "ZaloPay" : "Thanh toán khi nhận hàng (COD)");
+                ? "ZaloPay" : getString(R.string.payment_cod));
 
         TextView tvSubtotalLabel = findViewById(R.id.tvSubtotalLabel);
         if (tvSubtotalLabel != null) {
-            tvSubtotalLabel.setText("Tạm tính (" + totalQty + " sản phẩm)");
+            tvSubtotalLabel.setText(String.format(getString(R.string.subtotal_label_template), totalQty));
         }
 
         tvVoucher = findViewById(R.id.tvVoucher);
@@ -169,14 +169,37 @@ public class CompletedOrderDetailActivity extends BaseActivity {
 
         tvStatusText = findViewById(R.id.tvStatusText);
         if (tvStatusText != null) {
-            tvStatusText.setText(order.getStatus() != null ? order.getStatus() : "Đã hoàn thành");
+            tvStatusText.setText(order.getStatus() != null ? getLocalizedStatus(order.getStatus()) : getString(R.string.status_completed));
         }
 
         tvCompletedTime = findViewById(R.id.tvCompletedTime);
         if (tvCompletedTime != null) {
             String timeStr = (order.getCompletedAt() != null) ? order.getCompletedAt() : order.getCreatedAt();
-            tvCompletedTime.setText("Hoàn thành lúc " + DateTimeUtils.formatISOToVN(timeStr, "HH:mm, dd/MM/yyyy"));
+            tvCompletedTime.setText(getString(R.string.completed_at_prefix, DateTimeUtils.formatISOToVN(timeStr, "HH:mm, dd/MM/yyyy")));
         }
+    }
+
+    private String getLocalizedStatus(String status) {
+        if (status == null) return "";
+        if ("Chờ xác nhận".equalsIgnoreCase(status) || "Pending".equalsIgnoreCase(status)) {
+            return getString(R.string.status_pending);
+        }
+        if ("Đã xác nhận".equalsIgnoreCase(status) || "Confirmed".equalsIgnoreCase(status)) {
+            return getString(R.string.status_confirmed_at, "").trim();
+        }
+        if ("Đã rời kho".equalsIgnoreCase(status) || "Left Warehouse".equalsIgnoreCase(status)) {
+            return getString(R.string.status_dispatched);
+        }
+        if ("Đang giao hàng".equalsIgnoreCase(status) || "Shipping".equalsIgnoreCase(status)) {
+            return getString(R.string.status_shipping);
+        }
+        if ("Đã giao hàng".equalsIgnoreCase(status) || "Đã hoàn thành".equalsIgnoreCase(status) || "Completed".equalsIgnoreCase(status)) {
+            return getString(R.string.status_completed);
+        }
+        if ("Đã hủy".equalsIgnoreCase(status) || "Cancelled".equalsIgnoreCase(status)) {
+            return getString(R.string.status_cancelled);
+        }
+        return status;
     }
 
     private String formatPrice(long price) {
