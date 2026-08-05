@@ -57,6 +57,9 @@ public class ProductsFragmentManagement extends Fragment {
     private List<Category> categoriesList = new ArrayList<>();
     private final ArrayList<TextView> dynamicChips = new ArrayList<>();
     private final ArrayList<String> dynamicChipValues = new ArrayList<>();
+    private final ArrayList<Product> allProducts = new ArrayList<>();
+    private boolean isLoading = false;
+    private ProgressBar progressBarLoadMore;
 
     @Nullable
     @Override
@@ -86,10 +89,14 @@ public class ProductsFragmentManagement extends Fragment {
         lastPage = view.findViewById(R.id.tvAdminLastPage);
         tvEllipsis = view.findViewById(R.id.tvAdminEllipsis);
         progressBar = view.findViewById(R.id.progressBar);
+        progressBarLoadMore = view.findViewById(R.id.progressBarLoadMore);
         layoutPagination = view.findViewById(R.id.layoutPagination);
-
+        if (layoutPagination != null) {
+            layoutPagination.setVisibility(View.GONE);
+        }
+ 
         loadCategoriesFromServer();
-
+ 
         searchInput.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -98,26 +105,21 @@ public class ProductsFragmentManagement extends Fragment {
             }
             @Override public void afterTextChanged(Editable s) { }
         });
-
-        page1.setOnClickListener(v -> {
-            try {
-                goToPage(Integer.parseInt(page1.getText().toString()));
-            } catch (Exception ignored) {}
-        });
-        page2.setOnClickListener(v -> {
-            try {
-                goToPage(Integer.parseInt(page2.getText().toString()));
-            } catch (Exception ignored) {}
-        });
-        page3.setOnClickListener(v -> {
-            try {
-                goToPage(Integer.parseInt(page3.getText().toString()));
-            } catch (Exception ignored) {}
-        });
-        lastPage.setOnClickListener(v -> goToPage(totalPages));
-        view.findViewById(R.id.btnAdminPreviousPage).setOnClickListener(v -> goToPage(currentPage - 1));
-        view.findViewById(R.id.btnAdminNextPage).setOnClickListener(v -> goToPage(currentPage + 1));
-
+ 
+        androidx.core.widget.NestedScrollView nestedScrollView = view.findViewById(R.id.nestedScrollViewAdminProducts);
+        if (nestedScrollView != null) {
+            nestedScrollView.setOnScrollChangeListener((androidx.core.widget.NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+                if (scrollY > oldScrollY && !isLoading && currentPage < totalPages) {
+                    if (v.getChildAt(0) != null) {
+                        int diff = v.getChildAt(0).getMeasuredHeight() - (v.getHeight() + scrollY);
+                        if (diff <= 400) {
+                            loadNextPage();
+                        }
+                    }
+                }
+            });
+        }
+ 
         FloatingActionButton add = view.findViewById(R.id.fabAddProduct);
         add.setOnClickListener(v -> startActivity(ProductFormManagementActivity.createAddIntent(requireContext())));
     }
@@ -207,9 +209,10 @@ public class ProductsFragmentManagement extends Fragment {
         }
     }
 
-    private void goToPage(int page) {
-        if (page < 1 || page > totalPages || page == currentPage) return;
-        currentPage = page;
+    private void loadNextPage() {
+        if (isLoading || currentPage >= totalPages) return;
+        isLoading = true;
+        currentPage++;
         loadProducts();
     }
 
@@ -217,14 +220,24 @@ public class ProductsFragmentManagement extends Fragment {
         if (!isAdded() || adapter == null) return;
         if (currentCall != null) currentCall.cancel();
         
+        if (currentPage == 1) {
+            allProducts.clear();
+            adapter.submitList(allProducts);
+        }
+        isLoading = true;
+ 
         // Chỉ hiện Loading Spinner và ẩn danh sách ở lần đầu tiên tải (khi danh sách đang trống)
-        boolean isFirstLoad = adapter.getItemCount() == 0;
+        boolean isFirstLoad = allProducts.isEmpty();
         if (isFirstLoad) {
             if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
             if (grid != null) grid.setVisibility(View.GONE);
-            if (layoutPagination != null) layoutPagination.setVisibility(View.GONE);
+        } else {
+            if (progressBarLoadMore != null) progressBarLoadMore.setVisibility(View.VISIBLE);
         }
-
+        if (layoutPagination != null) {
+            layoutPagination.setVisibility(View.GONE);
+        }
+ 
         String keyword = searchInput == null ? "" : searchInput.getText().toString().trim();
         HttpResquest request = new HttpResquest();
         currentCall = keyword.isEmpty()
@@ -234,28 +247,33 @@ public class ProductsFragmentManagement extends Fragment {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
                 if (!isAdded() || call.isCanceled()) return;
-
+                isLoading = false;
+ 
                 if (progressBar != null) progressBar.setVisibility(View.GONE);
+                if (progressBarLoadMore != null) progressBarLoadMore.setVisibility(View.GONE);
                 if (grid != null) grid.setVisibility(View.VISIBLE);
-                if (layoutPagination != null) layoutPagination.setVisibility(View.VISIBLE);
-
+ 
                 if (response.isSuccessful() && response.body() != null) {
-                    adapter.submitList(response.body().getData());
+                    ArrayList<Product> newData = response.body().getData();
+                    if (newData != null) {
+                        allProducts.addAll(newData);
+                        adapter.submitList(allProducts);
+                    }
                     Pagination pagination = response.body().getPagination();
                     totalPages = pagination == null ? 1 : Math.max(1, pagination.getTotalPages());
                     currentPage = pagination == null ? 1 : pagination.getCurrentPage();
-                    updatePagination();
                 } else {
                     Toast.makeText(requireContext(), "Không thể tải danh sách sản phẩm", Toast.LENGTH_SHORT).show();
                 }
             }
-
+ 
             @Override
             public void onFailure(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull Throwable throwable) {
                 if (!isAdded() || call.isCanceled()) return;
+                isLoading = false;
                 if (progressBar != null) progressBar.setVisibility(View.GONE);
+                if (progressBarLoadMore != null) progressBarLoadMore.setVisibility(View.GONE);
                 if (grid != null) grid.setVisibility(View.VISIBLE);
-                if (layoutPagination != null) layoutPagination.setVisibility(View.VISIBLE);
                 Toast.makeText(requireContext(), "Lỗi kết nối server", Toast.LENGTH_SHORT).show();
             }
         });

@@ -51,6 +51,7 @@ public class UserManagementFragment extends Fragment {
     private final List<User> allStaffList = new ArrayList<>();
     private final List<User> allCustomerList = new ArrayList<>();
     private List<User> currentList = new ArrayList<>();
+    private final List<User> displayedUsers = new ArrayList<>();
 
     private boolean isStaffTabSelected = true;
     private int currentPage = 1;
@@ -167,42 +168,48 @@ public class UserManagementFragment extends Fragment {
             }
         });
 
-        btnPrevPage.setOnClickListener(v -> {
-            if (currentPage > 1) {
-                currentPage--;
-                String query = etSearchUser.getText().toString();
-                filterUserList(query);
+        if (llPagination != null) {
+            llPagination.setVisibility(View.GONE);
+        }
+
+        rvUsers.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                androidx.recyclerview.widget.LinearLayoutManager layoutManager =
+                        (androidx.recyclerview.widget.LinearLayoutManager) recyclerView.getLayoutManager();
+                if (layoutManager != null && dy > 0) {
+                    int visibleItemCount = layoutManager.getChildCount();
+                    int totalItemCount = layoutManager.getItemCount();
+                    int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+                    
+                    String query = etSearchUser == null ? "" : etSearchUser.getText().toString().trim().toLowerCase();
+                    List<User> filtered = new ArrayList<>();
+                    for (User user : currentList) {
+                        boolean nameMatches = user.getName() != null && user.getName().toLowerCase().contains(query);
+                        boolean emailMatches = user.getEmail() != null && user.getEmail().toLowerCase().contains(query);
+                        if (nameMatches || emailMatches) {
+                            filtered.add(user);
+                        }
+                    }
+                    int totalItems = filtered.size();
+                    int totalPagesVal = (totalItems + PAGE_SIZE - 1) / PAGE_SIZE;
+                    if (totalPagesVal < 1) totalPagesVal = 1;
+
+                    if (currentPage < totalPagesVal) {
+                        if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount - 2
+                                && firstVisibleItemPosition >= 0) {
+                            currentPage++;
+                            int start = (currentPage - 1) * PAGE_SIZE;
+                            int end = Math.min(start + PAGE_SIZE, totalItems);
+                            if (start < totalItems) {
+                                displayedUsers.addAll(filtered.subList(start, end));
+                                userAdapter.updateData(displayedUsers);
+                            }
+                        }
+                    }
+                }
             }
-        });
-
-        btnNextPage.setOnClickListener(v -> {
-            currentPage++;
-            String query = etSearchUser.getText().toString();
-            filterUserList(query);
-        });
-
-        btnPage1.setOnClickListener(v -> {
-            try {
-                currentPage = Integer.parseInt(btnPage1.getText().toString());
-                String query = etSearchUser.getText().toString();
-                filterUserList(query);
-            } catch (Exception ignored) {}
-        });
-
-        btnPage2.setOnClickListener(v -> {
-            try {
-                currentPage = Integer.parseInt(btnPage2.getText().toString());
-                String query = etSearchUser.getText().toString();
-                filterUserList(query);
-            } catch (Exception ignored) {}
-        });
-
-        btnPage3.setOnClickListener(v -> {
-            try {
-                currentPage = Integer.parseInt(btnPage3.getText().toString());
-                String query = etSearchUser.getText().toString();
-                filterUserList(query);
-            } catch (Exception ignored) {}
         });
     }
 
@@ -257,98 +264,26 @@ public class UserManagementFragment extends Fragment {
         }
 
         int totalItems = filtered.size();
-        int totalPages = (totalItems + PAGE_SIZE - 1) / PAGE_SIZE;
-        if (totalPages < 1) totalPages = 1;
+        currentPage = 1;
+        displayedUsers.clear();
 
-        if (currentPage > totalPages) {
-            currentPage = totalPages;
-        }
-
-        int start = (currentPage - 1) * PAGE_SIZE;
-        int end = Math.min(start + PAGE_SIZE, totalItems);
-        List<User> pagedList = new ArrayList<>();
+        int start = 0;
+        int end = Math.min(PAGE_SIZE, totalItems);
         if (start < totalItems) {
-            pagedList = filtered.subList(start, end);
+            displayedUsers.addAll(filtered.subList(start, end));
         }
 
-        userAdapter.updateData(pagedList);
+        userAdapter.updateData(displayedUsers);
 
-        if (pagedList.isEmpty()) {
-            tvEmptyState.setVisibility(View.VISIBLE);
-            rvUsers.setVisibility(View.GONE);
+        if (displayedUsers.isEmpty()) {
+            if (tvEmptyState != null) tvEmptyState.setVisibility(View.VISIBLE);
+            if (rvUsers != null) rvUsers.setVisibility(View.GONE);
+        } else {
+            if (tvEmptyState != null) tvEmptyState.setVisibility(View.GONE);
+            if (rvUsers != null) rvUsers.setVisibility(View.VISIBLE);
+        }
+        if (llPagination != null) {
             llPagination.setVisibility(View.GONE);
-        } else {
-            tvEmptyState.setVisibility(View.GONE);
-            rvUsers.setVisibility(View.VISIBLE);
-            if (totalItems <= PAGE_SIZE) {
-                llPagination.setVisibility(View.GONE);
-            } else {
-                llPagination.setVisibility(View.VISIBLE);
-                updatePaginationUi(currentPage, totalPages);
-            }
-        }
-    }
-
-    private void updatePaginationUi(int page, int totalPages) {
-        int p1, p2, p3;
-        if (totalPages <= 3) {
-            p1 = 1;
-            p2 = 2;
-            p3 = 3;
-            btnPage1.setVisibility(View.VISIBLE);
-            btnPage2.setVisibility(totalPages >= 2 ? View.VISIBLE : View.GONE);
-            btnPage3.setVisibility(totalPages >= 3 ? View.VISIBLE : View.GONE);
-        } else {
-            btnPage1.setVisibility(View.VISIBLE);
-            btnPage2.setVisibility(View.VISIBLE);
-            btnPage3.setVisibility(View.VISIBLE);
-            if (page <= 2) {
-                p1 = 1;
-                p2 = 2;
-                p3 = 3;
-            } else if (page >= totalPages - 1) {
-                p1 = totalPages - 2;
-                p2 = totalPages - 1;
-                p3 = totalPages;
-            } else {
-                p1 = page - 1;
-                p2 = page;
-                p3 = page + 1;
-            }
-        }
-
-        btnPage1.setText(String.valueOf(p1));
-        btnPage2.setText(String.valueOf(p2));
-        btnPage3.setText(String.valueOf(p3));
-
-        setActiveStyle(btnPage1, p1 == page);
-        setActiveStyle(btnPage2, p2 == page);
-        setActiveStyle(btnPage3, p3 == page);
-
-        if (page > 1) {
-            btnPrevPage.setEnabled(true);
-            btnPrevPage.setAlpha(1.0f);
-        } else {
-            btnPrevPage.setEnabled(false);
-            btnPrevPage.setAlpha(0.4f);
-        }
-
-        if (page < totalPages) {
-            btnNextPage.setEnabled(true);
-            btnNextPage.setAlpha(1.0f);
-        } else {
-            btnNextPage.setEnabled(false);
-            btnNextPage.setAlpha(0.4f);
-        }
-    }
-
-    private void setActiveStyle(TextView tv, boolean isActive) {
-        if (isActive) {
-            tv.setBackgroundResource(R.drawable.bg_pagination_active);
-            tv.setTextColor(Color.WHITE);
-        } else {
-            tv.setBackgroundResource(R.drawable.bg_pagination_inactive);
-            tv.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary));
         }
     }
 

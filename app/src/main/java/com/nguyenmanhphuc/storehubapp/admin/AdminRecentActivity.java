@@ -52,6 +52,7 @@ public class AdminRecentActivity extends AppCompatActivity {
             startActivity(RecentActivityDetailActivity.createIntent(this, activity)));
     private final ArrayList<RecentActivity> allActivities = new ArrayList<>();
     private final ArrayList<RecentActivity> filteredActivities = new ArrayList<>();
+    private final ArrayList<RecentActivity> displayedActivities = new ArrayList<>();
     private ProgressBar progressBar;
     private Call<Response<RevenueData>> activityCall;
     private int currentPage = 1;
@@ -142,12 +143,29 @@ public class AdminRecentActivity extends AppCompatActivity {
         tvFromDate.addTextChangedListener(dateFilterWatcher);
         tvToDate.addTextChangedListener(dateFilterWatcher);
 
-        btnPreviousPage.setOnClickListener(v -> goToPage(currentPage - 1));
-        btnNextPage.setOnClickListener(v -> goToPage(currentPage + 1));
-        tvPage1.setOnClickListener(v -> goToPage(readPage(tvPage1)));
-        tvPage2.setOnClickListener(v -> goToPage(readPage(tvPage2)));
-        tvPage3.setOnClickListener(v -> goToPage(readPage(tvPage3)));
-        tvPage4.setOnClickListener(v -> goToPage(readPage(tvPage4)));
+        if (layoutPagination != null) {
+            layoutPagination.setVisibility(View.GONE);
+        }
+
+        androidx.core.widget.NestedScrollView nestedScrollView = findViewById(R.id.nestedScrollViewRecent);
+        if (nestedScrollView != null) {
+            nestedScrollView.setOnScrollChangeListener((androidx.core.widget.NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+                if (scrollY > oldScrollY && currentPage < getTotalPages()) {
+                    if (v.getChildAt(0) != null) {
+                        int diff = v.getChildAt(0).getMeasuredHeight() - (v.getHeight() + scrollY);
+                        if (diff <= 400) {
+                            currentPage++;
+                            int fromIndex = Math.min((currentPage - 1) * ITEMS_PER_PAGE, filteredActivities.size());
+                            int toIndex = Math.min(fromIndex + ITEMS_PER_PAGE, filteredActivities.size());
+                            if (fromIndex < filteredActivities.size()) {
+                                displayedActivities.addAll(filteredActivities.subList(fromIndex, toIndex));
+                                adapter.updateData(displayedActivities);
+                            }
+                        }
+                    }
+                }
+            });
+        }
     }
 
     private void selectTab(String tab) {
@@ -284,82 +302,29 @@ public class AdminRecentActivity extends AppCompatActivity {
         }
 
         currentPage = 1;
+        displayedActivities.clear();
+        int fromIndex = 0;
+        int toIndex = Math.min(ITEMS_PER_PAGE, filteredActivities.size());
+        if (fromIndex < filteredActivities.size()) {
+            displayedActivities.addAll(filteredActivities.subList(fromIndex, toIndex));
+        }
         renderPage();
     }
 
     private void renderPage() {
         int totalItems = filteredActivities.size();
-        int totalPages = getTotalPages();
-        if (currentPage > totalPages) {
-            currentPage = totalPages;
-        }
-
-        int fromIndex = Math.min((currentPage - 1) * ITEMS_PER_PAGE, totalItems);
-        int toIndex = Math.min(fromIndex + ITEMS_PER_PAGE, totalItems);
-        adapter.updateData(filteredActivities.subList(fromIndex, toIndex));
+        adapter.updateData(displayedActivities);
 
         boolean isEmpty = totalItems == 0;
         layoutEmpty.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
         rvRecentActivities.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
-        updatePaginationUi(totalPages);
+        if (layoutPagination != null) {
+            layoutPagination.setVisibility(View.GONE);
+        }
     }
 
     private int getTotalPages() {
         return Math.max(1, (int) Math.ceil(filteredActivities.size() / (double) ITEMS_PER_PAGE));
-    }
-
-    private void goToPage(int page) {
-        int totalPages = getTotalPages();
-        if (page < 1 || page > totalPages || page == currentPage) {
-            return;
-        }
-        currentPage = page;
-        renderPage();
-    }
-
-    private int readPage(TextView pageView) {
-        try {
-            return Integer.parseInt(pageView.getText().toString());
-        } catch (NumberFormatException e) {
-            return currentPage;
-        }
-    }
-
-    private void updatePaginationUi(int totalPages) {
-        layoutPagination.setVisibility(totalPages > 1 ? View.VISIBLE : View.GONE);
-        if (totalPages <= 1) {
-            return;
-        }
-
-        int startPage = Math.max(1, currentPage - 2);
-        if (startPage + 3 > totalPages) {
-            startPage = Math.max(1, totalPages - 3);
-        }
-
-        tvPage1.setText(String.valueOf(startPage));
-        tvPage2.setText(String.valueOf(startPage + 1));
-        tvPage3.setText(String.valueOf(startPage + 2));
-        tvPage4.setText(String.valueOf(startPage + 3));
-
-        tvPage1.setVisibility(View.VISIBLE);
-        tvPage2.setVisibility(startPage + 1 <= totalPages ? View.VISIBLE : View.GONE);
-        tvPage3.setVisibility(startPage + 2 <= totalPages ? View.VISIBLE : View.GONE);
-        tvPage4.setVisibility(startPage + 3 <= totalPages ? View.VISIBLE : View.GONE);
-
-        setPageStyle(tvPage1, readPage(tvPage1) == currentPage);
-        setPageStyle(tvPage2, readPage(tvPage2) == currentPage);
-        setPageStyle(tvPage3, readPage(tvPage3) == currentPage);
-        setPageStyle(tvPage4, readPage(tvPage4) == currentPage);
-
-        btnPreviousPage.setEnabled(currentPage > 1);
-        btnPreviousPage.setAlpha(currentPage > 1 ? 1.0f : 0.4f);
-        btnNextPage.setEnabled(currentPage < totalPages);
-        btnNextPage.setAlpha(currentPage < totalPages ? 1.0f : 0.4f);
-    }
-
-    private void setPageStyle(TextView pageView, boolean active) {
-        pageView.setBackgroundResource(active ? R.drawable.bg_pagination_active : R.drawable.bg_pagination_inactive);
-        pageView.setTextColor(active ? Color.WHITE : Color.parseColor("#29362F"));
     }
 
     @Override

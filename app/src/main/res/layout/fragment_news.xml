@@ -54,6 +54,7 @@
             android:overScrollMode="never"
             android:paddingHorizontal="20dp"
             android:paddingTop="14dp"
+            android:paddingBottom="60dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/item_news_standard" />
 
@@ -62,6 +63,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:visibility="gone" />
+
+        <ProgressBar
+            android:id="@+id/progressBarNewsLoadMore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="12dp"
             android:visibility="gone" />
     </FrameLayout>
 

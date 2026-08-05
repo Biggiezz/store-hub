@@ -289,11 +289,12 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         int currentSold = currentProduct != null ? currentProduct.getSold() : 0;
         setLoading(true);
         HttpResquest request = new HttpResquest();
+        String token = HttpResquest.authorizationHeader(this);
         currentCall = editMode
-                ? request.callAPI().updateProduct(productId, text(name), text(price), text(categoryId),
+                ? request.callAPI().updateProduct(token, productId, text(name), text(price), text(categoryId),
                 text(description), text(stock), text(String.valueOf(currentSold)), text(String.valueOf(originalIsActive)),
                 text(colorsJson), imagePart)
-                : request.callAPI().addProduct(text(name), text(price), text(categoryId),
+                : request.callAPI().addProduct(token, text(name), text(price), text(categoryId),
                 text(description), text(stock), text("0"), text("true"), text(colorsJson), imagePart);
         currentCall.enqueue(new Callback<Response<Product>>() {
             @Override
@@ -440,7 +441,8 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         View preview = dialogView.findViewById(R.id.viewAdminColorPreview);
         CheckBox defaultCheck = dialogView.findViewById(R.id.chkAdminDefaultColor);
         Button customColorPicker = dialogView.findViewById(R.id.btnAdminCustomColorPicker);
-        colorNameInput.setFocusable(false);
+        colorNameInput.setFocusable(true);
+        colorNameInput.setFocusableInTouchMode(true);
         hexInput.setFocusable(false);
         setColor(preview, editing ? parseColorSafely(color.getHex()) : Color.LTGRAY);
         if (editing) bindColorDialog(color, colorNameInput, hexInput, defaultCheck);
@@ -448,7 +450,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         customColorPicker.setOnClickListener(v -> new com.skydoves.colorpickerview.ColorPickerDialog.Builder(this)
                 .setTitle("Chọn màu")
                 .setPositiveButton("Chọn", (com.skydoves.colorpickerview.listeners.ColorEnvelopeListener) (envelope, fromUser) -> {
-                    colorNameInput.setText("Màu tùy chỉnh");
+                    colorNameInput.setText(getClosestColorName(envelope.getColor()));
                     hexInput.setText(String.format("#%06X", 0xFFFFFF & envelope.getColor()));
                     setColor(preview, envelope.getColor());
                 })
@@ -542,6 +544,45 @@ public class ProductFormManagementActivity extends AppCompatActivity {
 
     private int dp(int value) {
         return Math.round(value * getResources().getDisplayMetrics().density);
+    }
+
+    private String getClosestColorName(int color) {
+        int r = Color.red(color);
+        int g = Color.green(color);
+        int b = Color.blue(color);
+        
+        String closestName = "Màu tùy chỉnh";
+        double minDistance = Double.MAX_VALUE;
+        
+        Object[][] namedColors = {
+            {"Đen", 0, 0, 0},
+            {"Trắng", 255, 255, 255},
+            {"Xám", 128, 128, 128},
+            {"Đỏ", 255, 0, 0},
+            {"Xanh lá", 0, 255, 0},
+            {"Xanh dương", 0, 0, 255},
+            {"Vàng", 255, 255, 0},
+            {"Cam", 255, 165, 0},
+            {"Tím", 128, 0, 128},
+            {"Hồng", 255, 192, 203},
+            {"Nâu", 165, 42, 42},
+            {"Xanh lam", 0, 206, 209},
+            {"Xanh rêu", 85, 107, 47}
+        };
+        
+        for (Object[] nc : namedColors) {
+            String name = (String) nc[0];
+            int nr = (int) nc[1];
+            int ng = (int) nc[2];
+            int nb = (int) nc[3];
+            
+            double distance = Math.sqrt(Math.pow(r - nr, 2) + Math.pow(g - ng, 2) + Math.pow(b - nb, 2));
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestName = name;
+            }
+        }
+        return closestName;
     }
 
     @Override

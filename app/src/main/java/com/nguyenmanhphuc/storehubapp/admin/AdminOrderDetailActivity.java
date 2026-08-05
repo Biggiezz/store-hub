@@ -191,7 +191,8 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
         RequestBody isActive = RequestBody.create(textType, String.valueOf(product.isActive()));
         RequestBody colors = RequestBody.create(textType, new com.google.gson.Gson().toJson(product.getColors()));
 
-        apiService.updateProduct(product.get_id(), name, price, category, description, stock, sold, isActive, colors, null)
+        String token = HttpResquest.authorizationHeader(this);
+        apiService.updateProduct(token, product.get_id(), name, price, category, description, stock, sold, isActive, colors, null)
                 .enqueue(new Callback<Response<Product>>() {
                     @Override
                     public void onResponse(@NonNull Call<Response<Product>> call, @NonNull retrofit2.Response<Response<Product>> response) {

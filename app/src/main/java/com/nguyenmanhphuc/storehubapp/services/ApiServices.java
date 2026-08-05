@@ -65,6 +65,7 @@ public interface ApiServices {
     @Multipart
     @POST("api/productsRouter/add-product")
     Call<Response<Product>> addProduct(
+            @Header("Authorization") String token,
             @Part("name") RequestBody name,
             @Part("price") RequestBody price,
             @Part("category") RequestBody category,
@@ -79,6 +80,7 @@ public interface ApiServices {
     @Multipart
     @PUT("api/productsRouter/update-product/{id}")
     Call<Response<Product>> updateProduct(
+            @Header("Authorization") String token,
             @Path("id") String id,
             @Part("name") RequestBody name,
             @Part("price") RequestBody price,
