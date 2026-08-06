@@ -5,6 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.ImageButton;
+import android.widget.Toast;
+import androidx.appcompat.widget.PopupMenu;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -33,11 +36,13 @@ public class AdminReviewAdapter extends RecyclerView.Adapter<AdminReviewAdapter.
         public ProductReview review;
         public String productName;
         public String productId;
+        public String productImage;
 
-        public ReviewWithProduct(ProductReview review, String productName, String productId) {
+        public ReviewWithProduct(ProductReview review, String productName, String productId, String productImage) {
             this.review = review;
             this.productName = productName;
             this.productId = productId;
+            this.productImage = productImage;
         }
     }
 
@@ -109,9 +114,9 @@ public class AdminReviewAdapter extends RecyclerView.Adapter<AdminReviewAdapter.
             return sb.toString();
         }
 
-        protected void bindCommon(ReviewWithProduct item, ShapeableImageView imgAvatar, TextView tvCustomerName, TextView tvReviewTime, TextView tvProductName, TextView tvRating, TextView tvReviewContent) {
+        protected void bindCommon(ReviewWithProduct item, ShapeableImageView imgAvatar, TextView tvCustomerName, TextView tvReviewTime, TextView tvProductName, TextView tvRating, TextView tvReviewContent, TextView tvSeeMore, ImageButton btnMoreMenu) {
             ProductReview review = item.review;
-            tvCustomerName.setText(review.getCustomerName().isEmpty() ? "Khách hàng" : review.getCustomerName());
+            tvCustomerName.setText(review.getCustomerName().isEmpty() ? context.getString(R.string.customer) : review.getCustomerName());
 
             String dateStr = review.getCreatedAt();
             if (dateStr != null && dateStr.contains("T")) {
@@ -119,9 +124,51 @@ public class AdminReviewAdapter extends RecyclerView.Adapter<AdminReviewAdapter.
             }
             tvReviewTime.setText(dateStr != null ? dateStr : "");
 
-            tvProductName.setText(item.productName != null ? item.productName : "Sản phẩm");
+            tvProductName.setText(item.productName != null ? item.productName : context.getString(R.string.nav_products));
             tvRating.setText(getStarString(review.rating));
-            tvReviewContent.setText(review.content != null ? review.content : "");
+
+            String contentText = review.content != null ? review.content : "";
+            tvReviewContent.setText(contentText);
+
+            if (tvSeeMore != null) {
+                if (contentText.length() > 120) {
+                    tvSeeMore.setVisibility(View.VISIBLE);
+                    tvReviewContent.setMaxLines(4);
+                    tvSeeMore.setText(context.getString(R.string.see_more));
+                    tvSeeMore.setOnClickListener(v -> {
+                        if (tvReviewContent.getMaxLines() == 4) {
+                            tvReviewContent.setMaxLines(Integer.MAX_VALUE);
+                            tvSeeMore.setText(context.getString(R.string.see_less));
+                        } else {
+                            tvReviewContent.setMaxLines(4);
+                            tvSeeMore.setText(context.getString(R.string.see_more));
+                        }
+                    });
+                } else {
+                    tvSeeMore.setVisibility(View.GONE);
+                }
+            }
+
+            if (btnMoreMenu != null) {
+                btnMoreMenu.setOnClickListener(v -> {
+                    PopupMenu popup = new PopupMenu(context, btnMoreMenu);
+                    popup.getMenu().add(context.getString(R.string.action_reply_edit));
+                    popup.getMenu().add(context.getString(R.string.action_hide_review));
+                    popup.getMenu().add(context.getString(R.string.action_delete_review));
+                    popup.setOnMenuItemClickListener(menuItem -> {
+                        String title = menuItem.getTitle().toString();
+                        if (title.equals(context.getString(R.string.action_reply_edit))) {
+                            if (listener != null) {
+                                listener.onReplyClick(item);
+                            }
+                        } else {
+                            Toast.makeText(context, context.getString(R.string.feature_under_development, title), Toast.LENGTH_SHORT).show();
+                        }
+                        return true;
+                    });
+                    popup.show();
+                });
+            }
 
             // Bind media files (images/videos)
             if (review.getMedia() != null && !review.getMedia().isEmpty()) {
@@ -145,6 +192,8 @@ public class AdminReviewAdapter extends RecyclerView.Adapter<AdminReviewAdapter.
     class UnansweredViewHolder extends ReviewViewHolder {
         ShapeableImageView imgAvatar;
         TextView tvCustomerName, tvReviewTime, tvProductName, tvRating, tvReviewContent;
+        TextView tvSeeMore;
+        ImageButton btnMoreMenu;
         MaterialButton btnReply;
 
         public UnansweredViewHolder(@NonNull View itemView) {
@@ -155,12 +204,14 @@ public class AdminReviewAdapter extends RecyclerView.Adapter<AdminReviewAdapter.
             tvProductName = itemView.findViewById(R.id.tvProductName);
             tvRating = itemView.findViewById(R.id.tvRating);
             tvReviewContent = itemView.findViewById(R.id.tvReviewContent);
+            tvSeeMore = itemView.findViewById(R.id.tvSeeMore);
+            btnMoreMenu = itemView.findViewById(R.id.btnMoreMenu);
             btnReply = itemView.findViewById(R.id.btnReply);
         }
 
         @Override
         public void bind(ReviewWithProduct item) {
-            bindCommon(item, imgAvatar, tvCustomerName, tvReviewTime, tvProductName, tvRating, tvReviewContent);
+            bindCommon(item, imgAvatar, tvCustomerName, tvReviewTime, tvProductName, tvRating, tvReviewContent, tvSeeMore, btnMoreMenu);
             btnReply.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onReplyClick(item);
@@ -172,6 +223,8 @@ public class AdminReviewAdapter extends RecyclerView.Adapter<AdminReviewAdapter.
     class AnsweredViewHolder extends ReviewViewHolder {
         ShapeableImageView imgAvatar;
         TextView tvCustomerName, tvReviewTime, tvProductName, tvRating, tvReviewContent;
+        TextView tvSeeMore;
+        ImageButton btnMoreMenu;
         TextView tvAdminName, tvReplyTime, tvAdminReply;
         MaterialButton btnEditReply;
 
@@ -183,6 +236,8 @@ public class AdminReviewAdapter extends RecyclerView.Adapter<AdminReviewAdapter.
             tvProductName = itemView.findViewById(R.id.tvProductName);
             tvRating = itemView.findViewById(R.id.tvRating);
             tvReviewContent = itemView.findViewById(R.id.tvReviewContent);
+            tvSeeMore = itemView.findViewById(R.id.tvSeeMore);
+            btnMoreMenu = itemView.findViewById(R.id.btnMoreMenu);
             tvAdminName = itemView.findViewById(R.id.tvAdminName);
             tvReplyTime = itemView.findViewById(R.id.tvReplyTime);
             tvAdminReply = itemView.findViewById(R.id.tvAdminReply);
@@ -191,10 +246,10 @@ public class AdminReviewAdapter extends RecyclerView.Adapter<AdminReviewAdapter.
 
         @Override
         public void bind(ReviewWithProduct item) {
-            bindCommon(item, imgAvatar, tvCustomerName, tvReviewTime, tvProductName, tvRating, tvReviewContent);
+            bindCommon(item, imgAvatar, tvCustomerName, tvReviewTime, tvProductName, tvRating, tvReviewContent, tvSeeMore, btnMoreMenu);
 
             ProductReview review = item.review;
-            tvAdminName.setText("Phản hồi từ Cửa hàng");
+            tvAdminName.setText(context.getString(R.string.shop_reply));
             tvReplyTime.setText(review.getReplyCreatedAt());
             tvAdminReply.setText(review.getReplyContent());
 

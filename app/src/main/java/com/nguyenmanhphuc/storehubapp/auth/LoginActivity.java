@@ -1,6 +1,7 @@
 package com.nguyenmanhphuc.storehubapp.auth;
 
-import android.app.ProgressDialog;
+import com.nguyenmanhphuc.storehubapp.utils.LoadingDialogHelper;
+import com.google.android.material.textfield.TextInputLayout;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -41,6 +42,7 @@ import retrofit2.Callback;
 public class LoginActivity extends BaseActivity {
 
     private TextInputEditText edtEmail, edtPassword;
+    private TextInputLayout tilEmail, tilPassword;
     private MaterialButton btnLogin;
     private TextView tvRegisterNow;
     private SharedPreferencesManager prefManager;
@@ -69,6 +71,8 @@ public class LoginActivity extends BaseActivity {
     private void initUi() {
         edtEmail = findViewById(R.id.edtEmail);
         edtPassword = findViewById(R.id.edtPassword);
+        tilEmail = findViewById(R.id.tilEmail);
+        tilPassword = findViewById(R.id.tilPassword);
         btnLogin = findViewById(R.id.btnLogin);
         tvRegisterNow = findViewById(R.id.tvRegisterNow);
     }
@@ -84,26 +88,67 @@ public class LoginActivity extends BaseActivity {
                 startActivity(intent);
             });
         }
+
+        if (edtEmail != null) {
+            edtEmail.addTextChangedListener(new android.text.TextWatcher() {
+                @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if (tilEmail != null) tilEmail.setError(null);
+                }
+                @Override public void afterTextChanged(android.text.Editable s) {}
+            });
+        }
+        if (edtPassword != null) {
+            edtPassword.addTextChangedListener(new android.text.TextWatcher() {
+                @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if (tilPassword != null) tilPassword.setError(null);
+                }
+                @Override public void afterTextChanged(android.text.Editable s) {}
+            });
+        }
     }
 
     private void handleLogin() {
         String email = edtEmail != null && edtEmail.getText() != null ? edtEmail.getText().toString().trim() : "";
         String password = edtPassword != null && edtPassword.getText() != null ? edtPassword.getText().toString().trim() : "";
 
-        if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Vui lòng nhập đầy đủ Email và Mật khẩu", Toast.LENGTH_SHORT).show();
+        if (tilEmail != null) tilEmail.setError(null);
+        if (tilPassword != null) tilPassword.setError(null);
+
+        if (email.isEmpty()) {
+            if (tilEmail != null) {
+                tilEmail.setError(getString(R.string.toast_enter_email));
+                tilEmail.requestFocus();
+            } else {
+                Toast.makeText(this, getString(R.string.toast_enter_email), Toast.LENGTH_SHORT).show();
+            }
             return;
         }
 
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(this, "Email không đúng định dạng", Toast.LENGTH_SHORT).show();
+            if (tilEmail != null) {
+                tilEmail.setError(getString(R.string.toast_invalid_email));
+                tilEmail.requestFocus();
+            } else {
+                Toast.makeText(this, getString(R.string.toast_invalid_email), Toast.LENGTH_SHORT).show();
+            }
             return;
         }
 
-        ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Đang đăng nhập...");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
+        if (password.isEmpty()) {
+            if (tilPassword != null) {
+                tilPassword.setError(getString(R.string.toast_enter_password));
+                tilPassword.requestFocus();
+            } else {
+                Toast.makeText(this, getString(R.string.toast_enter_password), Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
+
+        LoadingDialogHelper loadingDialog = new LoadingDialogHelper(this);
+        loadingDialog.setMessage("Đang đăng nhập...");
+        loadingDialog.show();
 
         LoginRequest request = new LoginRequest(email, password);
 
@@ -115,27 +160,27 @@ public class LoginActivity extends BaseActivity {
                     LoginResponse apiResponse = response.body();
                     if (apiResponse.getCode() == 200) {
                         prefManager.saveUserSession(apiResponse.getToken(), apiResponse.getData());
-                        progressDialog.setMessage("Đang tải dữ liệu sản phẩm...");
-                        preloadData(progressDialog);
+                        loadingDialog.setMessage("Đang tải dữ liệu sản phẩm...");
+                        preloadData(loadingDialog);
                     } else {
-                        progressDialog.dismiss();
+                        loadingDialog.dismiss();
                         Toast.makeText(LoginActivity.this, apiResponse.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    progressDialog.dismiss();
+                    loadingDialog.dismiss();
                     Toast.makeText(LoginActivity.this, "Đăng nhập thất bại. Sai tài khoản hoặc mật khẩu.", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable t) {
-                progressDialog.dismiss();
+                loadingDialog.dismiss();
                 Toast.makeText(LoginActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void preloadData(ProgressDialog progressDialog) {
+    private void preloadData(LoadingDialogHelper loadingDialog) {
         HttpResquest httpResquest = new HttpResquest();
 
         isProductsCallDone = false;
@@ -154,13 +199,13 @@ public class LoginActivity extends BaseActivity {
                         preloadedProducts = apiResponse.getData();
                     }
                 }
-                preloadProductImages(progressDialog);
+                preloadProductImages(loadingDialog);
             }
 
             @Override
             public void onFailure(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull Throwable t) {
                 isProductsCallDone = true;
-                checkPreloadComplete(progressDialog);
+                checkPreloadComplete(loadingDialog);
             }
         });
 
@@ -175,18 +220,18 @@ public class LoginActivity extends BaseActivity {
                         preloadedNews = apiResponse.getData();
                     }
                 }
-                preloadNewsImages(progressDialog);
+                preloadNewsImages(loadingDialog);
             }
 
             @Override
             public void onFailure(@NonNull Call<Response<ArrayList<News>>> call, @NonNull Throwable t) {
                 isNewsCallDone = true;
-                checkPreloadComplete(progressDialog);
+                checkPreloadComplete(loadingDialog);
             }
         });
     }
 
-    private void preloadProductImages(ProgressDialog progressDialog) {
+    private void preloadProductImages(LoadingDialogHelper loadingDialog) {
         ArrayList<String> imageUrls = new ArrayList<>();
         if (preloadedProducts != null) {
             for (Product product : preloadedProducts) {
@@ -196,18 +241,18 @@ public class LoginActivity extends BaseActivity {
         }
         preloadImages(imageUrls, () -> {
             isProductsCallDone = true;
-            checkPreloadComplete(progressDialog);
+            checkPreloadComplete(loadingDialog);
         });
     }
 
-    private void preloadNewsImages(ProgressDialog progressDialog) {
+    private void preloadNewsImages(LoadingDialogHelper loadingDialog) {
         ArrayList<String> imageUrls = new ArrayList<>();
         if (preloadedNews != null) {
             for (News news : preloadedNews) imageUrls.add(news.getImage());
         }
         preloadImages(imageUrls, () -> {
             isNewsCallDone = true;
-            checkPreloadComplete(progressDialog);
+            checkPreloadComplete(loadingDialog);
         });
     }
 
@@ -246,10 +291,10 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
-    private void checkPreloadComplete(ProgressDialog progressDialog) {
+    private void checkPreloadComplete(LoadingDialogHelper loadingDialog) {
         if (isProductsCallDone && isNewsCallDone) {
-            if (progressDialog != null && progressDialog.isShowing()) {
-                progressDialog.dismiss();
+            if (loadingDialog != null && loadingDialog.isShowing()) {
+                loadingDialog.dismiss();
             }
 
             // Gán dữ liệu preload vào cache static của MainActivity

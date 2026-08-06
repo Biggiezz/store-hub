@@ -8,7 +8,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#F9F6F2"
+        android:background="@color/background"
         android:fillViewport="true">
 
         <LinearLayout
@@ -18,46 +18,58 @@
             android:padding="20dp">
 
             <!-- Header -->
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:layout_height="53dp">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_centerVertical="true"
                     android:text="@string/admin_home"
-                    android:textColor="#1E2A24"
+                    android:textColor="#1B2C24"
                     android:textSize="20sp" />
 
-                <ImageView
-                    android:id="@+id/imgProductReview"
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="8dp"
-                    android:src="@drawable/ic_product_review"
-                    android:contentDescription="@string/product_review" />
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-                <ImageView
-                    android:id="@+id/btnLogout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="8dp"
-                    android:src="@drawable/ic_logout"
-                    android:contentDescription="@string/logout"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:background="?attr/selectableItemBackgroundBorderless" />
-            </LinearLayout>
+                    <ImageView
+                        android:id="@+id/imgProductReview"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:contentDescription="@string/product_review"
+                        android:focusable="true"
+                        android:padding="4dp"
+                        android:src="@drawable/ic_product_review"
+                        app:tint="#1B2C24" />
+
+                    <ImageView
+                        android:id="@+id/btnLogout"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="12dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:contentDescription="@string/logout"
+                        android:focusable="true"
+                        android:padding="4dp"
+                        android:src="@drawable/ic_logout"
+                        app:tint="#1B2C24" />
+                </LinearLayout>
+            </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginTop="12dp"
-                android:background="#DEDCD7" />
-
+                android:layout_height="1dp"
+                android:layout_marginLeft="-20dp"
+                android:layout_marginRight="-20dp"
+                android:background="@color/divider_color" />
             <!-- Card Sales -->
             <include
                 android:id="@+id/cardSales"

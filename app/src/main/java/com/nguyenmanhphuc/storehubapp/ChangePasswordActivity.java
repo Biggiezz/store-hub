@@ -1,10 +1,10 @@
 package com.nguyenmanhphuc.storehubapp;
 
 import android.os.Bundle;
-import android.text.InputType;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
+import com.google.android.material.textfield.TextInputLayout;
+import com.nguyenmanhphuc.storehubapp.utils.LoadingDialogHelper;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -29,11 +29,8 @@ import retrofit2.Callback;
 public class ChangePasswordActivity extends BaseActivity {
 
     private EditText edtCurrentPassword, edtNewPassword, edtConfirmNewPassword;
-    private ImageView btnToggleCurrentPassword, btnToggleNewPassword, btnToggleConfirmNewPassword;
+    private TextInputLayout tilCurrentPassword, tilNewPassword, tilConfirmNewPassword;
     private MaterialButton btnUpdatePassword;
-    private boolean isCurrentPasswordVisible = false;
-    private boolean isNewPasswordVisible = false;
-    private boolean isConfirmPasswordVisible = false;
 
     private SharedPreferencesManager sharedPreferencesManager;
 
@@ -58,42 +55,43 @@ public class ChangePasswordActivity extends BaseActivity {
         edtNewPassword = findViewById(R.id.edtNewPassword);
         edtConfirmNewPassword = findViewById(R.id.edtConfirmNewPassword);
 
-        btnToggleCurrentPassword = findViewById(R.id.btnToggleCurrentPassword);
-        btnToggleNewPassword = findViewById(R.id.btnToggleNewPassword);
-        btnToggleConfirmNewPassword = findViewById(R.id.btnToggleConfirmNewPassword);
+        tilCurrentPassword = findViewById(R.id.tilCurrentPassword);
+        tilNewPassword = findViewById(R.id.tilNewPassword);
+        tilConfirmNewPassword = findViewById(R.id.tilConfirmNewPassword);
         btnUpdatePassword = findViewById(R.id.btnUpdatePassword);
     }
 
     private void setupClickListeners() {
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
-
-        btnToggleCurrentPassword.setOnClickListener(v -> {
-            isCurrentPasswordVisible = !isCurrentPasswordVisible;
-            togglePasswordVisibility(edtCurrentPassword, btnToggleCurrentPassword, isCurrentPasswordVisible);
-        });
-
-        btnToggleNewPassword.setOnClickListener(v -> {
-            isNewPasswordVisible = !isNewPasswordVisible;
-            togglePasswordVisibility(edtNewPassword, btnToggleNewPassword, isNewPasswordVisible);
-        });
-
-        btnToggleConfirmNewPassword.setOnClickListener(v -> {
-            isConfirmPasswordVisible = !isConfirmPasswordVisible;
-            togglePasswordVisibility(edtConfirmNewPassword, btnToggleConfirmNewPassword, isConfirmPasswordVisible);
-        });
-
         btnUpdatePassword.setOnClickListener(v -> handlePasswordUpdate());
-    }
 
-    private void togglePasswordVisibility(EditText editText, ImageView toggleIcon, boolean isVisible) {
-        if (isVisible) {
-            editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-            toggleIcon.setImageResource(R.drawable.ic_visibility);
-        } else {
-            editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-            toggleIcon.setImageResource(R.drawable.ic_visibility_off);
+        if (edtCurrentPassword != null) {
+            edtCurrentPassword.addTextChangedListener(new android.text.TextWatcher() {
+                @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if (tilCurrentPassword != null) tilCurrentPassword.setError(null);
+                }
+                @Override public void afterTextChanged(android.text.Editable s) {}
+            });
         }
-        editText.setSelection(editText.getText().length());
+        if (edtNewPassword != null) {
+            edtNewPassword.addTextChangedListener(new android.text.TextWatcher() {
+                @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if (tilNewPassword != null) tilNewPassword.setError(null);
+                }
+                @Override public void afterTextChanged(android.text.Editable s) {}
+            });
+        }
+        if (edtConfirmNewPassword != null) {
+            edtConfirmNewPassword.addTextChangedListener(new android.text.TextWatcher() {
+                @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if (tilConfirmNewPassword != null) tilConfirmNewPassword.setError(null);
+                }
+                @Override public void afterTextChanged(android.text.Editable s) {}
+            });
+        }
     }
 
     private void handlePasswordUpdate() {
@@ -101,20 +99,63 @@ public class ChangePasswordActivity extends BaseActivity {
         String newPass = edtNewPassword.getText().toString();
         String confirmPass = edtConfirmNewPassword.getText().toString();
 
-        if (oldPass.isEmpty() || newPass.isEmpty() || confirmPass.isEmpty()) {
-            Toast.makeText(this, "Vui lòng nhập đầy đủ mật khẩu", Toast.LENGTH_SHORT).show();
+        if (tilCurrentPassword != null) tilCurrentPassword.setError(null);
+        if (tilNewPassword != null) tilNewPassword.setError(null);
+        if (tilConfirmNewPassword != null) tilConfirmNewPassword.setError(null);
+
+        if (oldPass.isEmpty()) {
+            if (tilCurrentPassword != null) {
+                tilCurrentPassword.setError("Vui lòng nhập mật khẩu hiện tại");
+                tilCurrentPassword.requestFocus();
+            } else {
+                Toast.makeText(this, "Vui lòng nhập mật khẩu hiện tại", Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
+
+        if (newPass.isEmpty()) {
+            if (tilNewPassword != null) {
+                tilNewPassword.setError("Vui lòng nhập mật khẩu mới");
+                tilNewPassword.requestFocus();
+            } else {
+                Toast.makeText(this, "Vui lòng nhập mật khẩu mới", Toast.LENGTH_SHORT).show();
+            }
             return;
         }
 
         if (newPass.length() < 8 || !newPass.matches(".*[a-zA-Z].*") || !newPass.matches(".*\\d.*")) {
-            Toast.makeText(this, "Mật khẩu mới phải tối thiểu 8 ký tự, bao gồm cả chữ cái và số", Toast.LENGTH_LONG).show();
+            if (tilNewPassword != null) {
+                tilNewPassword.setError("Mật khẩu mới phải tối thiểu 8 ký tự, bao gồm cả chữ cái và số");
+                tilNewPassword.requestFocus();
+            } else {
+                Toast.makeText(this, "Mật khẩu mới phải tối thiểu 8 ký tự, bao gồm cả chữ cái và số", Toast.LENGTH_LONG).show();
+            }
+            return;
+        }
+
+        if (confirmPass.isEmpty()) {
+            if (tilConfirmNewPassword != null) {
+                tilConfirmNewPassword.setError("Vui lòng xác nhận mật khẩu mới");
+                tilConfirmNewPassword.requestFocus();
+            } else {
+                Toast.makeText(this, "Vui lòng xác nhận mật khẩu mới", Toast.LENGTH_SHORT).show();
+            }
             return;
         }
 
         if (!newPass.equals(confirmPass)) {
-            Toast.makeText(this, "Mật khẩu xác nhận không khớp", Toast.LENGTH_SHORT).show();
+            if (tilConfirmNewPassword != null) {
+                tilConfirmNewPassword.setError("Mật khẩu xác nhận không khớp");
+                tilConfirmNewPassword.requestFocus();
+            } else {
+                Toast.makeText(this, "Mật khẩu xác nhận không khớp", Toast.LENGTH_SHORT).show();
+            }
             return;
         }
+
+        LoadingDialogHelper loadingDialog = new LoadingDialogHelper(this);
+        loadingDialog.setMessage("Đang cập nhật mật khẩu...");
+        loadingDialog.show();
 
         Map<String, String> body = new HashMap<>();
         body.put("oldPassword", oldPass);
@@ -126,6 +167,7 @@ public class ChangePasswordActivity extends BaseActivity {
         httpResquest.callAPI().changePassword(tokenHeader, body).enqueue(new Callback<Response<Void>>() {
             @Override
             public void onResponse(@NonNull Call<Response<Void>> call, @NonNull retrofit2.Response<Response<Void>> response) {
+                loadingDialog.dismiss();
                 if (response.isSuccessful() && response.body() != null) {
                     Response<Void> res = response.body();
                     if (res.getCode() == 200) {
@@ -143,12 +185,18 @@ public class ChangePasswordActivity extends BaseActivity {
                         Toast.makeText(ChangePasswordActivity.this, res.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(ChangePasswordActivity.this, "Mật khẩu hiện tại không chính xác", Toast.LENGTH_SHORT).show();
+                    if (tilCurrentPassword != null) {
+                        tilCurrentPassword.setError("Mật khẩu hiện tại không chính xác");
+                        tilCurrentPassword.requestFocus();
+                    } else {
+                        Toast.makeText(ChangePasswordActivity.this, "Mật khẩu hiện tại không chính xác", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<Response<Void>> call, @NonNull Throwable t) {
+                loadingDialog.dismiss();
                 Toast.makeText(ChangePasswordActivity.this, "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
             }
         });

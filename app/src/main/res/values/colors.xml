@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="background">#FAF8F4</color>
+    <color name="background">#FFFFFF</color>
     <color name="dark_green">#14291F</color>
     <color name="dark_green_pressed">#1A2821</color>
 
@@ -17,4 +17,17 @@
     <color name="button_disabled">#8B9690</color>
     <color name="bottom_nav_active">#ECDDD1</color>
     <color name="error_red">#D1160D</color>
+
+    <!-- Clean UX/UI Palette Colors -->
+    <color name="card_background">#FFFFFF</color>
+    <color name="stroke_color">#EEEEEE</color>
+    <color name="divider_color">#C8CCC9</color>
+    <color name="status_success_bg">#DFF6E5</color>
+    <color name="status_success_text">#2E7D32</color>
+    <color name="rating_gold">#FFCC00</color>
+    <color name="gray_99">#999999</color>
+    <color name="gray_66">#666666</color>
+    <color name="gray_55">#555555</color>
+    <color name="gray_22">#222222</color>
+    <color name="gray_44">#434844</color>
 </resources>

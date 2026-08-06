@@ -22,6 +22,8 @@ import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
 import com.bumptech.glide.Glide;
 import com.nguyenmanhphuc.storehubapp.utils.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputLayout;
+import com.nguyenmanhphuc.storehubapp.utils.LoadingDialogHelper;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
@@ -39,6 +41,7 @@ import retrofit2.Callback;
 public class EditProfileActivity extends BaseActivity {
 
     private EditText edtProfileName, edtProfileEmail, edtProfilePhone, edtProfileAddress;
+    private TextInputLayout tilProfileName, tilProfilePhone, tilProfileAddress;
     private ImageView imgLargeAvatar;
     private MaterialButton btnSaveChanges;
     private SharedPreferencesManager sharedPreferencesManager;
@@ -102,6 +105,10 @@ public class EditProfileActivity extends BaseActivity {
         edtProfilePhone = findViewById(R.id.edtProfilePhone);
         edtProfileAddress = findViewById(R.id.edtProfileAddress);
 
+        tilProfileName = findViewById(R.id.tilProfileName);
+        tilProfilePhone = findViewById(R.id.tilProfilePhone);
+        tilProfileAddress = findViewById(R.id.tilProfileAddress);
+
         imgLargeAvatar = findViewById(R.id.imgLargeAvatar);
         btnSaveChanges = findViewById(R.id.btnSaveChanges);
     }
@@ -155,14 +162,57 @@ public class EditProfileActivity extends BaseActivity {
     }
 
     private void saveProfileChanges() {
-        String name = edtProfileName.getText().toString().trim();
-        String phone = edtProfilePhone.getText().toString().trim();
-        String address = edtProfileAddress.getText().toString().trim();
+        String name = edtProfileName != null && edtProfileName.getText() != null ? edtProfileName.getText().toString().trim() : "";
+        String phone = edtProfilePhone != null && edtProfilePhone.getText() != null ? edtProfilePhone.getText().toString().trim() : "";
+        String address = edtProfileAddress != null && edtProfileAddress.getText() != null ? edtProfileAddress.getText().toString().trim() : "";
 
-        if (name.isEmpty() || phone.isEmpty() || address.isEmpty()) {
-            Toast.makeText(this, "Vui lòng nhập đầy đủ các trường thông tin", Toast.LENGTH_SHORT).show();
+        if (tilProfileName != null) tilProfileName.setError(null);
+        if (tilProfilePhone != null) tilProfilePhone.setError(null);
+        if (tilProfileAddress != null) tilProfileAddress.setError(null);
+
+        if (name.isEmpty()) {
+            if (tilProfileName != null) {
+                tilProfileName.setError("Vui lòng nhập họ và tên");
+                tilProfileName.requestFocus();
+            } else {
+                Toast.makeText(this, "Vui lòng nhập họ và tên", Toast.LENGTH_SHORT).show();
+            }
             return;
         }
+
+        if (phone.isEmpty()) {
+            if (tilProfilePhone != null) {
+                tilProfilePhone.setError("Vui lòng nhập số điện thoại");
+                tilProfilePhone.requestFocus();
+            } else {
+                Toast.makeText(this, "Vui lòng nhập số điện thoại", Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
+
+        if (!phone.matches("^[0-9]{10,11}$")) {
+            if (tilProfilePhone != null) {
+                tilProfilePhone.setError("Số điện thoại phải từ 10-11 chữ số");
+                tilProfilePhone.requestFocus();
+            } else {
+                Toast.makeText(this, "Số điện thoại phải từ 10-11 chữ số", Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
+
+        if (address.isEmpty()) {
+            if (tilProfileAddress != null) {
+                tilProfileAddress.setError("Vui lòng nhập địa chỉ");
+                tilProfileAddress.requestFocus();
+            } else {
+                Toast.makeText(this, "Vui lòng nhập địa chỉ", Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
+
+        LoadingDialogHelper loadingDialog = new LoadingDialogHelper(this);
+        loadingDialog.setMessage("Đang lưu thay đổi...");
+        loadingDialog.show();
 
         String tokenHeader = "Bearer " + sharedPreferencesManager.getToken();
         HttpResquest httpResquest = new HttpResquest();
@@ -194,6 +244,7 @@ public class EditProfileActivity extends BaseActivity {
         call.enqueue(new Callback<Response<User>>() {
             @Override
             public void onResponse(@NonNull Call<Response<User>> call, @NonNull retrofit2.Response<Response<User>> response) {
+                loadingDialog.dismiss();
                 if (response.isSuccessful() && response.body() != null) {
                     Response<User> res = response.body();
                     if (res.getCode() == 200 && res.getData() != null) {
@@ -211,6 +262,7 @@ public class EditProfileActivity extends BaseActivity {
 
             @Override
             public void onFailure(@NonNull Call<Response<User>> call, @NonNull Throwable t) {
+                loadingDialog.dismiss();
                 Toast.makeText(EditProfileActivity.this, "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
             }
         });

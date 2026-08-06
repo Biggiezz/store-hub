@@ -75,9 +75,9 @@
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="0.5dp"
+                        android:layout_height="1dp"
                         android:layout_marginTop="12dp"
-                        android:background="#DEDCD7" />
+                        android:background="@color/divider_color" />
 
                     <!-- Nội dung chính có padding ngang, đường kẻ phía trên vẫn full màn hình -->
                     <LinearLayout
