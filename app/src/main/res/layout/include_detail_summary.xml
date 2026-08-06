@@ -124,4 +124,15 @@
             android:textStyle="bold"
         />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvZaloPayNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="(*) Lưu ý: Phí tiện ích giao dịch (nếu có) được thu trực tiếp bởi ZaloPay tùy thuộc vào phương thức thanh toán của bạn và không tính vào hóa đơn của cửa hàng."
+        android:textColor="#8F8E8A"
+        android:textSize="11sp"
+        android:visibility="gone"
+    />
 </LinearLayout>

@@ -100,14 +100,6 @@ public class OderFragment extends Fragment {
         View root = getView();
         if (root == null) return;
 
-        View btnProfile = root.findViewById(R.id.btnProfile);
-        if (btnProfile != null) {
-            btnProfile.setOnClickListener(v -> {
-                Intent intent = new Intent(requireContext(), ProfileActivity.class);
-                startActivity(intent);
-            });
-        }
-
         View btnBack = root.findViewById(R.id.btnBack);
         if (btnBack != null) {
             btnBack.setOnClickListener(v -> {
@@ -385,7 +377,7 @@ public class OderFragment extends Fragment {
                 }
             }
 
-            long totalPayment = order.getTotalPrice() + order.getShippingFee();
+            long totalPayment = order.getTotalPrice() + order.getShippingFee() - order.getDiscount();
             tvOrderTotal.setText(formatPrice(totalPayment));
 
             btnViewShippingOrder.setText(getString(R.string.btn_details));

@@ -66,11 +66,18 @@ public class ProductReview implements java.io.Serializable {
     @SerializedName("replyCreatedAt")
     public String replyCreatedAt;
 
+    @SerializedName("media")
+    public java.util.ArrayList<String> media;
+
     public String getReplyContent() {
         return replyContent != null ? replyContent : "";
     }
 
     public String getReplyCreatedAt() {
         return replyCreatedAt != null ? replyCreatedAt : "";
+    }
+
+    public java.util.ArrayList<String> getMedia() {
+        return media != null ? media : new java.util.ArrayList<>();
     }
 }

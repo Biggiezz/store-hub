@@ -38,23 +38,6 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="0dp"
-            app:strokeColor="#DDD8D2"
-            app:strokeWidth="1dp">
-
-            <ImageView
-                android:id="@+id/imgAvatar"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_avatar" />
-
-        </com.google.android.material.card.MaterialCardView>
-
     </LinearLayout>
 
     <View
@@ -256,7 +239,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
                 <LinearLayout
                     android:id="@+id/btnUploadImage"
@@ -264,7 +248,9 @@
                     android:layout_height="80dp"
                     android:background="@drawable/bg_chip_unselected"
                     android:gravity="center"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:clickable="true"
+                    android:focusable="true">
 
                     <ImageView
                         android:layout_width="26dp"
@@ -281,16 +267,13 @@
 
                 </LinearLayout>
 
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/ivUploadedPreview"
-                    android:layout_width="80dp"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvSelectedMedia"
+                    android:layout_width="match_parent"
                     android:layout_height="80dp"
                     android:layout_marginStart="12dp"
-                    android:scaleType="centerCrop"
-                    android:visibility="gone"
-                    app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"
-                    tools:src="@drawable/ic_product"
-                    tools:visibility="visible" />
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
             </LinearLayout>
 

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="80dp"
+    android:layout_height="80dp"
+    android:layout_marginEnd="8dp">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/ivThumbnail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium" />
+
+    <ImageView
+        android:id="@+id/ivPlayIcon"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_gravity="center"
+        android:src="@android:drawable/ic_media_play"
+        android:contentDescription="Play video"
+        android:visibility="gone"
+        app:tint="@color/white" />
+
+</FrameLayout>

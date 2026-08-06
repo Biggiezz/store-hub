@@ -105,8 +105,17 @@ public interface ApiServices {
     @DELETE("api/productsRouter/delete-cart-item/{id}")
     Call<Response<ArrayList<CartItem>>> deleteCartItem(@Header("Authorization") String token, @Path("id") String id);
 
+    @Multipart
     @POST("api/productsRouter/add-review")
-    Call<Response<Product>> addReview(@Body AddReviewRequest request);
+    Call<Response<Product>> addReview(
+            @Part("productId") okhttp3.RequestBody productId,
+            @Part("customerName") okhttp3.RequestBody customerName,
+            @Part("customerImage") okhttp3.RequestBody customerImage,
+            @Part("rating") okhttp3.RequestBody rating,
+            @Part("content") okhttp3.RequestBody content,
+            @Part("orderId") okhttp3.RequestBody orderId,
+            @Part java.util.List<okhttp3.MultipartBody.Part> mediaFiles
+    );
 
     @POST("api/productsRouter/reply-review")
     Call<Response<Product>> replyReview(@Body ReplyReviewRequest request);
@@ -114,7 +123,8 @@ public interface ApiServices {
     @POST("api/oderRouter/create-order")
     Call<Response<Order>> createOrder(
             @Header("Authorization") String token,
-            @Query("paymentMethod") String paymentMethod
+            @Query("paymentMethod") String paymentMethod,
+            @Query("appTransId") String appTransId
     );
 
     @GET("api/oderRouter/get-orders")

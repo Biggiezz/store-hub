@@ -93,7 +93,8 @@ public class CancelledOrderDetailActivity extends BaseActivity {
         }
 
         long shippingFee = order.getShippingFee();
-        long total = subtotal + shippingFee;
+        long discount = order.getDiscount();
+        long total = subtotal + shippingFee - discount;
 
         if (tvSubtotal != null) tvSubtotal.setText(formatPrice(subtotal));
         if (tvShippingFee != null) tvShippingFee.setText(formatPrice(shippingFee));
@@ -107,7 +108,12 @@ public class CancelledOrderDetailActivity extends BaseActivity {
         }
 
         TextView tvVoucher = findViewById(R.id.tvVoucher);
-        if (tvVoucher != null) tvVoucher.setText("-" + formatPrice(0));
+        if (tvVoucher != null) tvVoucher.setText("-" + formatPrice(discount));
+
+        TextView tvZaloPayNote = findViewById(R.id.tvZaloPayNote);
+        if (tvZaloPayNote != null) {
+            tvZaloPayNote.setVisibility("ZaloPay".equalsIgnoreCase(order.getPaymentMethod()) ? android.view.View.VISIBLE : android.view.View.GONE);
+        }
 
         TextView tvCancelReason = findViewById(R.id.tvCancelReason);
         if (tvCancelReason != null) {
