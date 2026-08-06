@@ -10,6 +10,7 @@ activity = "1.8.0"
 constraintlayout = "2.1.4"
 okhttp = "4.11.0"
 ucrop = "2.2.8"
+swiperefreshlayout = "1.2.0"
 
 [libraries]
 commons-codec = { module = "commons-codec:commons-codec", version.ref = "commonsCodec" }
@@ -22,6 +23,7 @@ activity = { group = "androidx.activity", name = "activity", version.ref = "acti
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 ucrop = { group = "com.github.yalantis", name = "ucrop", version.ref = "ucrop" }
+swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

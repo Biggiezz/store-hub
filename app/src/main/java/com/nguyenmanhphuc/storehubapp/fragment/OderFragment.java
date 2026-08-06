@@ -47,6 +47,8 @@ import retrofit2.Callback;
  * Màn hình quản lý danh sách đơn hàng.
  * Tải trực tiếp dữ liệu từ Database, không chứa mockup, ngoại trừ lộ trình timeline.
  */
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 public class OderFragment extends Fragment {
 
     private static final String FILTER_ALL = "Tất cả";
@@ -57,6 +59,7 @@ public class OderFragment extends Fragment {
 
     private LinearLayout ordersContainer;
     private ProgressBar progressBar;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private TextView btnFilterAll;
     private TextView btnFilterPending;
     private TextView btnFilterShipping;
@@ -94,6 +97,12 @@ public class OderFragment extends Fragment {
         btnFilterCompleted = view.findViewById(R.id.btnFilterCompleted);
         btnFilterCancelled = view.findViewById(R.id.btnFilterCancelled);
         apiService = new HttpResquest().callAPI();
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.dark_green));
+            swipeRefreshLayout.setOnRefreshListener(this::loadOrdersAndCart);
+        }
     }
 
     private void initListener() {
@@ -534,6 +543,16 @@ public class OderFragment extends Fragment {
     }
 
     private void setLoading(boolean loading) {
+        if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
+            if (progressBar != null) {
+                progressBar.setVisibility(View.GONE);
+            }
+            if (!loading) {
+                swipeRefreshLayout.setRefreshing(false);
+            }
+            return;
+        }
+
         if (progressBar != null) {
             progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
         }
@@ -541,6 +560,9 @@ public class OderFragment extends Fragment {
             if (ordersContainer != null) ordersContainer.setVisibility(View.GONE);
         } else {
             if (ordersContainer != null) ordersContainer.setVisibility(View.VISIBLE);
+            if (swipeRefreshLayout != null) {
+                swipeRefreshLayout.setRefreshing(false);
+            }
         }
     }
 

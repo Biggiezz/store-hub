@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.nguyenmanhphuc.storehubapp.R;
 import com.nguyenmanhphuc.storehubapp.adapter.UserManagementAdapter;
@@ -56,6 +57,7 @@ public class UserManagementFragment extends Fragment {
     private boolean isStaffTabSelected = true;
     private int currentPage = 1;
     private static final int PAGE_SIZE = 10;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public UserManagementFragment() {
         // Required empty public constructor
@@ -106,6 +108,12 @@ public class UserManagementFragment extends Fragment {
         btnPage2 = view.findViewById(R.id.btnPage2);
         btnPage3 = view.findViewById(R.id.btnPage3);
         btnNextPage = view.findViewById(R.id.btnNextPage);
+
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.dark_green));
+            swipeRefreshLayout.setOnRefreshListener(this::fetchUsersFromServer);
+        }
     }
 
     private void setUpAdapter() {
@@ -288,7 +296,10 @@ public class UserManagementFragment extends Fragment {
     }
 
     private void fetchUsersFromServer() {
-        pbLoadingUsers.setVisibility(View.VISIBLE);
+        boolean isSwipeRefreshing = swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing();
+        if (!isSwipeRefreshing) {
+            pbLoadingUsers.setVisibility(View.VISIBLE);
+        }
         if (rvUsers != null) rvUsers.setVisibility(View.GONE);
         if (tvEmptyState != null) tvEmptyState.setVisibility(View.GONE);
         if (llPagination != null) llPagination.setVisibility(View.GONE);
@@ -299,6 +310,7 @@ public class UserManagementFragment extends Fragment {
             @Override
             public void onResponse(@NonNull retrofit2.Call<Response<ArrayList<User>>> call, @NonNull retrofit2.Response<Response<ArrayList<User>>> response) {
                 pbLoadingUsers.setVisibility(View.GONE);
+                if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                 allStaffList.clear();
                 allCustomerList.clear();
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null && !response.body().getData().isEmpty()) {
@@ -320,6 +332,7 @@ public class UserManagementFragment extends Fragment {
             @Override
             public void onFailure(@NonNull retrofit2.Call<Response<ArrayList<User>>> call, @NonNull Throwable t) {
                 pbLoadingUsers.setVisibility(View.GONE);
+                if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                 allStaffList.clear();
                 allCustomerList.clear();
                 tvStaffCount.setText("0");

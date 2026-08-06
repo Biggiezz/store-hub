@@ -20,6 +20,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.nguyenmanhphuc.storehubapp.R;
 import com.nguyenmanhphuc.storehubapp.admin.adapter.RecentActivityAdapter;
@@ -57,6 +58,7 @@ public class AdminRecentActivity extends AppCompatActivity {
     private Call<Response<RevenueData>> activityCall;
     private int currentPage = 1;
     private String selectedTabFilter = "all"; // "all", "order", "product", "user"
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +116,12 @@ public class AdminRecentActivity extends AppCompatActivity {
         if (tvFilterOrder != null) tvFilterOrder.setOnClickListener(v -> selectTab("order"));
         if (tvFilterProduct != null) tvFilterProduct.setOnClickListener(v -> selectTab("product"));
         if (tvFilterEmployee != null) tvFilterEmployee.setOnClickListener(v -> selectTab("user"));
+
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.dark_green));
+            swipeRefreshLayout.setOnRefreshListener(this::loadActivities);
+        }
 
         updateTabUi();
 
@@ -189,7 +197,10 @@ public class AdminRecentActivity extends AppCompatActivity {
     }
 
     private void loadActivities() {
-        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+        boolean isSwipeRefreshing = swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing();
+        if (!isSwipeRefreshing) {
+            if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+        }
         if (rvRecentActivities != null) rvRecentActivities.setVisibility(View.GONE);
         if (layoutEmpty != null) layoutEmpty.setVisibility(View.GONE);
         if (layoutPagination != null) layoutPagination.setVisibility(View.GONE);
@@ -200,6 +211,7 @@ public class AdminRecentActivity extends AppCompatActivity {
             public void onResponse(@NonNull Call<Response<RevenueData>> call,
                                    @NonNull retrofit2.Response<Response<RevenueData>> response) {
                 if (progressBar != null) progressBar.setVisibility(View.GONE);
+                if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     allActivities.clear();
                     List<RecentActivity> activities = response.body().getData().getRecentActivities();
@@ -214,6 +226,7 @@ public class AdminRecentActivity extends AppCompatActivity {
             public void onFailure(@NonNull Call<Response<RevenueData>> call, @NonNull Throwable t) {
                 if (!call.isCanceled()) {
                     if (progressBar != null) progressBar.setVisibility(View.GONE);
+                    if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                     allActivities.clear();
                     filterActivities();
                 }

@@ -1,9 +1,9 @@
 package com.nguyenmanhphuc.storehubapp;
 
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.appcompat.widget.Toolbar;
 
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -23,7 +23,7 @@ import java.util.Locale;
  */
 public class CancelledOrderDetailActivity extends BaseActivity {
 
-    private Toolbar toolbar;
+    private ImageView btnBack;
     private Order order;
     private RecyclerView rvOrderProducts;
     private OrderProductAdapter adapter;
@@ -54,7 +54,7 @@ public class CancelledOrderDetailActivity extends BaseActivity {
     }
 
     private void initUi() {
-        toolbar = findViewById(R.id.toolbar);
+        btnBack = findViewById(R.id.btnBack);
 
         tvSubtotal = findViewById(R.id.tvSubtotal);
         tvShippingFee = findViewById(R.id.tvShippingFee);
@@ -66,8 +66,8 @@ public class CancelledOrderDetailActivity extends BaseActivity {
     }
 
     private void setUpListener() {
-        if (toolbar != null) {
-            toolbar.setNavigationOnClickListener(v -> finish());
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> finish());
         }
     }
 

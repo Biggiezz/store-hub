@@ -5,150 +5,156 @@
     android:layout_height="match_parent"
     android:background="#FCFBF8">
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/nestedScrollViewAdminProducts"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:fillViewport="true"
-        android:paddingBottom="86dp">
+        android:layout_height="match_parent">
 
-        <LinearLayout
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nestedScrollViewAdminProducts"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="53dp"
-                android:gravity="center_vertical"
-                android:paddingStart="22dp"
-                android:paddingEnd="22dp"
-                android:text="@string/admin_product_management"
-                android:textColor="#1B2C24"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#DDDAD5" />
-
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="39dp"
-                android:clipToPadding="false"
-                android:paddingStart="22dp"
-                android:paddingEnd="22dp"
-                android:scrollbars="none">
-
-                <LinearLayout
-                    android:id="@+id/layoutAdminChips"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical" />
-            </HorizontalScrollView>
-
-            <EditText
-                android:id="@+id/edtAdminProductSearch"
-                android:layout_width="match_parent"
-                android:layout_height="47dp"
-                android:layout_marginStart="22dp"
-                android:layout_marginTop="25dp"
-                android:layout_marginEnd="22dp"
-                android:background="@drawable/bg_admin_search"
-                android:drawableStart="@drawable/ic_search"
-                android:drawablePadding="12dp"
-                android:hint="@string/search_product_hint"
-                android:paddingStart="14dp"
-                android:paddingEnd="18dp"
-                android:singleLine="true"
-                android:textColor="#25342D"
-                android:textColorHint="#A9ABA8"
-                android:textSize="15sp" />
-
-            <ProgressBar
-                android:id="@+id/progressBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="30dp"
-                android:layout_marginBottom="30dp"
-                android:visibility="gone" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvAdminProducts"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="25dp"
-                android:layout_marginEnd="15dp"
-                android:clipToPadding="false"
-                android:paddingBottom="8dp" />
-
-            <ProgressBar
-                android:id="@+id/progressBarLoadMore"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="12dp"
-                android:layout_marginBottom="12dp"
-                android:visibility="gone" />
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:fillViewport="true"
+            android:paddingBottom="86dp">
 
             <LinearLayout
-                android:id="@+id/layoutPagination"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:gravity="center"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/btnAdminPreviousPage"
-                    style="@style/Widget.StoreHub.AdminPageButton"
-                    android:text="‹"
-                    android:textSize="28sp" />
+                    android:layout_width="match_parent"
+                    android:layout_height="53dp"
+                    android:gravity="center_vertical"
+                    android:paddingStart="22dp"
+                    android:paddingEnd="22dp"
+                    android:text="@string/admin_product_management"
+                    android:textColor="#1B2C24"
+                    android:textSize="20sp" />
 
-                <TextView
-                    android:id="@+id/btnAdminPage1"
-                    style="@style/Widget.StoreHub.AdminPageButton"
-                    android:background="@drawable/bg_admin_chip_active"
-                    android:text="1"
-                    android:textColor="#FFFFFF" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#DDDAD5" />
 
-                <TextView
-                    android:id="@+id/btnAdminPage2"
-                    style="@style/Widget.StoreHub.AdminPageButton"
-                    android:text="2" />
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="39dp"
+                    android:clipToPadding="false"
+                    android:paddingStart="22dp"
+                    android:paddingEnd="22dp"
+                    android:scrollbars="none">
 
-                <TextView
-                    android:id="@+id/btnAdminPage3"
-                    style="@style/Widget.StoreHub.AdminPageButton"
-                    android:text="3" />
+                    <LinearLayout
+                        android:id="@+id/layoutAdminChips"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal" />
+                </HorizontalScrollView>
 
-                 <TextView
-                     android:id="@+id/tvAdminEllipsis"
-                     android:layout_width="34dp"
-                     android:layout_height="42dp"
-                     android:gravity="center"
-                     android:text="..."
-                     android:textColor="#5D625F" />
+                <EditText
+                    android:id="@+id/edtAdminProductSearch"
+                    android:layout_width="match_parent"
+                    android:layout_height="47dp"
+                    android:layout_marginStart="22dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginEnd="22dp"
+                    android:background="@drawable/bg_admin_search"
+                    android:drawableStart="@drawable/ic_search"
+                    android:drawablePadding="12dp"
+                    android:hint="@string/search_product_hint"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="18dp"
+                    android:singleLine="true"
+                    android:textColor="#25342D"
+                    android:textColorHint="#A9ABA8"
+                    android:textSize="15sp" />
 
-                <TextView
-                    android:id="@+id/tvAdminLastPage"
-                    style="@style/Widget.StoreHub.AdminPageButton"
-                    android:text="12" />
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginBottom="30dp"
+                    android:visibility="gone" />
 
-                <TextView
-                    android:id="@+id/btnAdminNextPage"
-                    style="@style/Widget.StoreHub.AdminPageButton"
-                    android:text="›"
-                    android:textSize="28sp" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvAdminProducts"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginEnd="15dp"
+                    android:clipToPadding="false"
+                    android:paddingBottom="8dp" />
+
+                <ProgressBar
+                    android:id="@+id/progressBarLoadMore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="12dp"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:id="@+id/layoutPagination"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/btnAdminPreviousPage"
+                        style="@style/Widget.StoreHub.AdminPageButton"
+                        android:text="‹"
+                        android:textSize="28sp" />
+
+                    <TextView
+                        android:id="@+id/btnAdminPage1"
+                        style="@style/Widget.StoreHub.AdminPageButton"
+                        android:background="@drawable/bg_admin_chip_active"
+                        android:text="1"
+                        android:textColor="#FFFFFF" />
+
+                    <TextView
+                        android:id="@+id/btnAdminPage2"
+                        style="@style/Widget.StoreHub.AdminPageButton"
+                        android:text="2" />
+
+                    <TextView
+                        android:id="@+id/btnAdminPage3"
+                        style="@style/Widget.StoreHub.AdminPageButton"
+                        android:text="3" />
+
+                    <TextView
+                        android:id="@+id/tvAdminEllipsis"
+                        android:layout_width="34dp"
+                        android:layout_height="42dp"
+                        android:gravity="center"
+                        android:text="..."
+                        android:textColor="#5D625F" />
+
+                    <TextView
+                        android:id="@+id/tvAdminLastPage"
+                        style="@style/Widget.StoreHub.AdminPageButton"
+                        android:text="12" />
+
+                    <TextView
+                        android:id="@+id/btnAdminNextPage"
+                        style="@style/Widget.StoreHub.AdminPageButton"
+                        android:text="›"
+                        android:textSize="28sp" />
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddProduct"

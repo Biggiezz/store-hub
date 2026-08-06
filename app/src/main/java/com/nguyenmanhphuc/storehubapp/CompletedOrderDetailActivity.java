@@ -2,9 +2,12 @@ package com.nguyenmanhphuc.storehubapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.appcompat.widget.Toolbar;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -24,12 +27,24 @@ import java.util.Locale;
  * Giao diện chi tiết đơn hàng đã hoàn thành kết nối dữ liệu thật.
  */
 public class CompletedOrderDetailActivity extends BaseActivity {
-    private Toolbar toolbar;
+    private ImageView btnBack;
     private RecyclerView rvOrderProducts;
     private OrderProductAdapter adapter;
     private TextView tvSubtotal, tvShippingFee, tvTotal, tvPaymentMethod, tvOrderDetailCode;
     private TextView tvShippingNamePhone, tvShippingAddress, btnReview, tvVoucher, tvStatusText, tvCompletedTime;
     private Order order;
+
+    private final ActivityResultLauncher<Intent> writeReviewLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    if (order != null) {
+                        order.setReviewed(true);
+                        bindOrderData(order);
+                    }
+                }
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +72,7 @@ public class CompletedOrderDetailActivity extends BaseActivity {
 
 
     private void initUi() {
-        toolbar = findViewById(R.id.toolbar);
+        btnBack = findViewById(R.id.btnBack);
 
         tvSubtotal = findViewById(R.id.tvSubtotal);
         tvShippingFee = findViewById(R.id.tvShippingFee);
@@ -72,8 +87,8 @@ public class CompletedOrderDetailActivity extends BaseActivity {
     }
 
     private void setUpListener() {
-        if (toolbar != null) {
-            toolbar.setNavigationOnClickListener(v -> finish());
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> finish());
         }
         if (btnReview != null) {
             btnReview.setOnClickListener(v -> {
@@ -93,7 +108,7 @@ public class CompletedOrderDetailActivity extends BaseActivity {
                         }
                     }
                     intent.putExtra("order_item", order);
-                    startActivity(intent);
+                    writeReviewLauncher.launch(intent);
                 }
             });
         }

@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,6 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -48,9 +49,10 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartChangeLi
 
     private RecyclerView rvCartItems;
     private CartAdapter cartAdapter;
-    private LinearLayout emptyCartLayout;
+    private View emptyCartLayout;
     private NestedScrollView cartScrollView;
     private ProgressBar progressBar;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private TextView tvSubtotalLabel, tvReceiverInformation, tvDeliveryAddress, btnChangeAddress, tvSubtotal, tvShippingFee, tvTotal;
     private MaterialButton btnCheckout;
     private ImageButton btnBack;
@@ -89,7 +91,6 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartChangeLi
     }
 
     private void initUi(View view) {
-        btnBack = view.findViewById(R.id.btnBack);
         rvCartItems = view.findViewById(R.id.rvCartItems);
         emptyCartLayout = view.findViewById(R.id.emptyCartLayout);
         cartScrollView = view.findViewById(R.id.cartScrollView);
@@ -104,6 +105,13 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartChangeLi
         tvShippingFee = view.findViewById(R.id.tvShippingFee);
         tvTotal = view.findViewById(R.id.tvTotal);
         btnCheckout = view.findViewById(R.id.btnCheckout);
+        btnBack = view.findViewById(R.id.btnBack);
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.dark_green));
+            swipeRefreshLayout.setOnRefreshListener(this::loadCartFromServer);
+        }
     }
 
     private void loadUserInfo() {
@@ -343,6 +351,16 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartChangeLi
     }
 
     private void setLoading(boolean loading) {
+        if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
+            if (progressBar != null) {
+                progressBar.setVisibility(View.GONE);
+            }
+            if (!loading) {
+                swipeRefreshLayout.setRefreshing(false);
+            }
+            return;
+        }
+
         if (progressBar != null) {
             progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
         }
@@ -351,6 +369,9 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartChangeLi
             if (emptyCartLayout != null) emptyCartLayout.setVisibility(View.GONE);
         } else {
             if (cartScrollView != null) cartScrollView.setVisibility(View.VISIBLE);
+            if (swipeRefreshLayout != null) {
+                swipeRefreshLayout.setRefreshing(false);
+            }
         }
     }
 

@@ -7,56 +7,66 @@
     android:background="@color/background"
     android:orientation="vertical">
 
-    <RelativeLayout
+    <!-- Custom Header Bar -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:background="@color/background"
-        android:paddingHorizontal="16dp">
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="12dp">
 
         <ImageView
             android:id="@+id/btnBackNews"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Quay lại"
-            android:padding="6dp"
+            android:padding="4dp"
             android:src="@drawable/ic_back"
             app:tint="@color/dark_green" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
             android:fontFamily="@font/shopee_display"
             android:text="@string/tech_news_title"
             android:textColor="@color/dark_green"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-    </RelativeLayout>
+            android:textSize="20sp" />
+    </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:background="#C3C8C3" />
+        android:background="#DEDCD7" />
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvAllNews"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:overScrollMode="never"
-            android:paddingHorizontal="20dp"
-            android:paddingTop="14dp"
-            android:paddingBottom="60dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/item_news_standard" />
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvAllNews"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:overScrollMode="never"
+                android:paddingHorizontal="20dp"
+                android:paddingTop="14dp"
+                android:paddingBottom="60dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_news_standard" />
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <ProgressBar
             android:id="@+id/progressBarNews"

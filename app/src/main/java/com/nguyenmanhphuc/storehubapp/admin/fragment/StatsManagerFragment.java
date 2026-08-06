@@ -15,7 +15,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.nguyenmanhphuc.storehubapp.R;
@@ -51,6 +53,7 @@ public class StatsManagerFragment extends Fragment {
     private LinearLayout layoutTopProduct, layoutActivity;
     private TextView tvSeeAll;
     private View progressBarStats, layoutStatsContent;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public StatsManagerFragment() {
     }
@@ -80,6 +83,16 @@ public class StatsManagerFragment extends Fragment {
         tvSeeAll = view.findViewById(R.id.tvSeeAll);
         progressBarStats = view.findViewById(R.id.progressBarStats);
         layoutStatsContent = view.findViewById(R.id.layoutStatsContent);
+
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.dark_green));
+            swipeRefreshLayout.setOnRefreshListener(() -> {
+                if (spTime != null) {
+                    onTimeFilterSelected(spTime.getSelectedItemPosition());
+                }
+            });
+        }
 
         if (barChart != null) {
             // Mặc định hiển thị thông báo chưa có dữ liệu thống kê nếu không có dữ liệu
@@ -129,6 +142,7 @@ public class StatsManagerFragment extends Fragment {
             public void onResponse(@NonNull Call<Response<RevenueData>> call, @NonNull retrofit2.Response<Response<RevenueData>> response) {
                 if (progressBarStats != null) progressBarStats.setVisibility(View.GONE);
                 if (layoutStatsContent != null) layoutStatsContent.setVisibility(View.VISIBLE);
+                if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     RevenueData data = response.body().getData();
                     List<BarEntry> entries = new ArrayList<>();
@@ -158,6 +172,7 @@ public class StatsManagerFragment extends Fragment {
             public void onFailure(@NonNull Call<Response<RevenueData>> call, @NonNull Throwable t) {
                 if (progressBarStats != null) progressBarStats.setVisibility(View.GONE);
                 if (layoutStatsContent != null) layoutStatsContent.setVisibility(View.VISIBLE);
+                if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                 if (isAdded()) {
                     renderChartAndStats(new ArrayList<>(), new String[0], 0L, 0);
                     renderTopProducts(new ArrayList<>());

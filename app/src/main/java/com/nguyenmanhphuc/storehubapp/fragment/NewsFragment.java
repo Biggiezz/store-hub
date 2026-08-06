@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ProgressBar;
+import android.widget.ImageView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,15 +42,17 @@ public class NewsFragment extends Fragment {
     private static final int LIMIT = 5;
 
     private RecyclerView rvAllNews;
-    private View btnBackNews;
+    private ImageView btnBackNews;
     private TextView btnPrevNewsPage, btnNewsPage1, btnNewsPage2, btnNewsPage3, btnNextNewsPage;
     private NewsAdapter newsAdapter;
     private Call<Response<ArrayList<News>>> currentCall;
-    private int loadGeneration;
+    private int loadGeneration = 0;
     private int currentPage = 1;
+    private int totalPages = 1;
     private ProgressBar progressBarNews;
     private ProgressBar progressBarNewsLoadMore;
     private View llPaginationNews;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private boolean isLoading = false;
     private boolean hasReachedEnd = false;
 
@@ -80,6 +84,16 @@ public class NewsFragment extends Fragment {
         progressBarNews = view.findViewById(R.id.progressBarNews);
         progressBarNewsLoadMore = view.findViewById(R.id.progressBarNewsLoadMore);
         llPaginationNews = view.findViewById(R.id.llPaginationNews);
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.dark_green));
+            swipeRefreshLayout.setOnRefreshListener(() -> {
+                currentPage = 1;
+                hasReachedEnd = false;
+                loadNews(1);
+            });
+        }
     }
 
     private void setUpAdapter() {
@@ -128,9 +142,11 @@ public class NewsFragment extends Fragment {
     }
  
     private void loadNews(int page) {
-        if (progressBarNews != null && page == 1) progressBarNews.setVisibility(View.VISIBLE);
+        if (swipeRefreshLayout == null || !swipeRefreshLayout.isRefreshing()) {
+            if (progressBarNews != null && page == 1) progressBarNews.setVisibility(View.VISIBLE);
+            if (rvAllNews != null && page == 1) rvAllNews.setVisibility(View.GONE);
+        }
         if (progressBarNewsLoadMore != null && page > 1) progressBarNewsLoadMore.setVisibility(View.VISIBLE);
-        if (rvAllNews != null && page == 1) rvAllNews.setVisibility(View.GONE);
         if (llPaginationNews != null) llPaginationNews.setVisibility(View.GONE);
  
         isLoading = true;
@@ -145,6 +161,9 @@ public class NewsFragment extends Fragment {
                 if (progressBarNews != null) progressBarNews.setVisibility(View.GONE);
                 if (progressBarNewsLoadMore != null) progressBarNewsLoadMore.setVisibility(View.GONE);
                 if (rvAllNews != null) rvAllNews.setVisibility(View.VISIBLE);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
  
                 if (response.isSuccessful() && response.body() != null
                         && response.body().getCode() == 200 && response.body().getData() != null) {
@@ -167,6 +186,9 @@ public class NewsFragment extends Fragment {
                 if (call.isCanceled()) return;
                 isLoading = false;
                 if (progressBarNewsLoadMore != null) progressBarNewsLoadMore.setVisibility(View.GONE);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
                 showLoadFailure(requestGeneration, "Lỗi tải tin tức", t);
             }
         });
@@ -177,6 +199,9 @@ public class NewsFragment extends Fragment {
         if (progressBarNews != null) progressBarNews.setVisibility(View.GONE);
         if (progressBarNewsLoadMore != null) progressBarNewsLoadMore.setVisibility(View.GONE);
         if (rvAllNews != null) rvAllNews.setVisibility(View.VISIBLE);
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setRefreshing(false);
+        }
         Log.e("NewsFragment", message, error);
         if (error != null) Toast.makeText(requireContext(), "Không thể kết nối đến máy chủ!", Toast.LENGTH_SHORT).show();
     }

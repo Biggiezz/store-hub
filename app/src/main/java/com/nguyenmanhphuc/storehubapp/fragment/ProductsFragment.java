@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
@@ -19,7 +20,6 @@ import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.nguyenmanhphuc.storehubapp.MainActivity;
@@ -35,14 +35,18 @@ import java.util.ArrayList;
 import retrofit2.Call;
 import retrofit2.Callback;
 
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.core.content.ContextCompat;
+
 public class ProductsFragment extends Fragment {
     private RecyclerView rvProducts;
-    private MaterialToolbar toolbar;
+    private ImageView btnBack, btnReceipt;
     private ProductAdapter productAdapter;
     private TextInputEditText edtSearch;
     private NestedScrollView nestedScrollView;
     private ProgressBar progressBar, progressBarLoadMore;
     private MaterialButton btnPrice, btnAZ, btnZA;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     private final ArrayList<Product> allProducts = new ArrayList<>();
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
@@ -78,7 +82,8 @@ public class ProductsFragment extends Fragment {
 
     private void initUi(View view) {
         rvProducts = view.findViewById(R.id.rvProducts);
-        toolbar = view.findViewById(R.id.toolbar);
+        btnBack = view.findViewById(R.id.btnBack);
+        btnReceipt = view.findViewById(R.id.btnReceipt);
         edtSearch = view.findViewById(R.id.edtSearch);
         nestedScrollView = view.findViewById(R.id.nestedScrollView);
         progressBar = view.findViewById(R.id.progressBar);
@@ -86,6 +91,12 @@ public class ProductsFragment extends Fragment {
         btnPrice = view.findViewById(R.id.btnPrice);
         btnAZ = view.findViewById(R.id.btnAZ);
         btnZA = view.findViewById(R.id.btnZA);
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.dark_green));
+            swipeRefreshLayout.setOnRefreshListener(this::loadFirstPage);
+        }
         updateSortButtons();
     }
 
@@ -97,15 +108,11 @@ public class ProductsFragment extends Fragment {
     }
 
     private void setUpListener() {
-        if (toolbar != null) {
-            toolbar.setNavigationOnClickListener(v -> ((MainActivity) requireActivity()).showHome());
-            toolbar.setOnMenuItemClickListener(item -> {
-                if (item.getItemId() == R.id.action_receipt) {
-                    ((MainActivity) requireActivity()).showOder();
-                    return true;
-                }
-                return false;
-            });
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> ((MainActivity) requireActivity()).showHome());
+        }
+        if (btnReceipt != null) {
+            btnReceipt.setOnClickListener(v -> ((MainActivity) requireActivity()).showOder());
         }
 
         if (edtSearch != null) {
@@ -191,8 +198,10 @@ public class ProductsFragment extends Fragment {
 
     private void fetchProducts(int page, String keyword, boolean isLoadMore) {
         if (!isLoadMore) {
-            if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
-            if (rvProducts != null) rvProducts.setVisibility(View.GONE);
+            if (swipeRefreshLayout == null || !swipeRefreshLayout.isRefreshing()) {
+                if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+                if (rvProducts != null) rvProducts.setVisibility(View.GONE);
+            }
         } else {
             if (progressBarLoadMore != null) progressBarLoadMore.setVisibility(View.VISIBLE);
         }
@@ -252,6 +261,9 @@ public class ProductsFragment extends Fragment {
         if (progressBar != null) progressBar.setVisibility(View.GONE);
         if (progressBarLoadMore != null) progressBarLoadMore.setVisibility(View.GONE);
         if (rvProducts != null) rvProducts.setVisibility(View.VISIBLE);
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setRefreshing(false);
+        }
     }
 
     private void showLoadFailure(int requestGeneration, String message) {
@@ -260,6 +272,9 @@ public class ProductsFragment extends Fragment {
         if (progressBar != null) progressBar.setVisibility(View.GONE);
         if (progressBarLoadMore != null) progressBarLoadMore.setVisibility(View.GONE);
         if (rvProducts != null) rvProducts.setVisibility(View.VISIBLE);
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setRefreshing(false);
+        }
         Log.e("ProductsFragment", message);
     }
 

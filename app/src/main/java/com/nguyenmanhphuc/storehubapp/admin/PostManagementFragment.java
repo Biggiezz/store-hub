@@ -12,6 +12,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.core.content.ContextCompat;
 
 import com.nguyenmanhphuc.storehubapp.NewsDetailActivity;
 import com.nguyenmanhphuc.storehubapp.R;
@@ -33,6 +35,7 @@ public class PostManagementFragment extends Fragment implements PostManagementAd
     private PostManagementAdapter adapter;
     private FloatingActionButton fabAdd;
     private ApiServices apiServices;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Nullable
     @Override
@@ -59,12 +62,19 @@ public class PostManagementFragment extends Fragment implements PostManagementAd
         loadNews();
 
         view.findViewById(R.id.btnRefresh).setOnClickListener(v -> loadNews());
+
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.dark_green));
+            swipeRefreshLayout.setOnRefreshListener(this::loadNews);
+        }
     }
 
     private void loadNews() {
         apiServices.getListNews(1, 100).enqueue(new Callback<Response<ArrayList<News>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<News>>> call, @NonNull retrofit2.Response<Response<ArrayList<News>>> response) {
+                if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                 if (response.isSuccessful() && response.body() != null) {
                     adapter.updateData(response.body().getData());
                 }
@@ -72,6 +82,7 @@ public class PostManagementFragment extends Fragment implements PostManagementAd
 
             @Override
             public void onFailure(@NonNull Call<Response<ArrayList<News>>> call, @NonNull Throwable t) {
+                if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                 if (isAdded() && getContext() != null) {
                     Toast.makeText(getContext(), "Lỗi tải dữ liệu", Toast.LENGTH_SHORT).show();
                 }

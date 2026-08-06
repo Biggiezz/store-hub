@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/write_review_activity"
     android:background="@color/background"
     android:orientation="vertical">
 
@@ -22,7 +23,6 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Back"
             android:padding="4dp"
             android:src="@drawable/ic_back"
             app:tint="@color/dark_green" />
@@ -35,15 +35,14 @@
             android:fontFamily="@font/shopee_display"
             android:text="@string/review"
             android:textColor="@color/dark_green"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textSize="20sp" />
 
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:background="#C3C8C3" />
+        android:background="#DEDCD7" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"

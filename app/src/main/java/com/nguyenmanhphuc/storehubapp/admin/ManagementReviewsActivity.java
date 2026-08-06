@@ -17,6 +17,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.core.content.ContextCompat;
 
 import com.nguyenmanhphuc.storehubapp.R;
 import com.nguyenmanhphuc.storehubapp.admin.adapter.AdminReviewAdapter;
@@ -47,6 +49,8 @@ public class ManagementReviewsActivity extends AppCompatActivity {
     private int currentTab = 0; // 0: Tất cả, 1: Chưa trả lời, 2: Đã trả lời
     private ApiServices apiServices;
 
+    private SwipeRefreshLayout swipeRefreshLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +78,12 @@ public class ManagementReviewsActivity extends AppCompatActivity {
         tvFilterAll = findViewById(R.id.tvFilterAll);
         tvFilterUnanswered = findViewById(R.id.tvFilterUnanswered);
         tvFilterAnswered = findViewById(R.id.tvFilterAnswered);
+
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.dark_green));
+            swipeRefreshLayout.setOnRefreshListener(this::loadReviews);
+        }
     }
 
     private void setupRecyclerView() {
@@ -138,7 +148,10 @@ public class ManagementReviewsActivity extends AppCompatActivity {
     }
 
     private void loadReviews() {
-        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+        boolean isSwipeRefreshing = swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing();
+        if (!isSwipeRefreshing) {
+            if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+        }
         if (rvReviews != null) rvReviews.setVisibility(View.GONE);
         if (tvEmptyState != null) tvEmptyState.setVisibility(View.GONE);
 
@@ -147,6 +160,7 @@ public class ManagementReviewsActivity extends AppCompatActivity {
             public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
                 if (isFinishing() || isDestroyed()) return;
                 if (progressBar != null) progressBar.setVisibility(View.GONE);
+                if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     allReviews.clear();
                     ArrayList<Product> products = response.body().getData();
@@ -170,6 +184,7 @@ public class ManagementReviewsActivity extends AppCompatActivity {
             public void onFailure(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull Throwable t) {
                 if (isFinishing() || isDestroyed()) return;
                 if (progressBar != null) progressBar.setVisibility(View.GONE);
+                if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                 Toast.makeText(ManagementReviewsActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 tvEmptyState.setVisibility(View.VISIBLE);
                 rvReviews.setVisibility(View.GONE);

@@ -13,6 +13,9 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -85,7 +88,11 @@ public class WriteReviewActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_write_review);
-
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.write_review_activity), (view, insets) -> {
+            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            view.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+            return insets;
+        });
         apiServices = new HttpResquest().callAPI();
         initUi();
 
@@ -173,6 +180,7 @@ public class WriteReviewActivity extends BaseActivity {
                     btnSubmitReview.setText("Gửi đánh giá");
                     if (response.isSuccessful() && response.body() != null && response.body().getCode() == 200) {
                         Toast.makeText(WriteReviewActivity.this, getString(R.string.toast_submit_success), Toast.LENGTH_SHORT).show();
+                        setResult(RESULT_OK);
                         finish();
                     } else {
                         String errMsg = (response.body() != null ? response.body().getMessage() : getString(R.string.toast_server_error));

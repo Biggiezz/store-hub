@@ -48,6 +48,8 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 public class MainActivity extends BaseActivity {
 
     public static final String EXTRA_OPEN_TAB = "open_tab";
@@ -72,6 +74,7 @@ public class MainActivity extends BaseActivity {
     private LinearLayout layoutCategories;
     private View layoutLoading, mainScrollView;
     private TextView tvLoadingText;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     private ArrayList<Product> allProductsList = new ArrayList<>();
     private ArrayList<News> newsList;
@@ -125,6 +128,12 @@ public class MainActivity extends BaseActivity {
         layoutLoading = findViewById(R.id.layoutLoading);
         tvLoadingText = findViewById(R.id.tvLoadingText);
         mainScrollView = findViewById(R.id.mainScrollView);
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.dark_green));
+            swipeRefreshLayout.setOnRefreshListener(this::refreshData);
+        }
 
         if (tvLoadingText != null) {
             ObjectAnimator pulse = ObjectAnimator.ofFloat(tvLoadingText, "alpha", 0.3f, 1.0f);
@@ -172,9 +181,22 @@ public class MainActivity extends BaseActivity {
         layoutCategories = findViewById(R.id.layoutCategories);
     }
 
+    private void refreshData() {
+        isProductsLoaded = false;
+        isCategoriesLoaded = false;
+        isNewsLoaded = false;
+        fetchProducts();
+        fetchNews();
+    }
+
     private synchronized void checkLoadingComplete() {
         if (isProductsLoaded && isCategoriesLoaded && isNewsLoaded) {
-            runOnUiThread(this::hideLoadingScreen);
+            runOnUiThread(() -> {
+                hideLoadingScreen();
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            });
         }
     }
 

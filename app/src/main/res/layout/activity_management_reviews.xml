@@ -31,15 +31,14 @@
             android:layout_weight="1"
             android:text="Quản lý Đánh giá"
             android:textColor="#26332D"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textSize="20sp" />
 
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#ECE9E5" />
+        android:layout_height="0.5dp"
+        android:background="#DEDCD7" />
 
     <!-- Filter tabs -->
     <HorizontalScrollView
@@ -86,15 +85,22 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvReviews"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:overScrollMode="never"
-            android:paddingVertical="20dp"
-            android:paddingTop="16dp"
-            android:paddingBottom="20dp" />
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvReviews"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:overScrollMode="never"
+                android:paddingVertical="20dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="20dp" />
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <TextView
             android:id="@+id/tvEmptyState"

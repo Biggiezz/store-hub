@@ -5,13 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -43,10 +43,13 @@ import java.util.Locale;
 import retrofit2.Call;
 import retrofit2.Callback;
 
-public class AdminOrderDetailActivity extends AppCompatActivity {
-    private static final String EXTRA_ORDER_ID = "admin_order_id";
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.core.content.ContextCompat;
 
-    private final String[] statusOptions = {
+public class AdminOrderDetailActivity extends AppCompatActivity {
+    public static final String EXTRA_ORDER_ID = "order_id";
+
+    private static final String[] statusOptions = {
             "Chờ xác nhận",
             "Đã xác nhận",
             "Đã rời kho",
@@ -61,6 +64,7 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
     private TextView totalView, cancelReasonView;
     private MaterialButton updateStatusButton;
     private ProgressBar progressBar;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private OrderProductAdapter productAdapter;
     private ApiServices apiService;
     private SharedPreferencesManager preferencesManager;
@@ -104,8 +108,10 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
     }
 
     private void initUi() {
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setNavigationOnClickListener(v -> finish());
+        ImageView btnBack = findViewById(R.id.btnBack);
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> finish());
+        }
 
         orderCodeView = findViewById(R.id.tvAdminDetailOrderCode);
         createdAtView = findViewById(R.id.tvAdminDetailCreatedAt);
@@ -128,6 +134,11 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
         productsView.setAdapter(productAdapter);
 
         updateStatusButton.setOnClickListener(v -> showStatusDialog());
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.dark_green));
+            swipeRefreshLayout.setOnRefreshListener(this::loadOrderDetail);
+        }
     }
 
     private void showEditQuantityDialog(CartItem item) {
@@ -360,8 +371,20 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
     }
 
     private void setLoading(boolean loading) {
+        if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
+            progressBar.setVisibility(View.GONE);
+            updateStatusButton.setEnabled(true);
+            if (!loading) {
+                swipeRefreshLayout.setRefreshing(false);
+            }
+            return;
+        }
+
         progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
         updateStatusButton.setEnabled(!loading);
+        if (!loading && swipeRefreshLayout != null) {
+            swipeRefreshLayout.setRefreshing(false);
+        }
     }
 
     private String formatPrice(long value) {

@@ -31,25 +31,29 @@
             android:layout_marginStart="8dp"
             android:layout_weight="1"
             android:text="Hoạt động gần đây"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textSize="18sp" />
 
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#E8E5E1" />
+        android:layout_height="0.5dp"
+        android:background="#DEDCD7" />
 
     <!-- Nội dung có thể cuộn -->
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/nestedScrollViewRecent"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:clipToPadding="false"
-        android:fillViewport="true"
-        android:overScrollMode="never">
+        android:layout_weight="1">
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nestedScrollViewRecent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:fillViewport="true"
+            android:overScrollMode="never">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -464,5 +468,7 @@
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </LinearLayout>

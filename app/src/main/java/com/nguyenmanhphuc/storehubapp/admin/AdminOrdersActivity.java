@@ -5,18 +5,20 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.core.content.ContextCompat;
 
 import com.nguyenmanhphuc.storehubapp.R;
 import com.nguyenmanhphuc.storehubapp.admin.adapter.AdminOrderAdapter;
@@ -38,6 +40,7 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
     private RecyclerView rvAdminOrders;
     private TextView tvEmptyState;
     private ProgressBar progressBar;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private AdminOrderAdapter adapter;
     private ApiServices apiService;
     private Call<Response<ArrayList<Order>>> ordersCall;
@@ -53,16 +56,22 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        // Bind Toolbar
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            toolbar.setNavigationOnClickListener(v -> finish());
+        // Bind back button
+        ImageView btnBack = findViewById(R.id.btnBack);
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> finish());
         }
 
         // Bind Views
         rvAdminOrders = findViewById(R.id.rvAdminOrders);
         tvEmptyState = findViewById(R.id.tvEmptyState);
         progressBar = findViewById(R.id.progressBar);
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.dark_green));
+            swipeRefreshLayout.setOnRefreshListener(this::loadOrders);
+        }
 
         // RecyclerView Config
         rvAdminOrders.setLayoutManager(new LinearLayoutManager(this));
@@ -127,6 +136,16 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
     }
 
     private void setLoading(boolean loading) {
+        if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
+            if (progressBar != null) {
+                progressBar.setVisibility(View.GONE);
+            }
+            if (!loading) {
+                swipeRefreshLayout.setRefreshing(false);
+            }
+            return;
+        }
+
         if (progressBar != null) {
             progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
         }
@@ -135,6 +154,9 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
             if (tvEmptyState != null) tvEmptyState.setVisibility(View.GONE);
         } else {
             if (rvAdminOrders != null) rvAdminOrders.setVisibility(View.VISIBLE);
+            if (swipeRefreshLayout != null) {
+                swipeRefreshLayout.setRefreshing(false);
+            }
         }
     }
 

@@ -37,14 +37,13 @@
             android:fontFamily="@font/shopee_display"
             android:text="@string/edit_profile_title"
             android:textColor="@color/dark_green"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textSize="20sp" />
     </RelativeLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:background="#E5E0DA" />
+        android:background="#DEDCD7" />
 
     <!-- Scrollable content -->
     <androidx.core.widget.NestedScrollView

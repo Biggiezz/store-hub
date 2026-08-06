@@ -8,38 +8,42 @@
     android:orientation="vertical">
 
     <!-- Header -->
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp">
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="12dp">
 
         <ImageView
             android:id="@+id/btnBack"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:layout_centerVertical="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Back"
             android:padding="4dp"
             android:src="@drawable/ic_back"
-            android:background="?attr/selectableItemBackgroundBorderless"
             app:tint="@color/dark_green" />
 
         <TextView
             android:id="@+id/tvAdminPostFormTitle"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
             android:fontFamily="@font/shopee_display"
             android:text="Thêm bài viết mới"
             android:textColor="@color/dark_green"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-    </RelativeLayout>
+            android:textSize="20sp" />
+    </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:background="#E5E0DA" />
+        android:background="#DEDCD7" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"

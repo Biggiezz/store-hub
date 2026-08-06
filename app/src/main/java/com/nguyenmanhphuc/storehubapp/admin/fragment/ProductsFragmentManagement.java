@@ -23,6 +23,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.nguyenmanhphuc.storehubapp.admin.AdminProductDetailActivity;
 import com.nguyenmanhphuc.storehubapp.R;
@@ -60,6 +61,7 @@ public class ProductsFragmentManagement extends Fragment {
     private final ArrayList<Product> allProducts = new ArrayList<>();
     private boolean isLoading = false;
     private ProgressBar progressBarLoadMore;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Nullable
     @Override
@@ -93,6 +95,16 @@ public class ProductsFragmentManagement extends Fragment {
         layoutPagination = view.findViewById(R.id.layoutPagination);
         if (layoutPagination != null) {
             layoutPagination.setVisibility(View.GONE);
+        }
+
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.dark_green));
+            swipeRefreshLayout.setOnRefreshListener(() -> {
+                currentPage = 1;
+                allProducts.clear();
+                loadProducts();
+            });
         }
  
         loadCategoriesFromServer();
@@ -228,10 +240,11 @@ public class ProductsFragmentManagement extends Fragment {
  
         // Chỉ hiện Loading Spinner và ẩn danh sách ở lần đầu tiên tải (khi danh sách đang trống)
         boolean isFirstLoad = allProducts.isEmpty();
-        if (isFirstLoad) {
+        boolean isSwipeRefreshing = swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing();
+        if (isFirstLoad && !isSwipeRefreshing) {
             if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
             if (grid != null) grid.setVisibility(View.GONE);
-        } else {
+        } else if (!isFirstLoad) {
             if (progressBarLoadMore != null) progressBarLoadMore.setVisibility(View.VISIBLE);
         }
         if (layoutPagination != null) {
@@ -251,6 +264,7 @@ public class ProductsFragmentManagement extends Fragment {
  
                 if (progressBar != null) progressBar.setVisibility(View.GONE);
                 if (progressBarLoadMore != null) progressBarLoadMore.setVisibility(View.GONE);
+                if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                 if (grid != null) grid.setVisibility(View.VISIBLE);
  
                 if (response.isSuccessful() && response.body() != null) {
@@ -273,6 +287,7 @@ public class ProductsFragmentManagement extends Fragment {
                 isLoading = false;
                 if (progressBar != null) progressBar.setVisibility(View.GONE);
                 if (progressBarLoadMore != null) progressBarLoadMore.setVisibility(View.GONE);
+                if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                 if (grid != null) grid.setVisibility(View.VISIBLE);
                 Toast.makeText(requireContext(), "Lỗi kết nối server", Toast.LENGTH_SHORT).show();
             }

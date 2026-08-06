@@ -21,17 +21,8 @@ public class HttpProvider {
     public static JSONObject sendPost(String URL, RequestBody formBody) {
         JSONObject data = new JSONObject();
         try {
-            ConnectionSpec spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-                    .tlsVersions(TlsVersion.TLS_1_2)
-                    .cipherSuites(
-                            CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-                            CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-                            CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256)
-                    .build();
-
             OkHttpClient client = new OkHttpClient.Builder()
-                    .connectionSpecs(Collections.singletonList(spec))
-                    .callTimeout(5000, TimeUnit.MILLISECONDS)
+                    .callTimeout(10, TimeUnit.SECONDS)
                     .build();
 
             Request request = new Request.Builder()

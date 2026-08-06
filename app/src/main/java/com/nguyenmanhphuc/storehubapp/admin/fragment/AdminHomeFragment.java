@@ -30,10 +30,15 @@ import java.util.ArrayList;
 import retrofit2.Call;
 import retrofit2.Callback;
 
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.core.content.ContextCompat;
+
 public class AdminHomeFragment extends Fragment {
 
     private View cardSales, cardUsers, cardProducts, cardOrders;
     private TextView txtTitle, txtValue, txtStatus;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private int completedCalls = 0;
 
     public AdminHomeFragment() {
     }
@@ -58,6 +63,12 @@ public class AdminHomeFragment extends Fragment {
         cardUsers = view.findViewById(R.id.cardUsers);
         cardProducts = view.findViewById(R.id.cardProducts);
         cardOrders = view.findViewById(R.id.cardOrders);
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.dark_green));
+            swipeRefreshLayout.setOnRefreshListener(this::refreshData);
+        }
 
         if (cardOrders != null) {
             cardOrders.setOnClickListener(v -> {
@@ -140,11 +151,27 @@ public class AdminHomeFragment extends Fragment {
         }
     }
 
+    private void refreshData() {
+        completedCalls = 0;
+        fetchDashboardStats();
+        fetchProductCount();
+    }
+
+    private synchronized void checkRefreshComplete() {
+        completedCalls++;
+        if (completedCalls >= 2) {
+            if (swipeRefreshLayout != null) {
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        }
+    }
+
     private void fetchDashboardStats() {
         HttpResquest request = new HttpResquest();
         request.callAPI().getAdminDashboardStats().enqueue(new Callback<Response<DashboardData>>() {
             @Override
             public void onResponse(@NonNull Call<Response<DashboardData>> call, @NonNull retrofit2.Response<Response<DashboardData>> response) {
+                checkRefreshComplete();
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     bindData(response.body().getData());
                 } else {
@@ -154,6 +181,7 @@ public class AdminHomeFragment extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<Response<DashboardData>> call, @NonNull Throwable t) {
+                checkRefreshComplete();
                 Log.e("AdminHomeFragment", "Lỗi khi gọi API thống kê", t);
                 if (isAdded()) {
                     Toast.makeText(requireContext(), "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
@@ -166,6 +194,7 @@ public class AdminHomeFragment extends Fragment {
         new HttpResquest().callAPI().getListProduct(1, 1, "", false, "").enqueue(new Callback<Response<ArrayList<Product>>>() {
                     @Override
                     public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
+                        checkRefreshComplete();
                         if (response.isSuccessful() && response.body() != null
                                 && response.body().getPagination() != null && cardProducts != null) {
                             TextView txtValue = cardProducts.findViewById(R.id.txtValue);
@@ -178,6 +207,7 @@ public class AdminHomeFragment extends Fragment {
 
                     @Override
                     public void onFailure(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull Throwable t) {
+                        checkRefreshComplete();
                         Log.e("AdminHomeFragment", "Lỗi khi lấy tổng số sản phẩm", t);
                     }
                 });

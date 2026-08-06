@@ -44,7 +44,7 @@ import retrofit2.Callback;
  */
 public class ShippingOrderDetailActivity extends BaseActivity {
 
-    private Toolbar toolbar;
+    private ImageView btnBack;
     private Order order;
     private LinearLayout layoutConfirmed, layoutWarehouse, layoutDelivering, layoutCompleted;
     private View btnCancelOrder;
@@ -84,7 +84,7 @@ public class ShippingOrderDetailActivity extends BaseActivity {
     }
 
     private void initUi() {
-        toolbar = findViewById(R.id.toolbar);
+        btnBack = findViewById(R.id.btnBack);
 
         tvSubtotal = findViewById(R.id.tvSubtotal);
         tvShippingFee = findViewById(R.id.tvShippingFee);
@@ -101,8 +101,8 @@ public class ShippingOrderDetailActivity extends BaseActivity {
     }
 
     private void setUpListener() {
-        if (toolbar != null) {
-            toolbar.setNavigationOnClickListener(v -> finish());
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> finish());
         }
         if (btnCancelOrder != null) {
             btnCancelOrder.setOnClickListener(v -> {

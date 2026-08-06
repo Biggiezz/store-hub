@@ -10,43 +10,40 @@
     <!-- Toolbar -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:background="#FCFAF7"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingHorizontal="12dp">
+        android:paddingHorizontal="20dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="12dp">
 
         <ImageButton
             android:id="@+id/btnBack"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="10dp"
+            android:padding="4dp"
             android:src="@drawable/ic_back"
-            app:tint="#26352D" />
+            app:tint="#1A2821" />
 
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
             android:layout_weight="1"
-            android:gravity="center"
+            android:fontFamily="@font/shopee_display"
             android:text="Trả lời đánh giá"
-            android:textColor="#202A25"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <!-- Cân bằng với nút quay lại để tiêu đề nằm chính giữa -->
-        <View
-            android:layout_width="44dp"
-            android:layout_height="44dp" />
+            android:textColor="#1A2821"
+            android:textSize="20sp" />
 
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#E8E4DF" />
+        android:layout_height="0.5dp"
+        android:background="#DEDCD7" />
 
     <!-- Nội dung -->
     <ScrollView
