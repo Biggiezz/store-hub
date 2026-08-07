@@ -149,7 +149,16 @@ public interface ApiServices {
     );
 
     @POST("api/oderRouter/cancel-order")
-    Call<Response<Order>> cancelOrder(@Body CancelOrderRequest request);
+    Call<Response<Order>> cancelOrder(
+            @Header("Authorization") String token,
+            @Body CancelOrderRequest request
+    );
+
+    @POST("api/oderRouter/create-zalopay-order")
+    Call<Response<com.google.gson.JsonObject>> createZaloPayOrder(
+            @Header("Authorization") String token,
+            @Body java.util.Map<String, Object> body
+    );
 
     @POST("api/oderRouter/update-status")
     Call<Response<Order>> updateOrderStatus(@Body UpdateStatusRequest request);

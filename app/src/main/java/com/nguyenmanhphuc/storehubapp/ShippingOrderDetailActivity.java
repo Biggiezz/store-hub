@@ -315,7 +315,7 @@ public class ShippingOrderDetailActivity extends BaseActivity {
 
     private void executeCancelOrder(Order order, String reason) {
         CancelOrderRequest request = new CancelOrderRequest(order.getOrderId(), reason);
-        apiService.cancelOrder(request).enqueue(new retrofit2.Callback<Response<Order>>() {
+        apiService.cancelOrder(HttpResquest.authorizationHeader(this), request).enqueue(new retrofit2.Callback<Response<Order>>() {
             @Override
             public void onResponse(@NonNull retrofit2.Call<Response<Order>> call,
                                    @NonNull retrofit2.Response<Response<Order>> response) {

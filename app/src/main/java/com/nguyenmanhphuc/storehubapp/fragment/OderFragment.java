@@ -481,7 +481,7 @@ public class OderFragment extends Fragment {
     private void executeCancelOrder(Order order, String reason) {
         setLoading(true);
         CancelOrderRequest request = new CancelOrderRequest(order.getOrderId(), reason);
-        apiService.cancelOrder(request).enqueue(new Callback<Response<Order>>() {
+        apiService.cancelOrder(HttpResquest.authorizationHeader(requireContext()), request).enqueue(new Callback<Response<Order>>() {
             @Override
             public void onResponse(@NonNull Call<Response<Order>> call, @NonNull retrofit2.Response<Response<Order>> response) {
                 setLoading(false);

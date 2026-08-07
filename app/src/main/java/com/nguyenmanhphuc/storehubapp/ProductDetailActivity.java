@@ -168,7 +168,7 @@ public class ProductDetailActivity extends BaseActivity {
             }
 
             if (currentProduct.getStock() > 0 && quantity >= currentProduct.getStock()) {
-                Toast.makeText(this, "Số lượng đã đạt giới hạn tồn kho (" + currentProduct.getStock() + ")", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Số lượng sản phẩm không đủ", Toast.LENGTH_SHORT).show();
                 return;
             }
 
