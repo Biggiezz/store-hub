@@ -22,11 +22,8 @@ import com.nguyenmanhphuc.storehubapp.model.Order;
 import com.nguyenmanhphuc.storehubapp.model.response.Response;
 import com.nguyenmanhphuc.storehubapp.services.ApiServices;
 import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
-import com.nguyenmanhphuc.storehubapp.zalopay.Api.CreateOrder;
 import com.nguyenmanhphuc.storehubapp.zalopay.Constant.AppInfo;
 import com.google.android.material.button.MaterialButton;
-
-import org.json.JSONObject;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -134,26 +131,41 @@ public class PaymentConfirmationActivity extends BaseActivity {
         }
     }
 
-    // Sandbox demo only: move MAC signing and CreateOrder to StoreHubServer before production.
     private void createZaloPayOrder() {
         btnConfirmPayment.setEnabled(false);
         btnConfirmPayment.setText("Đang tạo giao dịch...");
 
         long total = subtotal + SHIPPING_FEE;
-        new Thread(() -> {
-            try {
-                JSONObject result = new CreateOrder().createOrder(String.valueOf(total));
-                String token = result == null ? "" : result.optString("zp_trans_token");
-                if (!"1".equals(result == null ? "" : result.optString("return_code")) || token.isEmpty()) {
-                    throw new IllegalStateException(result == null ? "Không nhận được phản hồi từ ZaloPay" : result.optString("return_message"));
-                }
+        java.util.Map<String, Object> body = new java.util.HashMap<>();
+        body.put("amount", total);
 
-                runOnUiThread(() -> payWithZaloPay(token));
-            } catch (Exception exception) {
-                Log.e("PaymentConfirmation", "Cannot create ZaloPay order", exception);
-                runOnUiThread(() -> resetZaloPayButton("Không thể tạo giao dịch ZaloPay"));
+        String token = HttpResquest.authorizationHeader(this);
+        apiService.createZaloPayOrder(token, body).enqueue(new Callback<Response<com.google.gson.JsonObject>>() {
+            @Override
+            public void onResponse(@NonNull Call<Response<com.google.gson.JsonObject>> call,
+                                   @NonNull retrofit2.Response<Response<com.google.gson.JsonObject>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    com.google.gson.JsonObject data = response.body().getData();
+                    String zpTransToken = data.has("zp_trans_token") ? data.get("zp_trans_token").getAsString() : "";
+                    String returnCode = data.has("return_code") ? String.valueOf(data.get("return_code").getAsInt()) : "";
+                    
+                    if (!"1".equals(returnCode) || zpTransToken.isEmpty()) {
+                        String returnMessage = data.has("return_message") ? data.get("return_message").getAsString() : "Lỗi từ ZaloPay";
+                        resetZaloPayButton(returnMessage);
+                    } else {
+                        payWithZaloPay(zpTransToken);
+                    }
+                } else {
+                    resetZaloPayButton("Không tạo được giao dịch. Vui lòng thử lại");
+                }
             }
-        }).start();
+
+            @Override
+            public void onFailure(@NonNull Call<Response<com.google.gson.JsonObject>> call, @NonNull Throwable t) {
+                Log.e("PaymentConfirmation", "Cannot create ZaloPay order", t);
+                resetZaloPayButton("Không kết nối được máy chủ");
+            }
+        });
     }
 
     private void payWithZaloPay(String token) {

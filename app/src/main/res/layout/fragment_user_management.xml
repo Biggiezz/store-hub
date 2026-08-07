@@ -30,296 +30,268 @@
             android:background="@color/divider_color" />
     </LinearLayout>
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefreshLayout"
+    <!-- Main content container -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="16dp">
 
-        <androidx.core.widget.NestedScrollView
+        <!-- Add New User Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAddNewUser"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true">
+            android:layout_height="52dp"
+            android:layout_marginBottom="20dp"
+            android:backgroundTint="@color/dark_green"
+            android:fontFamily="@font/shopee_display"
+            android:text="@string/add_new_user"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            app:cornerRadius="10dp"
+            app:icon="@drawable/ic_user_add"
+            app:iconGravity="textStart"
+            app:iconPadding="8dp"
+            app:iconTint="@color/white" />
 
+        <!-- Staff / Customer Tabs Filter Bar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!-- Staff Tab -->
             <LinearLayout
-                android:layout_width="match_parent"
+                android:id="@+id/btnTabStaff"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_marginEnd="12dp"
+                android:background="@drawable/bg_admin_chip_active"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:paddingHorizontal="16dp"
-                android:paddingTop="16dp"
-                android:paddingBottom="32dp">
+                android:paddingVertical="8dp">
 
-                <!-- Add New User Button -->
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnAddNewUser"
-                    android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:layout_marginBottom="20dp"
-                    android:backgroundTint="@color/dark_green"
-                    android:fontFamily="@font/shopee_display"
-                    android:text="@string/add_new_user"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    app:cornerRadius="10dp"
-                    app:icon="@drawable/ic_user_add"
-                    app:iconGravity="textStart"
-                    app:iconPadding="8dp"
-                    app:iconTint="@color/white" />
-
-                <!-- Staff / Customer Tabs Filter Bar -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <!-- Staff Tab -->
-                    <LinearLayout
-                        android:id="@+id/btnTabStaff"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="12dp"
-                        android:background="@drawable/bg_admin_chip_active"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:paddingHorizontal="16dp"
-                        android:paddingVertical="8dp">
-
-                        <TextView
-                            android:id="@+id/tvStaffTabTitle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/shopee_display"
-                            android:text="@string/staff"
-                            android:textColor="@color/white"
-                            android:textSize="15sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/tvStaffCount"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:background="@drawable/bg_tab_badge_selected"
-                            android:paddingHorizontal="8dp"
-                            android:paddingVertical="2dp"
-                            android:textColor="#172C22"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <!-- Customer Tab -->
-                    <LinearLayout
-                        android:id="@+id/btnTabCustomer"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_admin_chip"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:paddingHorizontal="16dp"
-                        android:paddingVertical="8dp">
-
-                        <TextView
-                            android:id="@+id/tvCustomerTabTitle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/shopee_display"
-                            android:text="@string/customer"
-                            android:textColor="#8A8077"
-                            android:textSize="15sp" />
-
-                        <TextView
-                            android:id="@+id/tvCustomerCount"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:background="@drawable/bg_tab_badge_unselected"
-                            android:paddingHorizontal="8dp"
-                            android:paddingVertical="2dp"
-                            android:textColor="#8A8077"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- Search Box and Filter Button Row -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <!-- Search Bar -->
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="44dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_search_input"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:paddingHorizontal="12dp">
-
-                        <ImageView
-                            android:layout_width="18dp"
-                            android:layout_height="18dp"
-                            android:contentDescription="Search Icon"
-                            android:src="@drawable/ic_search"
-                            app:tint="@color/hint" />
-
-                        <EditText
-                            android:id="@+id/etSearchUser"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_marginStart="8dp"
-                            android:background="@null"
-                            android:hint="@string/search_user_hint"
-                            android:imeOptions="actionSearch"
-                            android:inputType="text"
-                            android:textColor="@color/text_primary"
-                            android:textColorHint="@color/hint"
-                            android:textSize="14sp" />
-                    </LinearLayout>
-
-                    <!-- Filter Button -->
-                    <!--        <FrameLayout-->
-                    <!--            android:id="@+id/btnFilterUser"-->
-                    <!--            android:layout_width="37dp"-->
-                    <!--            android:layout_height="44dp"-->
-                    <!--            android:layout_marginStart="10dp"-->
-                    <!--            android:background="@drawable/bg_search_input"-->
-                    <!--            android:clickable="true"-->
-                    <!--            android:focusable="true">-->
-
-                    <!--            <ImageView-->
-                    <!--                android:layout_width="20dp"-->
-                    <!--                android:layout_height="20dp"-->
-                    <!--                android:layout_gravity="center"-->
-                    <!--                android:contentDescription="Filter Icon"-->
-                    <!--                android:src="@drawable/ic_sort"-->
-                    <!--                app:tint="@color/text_primary" />-->
-                    <!--        </FrameLayout>-->
-                </LinearLayout>
-
-                <!-- Loading ProgressBar -->
-                <ProgressBar
-                    android:id="@+id/pbLoadingUsers"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginVertical="20dp"
-                    android:indeterminateTint="@color/dark_green"
-                    android:visibility="gone" />
-
-                <!-- Empty State Text -->
                 <TextView
-                    android:id="@+id/tvEmptyState"
+                    android:id="@+id/tvStaffTabTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginVertical="30dp"
-                    android:text="@string/no_user_found"
-                    android:textColor="@color/subtext_primary"
-                    android:textSize="14sp"
-                    android:visibility="gone" />
+                    android:fontFamily="@font/shopee_display"
+                    android:text="@string/staff"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
 
-                <!-- Users List RecyclerView -->
+                <TextView
+                    android:id="@+id/tvStaffCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_tab_badge_selected"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="2dp"
+                    android:textColor="#172C22"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Customer Tab -->
+            <LinearLayout
+                android:id="@+id/btnTabCustomer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_admin_chip"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp">
+
+                <TextView
+                    android:id="@+id/tvCustomerTabTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/shopee_display"
+                    android:text="@string/customer"
+                    android:textColor="#8A8077"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tvCustomerCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_tab_badge_unselected"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="2dp"
+                    android:textColor="#8A8077"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Search Box -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/bg_search_input"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="12dp">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:contentDescription="Search Icon"
+                android:src="@drawable/ic_search"
+                app:tint="@color/hint" />
+
+            <EditText
+                android:id="@+id/etSearchUser"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
+                android:background="@null"
+                android:hint="@string/search_user_hint"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/hint"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- List Container -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <!-- SwipeRefreshLayout wraps RecyclerView directly so scroll gestures work -->
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/swipeRefreshLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvUsers"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
+                    android:layout_height="match_parent"
                     android:clipToPadding="false"
+                    android:paddingBottom="16dp"
                     tools:listitem="@layout/item_user" />
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-                <!-- Pagination Controls Bar -->
-                <LinearLayout
-                    android:id="@+id/llPagination"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+            <!-- Loading ProgressBar -->
+            <ProgressBar
+                android:id="@+id/pbLoadingUsers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:indeterminateTint="@color/dark_green"
+                android:visibility="gone" />
 
-                    <!-- Prev Page -->
-                    <TextView
-                        android:id="@+id/btnPrevPage"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_marginEnd="6dp"
-                        android:background="@drawable/bg_pagination_inactive"
-                        android:gravity="center"
-                        android:text="&lt;"
-                        android:textColor="@color/text_primary"
-                        android:textSize="14sp" />
+            <!-- Empty State Text -->
+            <TextView
+                android:id="@+id/tvEmptyState"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/no_user_found"
+                android:textColor="@color/subtext_primary"
+                android:textSize="14sp"
+                android:visibility="gone" />
+        </FrameLayout>
 
-                    <!-- Page 1 (Active) -->
-                    <TextView
-                        android:id="@+id/btnPage1"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_marginEnd="6dp"
-                        android:background="@drawable/bg_pagination_active"
-                        android:gravity="center"
-                        android:text="1"
-                        android:textColor="@color/white"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
+        <!-- Pagination Controls Bar (hidden) -->
+        <LinearLayout
+            android:id="@+id/llPagination"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
 
-                    <!-- Page 2 -->
-                    <TextView
-                        android:id="@+id/btnPage2"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_marginEnd="6dp"
-                        android:background="@drawable/bg_pagination_inactive"
-                        android:gravity="center"
-                        android:text="2"
-                        android:textColor="@color/text_primary"
-                        android:textSize="14sp" />
+            <!-- Prev Page -->
+            <TextView
+                android:id="@+id/btnPrevPage"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/bg_pagination_inactive"
+                android:gravity="center"
+                android:text="&lt;"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp" />
 
-                    <!-- Page 3 -->
-                    <TextView
-                        android:id="@+id/btnPage3"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_marginEnd="6dp"
-                        android:background="@drawable/bg_pagination_inactive"
-                        android:gravity="center"
-                        android:text="3"
-                        android:textColor="@color/text_primary"
-                        android:textSize="14sp" />
+            <!-- Page 1 (Active) -->
+            <TextView
+                android:id="@+id/btnPage1"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/bg_pagination_active"
+                android:gravity="center"
+                android:text="1"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
-                    <!-- Ellipsis -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="32dp"
-                        android:layout_marginEnd="6dp"
-                        android:gravity="center"
-                        android:text="..."
-                        android:textColor="@color/subtext_primary"
-                        android:textSize="14sp" />
+            <!-- Page 2 -->
+            <TextView
+                android:id="@+id/btnPage2"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/bg_pagination_inactive"
+                android:gravity="center"
+                android:text="2"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp" />
 
-                    <!-- Next Page -->
-                    <TextView
-                        android:id="@+id/btnNextPage"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:background="@drawable/bg_pagination_inactive"
-                        android:gravity="center"
-                        android:text="&gt;"
-                        android:textColor="@color/text_primary"
-                        android:textSize="14sp" />
-                </LinearLayout>
+            <!-- Page 3 -->
+            <TextView
+                android:id="@+id/btnPage3"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/bg_pagination_inactive"
+                android:gravity="center"
+                android:text="3"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp" />
 
-            </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+            <!-- Ellipsis -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginEnd="6dp"
+                android:gravity="center"
+                android:text="..."
+                android:textColor="@color/subtext_primary"
+                android:textSize="14sp" />
+
+            <!-- Next Page -->
+            <TextView
+                android:id="@+id/btnNextPage"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/bg_pagination_inactive"
+                android:gravity="center"
+                android:text="&gt;"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+    </LinearLayout>
 
 </LinearLayout>
