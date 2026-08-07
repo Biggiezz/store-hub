@@ -22,6 +22,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.bumptech.glide.Glide;
 import com.nguyenmanhphuc.storehubapp.R;
 import com.nguyenmanhphuc.storehubapp.admin.AdminRecentActivity;
+import com.nguyenmanhphuc.storehubapp.admin.RecentActivityDetailActivity;
 import com.nguyenmanhphuc.storehubapp.admin.adapter.StatsTimeAdapter;
 import com.nguyenmanhphuc.storehubapp.model.response.DailyStat;
 import com.nguyenmanhphuc.storehubapp.model.response.RecentActivity;
@@ -289,6 +290,10 @@ public class StatsManagerFragment extends Fragment {
             if (divider != null) {
                 divider.setVisibility(i == activities.size() - 1 ? View.GONE : View.VISIBLE);
             }
+            item.setOnClickListener(v -> {
+                Intent intent = RecentActivityDetailActivity.createIntent(requireContext(), activity);
+                startActivity(intent);
+            });
             layoutActivity.addView(item);
         }
     }

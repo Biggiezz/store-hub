@@ -27,6 +27,8 @@ import com.nguyenmanhphuc.storehubapp.model.response.RecentActivity;
 import com.nguyenmanhphuc.storehubapp.utils.DateTimeUtils;
 import com.google.android.material.button.MaterialButton;
 
+
+
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -45,6 +47,8 @@ public class RecentActivityDetailActivity extends AppCompatActivity {
     private static final String EXTRA_PRODUCT_STOCK = "activity_product_stock";
     private static final String EXTRA_PRODUCT_PRICE = "activity_product_price";
     private static final String EXTRA_PRODUCT_STATUS = "activity_product_status";
+    private static final String EXTRA_TARGET_ID = "activity_target_id";
+
 
     private ImageView imgBack;
     private ImageView imgActivityIcon;
@@ -95,6 +99,7 @@ public class RecentActivityDetailActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_PRODUCT_STOCK, activity.getProductStock() != null ? activity.getProductStock() : -1);
         intent.putExtra(EXTRA_PRODUCT_PRICE, activity.getProductPrice() != null ? activity.getProductPrice() : -1L);
         intent.putExtra(EXTRA_PRODUCT_STATUS, value(activity.getProductStatus()));
+        intent.putExtra(EXTRA_TARGET_ID, value(activity.getTargetId()));
         return intent;
     }
 
@@ -124,6 +129,8 @@ public class RecentActivityDetailActivity extends AppCompatActivity {
         int productStock = getIntent().getIntExtra(EXTRA_PRODUCT_STOCK, -1);
         long productPrice = getIntent().getLongExtra(EXTRA_PRODUCT_PRICE, -1L);
         String productStatus = getIntent().getStringExtra(EXTRA_PRODUCT_STATUS);
+        String targetId = getIntent().getStringExtra(EXTRA_TARGET_ID);
+
 
         imgBack.setOnClickListener(v -> finish());
 //        btnBack.setOnClickListener(v -> finish());
@@ -265,7 +272,13 @@ public class RecentActivityDetailActivity extends AppCompatActivity {
         }
 
         btnViewOrders.setVisibility(isOrder ? View.VISIBLE : View.GONE);
-        btnViewOrders.setOnClickListener(v -> startActivity(new Intent(this, AdminOrdersActivity.class)));
+        btnViewOrders.setOnClickListener(v -> {
+            if (targetId != null && !targetId.isEmpty()) {
+                startActivity(AdminOrderDetailActivity.createIntent(this, targetId));
+            } else {
+                startActivity(new Intent(this, AdminOrdersActivity.class));
+            }
+        });
     }
 
     private void initUi() {
