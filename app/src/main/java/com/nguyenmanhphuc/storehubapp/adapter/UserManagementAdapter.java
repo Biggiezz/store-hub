@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -26,9 +27,14 @@ public class UserManagementAdapter extends RecyclerView.Adapter<UserManagementAd
         void onUserClick(User user);
     }
 
+    public interface OnUserDeleteListener {
+        void onUserDelete(User user);
+    }
+
     private final Context context;
     private List<User> userList;
     private OnUserClickListener listener;
+    private OnUserDeleteListener deleteListener;
     private User currentUser;
 
     public UserManagementAdapter(Context context) {
@@ -49,6 +55,10 @@ public class UserManagementAdapter extends RecyclerView.Adapter<UserManagementAd
 
     public void setOnUserClickListener(OnUserClickListener listener) {
         this.listener = listener;
+    }
+
+    public void setOnUserDeleteListener(OnUserDeleteListener listener) {
+        this.deleteListener = listener;
     }
 
     public void updateData(List<User> list) {
@@ -103,6 +113,19 @@ public class UserManagementAdapter extends RecyclerView.Adapter<UserManagementAd
                 .error(R.drawable.ic_avatar)
                 .into(holder.ivUserAvatar);
 
+        // Hiển thị nút xóa nếu là Super Admin và không phải là chính mình
+        if (currentUser != null && currentUser.isSuperAdmin() && !user.getId().equals(currentUser.getId())) {
+            holder.btnDeleteUser.setVisibility(View.VISIBLE);
+        } else {
+            holder.btnDeleteUser.setVisibility(View.GONE);
+        }
+
+        holder.btnDeleteUser.setOnClickListener(v -> {
+            if (deleteListener != null) {
+                deleteListener.onUserDelete(user);
+            }
+        });
+
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onUserClick(user);
@@ -118,6 +141,7 @@ public class UserManagementAdapter extends RecyclerView.Adapter<UserManagementAd
     static class UserViewHolder extends RecyclerView.ViewHolder {
         ShapeableImageView ivUserAvatar;
         TextView tvUserName, tvUserRole, tvUserEmail, tvUserLastActive;
+        ImageButton btnDeleteUser;
 
         public UserViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -126,6 +150,7 @@ public class UserManagementAdapter extends RecyclerView.Adapter<UserManagementAd
             tvUserRole = itemView.findViewById(R.id.tvUserRole);
             tvUserEmail = itemView.findViewById(R.id.tvUserEmail);
             tvUserLastActive = itemView.findViewById(R.id.tvUserLastActive);
+            btnDeleteUser = itemView.findViewById(R.id.btnDeleteUser);
         }
     }
 }

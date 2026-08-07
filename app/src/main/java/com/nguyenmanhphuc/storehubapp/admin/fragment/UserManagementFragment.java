@@ -167,6 +167,17 @@ public class UserManagementFragment extends Fragment {
             }
         });
 
+        userAdapter.setOnUserDeleteListener(user -> {
+            new AlertDialog.Builder(requireContext())
+                    .setTitle("Xác nhận xóa")
+                    .setMessage("Bạn có chắc chắn muốn xóa người dùng " + user.getName() + "?")
+                    .setPositiveButton("Xóa", (dialog, which) -> {
+                        performDeleteUser(user);
+                    })
+                    .setNegativeButton("Hủy", null)
+                    .show();
+        });
+
         btnPrevPage.setOnClickListener(v -> {
             if (currentPage > 1) {
                 currentPage--;
@@ -203,6 +214,28 @@ public class UserManagementFragment extends Fragment {
                 String query = etSearchUser.getText().toString();
                 filterUserList(query);
             } catch (Exception ignored) {}
+        });
+    }
+
+    private void performDeleteUser(User user) {
+        SharedPreferencesManager prefManager = new SharedPreferencesManager(requireContext());
+        String token = "Bearer " + prefManager.getToken();
+        HttpResquest httpResquest = new HttpResquest();
+        httpResquest.callAPI().deleteUser(token, user.getId()).enqueue(new retrofit2.Callback<Response<Void>>() {
+            @Override
+            public void onResponse(@NonNull retrofit2.Call<Response<Void>> call, @NonNull retrofit2.Response<Response<Void>> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(requireContext(), "Đã xóa người dùng thành công", Toast.LENGTH_SHORT).show();
+                    fetchUsersFromServer();
+                } else {
+                    Toast.makeText(requireContext(), "Không thể xóa người dùng", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull retrofit2.Call<Response<Void>> call, @NonNull Throwable t) {
+                Toast.makeText(requireContext(), "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
@@ -369,6 +402,11 @@ public class UserManagementFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null && !response.body().getData().isEmpty()) {
                     ArrayList<User> serverUsers = response.body().getData();
                     for (User u : serverUsers) {
+                        // Không lấy tài khoản super admin vào danh sách hiển thị
+                        if (u.isSuperAdmin()) {
+                            continue;
+                        }
+
                         String role = u.getRole() != null ? u.getRole().toLowerCase() : "";
                         if (role.contains("khách hàng") || role.contains("customer")) {
                             allCustomerList.add(u);

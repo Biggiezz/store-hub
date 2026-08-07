@@ -51,6 +51,7 @@ public class AdminHomeFragment extends Fragment {
         initUi(view);
         fetchDashboardStats();
         fetchProductCount();
+        fetchUserCount();
     }
 
     private void initUi(View view) {
@@ -183,6 +184,43 @@ public class AdminHomeFragment extends Fragment {
                 });
     }
 
+    private void fetchUserCount() {
+        SharedPreferencesManager prefManager = new SharedPreferencesManager(requireContext());
+        String token = "Bearer " + prefManager.getToken();
+        new HttpResquest().callAPI().getListUsers(token).enqueue(new Callback<Response<ArrayList<com.nguyenmanhphuc.storehubapp.model.User>>>() {
+            @Override
+            public void onResponse(@NonNull Call<Response<ArrayList<com.nguyenmanhphuc.storehubapp.model.User>>> call, @NonNull retrofit2.Response<Response<ArrayList<com.nguyenmanhphuc.storehubapp.model.User>>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null && cardUsers != null) {
+                    ArrayList<com.nguyenmanhphuc.storehubapp.model.User> allUsers = response.body().getData();
+                    int customerCount = 0;
+                    for (com.nguyenmanhphuc.storehubapp.model.User u : allUsers) {
+                        // Chỉ đếm khách hàng đăng ký, không đếm superadmin hoặc nhân viên
+                        if (u.isSuperAdmin()) {
+                            continue;
+                        }
+                        String role = u.getRole() != null ? u.getRole().toLowerCase() : "";
+                        if (role.contains("khách hàng") || role.contains("customer")) {
+                            customerCount++;
+                        }
+                    }
+                    TextView txtValue = cardUsers.findViewById(R.id.txtValue);
+                    if (txtValue != null) {
+                        txtValue.setText(String.valueOf(customerCount));
+                    }
+                    TextView txtStatus = cardUsers.findViewById(R.id.txtStatus);
+                    if (txtStatus != null) {
+                        txtStatus.setText("Tổng cộng " + customerCount + " khách hàng");
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Response<ArrayList<com.nguyenmanhphuc.storehubapp.model.User>>> call, @NonNull Throwable t) {
+                Log.e("AdminHomeFragment", "Lỗi khi lấy danh sách người dùng", t);
+            }
+        });
+    }
+
     private void bindData(DashboardData data) {
         if (data == null) return;
 
@@ -201,15 +239,7 @@ public class AdminHomeFragment extends Fragment {
         }
 
         if (cardUsers != null) {
-            TextView txtValue = cardUsers.findViewById(R.id.txtValue);
-            TextView txtStatus = cardUsers.findViewById(R.id.txtStatus);
-
-            if (txtValue != null) {
-                txtValue.setText(String.valueOf(data.getTotalUsers()));
-            }
-            if (txtStatus != null) {
-                txtStatus.setText(data.getUsersStatus() != null ? data.getUsersStatus() : "+0 thành viên");
-            }
+            // Đã cập nhật riêng trong fetchUserCount() để lọc theo yêu cầu
         }
 
         if (cardOrders != null) {
