@@ -185,6 +185,7 @@ public class MainActivity extends BaseActivity {
         isProductsLoaded = false;
         isCategoriesLoaded = false;
         isNewsLoaded = false;
+        fetchCategories();
         fetchProducts();
         fetchNews();
     }
