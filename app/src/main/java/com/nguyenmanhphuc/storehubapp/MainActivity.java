@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -78,6 +80,22 @@ public class MainActivity extends BaseActivity {
 
     private ArrayList<Product> allProductsList = new ArrayList<>();
     private ArrayList<News> newsList;
+
+    private final Handler slideHandler = new Handler(Looper.getMainLooper());
+    private final Runnable slideRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (sliderBanner != null && sliderBanner.getAdapter() != null) {
+                int currentItem = sliderBanner.getCurrentItem();
+                int totalItems = sliderBanner.getAdapter().getItemCount();
+                if (totalItems > 0) {
+                    int nextItem = (currentItem + 1) % totalItems;
+                    sliderBanner.setCurrentItem(nextItem, true);
+                }
+            }
+            slideHandler.postDelayed(this, 3000);
+        }
+    };
     private String selectedTab = TAB_HOME;
     private String activeCategory = "";
     private List<Category> categoriesList = new ArrayList<>();
@@ -231,12 +249,13 @@ public class MainActivity extends BaseActivity {
     }
 
     private void setUpListener() {
-        // Update indicator dots dynamically on page changes
         sliderBanner.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
                 updateIndicators(position);
+                slideHandler.removeCallbacks(slideRunnable);
+                slideHandler.postDelayed(slideRunnable, 3000);
             }
         });
 
@@ -585,5 +604,12 @@ public class MainActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         loadAvatar();
+        slideHandler.postDelayed(slideRunnable, 3000);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        slideHandler.removeCallbacks(slideRunnable);
     }
 }

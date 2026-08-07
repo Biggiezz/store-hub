@@ -157,6 +157,15 @@ public class ShippingOrderDetailActivity extends BaseActivity {
         if (tvStatusBadge != null) {
             tvStatusBadge.setText(getLocalizedStatus(status));
         }
+        if (btnCancelOrder != null) {
+            String norm = status.trim().toLowerCase();
+            if (norm.contains("chờ xác nhận") || norm.contains("pending") || norm.contains("chờ xử lý") ||
+                norm.contains("đã xác nhận") || norm.contains("confirmed")) {
+                btnCancelOrder.setVisibility(View.VISIBLE);
+            } else {
+                btnCancelOrder.setVisibility(View.GONE);
+            }
+        }
         if (tvEstimatedDelivery != null) {
             tvEstimatedDelivery.setText(getString(R.string.estimated_delivery_prefix, DateTimeUtils.calculateVNEstimatedDelivery(order.getCreatedAt())));
         }

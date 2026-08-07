@@ -365,14 +365,20 @@ public class OderFragment extends Fragment {
                 btnCancelOrder.setVisibility(View.VISIBLE);
                 btnCancelOrder.setText(getString(R.string.btn_cancel_order));
                 btnCancelOrder.setOnClickListener(v -> showCancelOrderDialog(order));
-            } else {
-                tvOrderStatus.setText(status != null ? getLocalizedStatus(status) : getString(R.string.status_shipping));
+            } else if ("Đã xác nhận".equalsIgnoreCase(status) || "confirmed".equalsIgnoreCase(status)) {
+                tvOrderStatus.setText(status != null ? getLocalizedStatus(status) : "Đã xác nhận");
                 tvOrderStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_car_waiting, 0, 0, 0);
                 tvOrderStatus.setTextColor(Color.parseColor("#1565C0"));
                 tvOrderStatus.setBackgroundResource(R.drawable.bg_status_shipping);
                 btnCancelOrder.setVisibility(View.VISIBLE);
                 btnCancelOrder.setText(getString(R.string.btn_cancel_order));
                 btnCancelOrder.setOnClickListener(v -> showCancelOrderDialog(order));
+            } else {
+                tvOrderStatus.setText(status != null ? getLocalizedStatus(status) : getString(R.string.status_shipping));
+                tvOrderStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_car_waiting, 0, 0, 0);
+                tvOrderStatus.setTextColor(Color.parseColor("#1565C0"));
+                tvOrderStatus.setBackgroundResource(R.drawable.bg_status_shipping);
+                btnCancelOrder.setVisibility(View.GONE);
             }
 
             // Hiển thị sản phẩm đầu tiên của đơn hàng

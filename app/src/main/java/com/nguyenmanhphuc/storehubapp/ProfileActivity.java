@@ -117,7 +117,18 @@ public class ProfileActivity extends BaseActivity {
             return;
         }
 
-        String role = user.getRole().equalsIgnoreCase("admin") ? getString(R.string.role_admin) : getString(R.string.role_customer);
+        String role;
+        if (user.getRole() != null) {
+            if (user.getRole().equalsIgnoreCase("superadmin") || user.getRole().equalsIgnoreCase("super admin")) {
+                role = "Super Admin";
+            } else if (user.getRole().equalsIgnoreCase("admin")) {
+                role = getString(R.string.role_admin);
+            } else {
+                role = getString(R.string.role_customer);
+            }
+        } else {
+            role = getString(R.string.role_customer);
+        }
         txtProfileName.setText(user.getName() + " • " + role);
         txtEmailValue.setText(user.getEmail());
         txtPhoneValue.setText(user.getPhone());

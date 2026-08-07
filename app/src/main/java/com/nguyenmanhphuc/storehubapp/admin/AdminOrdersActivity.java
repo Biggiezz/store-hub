@@ -160,32 +160,129 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
         }
     }
 
+    private String normalizeStatus(String status) {
+        if (status == null) return "Chờ xác nhận";
+        String s = status.trim().toLowerCase();
+        if (s.contains("chờ xác nhận") || s.contains("pending") || s.contains("chờ xử lý")) {
+            return "Chờ xác nhận";
+        }
+        if (s.contains("đã xác nhận") || s.contains("confirmed")) {
+            return "Đã xác nhận";
+        }
+        if (s.contains("đã rời kho") || s.contains("left warehouse") || s.contains("dispatched")) {
+            return "Đã rời kho";
+        }
+        if (s.contains("đang giao hàng") || s.contains("shipping") || s.contains("delivering")) {
+            return "Đang giao hàng";
+        }
+        if (s.contains("đã hoàn thành") || s.contains("completed") || s.contains("done")) {
+            return "Đã hoàn thành";
+        }
+        if (s.contains("đã hủy") || s.contains("cancelled") || s.contains("cancel")) {
+            return "Đã hủy";
+        }
+        return "Chờ xác nhận";
+    }
+
+    private static final String[] allStatuses = {
+            "Chờ xác nhận",
+            "Đã xác nhận",
+            "Đã rời kho",
+            "Đang giao hàng",
+            "Đã hoàn thành",
+            "Đã hủy"
+    };
+
+    private class StatusAdapter extends android.widget.ArrayAdapter<String> {
+        private final int currentStatusIndex;
+        private final int nextValidIndex;
+        private final int cancelIndex;
+        private final boolean isSuperAdmin;
+
+        public StatusAdapter(android.content.Context context, String[] objects, int currentStatusIndex, int nextValidIndex, int cancelIndex, boolean isSuperAdmin) {
+            super(context, android.R.layout.select_dialog_singlechoice, objects);
+            this.currentStatusIndex = currentStatusIndex;
+            this.nextValidIndex = nextValidIndex;
+            this.cancelIndex = cancelIndex;
+            this.isSuperAdmin = isSuperAdmin;
+        }
+
+        @Override
+        public boolean isEnabled(int position) {
+            if (position == cancelIndex) {
+                return isSuperAdmin && (currentStatusIndex == 0 || currentStatusIndex == 1);
+            }
+            return position == nextValidIndex;
+        }
+
+        @androidx.annotation.NonNull
+        @Override
+        public android.view.View getView(int position, android.view.View convertView, @androidx.annotation.NonNull android.view.ViewGroup parent) {
+            android.view.View view = super.getView(position, convertView, parent);
+            android.widget.TextView textView = view.findViewById(android.R.id.text1);
+
+            if (position == currentStatusIndex) {
+                textView.setTypeface(null, android.graphics.Typeface.BOLD);
+            } else {
+                textView.setTypeface(null, android.graphics.Typeface.NORMAL);
+            }
+
+            if (isEnabled(position)) {
+                textView.setTextColor(android.graphics.Color.parseColor("#1B2C24"));
+                view.setAlpha(1.0f);
+            } else {
+                textView.setTextColor(android.graphics.Color.parseColor("#B0B0B0"));
+                view.setAlpha(0.5f);
+            }
+            return view;
+        }
+    }
+
     @Override
     public void onUpdateStatusClick(Order order) {
         if (order == null || order.getOrderId().isEmpty()) return;
 
-        final String[] statusOptions = {"Đã xác nhận", "Đã rời kho", "Đang giao hàng", "Đã giao hàng"};
-
-        // Find current selection index
-        int currentIndex = -1;
         String currentStatus = order.getStatus();
-        for (int i = 0; i < statusOptions.length; i++) {
-            if (statusOptions[i].equalsIgnoreCase(currentStatus)) {
-                currentIndex = i;
+        
+        int currentStatusIndex = -1;
+        String normalized = normalizeStatus(currentStatus);
+        for (int i = 0; i < allStatuses.length; i++) {
+            if (allStatuses[i].equals(normalized)) {
+                currentStatusIndex = i;
                 break;
             }
         }
 
+        int nextValidIndex = -1;
+        if (currentStatusIndex >= 0 && currentStatusIndex < 4) {
+            nextValidIndex = currentStatusIndex + 1;
+        }
+
+        int cancelIndex = 5;
+
+        if (currentStatusIndex == 4 || currentStatusIndex == 5) {
+            Toast.makeText(this, "Đơn hàng đã ở trạng thái cuối cùng, không thể cập nhật nữa!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        User currentUser = new SharedPreferencesManager(this).getUser();
+        boolean isSuperAdmin = currentUser != null && currentUser.isSuperAdmin();
+
+        final int finalCurrentStatusIndex = currentStatusIndex;
+        final int[] selectedIndex = {finalCurrentStatusIndex};
+        StatusAdapter adapter = new StatusAdapter(this, allStatuses, finalCurrentStatusIndex, nextValidIndex, cancelIndex, isSuperAdmin);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Chọn trạng thái mới cho đơn hàng " + order.getOrderCode());
-
-        final int[] selectedIndex = {currentIndex};
-        builder.setSingleChoiceItems(statusOptions, currentIndex, (dialog, which) -> selectedIndex[0] = which);
+        builder.setSingleChoiceItems(adapter, finalCurrentStatusIndex, (dialog, which) -> {
+            selectedIndex[0] = which;
+        });
 
         builder.setPositiveButton("Cập nhật", (dialog, which) -> {
-            if (selectedIndex[0] >= 0 && selectedIndex[0] < statusOptions.length) {
-                String newStatus = statusOptions[selectedIndex[0]];
-                updateStatus(order.getOrderId(), newStatus);
+            if (selectedIndex[0] >= 0 && selectedIndex[0] != finalCurrentStatusIndex) {
+                updateStatus(order.getOrderId(), allStatuses[selectedIndex[0]]);
+            } else {
+                Toast.makeText(this, "Vui lòng chọn một trạng thái mới để cập nhật!", Toast.LENGTH_SHORT).show();
             }
         });
 

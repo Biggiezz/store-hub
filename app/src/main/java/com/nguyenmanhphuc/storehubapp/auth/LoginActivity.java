@@ -310,6 +310,7 @@ public class LoginActivity extends BaseActivity {
             Intent intent;
             if (role.equals("admin") || role.equals("super admin") || role.equals("superadmin")) {
                 intent = new Intent(LoginActivity.this, HomePageManagementActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             } else {
                 intent = new Intent(LoginActivity.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);

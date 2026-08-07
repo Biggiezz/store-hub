@@ -30,6 +30,7 @@ public class SplashActivity extends BaseActivity {
 
                 if (role.equals("admin") || role.equals("super admin") || role.equals("superadmin")) {
                     intent = new Intent(this, HomePageManagementActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 } else {
                     intent = new Intent(this, MainActivity.class);
                 }

@@ -10,25 +10,29 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <RelativeLayout
+        <!-- Header Bar -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:orientation="vertical">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/shopee_display"
+                android:id="@+id/tvTitle"
+                android:layout_width="match_parent"
+                android:layout_height="53dp"
+                android:gravity="center_vertical"
+                android:paddingStart="22dp"
+                android:paddingEnd="22dp"
                 android:text="Quản trị Bài viết"
-                android:textColor="@color/dark_green"
+                android:textColor="#1B2C24"
                 android:textSize="20sp" />
-        </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginBottom="8dp"
-            android:background="@color/divider_color" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="8dp"
+                android:background="@color/divider_color" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -50,6 +54,8 @@
                 android:textColor="@color/white"
                 android:textSize="12sp"
                 app:backgroundTint="@color/dark_green"
+                app:strokeColor="@color/dark_green"
+                app:strokeWidth="1dp"
                 app:cornerRadius="99dp" />
 
             <com.google.android.material.button.MaterialButton
@@ -60,9 +66,11 @@
                 android:layout_weight="1"
                 android:text="Bản nháp"
                 android:textAllCaps="false"
-                android:textColor="@color/text_primary"
+                android:textColor="#8A8077"
                 android:textSize="12sp"
-                app:backgroundTint="#F1E3D7"
+                app:backgroundTint="#F5F3F0"
+                app:strokeColor="#D5D2CD"
+                app:strokeWidth="1dp"
                 app:cornerRadius="99dp" />
 
             <com.google.android.material.button.MaterialButton
@@ -73,9 +81,11 @@
                 android:layout_weight="1"
                 android:text="Riêng tư"
                 android:textAllCaps="false"
-                android:textColor="@color/text_primary"
+                android:textColor="#8A8077"
                 android:textSize="12sp"
-                app:backgroundTint="#F1E3D7"
+                app:backgroundTint="#F5F3F0"
+                app:strokeColor="#D5D2CD"
+                app:strokeWidth="1dp"
                 app:cornerRadius="99dp" />
 
         </LinearLayout>
