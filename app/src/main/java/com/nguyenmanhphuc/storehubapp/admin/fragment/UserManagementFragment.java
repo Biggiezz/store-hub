@@ -309,6 +309,7 @@ public class UserManagementFragment extends Fragment {
         httpResquest.callAPI().getListUsers(token).enqueue(new retrofit2.Callback<Response<ArrayList<User>>>() {
             @Override
             public void onResponse(@NonNull retrofit2.Call<Response<ArrayList<User>>> call, @NonNull retrofit2.Response<Response<ArrayList<User>>> response) {
+                if (!isAdded()) return;
                 pbLoadingUsers.setVisibility(View.GONE);
                 if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                 allStaffList.clear();
@@ -331,6 +332,7 @@ public class UserManagementFragment extends Fragment {
 
             @Override
             public void onFailure(@NonNull retrofit2.Call<Response<ArrayList<User>>> call, @NonNull Throwable t) {
+                if (!isAdded()) return;
                 pbLoadingUsers.setVisibility(View.GONE);
                 if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                 allStaffList.clear();

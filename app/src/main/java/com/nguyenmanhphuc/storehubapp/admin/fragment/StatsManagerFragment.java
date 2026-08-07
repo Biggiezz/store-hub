@@ -140,6 +140,7 @@ public class StatsManagerFragment extends Fragment {
         request.callAPI().getRevenueStats(position).enqueue(new Callback<Response<RevenueData>>() {
             @Override
             public void onResponse(@NonNull Call<Response<RevenueData>> call, @NonNull retrofit2.Response<Response<RevenueData>> response) {
+                if (!isAdded()) return;
                 if (progressBarStats != null) progressBarStats.setVisibility(View.GONE);
                 if (layoutStatsContent != null) layoutStatsContent.setVisibility(View.VISIBLE);
                 if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
@@ -244,6 +245,7 @@ public class StatsManagerFragment extends Fragment {
     }
 
     private void renderTopProducts(List<TopProduct> products) {
+        if (!isAdded()) return;
         if (layoutTopProduct == null) return;
         layoutTopProduct.removeAllViews();
         if (products == null || products.isEmpty()) {
@@ -264,6 +266,7 @@ public class StatsManagerFragment extends Fragment {
     }
 
     private void renderRecentActivities(List<RecentActivity> activities) {
+        if (!isAdded()) return;
         if (layoutActivity == null) return;
         layoutActivity.removeAllViews();
         if (activities == null || activities.isEmpty()) {

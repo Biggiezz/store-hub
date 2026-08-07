@@ -6,6 +6,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.bumptech.glide.Glide;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,7 +26,7 @@ import retrofit2.Callback;
 
 public class ReplyReviewActivity extends AppCompatActivity {
 
-    private ImageView btnBack;
+    private ImageView btnBack, imgProduct;
     private TextView tvProductName, tvCustomerName, tvReviewTime, tvRating, tvReviewContent;
     private EditText edtReply;
     private TextView tvSuggestionOne, tvSuggestionTwo, tvSuggestionThree;
@@ -71,6 +72,14 @@ public class ReplyReviewActivity extends AppCompatActivity {
 
         if (productName != null) {
             tvProductName.setText(productName);
+        }
+
+        String productImage = getIntent().getStringExtra("product_image");
+        if (imgProduct != null && productImage != null && !productImage.isEmpty()) {
+            Glide.with(this)
+                    .load(productImage)
+                    .placeholder(R.drawable.ic_product)
+                    .into(imgProduct);
         }
 
         // Suggestions click handlers
@@ -126,6 +135,7 @@ public class ReplyReviewActivity extends AppCompatActivity {
 
         btnCancel = findViewById(R.id.btnCancel);
         btnSubmitReply = findViewById(R.id.btnSubmitReply);
+        imgProduct = findViewById(R.id.imgProduct);
     }
 
     private String getStarString(float rating) {

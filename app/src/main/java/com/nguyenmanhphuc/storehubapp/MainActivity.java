@@ -299,7 +299,7 @@ public class MainActivity extends BaseActivity {
         updateBottomNavigation(btnHome);
     }
 
-    private void showProducts() {
+    public void showProducts() {
         selectedTab = TAB_PRODUCTS;
         if (mainScrollView != null) {
             mainScrollView.setVisibility(View.GONE);

@@ -3,6 +3,7 @@ package com.nguyenmanhphuc.storehubapp.fragment;
 import static com.nguyenmanhphuc.storehubapp.R.drawable.ic_receipt;
 
 import android.content.Intent;
+import com.nguyenmanhphuc.storehubapp.utils.LoadingDialogHelper;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -171,6 +172,7 @@ public class OderFragment extends Fragment {
         ordersCall.enqueue(new Callback<Response<ArrayList<Order>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<Order>>> call, @NonNull retrofit2.Response<Response<ArrayList<Order>>> response) {
+                if (!isAdded()) return;
                 setLoading(false);
                 ArrayList<Order> orders = new ArrayList<>();
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
@@ -187,6 +189,7 @@ public class OderFragment extends Fragment {
             @Override
             public void onFailure(@NonNull Call<Response<ArrayList<Order>>> call, @NonNull Throwable t) {
                 if (call.isCanceled()) return;
+                if (!isAdded()) return;
                 setLoading(false);
                 Log.e("OderFragment", "Error fetching orders", t);
                 loadedCartItems.clear();
@@ -269,6 +272,7 @@ public class OderFragment extends Fragment {
     }
 
     private void renderAll(ArrayList<CartItem> cartItems, ArrayList<Order> orders) {
+        if (!isAdded()) return;
         ordersContainer.removeAllViews();
         LayoutInflater inflater = LayoutInflater.from(requireContext());
 
@@ -341,23 +345,31 @@ public class OderFragment extends Fragment {
             tvOrderCode.setText(order.getOrderCode());
 
             String status = order.getStatus();
-            if ("Đã hoàn thành".equalsIgnoreCase(status) || "Đã giao hàng".equalsIgnoreCase(status) || "completed".equalsIgnoreCase(status)) {
+            if ("Đã hoàn thành".equalsIgnoreCase(status) || "completed".equalsIgnoreCase(status) || "done".equalsIgnoreCase(status)) {
                 tvOrderStatus.setText(getString(R.string.status_completed));
                 tvOrderStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_check_done, 0, 0, 0);
-                tvOrderStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.dark_green));
-                tvOrderStatus.setBackgroundResource(R.drawable.bg_order_status);
+                tvOrderStatus.setTextColor(Color.parseColor("#2E7D32"));
+                tvOrderStatus.setBackgroundResource(R.drawable.bg_status_completed);
                 btnCancelOrder.setVisibility(View.GONE);
             } else if ("Đã hủy".equalsIgnoreCase(status) || "cancelled".equalsIgnoreCase(status) || "cancel".equalsIgnoreCase(status)) {
                 tvOrderStatus.setText(getString(R.string.status_cancelled));
                 tvOrderStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_reject, 0, 0, 0);
-                tvOrderStatus.setTextColor(Color.parseColor("#BA1A1A"));
-                tvOrderStatus.setBackgroundResource(R.drawable.bg_order_status_cancelled);
+                tvOrderStatus.setTextColor(Color.parseColor("#C62828"));
+                tvOrderStatus.setBackgroundResource(R.drawable.bg_status_cancelled);
                 btnCancelOrder.setVisibility(View.GONE);
+            } else if ("Chờ xác nhận".equalsIgnoreCase(status) || "pending".equalsIgnoreCase(status) || "Chờ xử lý".equalsIgnoreCase(status)) {
+                tvOrderStatus.setText(status != null ? getLocalizedStatus(status) : "Chờ xác nhận");
+                tvOrderStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_car_waiting, 0, 0, 0);
+                tvOrderStatus.setTextColor(Color.parseColor("#B78103"));
+                tvOrderStatus.setBackgroundResource(R.drawable.bg_status_pending);
+                btnCancelOrder.setVisibility(View.VISIBLE);
+                btnCancelOrder.setText(getString(R.string.btn_cancel_order));
+                btnCancelOrder.setOnClickListener(v -> showCancelOrderDialog(order));
             } else {
                 tvOrderStatus.setText(status != null ? getLocalizedStatus(status) : getString(R.string.status_shipping));
                 tvOrderStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_car_waiting, 0, 0, 0);
-                tvOrderStatus.setTextColor(Color.parseColor("#625E58"));
-                tvOrderStatus.setBackgroundResource(R.drawable.bg_order_status);
+                tvOrderStatus.setTextColor(Color.parseColor("#1565C0"));
+                tvOrderStatus.setBackgroundResource(R.drawable.bg_status_shipping);
                 btnCancelOrder.setVisibility(View.VISIBLE);
                 btnCancelOrder.setText(getString(R.string.btn_cancel_order));
                 btnCancelOrder.setOnClickListener(v -> showCancelOrderDialog(order));
@@ -397,9 +409,31 @@ public class OderFragment extends Fragment {
         }
 
         if (cartItems.isEmpty() && orders.isEmpty()) {
-            TextView emptyText = new TextView(requireContext(), null, 0, R.style.OrderEmptyStateStyle);
-            emptyText.setText(getString(R.string.no_orders_label));
-            ordersContainer.addView(emptyText);
+            View emptyView = inflater.inflate(R.layout.include_empty_state, ordersContainer, false);
+            ImageView imgEmptyIcon = emptyView.findViewById(R.id.imgEmptyIcon);
+            TextView tvEmptyTitle = emptyView.findViewById(R.id.tvEmptyTitle);
+            TextView tvEmptyDesc = emptyView.findViewById(R.id.tvEmptyDesc);
+            com.google.android.material.button.MaterialButton btnEmptyAction = emptyView.findViewById(R.id.btnEmptyAction);
+
+            if (imgEmptyIcon != null) {
+                imgEmptyIcon.setImageResource(R.drawable.ic_receipt);
+            }
+            if (tvEmptyTitle != null) {
+                tvEmptyTitle.setText(getString(R.string.empty_orders_title));
+            }
+            if (tvEmptyDesc != null) {
+                tvEmptyDesc.setText(getString(R.string.empty_orders_desc));
+            }
+            if (btnEmptyAction != null) {
+                btnEmptyAction.setVisibility(View.VISIBLE);
+                btnEmptyAction.setText(getString(R.string.btn_empty_action_shop));
+                btnEmptyAction.setOnClickListener(v -> {
+                    if (getActivity() instanceof MainActivity) {
+                        ((MainActivity) getActivity()).showProducts();
+                    }
+                });
+            }
+            ordersContainer.addView(emptyView);
         }
     }
 
@@ -479,12 +513,14 @@ public class OderFragment extends Fragment {
     }
 
     private void executeCancelOrder(Order order, String reason) {
-        setLoading(true);
+        LoadingDialogHelper loadingDialog = new LoadingDialogHelper(requireContext());
+        loadingDialog.setMessage("Đang hủy đơn hàng...");
+        loadingDialog.show();
         CancelOrderRequest request = new CancelOrderRequest(order.getOrderId(), reason);
         apiService.cancelOrder(request).enqueue(new Callback<Response<Order>>() {
             @Override
             public void onResponse(@NonNull Call<Response<Order>> call, @NonNull retrofit2.Response<Response<Order>> response) {
-                setLoading(false);
+                loadingDialog.dismiss();
                 if (response.isSuccessful()) {
                     Toast.makeText(requireContext(), getString(R.string.cancel_order_success_toast), Toast.LENGTH_SHORT).show();
                     loadOrdersAndCart();
@@ -495,7 +531,7 @@ public class OderFragment extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<Response<Order>> call, @NonNull Throwable t) {
-                setLoading(false);
+                loadingDialog.dismiss();
                 Toast.makeText(requireContext(), getString(R.string.cannot_connect_server_toast), Toast.LENGTH_SHORT).show();
             }
         });
@@ -512,11 +548,13 @@ public class OderFragment extends Fragment {
     }
 
     private void executeClearCart() {
-        setLoading(true);
+        LoadingDialogHelper loadingDialog = new LoadingDialogHelper(requireContext());
+        loadingDialog.setMessage("Đang xóa giỏ hàng tạm...");
+        loadingDialog.show();
         apiService.clearCart(HttpResquest.authorizationHeader(requireContext())).enqueue(new Callback<Response<Object>>() {
             @Override
             public void onResponse(@NonNull Call<Response<Object>> call, @NonNull retrofit2.Response<Response<Object>> response) {
-                setLoading(false);
+                loadingDialog.dismiss();
                 if (response.isSuccessful()) {
                     Toast.makeText(requireContext(), getString(R.string.clear_temp_cart_success_toast), Toast.LENGTH_SHORT).show();
                     loadOrdersAndCart();
@@ -527,7 +565,7 @@ public class OderFragment extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<Response<Object>> call, @NonNull Throwable t) {
-                setLoading(false);
+                loadingDialog.dismiss();
                 Toast.makeText(requireContext(), getString(R.string.cannot_connect_server_toast), Toast.LENGTH_SHORT).show();
             }
         });

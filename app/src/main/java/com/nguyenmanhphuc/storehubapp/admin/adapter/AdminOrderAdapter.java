@@ -1,6 +1,7 @@
 package com.nguyenmanhphuc.storehubapp.admin.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -114,12 +115,18 @@ public class AdminOrderAdapter extends RecyclerView.Adapter<AdminOrderAdapter.Or
             tvOrderStatus.setText(status != null ? status : "Chờ xác nhận");
 
             // Update status tag background depending on status
-            if ("Đã giao hàng".equals(status)) {
-                tvOrderStatus.setBackgroundResource(R.drawable.bg_status_dark); // standard dark active
-            } else if ("Đã hủy".equals(status)) {
-                tvOrderStatus.setBackgroundResource(R.drawable.bg_order_status_cancelled);
+            if ("Đã giao hàng".equalsIgnoreCase(status) || "completed".equalsIgnoreCase(status) || "Đã hoàn thành".equalsIgnoreCase(status)) {
+                tvOrderStatus.setBackgroundResource(R.drawable.bg_status_completed);
+                tvOrderStatus.setTextColor(Color.parseColor("#2E7D32"));
+            } else if ("Đã hủy".equalsIgnoreCase(status) || "cancelled".equalsIgnoreCase(status) || "cancel".equalsIgnoreCase(status)) {
+                tvOrderStatus.setBackgroundResource(R.drawable.bg_status_cancelled);
+                tvOrderStatus.setTextColor(Color.parseColor("#C62828"));
+            } else if ("Chờ xác nhận".equalsIgnoreCase(status) || "pending".equalsIgnoreCase(status) || "Chờ xử lý".equalsIgnoreCase(status)) {
+                tvOrderStatus.setBackgroundResource(R.drawable.bg_status_pending);
+                tvOrderStatus.setTextColor(Color.parseColor("#B78103"));
             } else {
-                tvOrderStatus.setBackgroundResource(R.drawable.bg_timeline_active);
+                tvOrderStatus.setBackgroundResource(R.drawable.bg_status_shipping);
+                tvOrderStatus.setTextColor(Color.parseColor("#1565C0"));
             }
 
             // Click listener

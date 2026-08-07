@@ -247,4 +247,25 @@
     <string name="toast_server_error">Lỗi server</string>
     <string name="toast_connection_error_prefix">Lỗi kết nối: %s</string>
 
+    <!-- Clean UX/UI Upgrades -->
+    <string name="empty_state_title">Không có dữ liệu</string>
+    <string name="empty_state_desc">Không tìm thấy thông tin nào phù hợp ở đây.</string>
+    <string name="empty_orders_title">Chưa có đơn hàng</string>
+    <string name="empty_orders_desc">Bạn chưa thực hiện bất kỳ giao dịch nào. Hãy khám phá và mua sắm ngay nhé!</string>
+    <string name="loading_dialog_message">Đang xử lý. Vui lòng đợi trong giây lát...</string>
+    <string name="review_anonymous">Khách hàng ẩn danh</string>
+    <string name="btn_empty_action_shop">Mua sắm ngay</string>
+    <string name="btn_empty_action_retry">Thử lại</string>
+    <string name="see_more">Xem thêm</string>
+    <string name="see_less">Thu gọn</string>
+    <string name="action_reply_edit">Trả lời / Chỉnh sửa</string>
+    <string name="action_hide_review">Ẩn đánh giá</string>
+    <string name="action_delete_review">Xóa đánh giá</string>
+    <string name="feature_under_development">Tính năng [%s] đang được phát triển!</string>
+    <string name="toast_enter_email">Vui lòng nhập Email</string>
+    <string name="toast_enter_password">Vui lòng nhập Mật khẩu</string>
+    <string name="toast_invalid_email">Email không đúng định dạng</string>
+    <string name="shop_reply">Phản hồi từ Cửa hàng</string>
+    <string name="status_responded">Đã phản hồi</string>
+    <string name="btn_edit_reply">Sửa phản hồi</string>
 </resources>
