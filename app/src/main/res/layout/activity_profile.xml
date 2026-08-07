@@ -4,7 +4,7 @@
     android:id="@+id/profile_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="#FFFFFF"
     android:orientation="vertical">
 
     <!-- Scrollable content -->
@@ -20,6 +20,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingTop="14dp"
+            android:background="#FFFFFF"
             android:paddingBottom="24dp">
 
             <!-- Top Header Bar -->
@@ -54,9 +55,9 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="0.5dp"
+                android:layout_height="1dp"
                 android:layout_marginBottom="16dp"
-                android:background="#DEDCD7" />
+                android:background="@color/divider_color" />
 
             <!-- Profile Avatar and Name Section -->
             <!-- Avatar + tên người dùng -->
@@ -158,7 +159,7 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
+                    android:layout_height="1dp"
                     android:background="#E5E0DA" />
 
                 <!-- Email Row -->
@@ -187,7 +188,7 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
+                    android:layout_height="1dp"
                     android:background="#E5E0DA" />
 
                 <!-- Phone Row -->
@@ -216,7 +217,7 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
+                    android:layout_height="1dp"
                     android:background="#E5E0DA" />
 
                 <!-- Address Row -->
@@ -268,7 +269,7 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
+                    android:layout_height="1dp"
                     android:background="#E5E0DA" />
 
                 <!-- Change Password Option -->
@@ -322,7 +323,7 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
+                    android:layout_height="1dp"
                     android:background="#E5E0DA" />
 
                 <!-- Change Language Option -->

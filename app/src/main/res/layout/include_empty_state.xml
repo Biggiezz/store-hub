@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layoutEmptyState"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="@dimen/spacing_large">
+
+    <ImageView
+        android:id="@+id/imgEmptyIcon"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:contentDescription="@string/empty_state_title"
+        android:src="@drawable/ic_products"
+        app:tint="@color/hint" />
+
+    <TextView
+        android:id="@+id/tvEmptyTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_medium"
+        android:fontFamily="@font/shopee_display"
+        android:text="@string/empty_state_title"
+        android:textColor="@color/text_primary"
+        android:textSize="@dimen/text_heading"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvEmptyDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_small"
+        android:gravity="center"
+        android:text="@string/empty_state_desc"
+        android:textColor="@color/text_secondary"
+        android:textSize="@dimen/text_body" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnEmptyAction"
+        style="@style/Widget.Material3.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/button_height_small"
+        android:layout_marginTop="@dimen/spacing_medium"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:text="@string/btn_empty_action_shop"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_body_small"
+        android:visibility="gone"
+        app:backgroundTint="@color/dark_green"
+        app:cornerRadius="18dp" />
+
+</LinearLayout>

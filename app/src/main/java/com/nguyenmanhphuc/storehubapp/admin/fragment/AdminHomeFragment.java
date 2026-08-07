@@ -124,6 +124,8 @@ public class AdminHomeFragment extends Fragment {
         if (cardSales != null) {
             txtTitle = cardSales.findViewById(R.id.txtTitle);
             if (txtTitle != null) txtTitle.setText("Doanh số bán hàng");
+            ImageView imgIcon = cardSales.findViewById(R.id.imgDashboardIcon);
+            if (imgIcon != null) imgIcon.setImageResource(R.drawable.ic_store_admin);
         }
         if (cardUsers != null) {
             txtTitle = cardUsers.findViewById(R.id.txtTitle);
@@ -132,6 +134,8 @@ public class AdminHomeFragment extends Fragment {
             if (txtTitle != null) txtTitle.setText("Người dùng đăng ký");
             if (txtValue != null) txtValue.setText("0");
             if (txtStatus != null) txtStatus.setText("+0 thành viên");
+            ImageView imgIcon = cardUsers.findViewById(R.id.imgDashboardIcon);
+            if (imgIcon != null) imgIcon.setImageResource(R.drawable.ic_users);
         }
         if (cardProducts != null) {
             txtTitle = cardProducts.findViewById(R.id.txtTitle);
@@ -140,6 +144,8 @@ public class AdminHomeFragment extends Fragment {
             if (txtTitle != null) txtTitle.setText("Tổng số sản phẩm");
             if (txtValue != null) txtValue.setText("0");
             if (txtStatus != null) txtStatus.setText("Đang kinh doanh");
+            ImageView imgIcon = cardProducts.findViewById(R.id.imgDashboardIcon);
+            if (imgIcon != null) imgIcon.setImageResource(R.drawable.ic_products);
         }
         if (cardOrders != null) {
             txtTitle = cardOrders.findViewById(R.id.txtTitle);
@@ -148,6 +154,8 @@ public class AdminHomeFragment extends Fragment {
             if (txtTitle != null) txtTitle.setText("Quản lý đơn hàng");
             if (txtValue != null) txtValue.setText("...");
             if (txtStatus != null) txtStatus.setText("Xem danh sách đơn hàng");
+            ImageView imgIcon = cardOrders.findViewById(R.id.imgDashboardIcon);
+            if (imgIcon != null) imgIcon.setImageResource(R.drawable.ic_receipt);
         }
     }
 

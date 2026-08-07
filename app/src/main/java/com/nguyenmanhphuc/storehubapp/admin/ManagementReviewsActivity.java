@@ -93,6 +93,7 @@ public class ManagementReviewsActivity extends AppCompatActivity {
             intent.putExtra("review_item", item.review);
             intent.putExtra("product_name", item.productName);
             intent.putExtra("product_id", item.productId);
+            intent.putExtra("product_image", item.productImage);
             startActivity(intent);
         });
         rvReviews.setAdapter(adapter);
@@ -168,7 +169,7 @@ public class ManagementReviewsActivity extends AppCompatActivity {
                     for (Product product : products) {
                         if (product.getReviews() != null) {
                             for (ProductReview review : product.getReviews()) {
-                                allReviews.add(new ReviewWithProduct(review, product.getName(), product.get_id()));
+                                allReviews.add(new ReviewWithProduct(review, product.getName(), product.get_id(), product.getImage()));
                             }
                         }
                     }

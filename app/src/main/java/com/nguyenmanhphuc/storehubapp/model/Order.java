@@ -83,6 +83,12 @@ public class Order implements Serializable {
     @SerializedName("isReviewed")
     private boolean isReviewed;
 
+    @SerializedName("appTransId")
+    private String appTransId;
+
+    @SerializedName("zpTransId")
+    private String zpTransId;
+
     // Danh sách các bước dòng thời gian giao nhận đơn hàng (Timeline)
     private ArrayList<TimelineStep> timeline;
 
@@ -269,5 +275,21 @@ public class Order implements Serializable {
 
     public void setReviewed(boolean reviewed) {
         isReviewed = reviewed;
+    }
+
+    public String getAppTransId() {
+        return appTransId != null ? appTransId : "";
+    }
+
+    public void setAppTransId(String appTransId) {
+        this.appTransId = appTransId;
+    }
+
+    public String getZpTransId() {
+        return zpTransId != null ? zpTransId : "";
+    }
+
+    public void setZpTransId(String zpTransId) {
+        this.zpTransId = zpTransId;
     }
 }
