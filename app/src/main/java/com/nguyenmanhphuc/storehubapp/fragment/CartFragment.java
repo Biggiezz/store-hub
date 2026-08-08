@@ -1,0 +1,392 @@
+package com.nguyenmanhphuc.storehubapp.fragment;
+
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.gson.Gson;
+import com.nguyenmanhphuc.storehubapp.MainActivity;
+import com.nguyenmanhphuc.storehubapp.PaymentConfirmationActivity;
+import com.nguyenmanhphuc.storehubapp.R;
+import com.nguyenmanhphuc.storehubapp.adapter.CartAdapter;
+import com.nguyenmanhphuc.storehubapp.model.CartItem;
+import com.nguyenmanhphuc.storehubapp.model.response.Response;
+import com.nguyenmanhphuc.storehubapp.model.request.UpdateQuantityRequest;
+import com.nguyenmanhphuc.storehubapp.model.Product;
+import com.nguyenmanhphuc.storehubapp.model.User;
+import com.nguyenmanhphuc.storehubapp.services.ApiServices;
+import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
+import com.nguyenmanhphuc.storehubapp.utils.SharedPreferencesManager;
+import com.google.android.material.button.MaterialButton;
+
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+
+public class CartFragment extends Fragment implements CartAdapter.OnCartChangeListener {
+
+    private RecyclerView rvCartItems;
+    private CartAdapter cartAdapter;
+    private View emptyCartLayout;
+    private NestedScrollView cartScrollView;
+    private ProgressBar progressBar;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private TextView tvSubtotalLabel, tvReceiverInformation, tvDeliveryAddress, btnChangeAddress, tvSubtotal, tvShippingFee, tvTotal;
+    private MaterialButton btnCheckout;
+    private ImageButton btnBack;
+    private ApiServices apiService;
+    private Call<Response<ArrayList<CartItem>>> cartCall;
+    private long subtotalAmount = 0L;
+    private final ArrayList<CartItem> cartItems = new ArrayList<>();
+    private static final long DEFAULT_SHIPPING_FEE = 40000L;
+    private final long discountAmount = 0L;
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_cart, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        apiService = new HttpResquest().callAPI();
+
+        initUi(view);
+        setUpAdapter();
+        setUpListener();
+        loadUserInfo();
+
+        loadCartFromServer();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadUserInfo();
+        loadCartFromServer();
+    }
+
+    private void initUi(View view) {
+        rvCartItems = view.findViewById(R.id.rvCartItems);
+        emptyCartLayout = view.findViewById(R.id.emptyCartLayout);
+        cartScrollView = view.findViewById(R.id.cartScrollView);
+        progressBar = view.findViewById(R.id.progressBar);
+
+        tvReceiverInformation = view.findViewById(R.id.tvReceiverInformation);
+        tvDeliveryAddress = view.findViewById(R.id.tvDeliveryAddress);
+        btnChangeAddress = view.findViewById(R.id.btnChangeAddress);
+
+        tvSubtotalLabel = view.findViewById(R.id.tvSubtotalLabel);
+        tvSubtotal = view.findViewById(R.id.tvSubtotal);
+        tvShippingFee = view.findViewById(R.id.tvShippingFee);
+        tvTotal = view.findViewById(R.id.tvTotal);
+        btnCheckout = view.findViewById(R.id.btnCheckout);
+        btnBack = view.findViewById(R.id.btnBack);
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.dark_green));
+            swipeRefreshLayout.setOnRefreshListener(this::loadCartFromServer);
+        }
+    }
+
+    private void loadUserInfo() {
+        if (!isAdded()) return;
+
+        SharedPreferencesManager prefManager = new SharedPreferencesManager(requireContext());
+        User user = prefManager.getUser();
+
+        if (user != null) {
+            String name = !TextUtils.isEmpty(user.getName()) ? user.getName() : "Khách hàng";
+            String phone = !TextUtils.isEmpty(user.getPhone()) ? user.getPhone() : "";
+            String receiverInfo = !TextUtils.isEmpty(phone) ? name + " | " + phone : name;
+
+            if (tvReceiverInformation != null) {
+                tvReceiverInformation.setText(receiverInfo);
+            }
+
+            String address = !TextUtils.isEmpty(user.getAddress())
+                    ? user.getAddress()
+                    : "123 Đường Lê Lợi, Phường Bến Thành, Quận 1, TP. Hồ Chí Minh";
+
+            if (tvDeliveryAddress != null) {
+                tvDeliveryAddress.setText(address);
+            }
+        }
+    }
+
+    private void setUpAdapter() {
+        cartAdapter = new CartAdapter(requireContext());
+        cartAdapter.setOnCartChangeListener(this);
+        rvCartItems.setLayoutManager(new LinearLayoutManager(requireContext()));
+        rvCartItems.setAdapter(cartAdapter);
+    }
+
+    private void setUpListener() {
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> {
+                if (getActivity() instanceof MainActivity) {
+                    ((MainActivity) getActivity()).showHome();
+                } else if (getActivity() != null) {
+                    getActivity().getOnBackPressedDispatcher().onBackPressed();
+                }
+            });
+        }
+
+        if (btnChangeAddress != null) {
+            btnChangeAddress.setOnClickListener(v ->
+                    Toast.makeText(requireContext(), "Chức năng đang được phát triển", Toast.LENGTH_SHORT).show()
+            );
+        }
+
+        if (btnCheckout != null) {
+            btnCheckout.setOnClickListener(v -> {
+                if (cartItems.isEmpty()) {
+                    Toast.makeText(requireContext(), "Giỏ hàng đang trống", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                startActivity(PaymentConfirmationActivity.createIntent(requireContext(), cartItems));
+            });
+        }
+    }
+
+    private void loadCartFromServer() {
+        setLoading(true);
+
+        if (cartCall != null) {
+            cartCall.cancel();
+        }
+
+        cartCall = apiService.getCart(HttpResquest.authorizationHeader(requireContext()));
+        cartCall.enqueue(new Callback<Response<ArrayList<CartItem>>>() {
+            @Override
+            public void onResponse(@NonNull Call<Response<ArrayList<CartItem>>> call, @NonNull retrofit2.Response<Response<ArrayList<CartItem>>> response) {
+                setLoading(false);
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    updateCartUi(response.body().getData());
+                } else {
+                    updateCartUi(new ArrayList<>());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Response<ArrayList<CartItem>>> call, @NonNull Throwable t) {
+                if (call.isCanceled()) return;
+                setLoading(false);
+                Log.e("CartFragment", "Error loading cart", t);
+                updateCartUi(new ArrayList<>());
+            }
+        });
+    }
+
+    private void updateProductsStockAfterOrder(List<CartItem> items) {
+        if (items == null) return;
+        for (CartItem item : items) {
+            final int quantityPurchased = item.getQuantity();
+            apiService.getProductDetail(item.getProductId()).enqueue(new Callback<Response<Product>>() {
+                @Override
+                public void onResponse(@NonNull Call<Response<Product>> call, @NonNull retrofit2.Response<Response<Product>> response) {
+                    if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                        Product product = response.body().getData();
+                        int newStock = Math.max(0, product.getStock() - quantityPurchased);
+                        int newSold = product.getSold() + quantityPurchased;
+
+                        updateSingleProductOnServer(product, newStock, newSold);
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<Response<Product>> call, @NonNull Throwable t) {
+                    Log.e("CartFragment", "Failed to get product for stock update", t);
+                }
+            });
+        }
+    }
+
+    private void updateSingleProductOnServer(Product product, int newStock, int newSold) {
+        MediaType textType = MediaType.parse("text/plain");
+        RequestBody name = RequestBody.create(textType, product.getName());
+        RequestBody price = RequestBody.create(textType, product.getPrice());
+        RequestBody category = RequestBody.create(textType, product.getCategory() != null ? product.getCategory().get_id() : "");
+        RequestBody description = RequestBody.create(textType, product.getDescription());
+        RequestBody stock = RequestBody.create(textType, String.valueOf(newStock));
+        RequestBody soldQuantity = RequestBody.create(textType, String.valueOf(newSold));
+        RequestBody isActive = RequestBody.create(textType, String.valueOf(product.isActive()));
+        RequestBody colors = RequestBody.create(textType, new Gson().toJson(product.getColors()));
+
+        String token = HttpResquest.authorizationHeader(requireContext());
+        apiService.updateProduct(token, product.get_id(), name, price, category,
+                description, stock, soldQuantity, isActive, colors, null)
+                .enqueue(new Callback<Response<Product>>() {
+                    @Override
+                    public void onResponse(@NonNull Call<Response<Product>> call, @NonNull retrofit2.Response<Response<Product>> response) {
+                        if (response.isSuccessful()) {
+                            Log.d("CartFragment", "Stock updated for product: " + product.getName());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<Response<Product>> call, @NonNull Throwable t) {
+                        Log.e("CartFragment", "Failed to update stock", t);
+                    }
+                });
+    }
+
+    private void updateCartUi(List<CartItem> cartItems) {
+        this.cartItems.clear();
+        if (cartItems != null) this.cartItems.addAll(cartItems);
+        if (cartItems == null || cartItems.isEmpty()) {
+            if (emptyCartLayout != null) emptyCartLayout.setVisibility(View.VISIBLE);
+            if (rvCartItems != null) rvCartItems.setVisibility(View.GONE);
+            cartAdapter.updateData(new ArrayList<>());
+            subtotalAmount = 0L;
+            updateOrderTotals();
+        } else {
+            if (emptyCartLayout != null) emptyCartLayout.setVisibility(View.GONE);
+            if (rvCartItems != null) rvCartItems.setVisibility(View.VISIBLE);
+            cartAdapter.updateData(cartItems);
+
+            long sum = 0L;
+            int totalQuantity = 0;
+            for (CartItem item : cartItems) {
+                sum += item.getTotalItemPrice();
+                totalQuantity += item.getQuantity();
+            }
+            subtotalAmount = sum;
+
+            if (tvSubtotalLabel != null) {
+                tvSubtotalLabel.setText("Tạm tính (" + totalQuantity + " sản phẩm):");
+            }
+
+            updateOrderTotals();
+        }
+    }
+
+    private void updateOrderTotals() {
+        long currentShippingFee = subtotalAmount == 0 ? 0L : DEFAULT_SHIPPING_FEE;
+        long total = subtotalAmount + currentShippingFee - discountAmount;
+        if (total < 0L) total = 0L;
+
+        if (tvSubtotal != null) {
+            tvSubtotal.setText(formatPrice(subtotalAmount));
+        }
+        if (tvShippingFee != null) {
+            tvShippingFee.setText(formatPrice(currentShippingFee));
+        }
+        if (tvTotal != null) {
+            tvTotal.setText(formatPrice(total));
+        }
+    }
+
+    @Override
+    public void onQuantityChange(CartItem cartItem, int newQuantity) {
+        setLoading(true);
+        UpdateQuantityRequest request = new UpdateQuantityRequest(cartItem.getId(), newQuantity);
+        apiService.updateCartQuantity(HttpResquest.authorizationHeader(requireContext()), request).enqueue(new Callback<Response<ArrayList<CartItem>>>() {
+            @Override
+            public void onResponse(@NonNull Call<Response<ArrayList<CartItem>>> call, @NonNull retrofit2.Response<Response<ArrayList<CartItem>>> response) {
+                setLoading(false);
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    updateCartUi(response.body().getData());
+                } else {
+                    loadCartFromServer();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Response<ArrayList<CartItem>>> call, @NonNull Throwable t) {
+                if (call.isCanceled()) return;
+                setLoading(false);
+                Toast.makeText(requireContext(), "Không thể cập nhật số lượng", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void onDeleteItem(CartItem cartItem) {
+        setLoading(true);
+        apiService.deleteCartItem(HttpResquest.authorizationHeader(requireContext()), cartItem.getId()).enqueue(new Callback<Response<ArrayList<CartItem>>>() {
+            @Override
+            public void onResponse(@NonNull Call<Response<ArrayList<CartItem>>> call, @NonNull retrofit2.Response<Response<ArrayList<CartItem>>> response) {
+                setLoading(false);
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    Toast.makeText(requireContext(), "Đã xóa khỏi giỏ hàng", Toast.LENGTH_SHORT).show();
+                    updateCartUi(response.body().getData());
+                } else {
+                    loadCartFromServer();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Response<ArrayList<CartItem>>> call, @NonNull Throwable t) {
+                if (call.isCanceled()) return;
+                setLoading(false);
+                Toast.makeText(requireContext(), "Không thể xóa sản phẩm", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void setLoading(boolean loading) {
+        if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
+            if (progressBar != null) {
+                progressBar.setVisibility(View.GONE);
+            }
+            if (!loading) {
+                swipeRefreshLayout.setRefreshing(false);
+            }
+            return;
+        }
+
+        if (progressBar != null) {
+            progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
+        }
+        if (loading) {
+            if (cartScrollView != null) cartScrollView.setVisibility(View.GONE);
+            if (emptyCartLayout != null) emptyCartLayout.setVisibility(View.GONE);
+        } else {
+            if (cartScrollView != null) cartScrollView.setVisibility(View.VISIBLE);
+            if (swipeRefreshLayout != null) {
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        }
+    }
+
+    private String formatPrice(long price) {
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(
+                new Locale("vi", "VN")
+        );
+        return formatter.format(price);
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (cartCall != null) {
+            cartCall.cancel();
+        }
+        super.onDestroyView();
+    }
+}
