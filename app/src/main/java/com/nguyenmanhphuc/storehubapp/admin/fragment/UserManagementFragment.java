@@ -49,15 +49,14 @@ public class UserManagementFragment extends Fragment {
     private TextView btnPrevPage, btnPage1, btnPage2, btnPage3, btnNextPage;
 
     private UserManagementAdapter userAdapter;
-    private final List<User> allStaffList = new ArrayList<>();
-    private final List<User> allCustomerList = new ArrayList<>();
-    private List<User> currentList = new ArrayList<>();
     private final List<User> displayedUsers = new ArrayList<>();
 
     private boolean isStaffTabSelected = true;
     private int currentPage = 1;
     private static final int PAGE_SIZE = 10;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private boolean isLoading = false;
+    private boolean hasMoreData = true;
 
     public UserManagementFragment() {
         // Required empty public constructor
@@ -144,7 +143,8 @@ public class UserManagementFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 currentPage = 1;
-                filterUserList(s.toString());
+                hasMoreData = true;
+                fetchUsersFromServer(1, false);
             }
 
             @Override
@@ -191,29 +191,11 @@ public class UserManagementFragment extends Fragment {
                     int totalItemCount = layoutManager.getItemCount();
                     int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
                     
-                    String query = etSearchUser == null ? "" : etSearchUser.getText().toString().trim().toLowerCase();
-                    List<User> filtered = new ArrayList<>();
-                    for (User user : currentList) {
-                        boolean nameMatches = user.getName() != null && user.getName().toLowerCase().contains(query);
-                        boolean emailMatches = user.getEmail() != null && user.getEmail().toLowerCase().contains(query);
-                        if (nameMatches || emailMatches) {
-                            filtered.add(user);
-                        }
-                    }
-                    int totalItems = filtered.size();
-                    int totalPagesVal = (totalItems + PAGE_SIZE - 1) / PAGE_SIZE;
-                    if (totalPagesVal < 1) totalPagesVal = 1;
-
-                    if (currentPage < totalPagesVal) {
+                    if (hasMoreData && !isLoading) {
                         if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount - 2
                                 && firstVisibleItemPosition >= 0) {
                             currentPage++;
-                            int start = (currentPage - 1) * PAGE_SIZE;
-                            int end = Math.min(start + PAGE_SIZE, totalItems);
-                            if (start < totalItems) {
-                                displayedUsers.addAll(filtered.subList(start, end));
-                                userAdapter.updateData(displayedUsers);
-                            }
+                            fetchUsersFromServer(currentPage, true);
                         }
                     }
                 }
@@ -224,6 +206,7 @@ public class UserManagementFragment extends Fragment {
     private void switchTab(boolean selectStaff) {
         isStaffTabSelected = selectStaff;
         currentPage = 1;
+        hasMoreData = true;
 
         if (selectStaff) {
             btnTabStaff.setBackgroundResource(R.drawable.bg_admin_chip_active);
@@ -237,8 +220,6 @@ public class UserManagementFragment extends Fragment {
             tvCustomerTabTitle.setTextColor(Color.parseColor("#8A8077"));
             tvCustomerCount.setBackgroundResource(R.drawable.bg_tab_badge_unselected);
             tvCustomerCount.setTextColor(Color.parseColor("#8A8077"));
-
-            currentList = new ArrayList<>(allStaffList);
         } else {
             btnTabStaff.setBackgroundResource(R.drawable.bg_admin_chip);
             btnTabCustomer.setBackgroundResource(R.drawable.bg_admin_chip_active);
@@ -251,95 +232,88 @@ public class UserManagementFragment extends Fragment {
             tvStaffTabTitle.setTextColor(Color.parseColor("#8A8077"));
             tvStaffCount.setBackgroundResource(R.drawable.bg_tab_badge_unselected);
             tvStaffCount.setTextColor(Color.parseColor("#8A8077"));
-
-            currentList = new ArrayList<>(allCustomerList);
         }
 
-        String query = etSearchUser.getText().toString();
-        filterUserList(query);
-    }
-
-    private void filterUserList(String keyword) {
-        List<User> filtered = new ArrayList<>();
-        String query = keyword != null ? keyword.trim().toLowerCase() : "";
-
-        for (User user : currentList) {
-            boolean nameMatches = user.getName() != null && user.getName().toLowerCase().contains(query);
-            boolean emailMatches = user.getEmail() != null && user.getEmail().toLowerCase().contains(query);
-            if (nameMatches || emailMatches) {
-                filtered.add(user);
-            }
-        }
-
-        int totalItems = filtered.size();
-        currentPage = 1;
-        displayedUsers.clear();
-
-        int start = 0;
-        int end = Math.min(PAGE_SIZE, totalItems);
-        if (start < totalItems) {
-            displayedUsers.addAll(filtered.subList(start, end));
-        }
-
-        userAdapter.updateData(displayedUsers);
-
-        if (displayedUsers.isEmpty()) {
-            if (tvEmptyState != null) tvEmptyState.setVisibility(View.VISIBLE);
-            if (rvUsers != null) rvUsers.setVisibility(View.GONE);
-        } else {
-            if (tvEmptyState != null) tvEmptyState.setVisibility(View.GONE);
-            if (rvUsers != null) rvUsers.setVisibility(View.VISIBLE);
-        }
-        if (llPagination != null) {
-            llPagination.setVisibility(View.GONE);
-        }
+        fetchUsersFromServer(1, false);
     }
 
     private void fetchUsersFromServer() {
+        currentPage = 1;
+        hasMoreData = true;
+        fetchUsersFromServer(1, false);
+    }
+
+    private void fetchUsersFromServer(int page, boolean isLoadMore) {
+        if (isLoading) return;
+        isLoading = true;
+
         boolean isSwipeRefreshing = swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing();
-        if (!isSwipeRefreshing) {
+        if (!isSwipeRefreshing && !isLoadMore) {
+            pbLoadingUsers.setVisibility(View.VISIBLE);
+            if (rvUsers != null) rvUsers.setVisibility(View.GONE);
+            if (tvEmptyState != null) tvEmptyState.setVisibility(View.GONE);
+        } else if (isLoadMore) {
             pbLoadingUsers.setVisibility(View.VISIBLE);
         }
-        if (rvUsers != null) rvUsers.setVisibility(View.GONE);
-        if (tvEmptyState != null) tvEmptyState.setVisibility(View.GONE);
-        if (llPagination != null) llPagination.setVisibility(View.GONE);
+
         SharedPreferencesManager prefManager = new SharedPreferencesManager(requireContext());
         String token = "Bearer " + prefManager.getToken();
+        String type = isStaffTabSelected ? "staff" : "customer";
+        String search = etSearchUser != null ? etSearchUser.getText().toString().trim() : "";
+
         HttpResquest httpResquest = new HttpResquest();
-        httpResquest.callAPI().getListUsers(token).enqueue(new retrofit2.Callback<Response<ArrayList<User>>>() {
+        httpResquest.callAPI().getListUsers(token, page, PAGE_SIZE, type, search).enqueue(new retrofit2.Callback<Response<ArrayList<User>>>() {
             @Override
             public void onResponse(@NonNull retrofit2.Call<Response<ArrayList<User>>> call, @NonNull retrofit2.Response<Response<ArrayList<User>>> response) {
                 if (!isAdded()) return;
+                isLoading = false;
                 pbLoadingUsers.setVisibility(View.GONE);
                 if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
-                allStaffList.clear();
-                allCustomerList.clear();
-                if (response.isSuccessful() && response.body() != null && response.body().getData() != null && !response.body().getData().isEmpty()) {
+
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     ArrayList<User> serverUsers = response.body().getData();
-                    for (User u : serverUsers) {
-                        String role = u.getRole() != null ? u.getRole().toLowerCase() : "";
-                        if (role.contains("khách hàng") || role.contains("customer")) {
-                            allCustomerList.add(u);
-                        } else {
-                            allStaffList.add(u);
-                        }
+                    
+                    // Read total counts from headers
+                    String totalStaff = response.headers().get("X-Total-Staff");
+                    String totalCustomers = response.headers().get("X-Total-Customers");
+                    if (totalStaff != null) tvStaffCount.setText(totalStaff);
+                    if (totalCustomers != null) tvCustomerCount.setText(totalCustomers);
+
+                    if (!isLoadMore) {
+                        displayedUsers.clear();
                     }
+
+                    if (serverUsers.size() < PAGE_SIZE) {
+                        hasMoreData = false;
+                    } else {
+                        hasMoreData = true;
+                    }
+
+                    displayedUsers.addAll(serverUsers);
+                    userAdapter.updateData(displayedUsers);
+                } else {
+                    if (!isLoadMore) {
+                        displayedUsers.clear();
+                        userAdapter.updateData(displayedUsers);
+                    }
+                    Toast.makeText(requireContext(), "Không thể lấy dữ liệu từ server", Toast.LENGTH_SHORT).show();
                 }
-                tvStaffCount.setText(String.valueOf(allStaffList.size()));
-                tvCustomerCount.setText(String.valueOf(allCustomerList.size()));
-                switchTab(isStaffTabSelected);
+
+                if (displayedUsers.isEmpty()) {
+                    if (tvEmptyState != null) tvEmptyState.setVisibility(View.VISIBLE);
+                    if (rvUsers != null) rvUsers.setVisibility(View.GONE);
+                } else {
+                    if (tvEmptyState != null) tvEmptyState.setVisibility(View.GONE);
+                    if (rvUsers != null) rvUsers.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override
             public void onFailure(@NonNull retrofit2.Call<Response<ArrayList<User>>> call, @NonNull Throwable t) {
                 if (!isAdded()) return;
+                isLoading = false;
                 pbLoadingUsers.setVisibility(View.GONE);
                 if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
-                allStaffList.clear();
-                allCustomerList.clear();
-                tvStaffCount.setText("0");
-                tvCustomerCount.setText("0");
-                switchTab(isStaffTabSelected);
                 Toast.makeText(requireContext(), "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
             }
         });

@@ -145,7 +145,7 @@ public class ProductDetailActivity extends BaseActivity {
 
     private void checkAdminRole() {
         User user = SharedPreferencesManager.getInstance(this).getUser();
-        if (user != null && "admin".equalsIgnoreCase(user.getRole())) {
+        if (user != null && user.isAdmin()) {
             btnEditProduct.setVisibility(View.VISIBLE);
         } else {
             btnEditProduct.setVisibility(View.GONE);

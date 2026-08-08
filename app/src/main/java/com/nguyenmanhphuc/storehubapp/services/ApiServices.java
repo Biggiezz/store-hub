@@ -188,7 +188,13 @@ public interface ApiServices {
     Call<LoginResponse> login(@Body LoginRequest request);
 
     @GET("users/get-all-users")
-    Call<Response<ArrayList<User>>> getListUsers(@Header("Authorization") String token);
+    Call<Response<ArrayList<User>>> getListUsers(
+            @Header("Authorization") String token,
+            @Query("page") int page,
+            @Query("limit") int limit,
+            @Query("type") String type,
+            @Query("search") String search
+    );
 
     @GET("users/get-user-by-id/{id}")
     Call<Response<User>> getUserById(@Path("id") String id);
@@ -206,7 +212,8 @@ public interface ApiServices {
     @GET("api/newsRouter/admin/get-all-news")
     Call<Response<ArrayList<News>>> getAdminListNews(@Header("Authorization") String token,
                                                      @Query("page") int page,
-                                                     @Query("limit") int limit);
+                                                     @Query("limit") int limit,
+                                                     @Query("status") String status);
 
     @Multipart
     @POST("api/newsRouter/admin/add-news")

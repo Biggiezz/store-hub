@@ -46,6 +46,11 @@ public class NewsFragmentManagement extends Fragment implements PostAdapter.Post
     private String selectedStatus = "published";
     private ProgressBar progressBar;
 
+    private int currentPage = 1;
+    private static final int PAGE_SIZE = 10;
+    private boolean isLoading = false;
+    private boolean hasMoreData = true;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -79,6 +84,27 @@ public class NewsFragmentManagement extends Fragment implements PostAdapter.Post
             adapter = new PostAdapter(getContext(), newsList, this);
             rvPosts.setLayoutManager(new LinearLayoutManager(getContext()));
             rvPosts.setAdapter(adapter);
+
+            rvPosts.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                    if (layoutManager != null && dy > 0) {
+                        int visibleItemCount = layoutManager.getChildCount();
+                        int totalItemCount = layoutManager.getItemCount();
+                        int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+
+                        if (hasMoreData && !isLoading) {
+                            if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount - 2
+                                    && firstVisibleItemPosition >= 0) {
+                                currentPage++;
+                                fetchPosts(currentPage, true);
+                            }
+                        }
+                    }
+                }
+            });
         }
     }
 
@@ -103,33 +129,65 @@ public class NewsFragmentManagement extends Fragment implements PostAdapter.Post
     }
 
     private void fetchPosts() {
+        currentPage = 1;
+        hasMoreData = true;
+        fetchPosts(1, false);
+    }
+
+    private void fetchPosts(int page, boolean isLoadMore) {
+        if (isLoading) return;
+        isLoading = true;
+
         String token = sharedPreferencesManager != null ? sharedPreferencesManager.getToken() : "";
         String authHeader = "Bearer " + token;
 
-        // Chỉ hiển thị loading và ẩn danh sách ở lần tải đầu tiên (danh sách rỗng)
-        boolean isFirstLoad = newsList.isEmpty();
-        if (isFirstLoad) {
+        // Chỉ hiển thị loading ở lần tải đầu tiên (danh sách rỗng)
+        if (!isLoadMore) {
             if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
             if (rvPosts != null) rvPosts.setVisibility(View.GONE);
             if (tvEmptyPosts != null) tvEmptyPosts.setVisibility(View.GONE);
+        } else {
+            if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
         }
 
-        httpRequest.callAPI().getAdminListNews(authHeader, 1, 50).enqueue(new Callback<Response<ArrayList<News>>>() {
+        httpRequest.callAPI().getAdminListNews(authHeader, page, PAGE_SIZE, selectedStatus).enqueue(new Callback<Response<ArrayList<News>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<News>>> call, @NonNull retrofit2.Response<Response<ArrayList<News>>> response) {
                 if (!isAdded()) return;
+                isLoading = false;
                 if (progressBar != null) progressBar.setVisibility(View.GONE);
                 if (rvPosts != null) rvPosts.setVisibility(View.VISIBLE);
 
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
-                    newsList = response.body().getData();
-                    filterByStatus(selectedStatus);
+                    ArrayList<News> serverNews = response.body().getData();
+                    if (!isLoadMore) {
+                        newsList.clear();
+                    }
+
+                    if (serverNews.size() < PAGE_SIZE) {
+                        hasMoreData = false;
+                    } else {
+                        hasMoreData = true;
+                    }
+
+                    newsList.addAll(serverNews);
+                    if (adapter != null) adapter.updateData(newsList);
+                } else {
+                    Toast.makeText(getContext(), "Không nhận được phản hồi từ máy chủ", Toast.LENGTH_SHORT).show();
                 }
+
+                tvEmptyPosts.setText("draft".equals(selectedStatus)
+                        ? "Chưa có bài viết bản nháp"
+                        : "hidden".equals(selectedStatus)
+                        ? "Chưa có bài viết riêng tư"
+                        : "Chưa có bài viết đã xuất bản");
+                tvEmptyPosts.setVisibility(newsList.isEmpty() ? View.VISIBLE : View.GONE);
             }
 
             @Override
             public void onFailure(@NonNull Call<Response<ArrayList<News>>> call, @NonNull Throwable t) {
                 if (!isAdded()) return;
+                isLoading = false;
                 if (progressBar != null) progressBar.setVisibility(View.GONE);
                 if (rvPosts != null) rvPosts.setVisibility(View.VISIBLE);
                 Toast.makeText(getContext(), "Lỗi tải danh sách bài viết", Toast.LENGTH_SHORT).show();
@@ -139,22 +197,16 @@ public class NewsFragmentManagement extends Fragment implements PostAdapter.Post
 
     private void filterByStatus(String status) {
         selectedStatus = status;
-        List<News> filteredNews = new ArrayList<>();
-        for (News news : newsList) {
-            if (status.equals(news.getStatus())) filteredNews.add(news);
-        }
-        if (adapter != null) adapter.updateData(filteredNews);
-        tvEmptyPosts.setText("draft".equals(status)
-                ? "Chưa có bài viết bản nháp"
-                : "hidden".equals(status)
-                ? "Chưa có bài viết riêng tư"
-                : "Chưa có bài viết đã xuất bản");
-        tvEmptyPosts.setVisibility(filteredNews.isEmpty() ? View.VISIBLE : View.GONE);
+        currentPage = 1;
+        hasMoreData = true;
 
         int activeBackground = Color.parseColor("#14291F");
-        int inactiveBackground = Color.parseColor("#F1E3D7");
+        int inactiveBackground = Color.parseColor("#F5F3F0");
         int activeText = Color.WHITE;
-        int inactiveText = Color.parseColor("#41413F");
+        int inactiveText = Color.parseColor("#8A8077");
+        int strokeActiveColor = Color.parseColor("#14291F");
+        int strokeInactiveColor = Color.parseColor("#D5D2CD");
+
         MaterialButton[] buttons = {btnPublished, btnDraft, btnPrivate};
         String[] statuses = {"published", "draft", "hidden"};
         for (int i = 0; i < buttons.length; i++) {
@@ -162,7 +214,11 @@ public class NewsFragmentManagement extends Fragment implements PostAdapter.Post
             buttons[i].setBackgroundTintList(ColorStateList.valueOf(
                     active ? activeBackground : inactiveBackground));
             buttons[i].setTextColor(active ? activeText : inactiveText);
+            buttons[i].setStrokeColor(ColorStateList.valueOf(
+                    active ? strokeActiveColor : strokeInactiveColor));
         }
+
+        fetchPosts(1, false);
     }
 
     @Override
