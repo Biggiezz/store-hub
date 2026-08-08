@@ -25,7 +25,6 @@ import android.content.Intent;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.nguyenmanhphuc.storehubapp.CartActivity;
-import com.nguyenmanhphuc.storehubapp.MainActivity;
 import com.nguyenmanhphuc.storehubapp.R;
 import com.nguyenmanhphuc.storehubapp.adapter.ProductAdapter;
 import com.nguyenmanhphuc.storehubapp.model.Pagination;

@@ -27,7 +27,6 @@ import com.bumptech.glide.Glide;
 import com.nguyenmanhphuc.storehubapp.CancelledOrderDetailActivity;
 import com.nguyenmanhphuc.storehubapp.CompletedOrderDetailActivity;
 import com.nguyenmanhphuc.storehubapp.MainActivity;
-import com.nguyenmanhphuc.storehubapp.ProfileActivity;
 import com.nguyenmanhphuc.storehubapp.R;
 import com.nguyenmanhphuc.storehubapp.ShippingOrderDetailActivity;
 import com.nguyenmanhphuc.storehubapp.model.CartItem;

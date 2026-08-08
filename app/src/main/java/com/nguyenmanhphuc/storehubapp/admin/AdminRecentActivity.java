@@ -1,6 +1,5 @@
 package com.nguyenmanhphuc.storehubapp.admin;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
