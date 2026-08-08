@@ -24,7 +24,7 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Quay lại"
+            android:contentDescription="@string/xml_quay_lai"
             android:padding="4dp"
             android:src="@drawable/ic_back"
             app:tint="@color/dark_green"

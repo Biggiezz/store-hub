@@ -1,5 +1,7 @@
 package com.nguyenmanhphuc.storehubapp;
 
+import com.nguyenmanhphuc.storehubapp.R;
+
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Intent;
@@ -163,7 +165,7 @@ public class MainActivity extends BaseActivity {
         imgAvatar.setOnClickListener(v -> {
             SharedPreferencesManager prefManager = new SharedPreferencesManager(MainActivity.this);
             if (!prefManager.isLoggedIn()) {
-                Toast.makeText(MainActivity.this, "Vui lòng đăng nhập để xem thông tin cá nhân", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getString(R.string.login_view_personal_info_toast), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intent);
             } else {
@@ -342,7 +344,7 @@ public class MainActivity extends BaseActivity {
     public void showOder() {
         SharedPreferencesManager prefManager = new SharedPreferencesManager(this);
         if (!prefManager.isLoggedIn()) {
-            Toast.makeText(this, "Vui lòng đăng nhập để xem đơn hàng", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, this.getString(R.string.toast_vui_long_dang_nhap_de_xem_don_hang), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             return;
@@ -368,7 +370,7 @@ public class MainActivity extends BaseActivity {
     public void showProfile() {
         SharedPreferencesManager prefManager = new SharedPreferencesManager(this);
         if (!prefManager.isLoggedIn()) {
-            Toast.makeText(this, "Vui lòng đăng nhập để xem thông tin tài khoản", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.login_view_account_info_toast), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             return;
@@ -442,10 +444,10 @@ public class MainActivity extends BaseActivity {
 
     private void useFallbackCategories() {
         categoriesList = Arrays.asList(
-                new Category("1", "Điện thoại"),
-                new Category("2", "Máy tính"),
-                new Category("3", "Tai nghe"),
-                new Category("4", "Đồng hồ")
+                new Category("1", getString(R.string.phone)),
+                new Category("2", getString(R.string.laptop)),
+                new Category("3", getString(R.string.headphone)),
+                new Category("4", getString(R.string.category_watches))
         );
         activeCategory = "2"; // Máy tính
         renderCategoryButtons(categoriesList);
@@ -456,52 +458,45 @@ public class MainActivity extends BaseActivity {
         layoutCategories.removeAllViews();
         dynamicCategoryButtons.clear();
 
-        int activeBgColor = Color.parseColor("#F0DED2");
-        int activeTextColor = ContextCompat.getColor(this, R.color.text_button);
-        int inactiveBgColor = ContextCompat.getColor(this, R.color.background);
-        int inactiveTextColor = ContextCompat.getColor(this, R.color.dark_green);
-        int inactiveStrokeColor = Color.parseColor("#D8D5CF");
-
         for (int i = 0; i < categories.size(); i++) {
             Category category = categories.get(i);
             MaterialButton btn = (MaterialButton) getLayoutInflater().inflate(R.layout.item_category_button, layoutCategories, false);
-            btn.setText(category.getName());
+            btn.setText(getLocalizedCategoryName(category.getName()));
 
             boolean isActive = category.get_id().equals(activeCategory);
-            btn.setBackgroundTintList(ColorStateList.valueOf(isActive ? activeBgColor : inactiveBgColor));
-            btn.setTextColor(isActive ? activeTextColor : inactiveTextColor);
-            btn.setStrokeColor(ColorStateList.valueOf(isActive ? Color.TRANSPARENT : inactiveStrokeColor));
+            btn.setSelected(isActive);
 
             btn.setOnClickListener(v -> updateCategorySelection(category.get_id()));
 
             layoutCategories.addView(btn);
             dynamicCategoryButtons.add(btn);
-
-            if (i < categories.size() - 1) {
-                View space = new View(this);
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(40, 1);
-                space.setLayoutParams(params);
-                layoutCategories.addView(space);
-            }
         }
         filterProductsByCategory(activeCategory);
     }
 
+    private String getLocalizedCategoryName(String rawName) {
+        if (rawName == null) return "";
+        String lower = rawName.trim().toLowerCase();
+        if (lower.contains("điện thoại") || lower.contains("phone")) {
+            return getString(R.string.category_phones);
+        } else if (lower.contains("máy tính") || lower.contains("computer") || lower.contains("laptop")) {
+            return getString(R.string.category_computers);
+        } else if (lower.contains("tai nghe") || lower.contains("headphone") || lower.contains("earphone")) {
+            return getString(R.string.category_headphones);
+        } else if (lower.contains("đồng hồ") || lower.contains("watch")) {
+            return getString(R.string.category_watches);
+        }
+        return rawName;
+    }
+
     private void updateCategorySelection(String selectedCategoryId) {
         activeCategory = selectedCategoryId;
-        int activeBgColor = Color.parseColor("#F0DED2");
-        int activeTextColor = ContextCompat.getColor(this, R.color.text_button);
-        int inactiveBgColor = ContextCompat.getColor(this, R.color.background);
-        int inactiveTextColor = ContextCompat.getColor(this, R.color.dark_green);
-        int inactiveStrokeColor = Color.parseColor("#D8D5CF");
 
         for (int i = 0; i < dynamicCategoryButtons.size(); i++) {
             MaterialButton btn = dynamicCategoryButtons.get(i);
             Category cat = categoriesList.get(i);
             boolean isActive = cat.get_id().equals(activeCategory);
-            btn.setBackgroundTintList(ColorStateList.valueOf(isActive ? activeBgColor : inactiveBgColor));
-            btn.setTextColor(isActive ? activeTextColor : inactiveTextColor);
-            btn.setStrokeColor(ColorStateList.valueOf(isActive ? Color.TRANSPARENT : inactiveStrokeColor));
+            btn.setSelected(isActive);
         }
 
         filterProductsByCategory(activeCategory);

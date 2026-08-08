@@ -33,7 +33,7 @@
             android:layout_centerVertical="true"
             android:layout_toEndOf="@id/btnBack"
             android:layout_marginStart="12dp"
-            android:text="Quản lý đơn hàng"
+            android:text="@string/xml_quan_ly_don_hang"
             android:textColor="#1B2C24"
             android:textSize="20sp" />
     </RelativeLayout>
@@ -68,7 +68,7 @@
             android:layout_height="match_parent"
             android:layout_marginStart="8dp"
             android:background="@null"
-            android:hint="Tìm kiếm mã, tên, SĐT nhận hàng..."
+            android:hint="@string/xml_tim_kiem_ma_ten_sdt_nhan_hang"
             android:imeOptions="actionSearch"
             android:inputType="text"
             android:textColor="@color/text_primary"
@@ -99,37 +99,37 @@
                 android:id="@+id/tvFilterAll"
                 style="@style/Widget.StoreHub.OrderFilter"
                 android:background="@drawable/bg_order_filter_selected"
-                android:text="Tất cả" />
+                android:text="@string/xml_tat_ca" />
 
             <TextView
                 android:id="@+id/tvFilterPending"
                 style="@style/Widget.StoreHub.OrderFilter"
                 android:layout_marginStart="10dp"
-                android:text="Chờ xác nhận" />
+                android:text="@string/xml_cho_xac_nhan" />
 
             <TextView
                 android:id="@+id/tvFilterConfirmed"
                 style="@style/Widget.StoreHub.OrderFilter"
                 android:layout_marginStart="10dp"
-                android:text="Đã xác nhận" />
+                android:text="@string/xml_da_xac_nhan" />
 
             <TextView
                 android:id="@+id/tvFilterShipping"
                 style="@style/Widget.StoreHub.OrderFilter"
                 android:layout_marginStart="10dp"
-                android:text="Đang giao" />
+                android:text="@string/xml_dang_giao" />
 
             <TextView
                 android:id="@+id/tvFilterCompleted"
                 style="@style/Widget.StoreHub.OrderFilter"
                 android:layout_marginStart="10dp"
-                android:text="Đã hoàn thành" />
+                android:text="@string/xml_da_hoan_thanh" />
 
             <TextView
                 android:id="@+id/tvFilterCancelled"
                 style="@style/Widget.StoreHub.OrderFilter"
                 android:layout_marginStart="10dp"
-                android:text="Đã hủy" />
+                android:text="@string/xml_da_huy" />
 
         </LinearLayout>
 
@@ -160,7 +160,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Chưa có đơn hàng nào"
+            android:text="@string/xml_chua_co_don_hang_nao"
             android:textSize="16sp"
             android:visibility="gone" />
 

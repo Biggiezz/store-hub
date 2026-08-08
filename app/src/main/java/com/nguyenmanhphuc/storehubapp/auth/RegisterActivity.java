@@ -258,7 +258,7 @@ public class RegisterActivity extends BaseActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     Response<User> apiResponse = response.body();
                     if (apiResponse.getCode() == 201) {
-                        Toast.makeText(RegisterActivity.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterActivity.this, RegisterActivity.this.getString(R.string.toast_dang_ky_thanh_cong), Toast.LENGTH_SHORT).show();
                         // Quay lại màn hình Login
                         Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -268,7 +268,7 @@ public class RegisterActivity extends BaseActivity {
                         Toast.makeText(RegisterActivity.this, apiResponse.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(RegisterActivity.this, "Đăng ký thất bại hoặc email đã tồn tại", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, RegisterActivity.this.getString(R.string.toast_dang_ky_that_bai_hoac_email_da_ton_tai), Toast.LENGTH_SHORT).show();
                 }
             }
 

@@ -81,7 +81,7 @@ public class AddNewsManagementActivity extends AppCompatActivity {
                 ? user.getRole().replace(" ", "").toLowerCase(Locale.ROOT)
                 : "";
         if (!"admin".equals(role) && !"superadmin".equals(role)) {
-            Toast.makeText(this, "Bạn không có quyền thêm bài viết", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, this.getString(R.string.toast_ban_khong_co_quyen_them_bai_viet), Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -194,12 +194,12 @@ public class AddNewsManagementActivity extends AppCompatActivity {
         String selectedStatus = spinnerStatus != null && spinnerStatus.getSelectedItem() != null ? spinnerStatus.getSelectedItem().toString() : "Đã xuất bản";
 
         if (title.isEmpty() || content.isEmpty()) {
-            Toast.makeText(this, "Vui lòng nhập đầy đủ tiêu đề và nội dung bài viết", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, this.getString(R.string.toast_vui_long_nhap_day_du_tieu_de_va_noi_dung), Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (!isEditMode && selectedImageUri == null) {
-            Toast.makeText(this, "Vui lòng chọn ảnh đại diện bài viết", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, this.getString(R.string.toast_vui_long_chon_anh_dai_dien_bai_viet), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -246,7 +246,7 @@ public class AddNewsManagementActivity extends AppCompatActivity {
                         .enqueue(createAddNewsCallback());
             }
         } catch (IOException error) {
-            Toast.makeText(this, "Không thể đọc ảnh đã chọn", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, this.getString(R.string.toast_khong_the_doc_anh_da_chon), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -256,12 +256,12 @@ public class AddNewsManagementActivity extends AppCompatActivity {
             public void onResponse(@NonNull Call<Response<News>> call, @NonNull retrofit2.Response<Response<News>> response) {
                 btnAddPost.setEnabled(true);
                 if (response.isSuccessful() && response.body() != null && response.body().getCode() == 201) {
-                    Toast.makeText(AddNewsManagementActivity.this, "Tạo bài viết mới thành công!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddNewsManagementActivity.this, AddNewsManagementActivity.this.getString(R.string.toast_tao_bai_viet_moi_thanh_cong), Toast.LENGTH_SHORT).show();
                     finish();
                 } else if (response.body() != null && response.body().getMessage() != null) {
                     Toast.makeText(AddNewsManagementActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(AddNewsManagementActivity.this, "Lỗi khi tạo bài viết mới", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddNewsManagementActivity.this, AddNewsManagementActivity.this.getString(R.string.toast_loi_khi_tao_bai_viet_moi), Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -279,19 +279,19 @@ public class AddNewsManagementActivity extends AppCompatActivity {
             public void onResponse(@NonNull Call<Response<News>> call, @NonNull retrofit2.Response<Response<News>> response) {
                 btnAddPost.setEnabled(true);
                 if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(AddNewsManagementActivity.this, "Cập nhật bài viết thành công!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddNewsManagementActivity.this, AddNewsManagementActivity.this.getString(R.string.toast_cap_nhat_bai_viet_thanh_cong), Toast.LENGTH_SHORT).show();
                     finish();
                 } else if (response.body() != null && response.body().getMessage() != null) {
                     Toast.makeText(AddNewsManagementActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(AddNewsManagementActivity.this, "Lỗi khi cập nhật bài viết!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddNewsManagementActivity.this, AddNewsManagementActivity.this.getString(R.string.toast_loi_khi_cap_nhat_bai_viet), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<Response<News>> call, @NonNull Throwable t) {
                 btnAddPost.setEnabled(true);
-                Toast.makeText(AddNewsManagementActivity.this, "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AddNewsManagementActivity.this, AddNewsManagementActivity.this.getString(R.string.toast_loi_ket_noi_may_chu), Toast.LENGTH_SHORT).show();
             }
         };
     }

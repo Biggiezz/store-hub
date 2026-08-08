@@ -1,5 +1,7 @@
 package com.nguyenmanhphuc.storehubapp;
 
+import com.nguyenmanhphuc.storehubapp.R;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -248,7 +250,7 @@ public class ShippingOrderDetailActivity extends BaseActivity {
                         tvShippingFee.setText(formatPrice(DEFAULT_SHIPPING_FEE));
                     if (tvTotal != null) tvTotal.setText(formatPrice(total));
                 } else {
-                    Toast.makeText(ShippingOrderDetailActivity.this, "Không thể lấy danh sách sản phẩm", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ShippingOrderDetailActivity.this, ShippingOrderDetailActivity.this.getString(R.string.toast_khong_the_lay_danh_sach_san_pham), Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -256,7 +258,7 @@ public class ShippingOrderDetailActivity extends BaseActivity {
             public void onFailure(@NonNull Call<Response<ArrayList<CartItem>>> call, @NonNull Throwable t) {
                 if (call.isCanceled()) return;
                 Log.e("ShippingOrderDetail", "Error loading order products", t);
-                Toast.makeText(ShippingOrderDetailActivity.this, "Lỗi tải dữ liệu", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ShippingOrderDetailActivity.this, ShippingOrderDetailActivity.this.getString(R.string.toast_loi_tai_du_lieu), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -305,7 +307,7 @@ public class ShippingOrderDetailActivity extends BaseActivity {
                 }
 
                 if (reason.isEmpty()) {
-                    Toast.makeText(this, "Vui lòng chọn hoặc nhập lý do hủy", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, this.getString(R.string.toast_vui_long_chon_hoac_nhap_ly_do_huy), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -328,17 +330,17 @@ public class ShippingOrderDetailActivity extends BaseActivity {
             public void onResponse(@NonNull retrofit2.Call<Response<Order>> call,
                                    @NonNull retrofit2.Response<Response<Order>> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(ShippingOrderDetailActivity.this, "Đã hủy đơn hàng thành công!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ShippingOrderDetailActivity.this, ShippingOrderDetailActivity.this.getString(R.string.toast_da_huy_don_hang_thanh_cong), Toast.LENGTH_SHORT).show();
                     // Go back to Orders list fragment by finishing
                     finish();
                 } else {
-                    Toast.makeText(ShippingOrderDetailActivity.this, "Không thể hủy đơn hàng", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ShippingOrderDetailActivity.this, ShippingOrderDetailActivity.this.getString(R.string.toast_khong_the_huy_don_hang), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(@NonNull retrofit2.Call<Response<Order>> call, @NonNull Throwable t) {
-                Toast.makeText(ShippingOrderDetailActivity.this, "Không kết nối được máy chủ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ShippingOrderDetailActivity.this, ShippingOrderDetailActivity.this.getString(R.string.toast_khong_ket_noi_duoc_may_chu), Toast.LENGTH_SHORT).show();
             }
         });
     }

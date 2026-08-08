@@ -38,7 +38,7 @@
             android:ellipsize="end"
             android:fontFamily="@font/shopee_display"
             android:maxLines="1"
-            android:text="Chi tiết sản phẩm"
+            android:text="@string/xml_chi_tiet_san_pham"
             android:textColor="@color/dark_green"
             android:textSize="20sp" />
 
@@ -47,7 +47,7 @@
             android:layout_width="wrap_content"
             android:layout_height="36dp"
             android:layout_marginEnd="12dp"
-            android:text="Sửa"
+            android:text="@string/xml_sua"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
             android:textSize="12sp"
@@ -130,7 +130,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="#E5E5E5"
-                        android:contentDescription="Ảnh sản phẩm"
+                        android:contentDescription="@string/xml_anh_san_pham"
                         android:scaleType="centerCrop" />
 
                 </FrameLayout>
@@ -233,8 +233,8 @@
                                     android:isIndicator="true"
                                     android:numStars="5"
                                     android:progressBackgroundTint="#D7D7D7"
-                                    android:progressTint="#C62828"
-                                    android:secondaryProgressTint="#C62828"
+                                    android:progressTint="@color/rating_gold"
+                                    android:secondaryProgressTint="@color/rating_gold"
                                     android:stepSize="0.1" />
 
                                 <TextView
@@ -256,7 +256,7 @@
                                     android:id="@+id/tvSold"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Đã bán: 0"
+                                    android:text="@string/xml_da_ban_0"
                                     android:textColor="#5D5D5D"
                                     android:textSize="15sp" />
 
@@ -340,7 +340,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:fontFamily="@font/shopee_display"
-                                android:text="Đánh giá của khách hàng"
+                                android:text="@string/xml_danh_gia_cua_khach_hang"
                                 android:textColor="#183226"
                                 android:textSize="22sp"
                                 android:textStyle="bold" />
@@ -377,7 +377,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="24dp"
                             android:gravity="center"
-                            android:text="Sản phẩm chưa có đánh giá"
+                            android:text="@string/xml_san_pham_chua_co_danh_gia"
                             android:textColor="#777777"
                             android:textSize="15sp"
                             android:visibility="visible" />
@@ -396,7 +396,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="52dp"
                             android:layout_marginTop="4dp"
-                            android:text="ĐỌC TẤT CẢ ĐÁNH GIÁ"
+                            android:text="@string/xml_doc_tat_ca_danh_gia"
                             android:textColor="#4F5752"
                             android:textSize="13sp"
                             android:textStyle="bold"
@@ -431,7 +431,7 @@
             android:background="#FFFFFF"
             android:gravity="center"
             android:padding="20dp"
-            android:text="Không thể tải dữ liệu.\nChạm để thử lại."
+            android:text="@string/xml_khong_the_tai_du_lieuncham_de_thu_lai"
             android:textColor="#333333"
             android:textSize="16sp"
             android:visibility="gone" />

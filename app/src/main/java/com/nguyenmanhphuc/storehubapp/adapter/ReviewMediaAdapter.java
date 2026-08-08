@@ -98,7 +98,7 @@ public class ReviewMediaAdapter extends RecyclerView.Adapter<ReviewMediaAdapter.
 
             vvFullscreen.setOnErrorListener((mp, what, extra) -> {
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(context, "Không thể tải video này", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, context.getString(R.string.toast_khong_the_tai_video_nay), Toast.LENGTH_SHORT).show();
                 return true;
             });
 

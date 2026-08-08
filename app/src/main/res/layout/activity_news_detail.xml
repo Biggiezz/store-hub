@@ -26,7 +26,7 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Quay lại"
+            android:contentDescription="@string/xml_quay_lai"
             android:padding="4dp"
             android:src="@drawable/ic_back"
             app:tint="@color/dark_green" />
@@ -38,7 +38,7 @@
             android:layout_marginStart="12dp"
             android:layout_weight="1"
             android:fontFamily="@font/shopee_display"
-            android:text="Chi tiết tin tức"
+            android:text="@string/news_detail_title"
             android:textColor="@color/dark_green"
             android:textSize="20sp" />
     </LinearLayout>
@@ -75,7 +75,7 @@
                     android:id="@+id/ivDetailNewsImage"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:contentDescription="Ảnh tin tức"
+                    android:contentDescription="@string/xml_anh_tin_tuc"
                     android:scaleType="centerCrop"
                     tools:src="@tools:sample/backgrounds/scenic" />
 
@@ -105,7 +105,7 @@
                     android:id="@+id/tvDetailNewsAuthor"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tác giả: Admin"
+                    android:text="@string/xml_tac_gia_admin"
                     android:textColor="@color/subtext_primary"
                     android:textSize="13sp"
                     android:textStyle="italic" />
@@ -165,7 +165,7 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginBottom="16dp"
                     android:letterSpacing="0.08"
-                    android:text="CHIA SẺ BÀI VIẾT"
+                    android:text="@string/xml_chia_se_bai_viet"
                     android:textColor="#AAA49D"
                     android:textSize="11sp"
                     android:textStyle="bold" />

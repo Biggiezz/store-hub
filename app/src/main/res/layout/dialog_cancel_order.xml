@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:fontFamily="@font/shopee_display"
-            android:text="Lý do hủy đơn"
+            android:text="@string/xml_ly_do_huy_don"
             android:textColor="@color/dark_green"
             android:textSize="22sp"
             android:textStyle="bold" />
@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:checked="true"
             android:paddingVertical="8dp"
-            android:text="Thay đổi ý định mua hàng"
+            android:text="@string/xml_thay_doi_y_dinh_mua_hang"
             android:textColor="@color/text_primary"
             android:textSize="14sp" />
 
@@ -57,7 +57,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingVertical="8dp"
-            android:text="Tìm thấy nơi khác giá rẻ hơn"
+            android:text="@string/xml_tim_thay_noi_khac_gia_re_hon"
             android:textColor="@color/text_primary"
             android:textSize="14sp" />
 
@@ -66,7 +66,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingVertical="8dp"
-            android:text="Phí vận chuyển quá cao"
+            android:text="@string/xml_phi_van_chuyen_qua_cao"
             android:textColor="@color/text_primary"
             android:textSize="14sp" />
 
@@ -75,7 +75,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingVertical="8dp"
-            android:text="Thời gian giao hàng quá lâu"
+            android:text="@string/xml_thoi_gian_giao_hang_qua_lau"
             android:textColor="@color/text_primary"
             android:textSize="14sp" />
 
@@ -84,7 +84,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingVertical="8dp"
-            android:text="Nhập sai thông tin"
+            android:text="@string/xml_nhap_sai_thong_tin"
             android:textColor="@color/text_primary"
             android:textSize="14sp" />
 
@@ -93,7 +93,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingVertical="8dp"
-            android:text="Khác"
+            android:text="@string/xml_khac"
             android:textColor="@color/text_primary"
             android:textSize="14sp" />
 
@@ -104,7 +104,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:text="Ghi chú thêm (Không bắt buộc)"
+        android:text="@string/xml_ghi_chu_them_khong_bat_buoc"
         android:textColor="#675C53"
         android:textSize="12sp" />
 
@@ -115,7 +115,7 @@
         android:layout_marginTop="6dp"
         android:background="@drawable/bg_input"
         android:gravity="top"
-        android:hint="Nhập lý do của bạn..."
+        android:hint="@string/xml_nhap_ly_do_cua_ban"
         android:importantForAutofill="no"
         android:inputType="textMultiLine"
         android:padding="12dp"
@@ -136,7 +136,7 @@
             android:layout_height="46dp"
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:text="Đóng"
+            android:text="@string/xml_dong"
             android:textAllCaps="false"
             android:textColor="@color/text_primary"
             android:textSize="14sp"
@@ -149,7 +149,7 @@
             android:layout_height="46dp"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
-            android:text="Xác nhận hủy"
+            android:text="@string/xml_xac_nhan_huy"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="14sp"

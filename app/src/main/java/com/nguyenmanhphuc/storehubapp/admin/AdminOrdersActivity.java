@@ -124,7 +124,7 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
         preferencesManager = new SharedPreferencesManager(this);
 
         if (!hasAdminAccess()) {
-            Toast.makeText(this, "Bạn không có quyền quản lý đơn hàng", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, this.getString(R.string.toast_ban_khong_co_quyen_quan_ly_don_hang), Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -152,7 +152,7 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
                     }
                     filterAndSearchOrders();
                 } else {
-                    Toast.makeText(AdminOrdersActivity.this, "Không thể tải danh sách đơn hàng", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AdminOrdersActivity.this, AdminOrdersActivity.this.getString(R.string.toast_khong_the_tai_danh_sach_don_hang), Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -161,7 +161,7 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
                 if (call.isCanceled()) return;
                 setLoading(false);
                 Log.e("AdminOrdersActivity", "Error loading orders", t);
-                Toast.makeText(AdminOrdersActivity.this, "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AdminOrdersActivity.this, AdminOrdersActivity.this.getString(R.string.toast_loi_ket_noi_may_chu), Toast.LENGTH_SHORT).show();
                 allOrders.clear();
                 filterAndSearchOrders();
             }
@@ -301,7 +301,7 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
         int cancelIndex = 5;
 
         if (currentStatusIndex == 4 || currentStatusIndex == 5) {
-            Toast.makeText(this, "Đơn hàng đã ở trạng thái cuối cùng, không thể cập nhật nữa!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, this.getString(R.string.toast_don_hang_da_o_trang_thai_cuoi_cung_khong), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -322,7 +322,7 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
             if (selectedIndex[0] >= 0 && selectedIndex[0] != finalCurrentStatusIndex) {
                 updateStatus(order.getOrderId(), allStatuses[selectedIndex[0]]);
             } else {
-                Toast.makeText(this, "Vui lòng chọn một trạng thái mới để cập nhật!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, this.getString(R.string.toast_vui_long_chon_mot_trang_thai_moi_de_cap_), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -339,10 +339,10 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
                     public void onResponse(@NonNull Call<Response<Order>> call, @NonNull retrofit2.Response<Response<Order>> response) {
                         setLoading(false);
                         if (response.isSuccessful() && response.body() != null) {
-                            Toast.makeText(AdminOrdersActivity.this, "Cập nhật trạng thái thành công!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AdminOrdersActivity.this, AdminOrdersActivity.this.getString(R.string.toast_cap_nhat_trang_thai_thanh_cong), Toast.LENGTH_SHORT).show();
                             loadOrders(); // Refresh lists
                         } else {
-                            Toast.makeText(AdminOrdersActivity.this, "Cập nhật thất bại", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AdminOrdersActivity.this, AdminOrdersActivity.this.getString(R.string.toast_cap_nhat_that_bai), Toast.LENGTH_SHORT).show();
                         }
                     }
 
@@ -350,7 +350,7 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
                     public void onFailure(@NonNull Call<Response<Order>> call, @NonNull Throwable t) {
                         setLoading(false);
                         Log.e("AdminOrdersActivity", "Error updating status", t);
-                        Toast.makeText(AdminOrdersActivity.this, "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AdminOrdersActivity.this, AdminOrdersActivity.this.getString(R.string.toast_loi_ket_noi_may_chu), Toast.LENGTH_SHORT).show();
                     }
                 });
     }

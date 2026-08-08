@@ -108,7 +108,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="MÃ ĐƠN: #SH-863110"
+                    android:text="@string/xml_ma_don_sh_863110"
                     android:textColor="#434844"
                     android:textSize="12sp"
                     android:textStyle="bold" />
@@ -126,7 +126,7 @@
                     android:layout_marginTop="18dp"
                     android:drawableStart="@drawable/ic_detail_clock"
                     android:drawablePadding="8dp"
-                    android:text="Lý do hủy: Thay đổi ý định"
+                    android:text="@string/xml_ly_do_huy_thay_doi_y_dinh"
                     android:textColor="#1B1C1A"
                     android:textSize="14sp" />
             </LinearLayout>

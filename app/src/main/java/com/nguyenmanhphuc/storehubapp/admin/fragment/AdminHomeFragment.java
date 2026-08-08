@@ -105,7 +105,7 @@ public class AdminHomeFragment extends Fragment {
 
                     private void navigateToLogin() {
                         android.content.Context appContext = requireContext().getApplicationContext();
-                        Toast.makeText(appContext, "Đã đăng xuất tài khoản", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(appContext, appContext.getString(R.string.toast_da_dang_xuat_tai_khoan), Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(appContext, LoginActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
@@ -192,7 +192,7 @@ public class AdminHomeFragment extends Fragment {
                 checkRefreshComplete();
                 Log.e("AdminHomeFragment", "Lỗi khi gọi API thống kê", t);
                 if (isAdded()) {
-                    Toast.makeText(requireContext(), "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), requireContext().getString(R.string.toast_loi_ket_noi_may_chu), Toast.LENGTH_SHORT).show();
                 }
             }
         });

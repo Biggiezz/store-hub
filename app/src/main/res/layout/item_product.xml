@@ -78,7 +78,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Đã bán: 0"
+                android:text="@string/xml_da_ban_0"
                 android:textColor="#888888"
                 android:textSize="13sp" />
 
@@ -90,7 +90,7 @@
                 android:background="@drawable/bg_status_out_of_stock"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="3dp"
-                android:text="HẾT HÀNG"
+                android:text="@string/xml_het_hang"
                 android:textColor="#C62828"
                 android:textSize="11sp"
                 android:textStyle="bold"

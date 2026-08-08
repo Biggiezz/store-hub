@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:fontFamily="@font/shopee_display"
-            android:text="Thêm người dùng mới"
+            android:text="@string/xml_them_nguoi_dung_moi"
             android:textColor="@color/dark_green"
             android:textSize="20sp" />
     </LinearLayout>
@@ -93,7 +93,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="Tải ảnh đại diện"
+                    android:text="@string/xml_tai_anh_dai_dien"
                     android:textColor="#675C53"
                     android:textSize="13sp" />
             </LinearLayout>
@@ -127,7 +127,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:fontFamily="@font/shopee_display"
-                        android:text="Thông tin cá nhân"
+                        android:text="@string/xml_thong_tin_ca_nhan"
                         android:textColor="@color/dark_green"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -138,7 +138,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="6dp"
-                    android:text="Họ và tên"
+                    android:text="@string/xml_ho_va_ten"
                     android:textColor="@color/text_primary"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -149,7 +149,7 @@
                     android:layout_height="48dp"
                     android:layout_marginBottom="14dp"
                     android:background="@drawable/bg_search_input"
-                    android:hint="Nhập họ và tên đầy đủ"
+                    android:hint="@string/xml_nhap_ho_va_ten_day_du"
                     android:inputType="textPersonName"
                     android:paddingHorizontal="14dp"
                     android:textColor="@color/text_primary"
@@ -161,7 +161,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="6dp"
-                    android:text="Số điện thoại"
+                    android:text="@string/xml_so_dien_thoai"
                     android:textColor="@color/text_primary"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -172,7 +172,7 @@
                     android:layout_height="48dp"
                     android:layout_marginBottom="14dp"
                     android:background="@drawable/bg_search_input"
-                    android:hint="Nhập số điện thoại"
+                    android:hint="@string/xml_nhap_so_dien_thoai"
                     android:inputType="phone"
                     android:paddingHorizontal="14dp"
                     android:textColor="@color/text_primary"
@@ -184,7 +184,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="6dp"
-                    android:text="Địa chỉ Email"
+                    android:text="@string/xml_dia_chi_email"
                     android:textColor="@color/text_primary"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -231,7 +231,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:fontFamily="@font/shopee_display"
-                        android:text="Thiết lập tài khoản"
+                        android:text="@string/xml_thiet_lap_tai_khoan"
                         android:textColor="@color/dark_green"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -242,7 +242,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="6dp"
-                    android:text="Vai trò"
+                    android:text="@string/xml_vai_tro"
                     android:textColor="@color/text_primary"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -260,7 +260,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="6dp"
-                    android:text="Mật khẩu"
+                    android:text="@string/xml_mat_khau"
                     android:textColor="@color/text_primary"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -327,7 +327,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:fontFamily="@font/shopee_display"
-                        android:text="Địa chỉ chi tiết"
+                        android:text="@string/xml_dia_chi_chi_tiet"
                         android:textColor="@color/dark_green"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -338,7 +338,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="6dp"
-                    android:text="Địa chỉ"
+                    android:text="@string/xml_dia_chi"
                     android:textColor="@color/text_primary"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -349,7 +349,7 @@
                     android:layout_height="90dp"
                     android:background="@drawable/bg_search_input"
                     android:gravity="top|start"
-                    android:hint="Nhập địa chỉ chi tiết của người dùng..."
+                    android:hint="@string/xml_nhap_dia_chi_chi_tiet_cua_nguoi_dung"
                     android:inputType="textMultiLine"
                     android:padding="12dp"
                     android:textColor="@color/text_primary"
@@ -374,7 +374,7 @@
                     android:layout_marginEnd="12dp"
                     android:backgroundTint="@color/white"
                     android:fontFamily="@font/shopee_display"
-                    android:text="HỦY"
+                    android:text="@string/xml_huy"
                     android:textColor="@color/text_primary"
                     android:textSize="14sp"
                     app:cornerRadius="25dp"
@@ -389,7 +389,7 @@
                     android:backgroundTint="@color/dark_green"
                     android:fontFamily="@font/shopee_display"
                     android:paddingHorizontal="24dp"
-                    android:text="Lưu người dùng"
+                    android:text="@string/xml_luu_nguoi_dung"
                     android:textColor="@color/white"
                     android:textSize="14sp"
                     app:cornerRadius="25dp" />

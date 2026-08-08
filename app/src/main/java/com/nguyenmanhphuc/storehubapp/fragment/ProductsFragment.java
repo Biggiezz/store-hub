@@ -252,7 +252,7 @@ public class ProductsFragment extends Fragment {
                     Pagination pagination = response.body().getPagination();
                     showProducts(products, pagination, requestGeneration, isLoadMore);
                 } else {
-                    showLoadFailure(requestGeneration, "Không thể tải danh sách sản phẩm");
+                    showLoadFailure(requestGeneration, getString(R.string.failed_to_load_products_toast));
                 }
             }
 
@@ -260,7 +260,7 @@ public class ProductsFragment extends Fragment {
             public void onFailure(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull Throwable t) {
                 if (call.isCanceled()) return;
 
-                showLoadFailure(requestGeneration, "Lỗi tải sản phẩm");
+                showLoadFailure(requestGeneration, getString(R.string.error_loading_products_toast));
             }
         });
     }
@@ -371,7 +371,7 @@ public class ProductsFragment extends Fragment {
         View allItemView = LayoutInflater.from(requireContext()).inflate(R.layout.item_dialog_category, layoutCategoriesList, false);
         TextView tvAllName = allItemView.findViewById(R.id.tvCategoryName);
         ImageView ivAllCheck = allItemView.findViewById(R.id.ivCheck);
-        tvAllName.setText("Tất cả danh mục");
+        tvAllName.setText(getString(R.string.all_categories));
         ivAllCheck.setVisibility(currentCategory.isEmpty() ? View.VISIBLE : View.GONE);
         allItemView.setOnClickListener(v -> {
             currentCategory = "";
@@ -386,7 +386,7 @@ public class ProductsFragment extends Fragment {
             TextView tvName = itemView.findViewById(R.id.tvCategoryName);
             ImageView ivCheck = itemView.findViewById(R.id.ivCheck);
             
-            tvName.setText(category.getName());
+            tvName.setText(getLocalizedCategoryName(category.getName()));
             boolean isSelected = category.get_id().equals(currentCategory);
             ivCheck.setVisibility(isSelected ? View.VISIBLE : View.GONE);
 
@@ -399,6 +399,21 @@ public class ProductsFragment extends Fragment {
         }
 
         popupWindow.showAsDropDown(anchorView, 0, 10);
+    }
+
+    private String getLocalizedCategoryName(String rawName) {
+        if (rawName == null) return "";
+        String lower = rawName.trim().toLowerCase();
+        if (lower.contains("điện thoại") || lower.contains("phone")) {
+            return getString(R.string.category_phones);
+        } else if (lower.contains("máy tính") || lower.contains("computer") || lower.contains("laptop")) {
+            return getString(R.string.category_computers);
+        } else if (lower.contains("tai nghe") || lower.contains("headphone") || lower.contains("earphone")) {
+            return getString(R.string.category_headphones);
+        } else if (lower.contains("đồng hồ") || lower.contains("watch")) {
+            return getString(R.string.category_watches);
+        }
+        return rawName;
     }
 
     @Override

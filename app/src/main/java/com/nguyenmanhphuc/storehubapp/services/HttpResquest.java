@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.nguyenmanhphuc.storehubapp.utils.NetworkUtils;
 import com.nguyenmanhphuc.storehubapp.utils.SharedPreferencesManager;
+import com.nguyenmanhphuc.storehubapp.R;
 
 import java.io.IOException;
 
@@ -31,9 +32,9 @@ public class HttpResquest {
             builder.addInterceptor(chain -> {
                 if (!NetworkUtils.isNetworkAvailable(appContext)) {
                     new Handler(Looper.getMainLooper()).post(() ->
-                            Toast.makeText(appContext, "Mạng không khả dụng. Kiểm tra lại mạng.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(appContext, appContext.getString(R.string.network_unavailable_toast), Toast.LENGTH_SHORT).show()
                     );
-                    throw new IOException("Mạng không khả dụng. Kiểm tra lại mạng.");
+                    throw new IOException(appContext.getString(R.string.network_unavailable_toast));
                 }
                 return chain.proceed(chain.request());
             });

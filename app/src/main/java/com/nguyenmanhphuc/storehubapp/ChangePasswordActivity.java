@@ -1,5 +1,7 @@
 package com.nguyenmanhphuc.storehubapp;
 
+import com.nguyenmanhphuc.storehubapp.R;
+
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -108,7 +110,7 @@ public class ChangePasswordActivity extends BaseActivity {
                 tilCurrentPassword.setError("Vui lòng nhập mật khẩu hiện tại");
                 tilCurrentPassword.requestFocus();
             } else {
-                Toast.makeText(this, "Vui lòng nhập mật khẩu hiện tại", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, this.getString(R.string.toast_vui_long_nhap_mat_khau_hien_tai), Toast.LENGTH_SHORT).show();
             }
             return;
         }
@@ -118,7 +120,7 @@ public class ChangePasswordActivity extends BaseActivity {
                 tilNewPassword.setError("Vui lòng nhập mật khẩu mới");
                 tilNewPassword.requestFocus();
             } else {
-                Toast.makeText(this, "Vui lòng nhập mật khẩu mới", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, this.getString(R.string.toast_vui_long_nhap_mat_khau_moi), Toast.LENGTH_SHORT).show();
             }
             return;
         }
@@ -128,7 +130,7 @@ public class ChangePasswordActivity extends BaseActivity {
                 tilNewPassword.setError("Mật khẩu mới phải tối thiểu 8 ký tự, bao gồm cả chữ cái và số");
                 tilNewPassword.requestFocus();
             } else {
-                Toast.makeText(this, "Mật khẩu mới phải tối thiểu 8 ký tự, bao gồm cả chữ cái và số", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, this.getString(R.string.toast_mat_khau_moi_phai_toi_thieu_8_ky_tu_bao_), Toast.LENGTH_LONG).show();
             }
             return;
         }
@@ -138,7 +140,7 @@ public class ChangePasswordActivity extends BaseActivity {
                 tilConfirmNewPassword.setError("Vui lòng xác nhận mật khẩu mới");
                 tilConfirmNewPassword.requestFocus();
             } else {
-                Toast.makeText(this, "Vui lòng xác nhận mật khẩu mới", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, this.getString(R.string.toast_vui_long_xac_nhan_mat_khau_moi), Toast.LENGTH_SHORT).show();
             }
             return;
         }
@@ -148,7 +150,7 @@ public class ChangePasswordActivity extends BaseActivity {
                 tilConfirmNewPassword.setError("Mật khẩu xác nhận không khớp");
                 tilConfirmNewPassword.requestFocus();
             } else {
-                Toast.makeText(this, "Mật khẩu xác nhận không khớp", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, this.getString(R.string.toast_mat_khau_xac_nhan_khong_khop), Toast.LENGTH_SHORT).show();
             }
             return;
         }
@@ -171,7 +173,7 @@ public class ChangePasswordActivity extends BaseActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     Response<Void> res = response.body();
                     if (res.getCode() == 200) {
-                        Toast.makeText(ChangePasswordActivity.this, "Đổi mật khẩu thành công!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ChangePasswordActivity.this, ChangePasswordActivity.this.getString(R.string.toast_doi_mat_khau_thanh_cong), Toast.LENGTH_SHORT).show();
 
                         User user = sharedPreferencesManager.getUser();
                         if (user != null) {
@@ -189,7 +191,7 @@ public class ChangePasswordActivity extends BaseActivity {
                         tilCurrentPassword.setError("Mật khẩu hiện tại không chính xác");
                         tilCurrentPassword.requestFocus();
                     } else {
-                        Toast.makeText(ChangePasswordActivity.this, "Mật khẩu hiện tại không chính xác", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ChangePasswordActivity.this, ChangePasswordActivity.this.getString(R.string.toast_mat_khau_hien_tai_khong_chinh_xac), Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -197,7 +199,7 @@ public class ChangePasswordActivity extends BaseActivity {
             @Override
             public void onFailure(@NonNull Call<Response<Void>> call, @NonNull Throwable t) {
                 loadingDialog.dismiss();
-                Toast.makeText(ChangePasswordActivity.this, "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ChangePasswordActivity.this, ChangePasswordActivity.this.getString(R.string.toast_loi_ket_noi_may_chu), Toast.LENGTH_SHORT).show();
             }
         });
     }

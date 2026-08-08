@@ -175,7 +175,7 @@ public class ManagementReviewsActivity extends AppCompatActivity {
                     }
                     filterAndDisplayReviews();
                 } else {
-                    Toast.makeText(ManagementReviewsActivity.this, "Không thể tải đánh giá từ server", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ManagementReviewsActivity.this, ManagementReviewsActivity.this.getString(R.string.toast_khong_the_tai_danh_gia_tu_server), Toast.LENGTH_SHORT).show();
                     tvEmptyState.setVisibility(View.VISIBLE);
                     rvReviews.setVisibility(View.GONE);
                 }

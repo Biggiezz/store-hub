@@ -34,7 +34,7 @@
             android:layout_centerVertical="true"
             android:layout_toEndOf="@id/btnBack"
             android:layout_marginStart="12dp"
-            android:text="Trả lời đánh giá"
+            android:text="@string/xml_tra_loi_danh_gia"
             android:textColor="#1B2C24"
             android:textSize="20sp" />
     </RelativeLayout>
@@ -102,7 +102,7 @@
                             android:paddingVertical="4dp"
                             android:paddingStart="8dp"
                             android:paddingEnd="10dp"
-                            android:text="Đã hoàn thành"
+                            android:text="@string/xml_da_hoan_thanh"
                             android:textColor="#334D27"
                             android:textSize="12sp"
                             app:drawableTint="#496C35" />
@@ -251,19 +251,19 @@
                     <TextView
                         android:id="@+id/tvSuggestionOne"
                         style="@style/ReplySuggestionStyle"
-                        android:text="Cảm ơn bạn đã tin dùng!" />
+                        android:text="@string/xml_cam_on_ban_da_tin_dung" />
 
                     <TextView
                         android:id="@+id/tvSuggestionTwo"
                         style="@style/ReplySuggestionStyle"
                         android:layout_marginTop="8dp"
-                        android:text="Rất vui vì bạn hài lòng" />
+                        android:text="@string/xml_rat_vui_vi_ban_hai_long" />
 
                     <TextView
                         android:id="@+id/tvSuggestionThree"
                         style="@style/ReplySuggestionStyle"
                         android:layout_marginTop="8dp"
-                        android:text="Chúng tôi sẽ nỗ lực hơn" />
+                        android:text="@string/xml_chung_toi_se_no_luc_hon" />
 
                     <!-- Ô nhập phản hồi -->
                     <com.google.android.material.card.MaterialCardView
@@ -290,7 +290,7 @@
                                 android:layout_weight="1"
                                 android:background="@null"
                                 android:gravity="top|start"
-                                android:hint="Viết phản hồi của bạn..."
+                                android:hint="@string/xml_viet_phan_hoi_cua_ban"
                                 android:inputType="textCapSentences|textMultiLine"
                                 android:maxLength="500"
                                 android:padding="4dp"
@@ -340,7 +340,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Hủy"
+            android:text="@string/xml_huy"
             android:textAllCaps="false"
             android:textColor="#2F3933"
             android:textSize="18sp"
@@ -356,7 +356,7 @@
             android:layout_height="match_parent"
             android:layout_marginStart="16dp"
             android:layout_weight="1"
-            android:text="Trả lời"
+            android:text="@string/xml_tra_loi"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
             android:textSize="18sp"

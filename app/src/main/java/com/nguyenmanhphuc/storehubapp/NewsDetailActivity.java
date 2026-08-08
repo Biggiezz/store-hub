@@ -13,6 +13,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
 import com.nguyenmanhphuc.storehubapp.model.News;
+import com.nguyenmanhphuc.storehubapp.R;
 import com.nguyenmanhphuc.storehubapp.utils.DateTimeUtils;
 
 /**
@@ -50,7 +51,7 @@ public class NewsDetailActivity extends BaseActivity {
         if (news != null) {
             displayNewsDetails(news);
         } else {
-            Toast.makeText(this, "Không thể tải chi tiết bài viết!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, this.getString(R.string.toast_khong_the_tai_chi_tiet_bai_viet), Toast.LENGTH_SHORT).show();
             finish();
         }
     }
@@ -112,10 +113,10 @@ public class NewsDetailActivity extends BaseActivity {
      * Cấu hình sự kiện cho cụm nút tương tác Chia sẻ / Lưu / Thích dưới cùng
      */
     private void setupInteractionButtons() {
-        findViewById(R.id.btnShare).setOnClickListener(v -> Toast.makeText(this, "Đã sao chép liên kết bài viết!", Toast.LENGTH_SHORT).show());
+        findViewById(R.id.btnShare).setOnClickListener(v -> Toast.makeText(this, getString(R.string.toast_share_link_copied), Toast.LENGTH_SHORT).show());
 
-        findViewById(R.id.btnBookmark).setOnClickListener(v -> Toast.makeText(this, "Đã lưu bài viết vào mục đọc sau!", Toast.LENGTH_SHORT).show());
+        findViewById(R.id.btnBookmark).setOnClickListener(v -> Toast.makeText(this, getString(R.string.toast_bookmark_saved), Toast.LENGTH_SHORT).show());
 
-        findViewById(R.id.btnLike).setOnClickListener(v -> Toast.makeText(this, "Đã thêm bài viết vào danh sách yêu thích!", Toast.LENGTH_SHORT).show());
+        findViewById(R.id.btnLike).setOnClickListener(v -> Toast.makeText(this, getString(R.string.toast_like_saved), Toast.LENGTH_SHORT).show());
     }
 }

@@ -80,14 +80,14 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
 
         preferencesManager = new SharedPreferencesManager(this);
         if (!hasAdminAccess()) {
-            Toast.makeText(this, "Bạn không có quyền xem đơn hàng này", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, this.getString(R.string.toast_ban_khong_co_quyen_xem_don_hang_nay), Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
         orderId = getIntent().getStringExtra(EXTRA_ORDER_ID);
         if (orderId == null || orderId.isBlank()) {
-            Toast.makeText(this, "Mã đơn hàng không hợp lệ", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, this.getString(R.string.toast_ma_don_hang_khong_hop_le), Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -176,7 +176,7 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(@NonNull Call<Response<Product>> call, @NonNull Throwable t) {
-                Toast.makeText(AdminOrderDetailActivity.this, "Lỗi khi lấy thông tin sản phẩm", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AdminOrderDetailActivity.this, AdminOrderDetailActivity.this.getString(R.string.toast_loi_khi_lay_thong_tin_san_pham), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -198,14 +198,14 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(@NonNull Call<Response<Product>> call, @NonNull retrofit2.Response<Response<Product>> response) {
                         if (response.isSuccessful()) {
-                            Toast.makeText(AdminOrderDetailActivity.this, "Đã cập nhật số lượng và Tồn kho", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AdminOrderDetailActivity.this, AdminOrderDetailActivity.this.getString(R.string.toast_da_cap_nhat_so_luong_va_ton_kho), Toast.LENGTH_SHORT).show();
                             bindOrder(currentOrder); // Refresh UI
                         }
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<Response<Product>> call, @NonNull Throwable t) {
-                        Toast.makeText(AdminOrderDetailActivity.this, "Lỗi cập nhật Tồn kho", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AdminOrderDetailActivity.this, AdminOrderDetailActivity.this.getString(R.string.toast_loi_cap_nhat_ton_kho), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -232,8 +232,7 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
             public void onFailure(@NonNull Call<Response<Order>> call, @NonNull Throwable throwable) {
                 if (call.isCanceled()) return;
                 setLoading(false);
-                Toast.makeText(AdminOrderDetailActivity.this,
-                        "Lỗi kết nối server", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AdminOrderDetailActivity.this, AdminOrderDetailActivity.this.getString(R.string.toast_loi_ket_noi_server), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -383,7 +382,7 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
         int cancelIndex = 5;
 
         if (currentStatusIndex == 4 || currentStatusIndex == 5) {
-            Toast.makeText(this, "Đơn hàng đã ở trạng thái cuối cùng, không thể cập nhật nữa!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, this.getString(R.string.toast_don_hang_da_o_trang_thai_cuoi_cung_khong), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -404,7 +403,7 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
                     if (selectedIndex[0] >= 0 && selectedIndex[0] != finalCurrentStatusIndex) {
                         updateOrderStatus(allStatuses[selectedIndex[0]]);
                     } else {
-                        Toast.makeText(this, "Vui lòng chọn một trạng thái mới để cập nhật!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, this.getString(R.string.toast_vui_long_chon_mot_trang_thai_moi_de_cap_), Toast.LENGTH_SHORT).show();
                     }
                 })
                 .show();
@@ -435,8 +434,7 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
             public void onFailure(@NonNull Call<Response<Order>> call, @NonNull Throwable throwable) {
                 if (call.isCanceled()) return;
                 setLoading(false);
-                Toast.makeText(AdminOrderDetailActivity.this,
-                        "Lỗi kết nối server", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AdminOrderDetailActivity.this, AdminOrderDetailActivity.this.getString(R.string.toast_loi_ket_noi_server), Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -147,7 +147,7 @@ public class LoginActivity extends BaseActivity {
         }
 
         LoadingDialogHelper loadingDialog = new LoadingDialogHelper(this);
-        loadingDialog.setMessage("Đang đăng nhập...");
+        loadingDialog.setMessage(getString(R.string.loading_logging_in));
         loadingDialog.show();
 
         LoginRequest request = new LoginRequest(email, password);
@@ -160,7 +160,7 @@ public class LoginActivity extends BaseActivity {
                     LoginResponse apiResponse = response.body();
                     if (apiResponse.getCode() == 200) {
                         prefManager.saveUserSession(apiResponse.getToken(), apiResponse.getData());
-                        loadingDialog.setMessage("Đang tải dữ liệu sản phẩm...");
+                        loadingDialog.setMessage(getString(R.string.loading_product_data));
                         preloadData(loadingDialog);
                     } else {
                         loadingDialog.dismiss();
@@ -168,7 +168,7 @@ public class LoginActivity extends BaseActivity {
                     }
                 } else {
                     loadingDialog.dismiss();
-                    Toast.makeText(LoginActivity.this, "Đăng nhập thất bại. Sai tài khoản hoặc mật khẩu.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, getString(R.string.toast_login_failed), Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -301,7 +301,7 @@ public class LoginActivity extends BaseActivity {
             MainActivity.preloadedProducts = preloadedProducts;
             MainActivity.preloadedNews = preloadedNews;
 
-            Toast.makeText(LoginActivity.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, LoginActivity.this.getString(R.string.toast_dang_nhap_thanh_cong), Toast.LENGTH_SHORT).show();
 
             /// Kiểm tra role để chuyển đến màn hình Quản trị (HomePageManagement) hoặc Trang người dùng (MainActivity)
             User user = prefManager.getUser();

@@ -1,5 +1,7 @@
 package com.nguyenmanhphuc.storehubapp;
 
+import com.nguyenmanhphuc.storehubapp.R;
+
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -48,7 +50,7 @@ public class CancelledOrderDetailActivity extends BaseActivity {
         if (order != null) {
             bindOrderData(order);
         } else {
-            Toast.makeText(this, "Không tìm thấy dữ liệu đơn hàng", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, this.getString(R.string.toast_khong_tim_thay_du_lieu_don_hang), Toast.LENGTH_SHORT).show();
             finish();
         }
     }

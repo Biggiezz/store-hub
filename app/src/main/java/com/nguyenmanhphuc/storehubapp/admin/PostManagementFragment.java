@@ -84,7 +84,7 @@ public class PostManagementFragment extends Fragment implements PostManagementAd
             public void onFailure(@NonNull Call<Response<ArrayList<News>>> call, @NonNull Throwable t) {
                 if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                 if (isAdded() && getContext() != null) {
-                    Toast.makeText(getContext(), "Lỗi tải dữ liệu", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getContext().getString(R.string.toast_loi_tai_du_lieu), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -97,7 +97,7 @@ public class PostManagementFragment extends Fragment implements PostManagementAd
             public void onResponse(@NonNull Call<Response<Void>> call, @NonNull retrofit2.Response<Response<Void>> response) {
                 if (response.isSuccessful()) {
                     if (isAdded() && getContext() != null) {
-                        Toast.makeText(getContext(), "Đã xóa bài viết", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), getContext().getString(R.string.toast_da_xoa_bai_viet), Toast.LENGTH_SHORT).show();
                     }
                     loadNews();
                 }
@@ -106,7 +106,7 @@ public class PostManagementFragment extends Fragment implements PostManagementAd
             @Override
             public void onFailure(@NonNull Call<Response<Void>> call, @NonNull Throwable t) {
                 if (isAdded() && getContext() != null) {
-                    Toast.makeText(getContext(), "Lỗi khi xóa", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getContext().getString(R.string.toast_loi_khi_xoa), Toast.LENGTH_SHORT).show();
                 }
             }
         });

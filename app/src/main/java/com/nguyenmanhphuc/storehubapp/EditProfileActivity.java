@@ -1,5 +1,7 @@
 package com.nguyenmanhphuc.storehubapp;
 
+import com.nguyenmanhphuc.storehubapp.R;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -89,7 +91,7 @@ public class EditProfileActivity extends BaseActivity {
         currentUser = sharedPreferencesManager.getUser();
 
         if (currentUser == null) {
-            Toast.makeText(this, "Vui lòng đăng nhập", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, this.getString(R.string.toast_vui_long_dang_nhap), Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -175,7 +177,7 @@ public class EditProfileActivity extends BaseActivity {
                 tilProfileName.setError("Vui lòng nhập họ và tên");
                 tilProfileName.requestFocus();
             } else {
-                Toast.makeText(this, "Vui lòng nhập họ và tên", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, this.getString(R.string.toast_vui_long_nhap_ho_va_ten), Toast.LENGTH_SHORT).show();
             }
             return;
         }
@@ -185,7 +187,7 @@ public class EditProfileActivity extends BaseActivity {
                 tilProfilePhone.setError("Vui lòng nhập số điện thoại");
                 tilProfilePhone.requestFocus();
             } else {
-                Toast.makeText(this, "Vui lòng nhập số điện thoại", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, this.getString(R.string.toast_vui_long_nhap_so_dien_thoai), Toast.LENGTH_SHORT).show();
             }
             return;
         }
@@ -195,7 +197,7 @@ public class EditProfileActivity extends BaseActivity {
                 tilProfilePhone.setError("Số điện thoại phải từ 10-11 chữ số");
                 tilProfilePhone.requestFocus();
             } else {
-                Toast.makeText(this, "Số điện thoại phải từ 10-11 chữ số", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, this.getString(R.string.toast_so_dien_thoai_phai_tu_10_11_chu_so), Toast.LENGTH_SHORT).show();
             }
             return;
         }
@@ -205,7 +207,7 @@ public class EditProfileActivity extends BaseActivity {
                 tilProfileAddress.setError("Vui lòng nhập địa chỉ");
                 tilProfileAddress.requestFocus();
             } else {
-                Toast.makeText(this, "Vui lòng nhập địa chỉ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, this.getString(R.string.toast_vui_long_nhap_dia_chi), Toast.LENGTH_SHORT).show();
             }
             return;
         }
@@ -249,21 +251,21 @@ public class EditProfileActivity extends BaseActivity {
                     Response<User> res = response.body();
                     if (res.getCode() == 200 && res.getData() != null) {
                         sharedPreferencesManager.updateUser(res.getData());
-                        Toast.makeText(EditProfileActivity.this, "Cập nhật thông tin thành công!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(EditProfileActivity.this, EditProfileActivity.this.getString(R.string.toast_cap_nhat_thong_tin_thanh_cong), Toast.LENGTH_SHORT).show();
                         setResult(RESULT_OK);
                         finish();
                     } else {
                         Toast.makeText(EditProfileActivity.this, res.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(EditProfileActivity.this, "Không thể cập nhật thông tin. Vui lòng thử lại.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditProfileActivity.this, EditProfileActivity.this.getString(R.string.toast_khong_the_cap_nhat_thong_tin_vui_long_th), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<Response<User>> call, @NonNull Throwable t) {
                 loadingDialog.dismiss();
-                Toast.makeText(EditProfileActivity.this, "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(EditProfileActivity.this, EditProfileActivity.this.getString(R.string.toast_loi_ket_noi_may_chu), Toast.LENGTH_SHORT).show();
             }
         });
     }

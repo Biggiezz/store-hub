@@ -27,7 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/shopee_display"
-        android:text="Nâng tầm phong cách sống"
+        android:text="@string/splash_subtitle"
         android:textColor="@color/subtext_primary"
         android:textSize="16sp"
         android:textStyle="bold" />

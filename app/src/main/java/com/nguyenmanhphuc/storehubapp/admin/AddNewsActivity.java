@@ -121,7 +121,7 @@ public class AddNewsActivity extends AppCompatActivity {
         String author = tvAuthor.getText().toString();
 
         if (title.isEmpty() || content.isEmpty()) {
-            Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, this.getString(R.string.toast_vui_long_nhap_day_du_thong_tin), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -137,16 +137,16 @@ public class AddNewsActivity extends AppCompatActivity {
             @Override
             public void onResponse(@NonNull Call<Response<News>> call, @NonNull retrofit2.Response<Response<News>> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(AddNewsActivity.this, "Lưu bài viết thành công", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddNewsActivity.this, AddNewsActivity.this.getString(R.string.toast_luu_bai_viet_thanh_cong), Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
-                    Toast.makeText(AddNewsActivity.this, "Lỗi khi lưu bài viết", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddNewsActivity.this, AddNewsActivity.this.getString(R.string.toast_loi_khi_luu_bai_viet), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<Response<News>> call, @NonNull Throwable t) {
-                Toast.makeText(AddNewsActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AddNewsActivity.this, AddNewsActivity.this.getString(R.string.toast_loi_ket_noi), Toast.LENGTH_SHORT).show();
             }
         });
     }

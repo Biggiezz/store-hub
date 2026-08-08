@@ -173,7 +173,7 @@ public class NewsFragmentManagement extends Fragment implements PostAdapter.Post
                     newsList.addAll(serverNews);
                     if (adapter != null) adapter.updateData(newsList);
                 } else {
-                    Toast.makeText(getContext(), "Không nhận được phản hồi từ máy chủ", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getContext().getString(R.string.toast_khong_nhan_duoc_phan_hoi_tu_may_chu), Toast.LENGTH_SHORT).show();
                 }
 
                 tvEmptyPosts.setText("draft".equals(selectedStatus)
@@ -190,7 +190,7 @@ public class NewsFragmentManagement extends Fragment implements PostAdapter.Post
                 isLoading = false;
                 if (progressBar != null) progressBar.setVisibility(View.GONE);
                 if (rvPosts != null) rvPosts.setVisibility(View.VISIBLE);
-                Toast.makeText(getContext(), "Lỗi tải danh sách bài viết", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getContext().getString(R.string.toast_loi_tai_danh_sach_bai_viet), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -241,7 +241,7 @@ public class NewsFragmentManagement extends Fragment implements PostAdapter.Post
             @Override
             public void onResponse(@NonNull Call<Response<Void>> call, @NonNull retrofit2.Response<Response<Void>> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(getContext(), "Đã xóa bài viết thành công", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getContext().getString(R.string.toast_da_xoa_bai_viet_thanh_cong), Toast.LENGTH_SHORT).show();
                     fetchPosts();
                 }
             }
@@ -249,7 +249,7 @@ public class NewsFragmentManagement extends Fragment implements PostAdapter.Post
             @Override
             public void onFailure(@NonNull Call<Response<Void>> call, @NonNull Throwable t) {
                 if (isAdded()) {
-                    Toast.makeText(getContext(), "Lỗi khi xóa bài viết", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getContext().getString(R.string.toast_loi_khi_xoa_bai_viet), Toast.LENGTH_SHORT).show();
                 }
             }
         });

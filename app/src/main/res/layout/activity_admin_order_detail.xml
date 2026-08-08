@@ -38,7 +38,7 @@
                 android:layout_marginStart="12dp"
                 android:layout_weight="1"
                 android:fontFamily="@font/shopee_display"
-                android:text="Chi tiết đơn hàng"
+                android:text="@string/xml_chi_tiet_don_hang"
                 android:textColor="@color/dark_green"
                 android:textSize="20sp" />
         </LinearLayout>
@@ -126,7 +126,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="22dp"
-                        android:text="Thông tin giao hàng"
+                        android:text="@string/xml_thong_tin_giao_hang"
                         android:textColor="@color/dark_green"
                         android:textSize="20sp"
                         android:textStyle="bold" />
@@ -179,7 +179,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Sản phẩm trong đơn"
+                            android:text="@string/xml_san_pham_trong_don"
                             android:textColor="@color/dark_green"
                             android:textSize="20sp"
                             android:textStyle="bold" />
@@ -203,7 +203,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:text="Thanh toán"
+                        android:text="@string/xml_thanh_toan"
                         android:textColor="@color/dark_green"
                         android:textSize="20sp"
                         android:textStyle="bold" />
@@ -225,14 +225,14 @@
                             android:padding="16dp">
 
                             <LinearLayout style="@style/Widget.StoreHub.AdminOrderSummaryRow">
-                                <TextView style="@style/Widget.StoreHub.AdminOrderSummaryLabel" android:text="Tạm tính" />
+                                <TextView style="@style/Widget.StoreHub.AdminOrderSummaryLabel" android:text="@string/xml_tam_tinh" />
                                 <TextView android:id="@+id/tvAdminDetailSubtotal" style="@style/Widget.StoreHub.AdminOrderSummaryValue" />
                             </LinearLayout>
 
                             <LinearLayout
                                 style="@style/Widget.StoreHub.AdminOrderSummaryRow"
                                 android:layout_marginTop="10dp">
-                                <TextView style="@style/Widget.StoreHub.AdminOrderSummaryLabel" android:text="Phí vận chuyển" />
+                                <TextView style="@style/Widget.StoreHub.AdminOrderSummaryLabel" android:text="@string/xml_phi_van_chuyen" />
                                 <TextView android:id="@+id/tvAdminDetailShippingFee" style="@style/Widget.StoreHub.AdminOrderSummaryValue" />
                             </LinearLayout>
 
@@ -246,7 +246,7 @@
                             <LinearLayout style="@style/Widget.StoreHub.AdminOrderSummaryRow">
                                 <TextView
                                     style="@style/Widget.StoreHub.AdminOrderSummaryLabel"
-                                    android:text="Tổng cộng"
+                                    android:text="@string/xml_tong_cong"
                                     android:textColor="@color/dark_green"
                                     android:textSize="16sp"
                                     android:textStyle="bold" />
@@ -282,7 +282,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="12dp"
-            android:text="Cập nhật trạng thái"
+            android:text="@string/xml_cap_nhat_trang_thai"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="16sp"

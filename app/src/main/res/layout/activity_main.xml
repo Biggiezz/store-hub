@@ -65,7 +65,7 @@
                                 android:id="@+id/imgAvatar"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:contentDescription="Ảnh đại diện"
+                                android:contentDescription="@string/xml_anh_dai_dien"
                                 android:scaleType="centerCrop"
                                 android:src="@drawable/ic_avatar" />
 
@@ -141,22 +141,16 @@
                         </FrameLayout>
 
                         <!-- Danh mục động -->
-                        <HorizontalScrollView
+                        <LinearLayout
+                            android:id="@+id/layoutCategories"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:paddingTop="16dp"
-                            android:scrollbars="none">
-
-                            <LinearLayout
-                                android:id="@+id/layoutCategories"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:paddingStart="24dp"
-                                android:paddingEnd="24dp"
-                                android:gravity="center_vertical" />
-                        </HorizontalScrollView>
+                            android:orientation="horizontal"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
+                            android:gravity="center_vertical" />
 
                         <!-- Tiêu đề sản phẩm -->
                         <LinearLayout
@@ -232,7 +226,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:fontFamily="@font/shopee_display"
-                                android:text="Tin tức"
+                                android:text="@string/news_title"
                                 android:textColor="@color/dark_green"
                                 android:textSize="24sp"
                                 android:textStyle="bold" />
@@ -314,7 +308,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
                 android:fontFamily="@font/shopee_display"
-                android:text="Đang tải dữ liệu StoreHub..."
+                android:text="@string/loading_storehub_data"
                 android:textColor="@color/dark_green"
                 android:textSize="17sp"
                 android:textStyle="bold" />
@@ -412,7 +406,7 @@
             android:insetTop="0dp"
             android:insetRight="0dp"
             android:insetBottom="0dp"
-            android:text="Tài khoản"
+            android:text="@string/nav_profile"
             android:textColor="#AAA49D"
             app:backgroundTint="@android:color/transparent"
             app:icon="@drawable/ic_user"

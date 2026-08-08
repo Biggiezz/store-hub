@@ -90,12 +90,12 @@ public class ReplyReviewActivity extends AppCompatActivity {
         btnSubmitReply.setOnClickListener(v -> {
             String replyText = edtReply.getText().toString().trim();
             if (replyText.isEmpty()) {
-                Toast.makeText(this, "Vui lòng nhập phản hồi hoặc chọn gợi ý!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, this.getString(R.string.toast_vui_long_nhap_phan_hoi_hoac_chon_goi_y), Toast.LENGTH_SHORT).show();
                 return;
             }
 
             if (productId == null || productId.isEmpty() || review == null || review.getId() == null || review.getId().isEmpty()) {
-                Toast.makeText(this, "Lỗi: Thiếu thông tin sản phẩm hoặc nhận xét!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, this.getString(R.string.toast_loi_thieu_thong_tin_san_pham_hoac_nhan_x), Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -104,7 +104,7 @@ public class ReplyReviewActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(Call<Response<Product>> call, retrofit2.Response<Response<Product>> response) {
                             if (response.isSuccessful() && response.body() != null && response.body().getCode() == 200) {
-                                Toast.makeText(ReplyReviewActivity.this, "Đã gửi phản hồi thành công!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ReplyReviewActivity.this, ReplyReviewActivity.this.getString(R.string.toast_da_gui_phan_hoi_thanh_cong), Toast.LENGTH_SHORT).show();
                                 setResult(RESULT_OK);
                                 finish();
                             } else {

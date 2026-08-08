@@ -159,10 +159,10 @@ public class ProductsFragmentManagement extends Fragment {
 
     private void useFallbackCategories() {
         categoriesList = java.util.Arrays.asList(
-                new Category("1", "Điện thoại"),
-                new Category("2", "Máy tính"),
-                new Category("3", "Tai nghe"),
-                new Category("4", "Đồng hồ")
+                new Category("1", getString(R.string.category_phones)),
+                new Category("2", getString(R.string.category_computers)),
+                new Category("3", getString(R.string.category_headphones)),
+                new Category("4", getString(R.string.category_headphones))
         );
         renderAdminChips(categoriesList);
     }
@@ -277,7 +277,7 @@ public class ProductsFragmentManagement extends Fragment {
                     totalPages = pagination == null ? 1 : Math.max(1, pagination.getTotalPages());
                     currentPage = pagination == null ? 1 : pagination.getCurrentPage();
                 } else {
-                    Toast.makeText(requireContext(), "Không thể tải danh sách sản phẩm", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), requireContext().getString(R.string.toast_khong_the_tai_danh_sach_san_pham), Toast.LENGTH_SHORT).show();
                 }
             }
  
@@ -289,7 +289,7 @@ public class ProductsFragmentManagement extends Fragment {
                 if (progressBarLoadMore != null) progressBarLoadMore.setVisibility(View.GONE);
                 if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                 if (grid != null) grid.setVisibility(View.VISIBLE);
-                Toast.makeText(requireContext(), "Lỗi kết nối server", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), requireContext().getString(R.string.toast_loi_ket_noi_server), Toast.LENGTH_SHORT).show();
             }
         });
     }

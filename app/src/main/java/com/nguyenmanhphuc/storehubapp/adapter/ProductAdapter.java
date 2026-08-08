@@ -52,12 +52,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Product product = listProduct.get(position);
-        holder.tvProductCategory.setText(product.getCategory() != null ? product.getCategory().getName() : "");
+        holder.tvProductCategory.setText(product.getCategory() != null ? getLocalizedCategoryName(product.getCategory().getName()) : "");
         holder.tvProductName.setText(product.getName());
 
         if (product.getStock() <= 0) {
             holder.tvProductStatus.setVisibility(View.VISIBLE);
-            holder.tvProductStatus.setText("HẾT HÀNG");
+            holder.tvProductStatus.setText(context.getString(R.string.out_of_stock).toUpperCase(java.util.Locale.getDefault()));
         } else {
             holder.tvProductStatus.setVisibility(View.GONE);
         }
@@ -101,6 +101,21 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     @Override
     public int getItemCount() {
         return listProduct.size();
+    }
+
+    private String getLocalizedCategoryName(String rawName) {
+        if (rawName == null) return "";
+        String lower = rawName.trim().toLowerCase();
+        if (lower.contains("điện thoại") || lower.contains("phone")) {
+            return context.getString(R.string.category_phones);
+        } else if (lower.contains("máy tính") || lower.contains("computer") || lower.contains("laptop")) {
+            return context.getString(R.string.category_computers);
+        } else if (lower.contains("tai nghe") || lower.contains("headphone") || lower.contains("earphone")) {
+            return context.getString(R.string.category_headphones);
+        } else if (lower.contains("đồng hồ") || lower.contains("watch")) {
+            return context.getString(R.string.category_watches);
+        }
+        return rawName;
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

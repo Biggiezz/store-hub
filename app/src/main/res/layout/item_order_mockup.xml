@@ -125,7 +125,7 @@
             android:gravity="center"
             android:lineSpacingExtra="0.5sp"
             android:paddingHorizontal="12dp"
-            android:text="Hủy đơn"
+            android:text="@string/xml_huy_don"
             android:textColor="#E05F65"
             android:textSize="12sp" />
 

@@ -1,5 +1,7 @@
 package com.nguyenmanhphuc.storehubapp;
 
+import com.nguyenmanhphuc.storehubapp.R;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -178,7 +180,7 @@ public class PaymentConfirmationActivity extends BaseActivity {
                     @Override
                     public void onPaymentSucceeded(String transactionId, String transToken, String appTransID) {
                         runOnUiThread(() -> {
-                            Toast.makeText(PaymentConfirmationActivity.this, "Thanh toán ZaloPay thành công", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(PaymentConfirmationActivity.this, PaymentConfirmationActivity.this.getString(R.string.toast_thanh_toan_zalopay_thanh_cong), Toast.LENGTH_SHORT).show();
                             createStoreOrder(appTransID);
                         });
                     }
@@ -216,7 +218,7 @@ public class PaymentConfirmationActivity extends BaseActivity {
                         finish();
                     }
                 } else {
-                    Toast.makeText(PaymentConfirmationActivity.this, "Đặt hàng thất bại. Vui lòng thử lại", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PaymentConfirmationActivity.this, PaymentConfirmationActivity.this.getString(R.string.toast_dat_hang_that_bai_vui_long_thu_lai), Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -224,7 +226,7 @@ public class PaymentConfirmationActivity extends BaseActivity {
             public void onFailure(@NonNull Call<Response<Order>> call, @NonNull Throwable t) {
                 btnConfirmPayment.setEnabled(true);
                 btnConfirmPayment.setText("Xác nhận thanh toán");
-                Toast.makeText(PaymentConfirmationActivity.this, "Không thể kết nối đến máy chủ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PaymentConfirmationActivity.this, PaymentConfirmationActivity.this.getString(R.string.toast_khong_the_ket_noi_den_may_chu), Toast.LENGTH_SHORT).show();
             }
         });
     }

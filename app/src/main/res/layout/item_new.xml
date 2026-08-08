@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxLines="2"
-            android:text="Sự kiện ra mắt sản phẩm mới mùa thu 2026"
+            android:text="@string/xml_su_kien_ra_mat_san_pham_moi_mua_thu_2026"
             android:textColor="@color/text_primary"
             android:textSize="16sp" />
 
@@ -32,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:text="2 giờ trước"
+            android:text="@string/xml_2_gio_truoc"
             android:textColor="#AAA49D"
             android:textSize="13sp" />
 

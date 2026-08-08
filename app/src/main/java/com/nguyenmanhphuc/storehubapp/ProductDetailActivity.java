@@ -86,7 +86,7 @@ public class ProductDetailActivity extends BaseActivity {
 
         if (TextUtils.isEmpty(productId) || "null".equalsIgnoreCase(productId)) {
             Log.e("ProductDetail", "Invalid Product ID: " + productId);
-            Toast.makeText(this, "Mã sản phẩm không hợp lệ", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.invalid_product_id_toast), Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -185,7 +185,7 @@ public class ProductDetailActivity extends BaseActivity {
             }
 
             if (currentProduct.getStock() > 0 && quantity >= currentProduct.getStock()) {
-                Toast.makeText(this, "Số lượng sản phẩm không đủ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.insufficient_stock_toast), Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -256,7 +256,7 @@ public class ProductDetailActivity extends BaseActivity {
             tvCategory.setVisibility(View.GONE);
         } else {
             tvCategory.setVisibility(View.VISIBLE);
-            tvCategory.setText(product.getCategory().getName().toUpperCase(new Locale("vi", "VN")));
+            tvCategory.setText(getLocalizedCategoryName(product.getCategory().getName()).toUpperCase(Locale.getDefault()));
         }
 
         ratingProduct.setRating(product.getRating());
@@ -424,13 +424,13 @@ public class ProductDetailActivity extends BaseActivity {
 
         SharedPreferencesManager pref = new SharedPreferencesManager(this);
         if (!pref.isLoggedIn()) {
-            Toast.makeText(this, "Vui lòng đăng nhập để mua hàng", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.login_to_buy_toast), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             return;
         }
         if (currentProduct.getColors() != null && !currentProduct.getColors().isEmpty() && selectedColorId == null) {
-            Toast.makeText(this, "Vui lòng chọn màu sản phẩm", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.select_product_color_toast), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -449,7 +449,7 @@ public class ProductDetailActivity extends BaseActivity {
             public void onResponse(@NonNull Call<Response<Object>> call, @NonNull retrofit2.Response<Response<Object>> response) {
                 setCartLoading(false);
                 if (!response.isSuccessful() || response.body() == null) {
-                    Toast.makeText(ProductDetailActivity.this, "Không thể thêm sản phẩm vào giỏ", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ProductDetailActivity.this, getString(R.string.add_to_cart_failed_toast), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -473,7 +473,7 @@ public class ProductDetailActivity extends BaseActivity {
                 if (!com.nguyenmanhphuc.storehubapp.utils.NetworkUtils.isNetworkAvailable(ProductDetailActivity.this)) {
                     com.nguyenmanhphuc.storehubapp.utils.NetworkUtils.showNoNetworkToast(ProductDetailActivity.this);
                 } else {
-                    Toast.makeText(ProductDetailActivity.this, "Không thể kết nối đến máy chủ", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ProductDetailActivity.this, getString(R.string.cannot_connect_server_toast), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -617,6 +617,21 @@ public class ProductDetailActivity extends BaseActivity {
     private int dpToPx(int dp) {
         return Math.round(dp * getResources().getDisplayMetrics().density
         );
+    }
+
+    private String getLocalizedCategoryName(String rawName) {
+        if (rawName == null) return "";
+        String lower = rawName.trim().toLowerCase();
+        if (lower.contains("điện thoại") || lower.contains("phone")) {
+            return getString(R.string.category_phones);
+        } else if (lower.contains("máy tính") || lower.contains("computer") || lower.contains("laptop")) {
+            return getString(R.string.category_computers);
+        } else if (lower.contains("tai nghe") || lower.contains("headphone") || lower.contains("earphone")) {
+            return getString(R.string.category_headphones);
+        } else if (lower.contains("đồng hồ") || lower.contains("watch")) {
+            return getString(R.string.category_watches);
+        }
+        return rawName;
     }
 
     @Override

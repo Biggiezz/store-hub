@@ -6,6 +6,7 @@ import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.os.Build;
 import android.widget.Toast;
+import com.nguyenmanhphuc.storehubapp.R;
 
 public class NetworkUtils {
 
@@ -31,7 +32,7 @@ public class NetworkUtils {
     public static boolean checkNetworkOrShowToast(Context context) {
         if (!isNetworkAvailable(context)) {
             if (context != null) {
-                Toast.makeText(context.getApplicationContext(), "Mạng không khả dụng. Kiểm tra lại mạng.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context.getApplicationContext(), context.getString(R.string.network_unavailable_toast), Toast.LENGTH_SHORT).show();
             }
             return false;
         }
@@ -40,7 +41,7 @@ public class NetworkUtils {
 
     public static void showNoNetworkToast(Context context) {
         if (context != null) {
-            Toast.makeText(context.getApplicationContext(), "Mạng không khả dụng. Kiểm tra lại mạng.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context.getApplicationContext(), context.getString(R.string.network_unavailable_toast), Toast.LENGTH_SHORT).show();
         }
     }
 }

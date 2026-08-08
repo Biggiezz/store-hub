@@ -61,7 +61,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Số lượng: 1"
+            android:text="@string/xml_so_luong_1"
             android:textColor="#434844"
             android:textSize="12sp"
         />
@@ -73,7 +73,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/shopee_display"
-            android:text="0đ"
+            android:text="@string/xml_0d"
             android:textColor="#1A2821"
             android:textSize="18sp" />
 

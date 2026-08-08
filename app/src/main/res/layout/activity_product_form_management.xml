@@ -66,7 +66,7 @@
 
                 <TextView
                     style="@style/Widget.StoreHub.AdminFormLabel"
-                    android:text="HÌNH ẢNH SẢN PHẨM" />
+                    android:text="@string/xml_hinh_anh_san_pham" />
 
                 <LinearLayout
                     android:id="@+id/layoutAdminImagePicker"
@@ -95,7 +95,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
-                        android:text="Tải ảnh lên"
+                        android:text="@string/xml_tai_anh_len"
                         android:textColor="#303D37"
                         android:textSize="13sp" />
                 </LinearLayout>
@@ -111,7 +111,7 @@
 
                 <TextView
                     style="@style/Widget.StoreHub.AdminFormLabel"
-                    android:text="MÔ TẢ SẢN PHẨM" />
+                    android:text="@string/xml_mo_ta_san_pham" />
 
                 <EditText
                     android:id="@+id/edtAdminProductDescription"
@@ -121,7 +121,7 @@
                     android:layout_weight="1"
                     android:background="@drawable/bg_admin_field"
                     android:gravity="top|start"
-                    android:hint="Viết mô tả chi tiết về sản phẩm này..."
+                    android:hint="@string/xml_viet_mo_ta_chi_tiet_ve_san_pham_nay"
                     android:inputType="textMultiLine"
                     android:padding="16dp"
                     android:textColor="#26342D"
@@ -140,7 +140,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Thông tin cơ bản"
+                    android:text="@string/xml_thong_tin_co_ban"
                     android:textColor="#172C22"
                     android:textSize="30sp"
                     android:textStyle="bold" />
@@ -148,18 +148,18 @@
                 <TextView
                     style="@style/Widget.StoreHub.AdminFormLabel"
                     android:layout_marginTop="28dp"
-                    android:text="TÊN SẢN PHẨM" />
+                    android:text="@string/xml_ten_san_pham" />
 
                 <EditText
                     android:id="@+id/edtAdminProductName"
                     style="@style/Widget.StoreHub.AdminFormField"
-                    android:hint="Ví dụ: iPhone 15 Pro Max"
+                    android:hint="@string/xml_vi_du_iphone_15_pro_max"
                     android:inputType="textCapSentences" />
 
                 <TextView
                     style="@style/Widget.StoreHub.AdminFormLabel"
                     android:layout_marginTop="28dp"
-                    android:text="DANH MỤC" />
+                    android:text="@string/xml_danh_muc" />
 
                 <LinearLayout
                     android:id="@+id/layoutAdminCategoryPicker"
@@ -174,7 +174,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="center_vertical"
-                        android:text="Chọn danh mục"
+                        android:text="@string/xml_chon_danh_muc"
                         android:textColor="#242C28"
                         android:textSize="16sp" />
 
@@ -187,7 +187,7 @@
                 <TextView
                     style="@style/Widget.StoreHub.AdminFormLabel"
                     android:layout_marginTop="28dp"
-                    android:text="SỐ LƯỢNG TỒN KHO" />
+                    android:text="@string/xml_so_luong_ton_kho" />
 
                 <EditText
                     android:id="@+id/edtAdminProductStock"
@@ -198,7 +198,7 @@
                 <TextView
                     style="@style/Widget.StoreHub.AdminFormLabel"
                     android:layout_marginTop="28dp"
-                    android:text="GIÁ BÁN (VNĐ)" />
+                    android:text="@string/xml_gia_ban_vnd" />
 
                 <LinearLayout
                     style="@style/Widget.StoreHub.AdminFormField"
@@ -222,7 +222,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="VNĐ"
+                        android:text="@string/xml_vnd"
                         android:textColor="#4B4E4B"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -251,7 +251,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Biến thể màu sắc"
+                        android:text="@string/xml_bien_the_mau_sac"
                         android:textColor="#172C22"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -261,7 +261,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="9dp"
-                        android:text="Thêm màu"
+                        android:text="@string/xml_them_mau"
                         android:textColor="#172C22"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -277,7 +277,7 @@
 
                     <TextView
                         style="@style/Widget.StoreHub.AdminFormLabel"
-                        android:text="DANH SÁCH MÀU (Nhấp chọn mặc định, Nhấn giữ để sửa/xóa)" />
+                        android:text="@string/xml_danh_sach_mau_nhap_chon_mac_dinh_nhan_gi" />
 
                     <HorizontalScrollView
                         android:layout_width="match_parent"
@@ -305,7 +305,7 @@
                     android:id="@+id/btnCancelProductForm"
                     style="@style/Widget.StoreHub.AdminFormSecondaryButton"
                     android:layout_width="100dp"
-                    android:text="Hủy" />
+                    android:text="@string/xml_huy" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSubmitProductForm"

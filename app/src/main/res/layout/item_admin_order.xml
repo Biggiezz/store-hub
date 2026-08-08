@@ -64,7 +64,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Thông tin nhận hàng:"
+            android:text="@string/xml_thong_tin_nhan_hang"
             android:textColor="#1A2821"
             android:textSize="13sp"
             android:textStyle="bold" />
@@ -132,7 +132,7 @@
                 android:background="@drawable/bg_status_dark"
                 android:paddingHorizontal="10dp"
                 android:paddingVertical="4dp"
-                android:text="Đang giao hàng"
+                android:text="@string/xml_dang_giao_hang"
                 android:textColor="#FFFFFF"
                 android:textSize="12sp" />
 
@@ -149,7 +149,7 @@
                 android:minWidth="0dp"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
-                android:text="Chi tiết"
+                android:text="@string/xml_chi_tiet"
                 android:textAllCaps="false"
                 android:textColor="@color/dark_green"
                 android:textSize="12sp" />
@@ -160,7 +160,7 @@
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cập nhật trạng thái"
+                android:text="@string/xml_cap_nhat_trang_thai"
                 android:textAllCaps="false"
                 android:textColor="@color/dark_green"
                 android:textSize="12sp"

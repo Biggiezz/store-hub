@@ -43,7 +43,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/shopee_display"
                     android:gravity="center"
-                    android:text="Đỉnh Cao Công Nghệ"
+                    android:text="@string/xml_dinh_cao_cong_nghe"
                     android:textColor="@color/white"
                     android:textSize="28sp"
                     android:textStyle="bold" />
@@ -54,7 +54,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
                     android:gravity="center"
-                    android:text="Trải nghiệm âm thanh và hình ảnh sống động nhất."
+                    android:text="@string/xml_trai_nghiem_am_thanh_va_hinh_anh_song_do"
                     android:textColor="#EEEEEE"
                     android:textSize="14sp" />
 

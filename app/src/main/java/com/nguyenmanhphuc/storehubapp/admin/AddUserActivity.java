@@ -231,7 +231,7 @@ public class AddUserActivity extends AppCompatActivity {
         }
 
         if ("Chọn vai trò".equals(role) || TextUtils.isEmpty(role)) {
-            Toast.makeText(this, "Vui lòng chọn vai trò cho người dùng", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, this.getString(R.string.toast_vui_long_chon_vai_tro_cho_nguoi_dung), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -270,7 +270,7 @@ public class AddUserActivity extends AppCompatActivity {
                     } else if (response.body() != null && response.body().getMessage() != null) {
                         Toast.makeText(AddUserActivity.this, response.body().getMessage(), Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(AddUserActivity.this, "Lỗi khi thêm người dùng", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AddUserActivity.this, AddUserActivity.this.getString(R.string.toast_loi_khi_them_nguoi_dung), Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -291,7 +291,7 @@ public class AddUserActivity extends AppCompatActivity {
                     } else if (response.body() != null && response.body().getMessage() != null) {
                         Toast.makeText(AddUserActivity.this, response.body().getMessage(), Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(AddUserActivity.this, "Lỗi khi thêm người dùng", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AddUserActivity.this, AddUserActivity.this.getString(R.string.toast_loi_khi_them_nguoi_dung), Toast.LENGTH_SHORT).show();
                     }
                 }
 

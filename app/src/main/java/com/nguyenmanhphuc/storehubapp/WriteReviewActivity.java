@@ -1,5 +1,7 @@
 package com.nguyenmanhphuc.storehubapp;
 
+import com.nguyenmanhphuc.storehubapp.R;
+
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -65,14 +67,14 @@ public class WriteReviewActivity extends BaseActivity {
                 if (uris != null && !uris.isEmpty()) {
                     for (Uri uri : uris) {
                         if (selectedUris.size() >= 5) {
-                            Toast.makeText(this, "Chỉ được chọn tối đa 5 hình ảnh hoặc video!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, this.getString(R.string.toast_chi_duoc_chon_toi_da_5_hinh_anh_hoac_vid), Toast.LENGTH_SHORT).show();
                             break;
                         }
                         // Kiểm tra nếu là video và dung lượng vượt quá 30MB
                         if (isVideo(uri)) {
                             long size = getFileSize(uri);
                             if (size > 30 * 1024 * 1024) { // 30 MB
-                                Toast.makeText(this, "Dung lượng video vượt quá 30MB, vui lòng chọn video ngắn hơn!", Toast.LENGTH_LONG).show();
+                                Toast.makeText(this, this.getString(R.string.toast_dung_luong_video_vuot_qua_30mb_vui_long_), Toast.LENGTH_LONG).show();
                                 continue;
                             }
                         }
@@ -113,7 +115,7 @@ public class WriteReviewActivity extends BaseActivity {
 
         btnUploadImage.setOnClickListener(v -> {
             if (selectedUris.size() >= 5) {
-                Toast.makeText(this, "Đã chọn tối đa 5 tệp tin!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, this.getString(R.string.toast_da_chon_toi_da_5_tep_tin), Toast.LENGTH_SHORT).show();
                 return;
             }
             // Mở thư viện chọn cả ảnh và video

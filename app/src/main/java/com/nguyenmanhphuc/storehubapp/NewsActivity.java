@@ -1,5 +1,7 @@
 package com.nguyenmanhphuc.storehubapp;
 
+import com.nguyenmanhphuc.storehubapp.R;
+
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -192,7 +194,7 @@ public class NewsActivity extends AppCompatActivity {
         if (!com.nguyenmanhphuc.storehubapp.utils.NetworkUtils.isNetworkAvailable(this)) {
             com.nguyenmanhphuc.storehubapp.utils.NetworkUtils.showNoNetworkToast(this);
         } else if (error != null) {
-            Toast.makeText(this, "Không thể kết nối đến máy chủ!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, this.getString(R.string.toast_khong_the_ket_noi_den_may_chu), Toast.LENGTH_SHORT).show();
         }
     }
 

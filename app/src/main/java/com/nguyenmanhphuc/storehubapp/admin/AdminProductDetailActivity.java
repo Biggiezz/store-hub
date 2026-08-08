@@ -55,7 +55,7 @@ public class AdminProductDetailActivity extends AppCompatActivity {
         }
 
         if (productId == null || productId.isEmpty()) {
-            Toast.makeText(this, "Không tìm thấy mã sản phẩm", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, this.getString(R.string.toast_khong_tim_thay_ma_san_pham), Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -130,7 +130,7 @@ public class AdminProductDetailActivity extends AppCompatActivity {
                             String msg = status ? "Đã chuyển sang Đang bán" : "Đã chuyển sang Ngừng bán";
                             Toast.makeText(AdminProductDetailActivity.this, msg, Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(AdminProductDetailActivity.this, "Không thể cập nhật trạng thái", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AdminProductDetailActivity.this, AdminProductDetailActivity.this.getString(R.string.toast_khong_the_cap_nhat_trang_thai), Toast.LENGTH_SHORT).show();
                             // Rollback UI
                             switchStatus.setChecked(!status);
                         }
@@ -138,7 +138,7 @@ public class AdminProductDetailActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(@NonNull Call<Response<Product>> call, @NonNull Throwable t) {
-                        Toast.makeText(AdminProductDetailActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AdminProductDetailActivity.this, AdminProductDetailActivity.this.getString(R.string.toast_loi_ket_noi), Toast.LENGTH_SHORT).show();
                         switchStatus.setChecked(!status);
                     }
                 });
@@ -163,14 +163,14 @@ public class AdminProductDetailActivity extends AppCompatActivity {
                     currentProduct = response.body().getData();
                     bindData(currentProduct);
                 } else {
-                    Toast.makeText(AdminProductDetailActivity.this, "Lỗi tải thông tin sản phẩm", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AdminProductDetailActivity.this, AdminProductDetailActivity.this.getString(R.string.toast_loi_tai_thong_tin_san_pham), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<Response<Product>> call, @NonNull Throwable t) {
                 Log.e("AdminProductDetail", "onFailure: ", t);
-                Toast.makeText(AdminProductDetailActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AdminProductDetailActivity.this, AdminProductDetailActivity.this.getString(R.string.toast_loi_ket_noi), Toast.LENGTH_SHORT).show();
             }
         });
     }

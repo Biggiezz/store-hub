@@ -32,7 +32,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnHome"
             style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="Trang chủ"
+            android:text="@string/xml_trang_chu"
             android:textColor="#434844"
             app:backgroundTint="@color/bottom_nav_active"
             app:icon="@drawable/ic_home"
@@ -41,7 +41,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnProducts"
             style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="Sản phẩm"
+            android:text="@string/xml_san_pham"
             android:textColor="#434844"
             app:icon="@drawable/ic_products"
             app:iconTint="#434844" />
@@ -49,7 +49,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnNews"
             style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="Bài viết"
+            android:text="@string/xml_bai_viet"
             android:textColor="#434844"
             app:icon="@drawable/ic_news"
             app:iconTint="#434844" />
@@ -57,7 +57,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnUsers"
             style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="Người dùng"
+            android:text="@string/xml_nguoi_dung"
             android:textColor="#434844"
             app:icon="@drawable/ic_users"
             app:iconTint="#434844" />
@@ -65,7 +65,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnStats"
             style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="Thống kê"
+            android:text="@string/xml_thong_ke"
             android:textColor="#434844"
             app:icon="@drawable/ic_stats"
             app:iconTint="#434844" />

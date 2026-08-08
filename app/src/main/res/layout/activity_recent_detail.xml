@@ -32,7 +32,7 @@
             android:layout_marginStart="12dp"
             android:layout_weight="1"
             android:fontFamily="@font/shopee_display"
-            android:text="Chi tiết hoạt động"
+            android:text="@string/xml_chi_tiet_hoat_dong"
             android:textColor="@color/dark_green"
             android:textSize="20sp" />
     </LinearLayout>
@@ -120,7 +120,7 @@
                         android:id="@+id/tvSectionHeader"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="THÔNG TIN KHÁCH HÀNG"
+                        android:text="@string/xml_thong_tin_khach_hang"
                         android:textColor="#4F5651"
                         android:textSize="12sp"
                         android:textStyle="bold" />
@@ -137,7 +137,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Tên người dùng"
+                            android:text="@string/xml_ten_nguoi_dung"
                             android:textColor="#5E6661"
                             android:textSize="14sp" />
 
@@ -174,7 +174,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Số lượng tồn kho"
+                            android:text="@string/xml_so_luong_ton_kho"
                             android:textColor="#5E6661"
                             android:textSize="14sp" />
 
@@ -211,7 +211,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Giá bán sản phẩm"
+                            android:text="@string/xml_gia_ban_san_pham"
                             android:textColor="#5E6661"
                             android:textSize="14sp" />
 
@@ -248,7 +248,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Trạng thái"
+                            android:text="@string/xml_trang_thai"
                             android:textColor="#5E6661"
                             android:textSize="14sp" />
 
@@ -283,7 +283,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Số điện thoại"
+                            android:text="@string/xml_so_dien_thoai"
                             android:textColor="#5E6661"
                             android:textSize="14sp" />
 
@@ -318,7 +318,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Phương thức thanh toán"
+                            android:text="@string/xml_phuong_thuc_thanh_toan"
                             android:textColor="#5E6661"
                             android:textSize="14sp" />
 
@@ -353,7 +353,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Tổng tiền"
+                            android:text="@string/xml_tong_tien"
                             android:textColor="#E53935"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -396,7 +396,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingHorizontal="16dp"
-                        android:text="SẢN PHẨM ĐÃ MUA"
+                        android:text="@string/xml_san_pham_da_mua"
                         android:textColor="#4F5651"
                         android:textSize="12sp"
                         android:textStyle="bold" />
@@ -418,7 +418,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
                 android:layout_marginTop="48dp"
-                android:text="Xem đơn hàng"
+                android:text="@string/xml_xem_don_hang"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
@@ -431,7 +431,7 @@
 <!--                android:layout_width="match_parent"-->
 <!--                android:layout_height="52dp"-->
 <!--                android:layout_marginTop="12dp"-->
-<!--                android:text="Quay lại"-->
+<!--                android:text="@string/xml_quay_lai"-->
 <!--                android:textAllCaps="false"-->
 <!--                android:textColor="#1E2D27"-->
 <!--                android:textSize="18sp"-->

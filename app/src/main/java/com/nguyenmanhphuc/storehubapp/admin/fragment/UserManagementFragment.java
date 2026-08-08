@@ -152,13 +152,13 @@ public class UserManagementFragment extends Fragment {
             }
         });
 
-//        btnFilterUser.setOnClickListener(v -> Toast.makeText(requireContext(), "Bộ lọc nâng cao", Toast.LENGTH_SHORT).show());
+//        btnFilterUser.setOnClickListener(v -> Toast.makeText(requireContext(), requireContext().getString(R.string.toast_bo_loc_nang_cao), Toast.LENGTH_SHORT).show());
 
         userAdapter.setOnUserClickListener(user -> {
             boolean isSuperAdmin = currentUser != null && currentUser.isSuperAdmin();
             if (isSuperAdmin) {
                 if (!currentUser.canManage(user)) {
-                    Toast.makeText(requireContext(), "Bạn không có quyền chỉnh sửa/xóa tài khoản Super Admin này!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(requireContext(), requireContext().getString(R.string.toast_ban_khong_co_quyen_chinh_suaxoa_tai_khoa), Toast.LENGTH_LONG).show();
                     return;
                 }
                 new AlertDialog.Builder(requireContext())
@@ -296,7 +296,7 @@ public class UserManagementFragment extends Fragment {
                         displayedUsers.clear();
                         userAdapter.updateData(displayedUsers);
                     }
-                    Toast.makeText(requireContext(), "Không thể lấy dữ liệu từ server", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), requireContext().getString(R.string.toast_khong_the_lay_du_lieu_tu_server), Toast.LENGTH_SHORT).show();
                 }
 
                 if (displayedUsers.isEmpty()) {
@@ -314,7 +314,7 @@ public class UserManagementFragment extends Fragment {
                 isLoading = false;
                 pbLoadingUsers.setVisibility(View.GONE);
                 if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
-                Toast.makeText(requireContext(), "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), requireContext().getString(R.string.toast_loi_ket_noi_may_chu), Toast.LENGTH_SHORT).show();
             }
         });
     }

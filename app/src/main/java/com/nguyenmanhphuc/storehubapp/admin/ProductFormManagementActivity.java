@@ -171,16 +171,16 @@ public class ProductFormManagementActivity extends AppCompatActivity {
 
     private void useFallbackCategories() {
         categoriesList = java.util.Arrays.asList(
-                new Category("1", "Điện thoại"),
-                new Category("2", "Máy tính"),
-                new Category("3", "Tai nghe"),
-                new Category("4", "Đồng hồ")
+                new Category("1", getString(R.string.category_phones)),
+                new Category("2", getString(R.string.category_computers)),
+                new Category("3", getString(R.string.category_headphones)),
+                new Category("4", getString(R.string.category_watches))
         );
     }
 
     private void showCategoryMenu(View anchor) {
         if (categoriesList.isEmpty()) {
-            Toast.makeText(this, "Đang tải danh mục, vui lòng thử lại sau", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, this.getString(R.string.toast_dang_tai_danh_muc_vui_long_thu_lai_sau), Toast.LENGTH_SHORT).show();
             return;
         }
         PopupMenu menu = new PopupMenu(this, anchor);
@@ -206,8 +206,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     bindProduct(response.body().getData());
                 } else {
-                    Toast.makeText(ProductFormManagementActivity.this,
-                            "Không thể tải thông tin sản phẩm", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ProductFormManagementActivity.this, ProductFormManagementActivity.this.getString(R.string.toast_khong_the_tai_thong_tin_san_pham), Toast.LENGTH_SHORT).show();
                     finish();
                 }
             }
@@ -216,7 +215,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
             public void onFailure(@NonNull Call<Response<Product>> call, @NonNull Throwable throwable) {
                 if (call.isCanceled()) return;
                 setLoading(false);
-                Toast.makeText(ProductFormManagementActivity.this, "Lỗi kết nối server", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ProductFormManagementActivity.this, ProductFormManagementActivity.this.getString(R.string.toast_loi_ket_noi_server), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -259,7 +258,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
             return;
         }
         if (selectedCategory == null) {
-            Toast.makeText(this, "Vui lòng chọn danh mục", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, this.getString(R.string.toast_vui_long_chon_danh_muc), Toast.LENGTH_SHORT).show();
             return;
         }
         String categoryId = selectedCategory.get_id();
@@ -272,7 +271,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
             return;
         }
         if (!editMode && selectedImageUri == null) {
-            Toast.makeText(this, "Vui lòng chọn hình ảnh sản phẩm", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, this.getString(R.string.toast_vui_long_chon_hinh_anh_san_pham), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -280,7 +279,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         try {
             imagePart = selectedImageUri == null ? null : createImagePart(selectedImageUri);
         } catch (IOException exception) {
-            Toast.makeText(this, "Không thể đọc ảnh đã chọn", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, this.getString(R.string.toast_khong_the_doc_anh_da_chon), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -305,7 +304,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
                     setResult(RESULT_OK);
                     finish();
                 } else {
-                    Toast.makeText(ProductFormManagementActivity.this, "Không thể lưu sản phẩm", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ProductFormManagementActivity.this, ProductFormManagementActivity.this.getString(R.string.toast_khong_the_luu_san_pham), Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -313,7 +312,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
             public void onFailure(@NonNull Call<Response<Product>> call, @NonNull Throwable throwable) {
                 if (call.isCanceled()) return;
                 setLoading(false);
-                Toast.makeText(ProductFormManagementActivity.this, "Lỗi kết nối server", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ProductFormManagementActivity.this, ProductFormManagementActivity.this.getString(R.string.toast_loi_ket_noi_server), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -514,7 +513,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         String name = nameInput.getText().toString().trim();
         String hex = hexInput.getText().toString().trim();
         if (name.isEmpty() || hex.isEmpty()) {
-            Toast.makeText(this, "Tên và mã màu không được bỏ trống", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, this.getString(R.string.toast_ten_va_ma_mau_khong_duoc_bo_trong), Toast.LENGTH_SHORT).show();
             return;
         }
 

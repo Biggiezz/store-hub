@@ -15,7 +15,7 @@
             android:id="@+id/edtAdminColorName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Tên màu"
+            android:hint="@string/xml_ten_mau"
             android:singleLine="true" />
 
         <EditText
@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:hint="Mã HEX"
+            android:hint="@string/xml_ma_hex"
             android:singleLine="true" />
 
         <View
@@ -40,14 +40,14 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="12dp"
-            android:text="Chọn từ bảng màu" />
+            android:text="@string/xml_chon_tu_bang_mau" />
 
         <TextView
             android:id="@+id/tvAdminColorPaletteLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:text="Chọn màu mẫu:"
+            android:text="@string/xml_chon_mau_mau"
             android:textColor="#26342D"
             android:textSize="14sp" />
 
@@ -69,6 +69,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:text="Đặt làm màu mặc định" />
+            android:text="@string/xml_dat_lam_mau_mac_dinh" />
     </LinearLayout>
 </ScrollView>

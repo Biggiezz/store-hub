@@ -62,7 +62,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
         if (!TextUtils.isEmpty(item.getColorName())) {
             holder.layoutVariant.setVisibility(View.VISIBLE);
-            holder.tvVariant.setText("Màu: " + item.getColorName());
+            holder.tvVariant.setText(context.getString(R.string.color_prefix, item.getColorName()));
             if (!TextUtils.isEmpty(item.getColorHex())) {
                 holder.viewColorPreview.setVisibility(View.VISIBLE);
                 holder.viewColorPreview.setBackground(createColorCircleDrawable(item.getColorHex()));

@@ -109,7 +109,7 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:contentDescription="Chụp ảnh đại diện"
+                        android:contentDescription="@string/xml_chup_anh_dai_dien"
                         android:padding="9dp"
                         android:src="@drawable/ic_camera"
                         app:tint="@color/dark_green" />
@@ -180,7 +180,7 @@
                     android:id="@+id/tilProfileEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Địa chỉ Email"
+                    android:hint="@string/xml_dia_chi_email"
                     android:enabled="false"
                     app:boxBackgroundColor="@color/background"
                     app:boxBackgroundMode="outline"

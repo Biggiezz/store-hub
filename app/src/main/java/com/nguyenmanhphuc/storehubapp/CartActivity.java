@@ -1,5 +1,7 @@
 package com.nguyenmanhphuc.storehubapp;
 
+import com.nguyenmanhphuc.storehubapp.R;
+
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -153,14 +155,14 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
 
         if (btnChangeAddress != null) {
             btnChangeAddress.setOnClickListener(v ->
-                    Toast.makeText(this, "Chức năng đang được phát triển", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.toast_feature_under_dev), Toast.LENGTH_SHORT).show()
             );
         }
 
         if (btnCheckout != null) {
             btnCheckout.setOnClickListener(v -> {
                 if (cartItems.isEmpty()) {
-                    Toast.makeText(this, "Giỏ hàng đang trống", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, this.getString(R.string.toast_gio_hang_dang_trong), Toast.LENGTH_SHORT).show();
                     return;
                 }
                 startActivity(PaymentConfirmationActivity.createIntent(this, cartItems));
@@ -228,7 +230,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
             subtotalAmount = sum;
 
             if (tvSubtotalLabel != null) {
-                tvSubtotalLabel.setText("Tạm tính (" + totalQuantity + " sản phẩm):");
+                tvSubtotalLabel.setText(getString(R.string.subtotal_label_template, totalQuantity));
             }
 
             updateOrderTotals();
@@ -275,7 +277,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
             @Override
             public void onFailure(@NonNull Call<Response<ArrayList<CartItem>>> call, @NonNull Throwable t) {
                 if (call.isCanceled()) return;
-                Toast.makeText(CartActivity.this, "Không thể cập nhật số lượng", Toast.LENGTH_SHORT).show();
+                Toast.makeText(CartActivity.this, CartActivity.this.getString(R.string.toast_khong_the_cap_nhat_so_luong), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -303,7 +305,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
             }
         }
 
-        Toast.makeText(CartActivity.this, "Đã xóa khỏi giỏ hàng", Toast.LENGTH_SHORT).show();
+        Toast.makeText(CartActivity.this, getString(R.string.removed_from_cart_toast), Toast.LENGTH_SHORT).show();
         updateCartUi(this.cartItems);
 
         String deleteId = !cartItem.getId().isEmpty() ? cartItem.getId() : cartItem.getProductId();
@@ -316,7 +318,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
             @Override
             public void onFailure(@NonNull Call<Response<ArrayList<CartItem>>> call, @NonNull Throwable t) {
                 if (call.isCanceled()) return;
-                Toast.makeText(CartActivity.this, "Không thể xóa sản phẩm", Toast.LENGTH_SHORT).show();
+                Toast.makeText(CartActivity.this, CartActivity.this.getString(R.string.toast_khong_the_xoa_san_pham), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -331,7 +333,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         subtotalAmount = sum;
 
         if (tvSubtotalLabel != null) {
-            tvSubtotalLabel.setText("Tạm tính (" + totalQuantity + " sản phẩm):");
+            tvSubtotalLabel.setText(getString(R.string.subtotal_label_template, totalQuantity));
         }
 
         updateOrderTotals();

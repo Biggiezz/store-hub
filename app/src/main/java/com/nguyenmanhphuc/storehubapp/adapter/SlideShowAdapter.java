@@ -16,17 +16,11 @@ public class SlideShowAdapter extends RecyclerView.Adapter<SlideShowAdapter.View
     private final int[] imgs = {
             R.drawable.img_slide1, R.drawable.img_slide2, R.drawable.img_slide3};
 
-    private final String[] titles = {
-            "Đỉnh Cao Công Nghệ",
-            "Thiết Kế Thời Thượng",
-            "Ưu Đãi Cực Khủng"
-    };
+    private final int[] titleRes = {
+            R.string.slide_title_1, R.string.slide_title_2, R.string.slide_title_3};
 
-    private final String[] descriptions = {
-            "Trải nghiệm âm thanh và hình ảnh sống động nhất.",
-            "Phong cách hiện đại làm nổi bật cá tính của bạn.",
-            "Giảm giá lên đến 50% cho tất cả các sản phẩm."
-    };
+    private final int[] descRes = {
+            R.string.slide_desc_1, R.string.slide_desc_2, R.string.slide_desc_3};
 
     private final Context context;
 
@@ -44,8 +38,8 @@ public class SlideShowAdapter extends RecyclerView.Adapter<SlideShowAdapter.View
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.imageView.setImageResource(imgs[position]);
-        holder.titleView.setText(titles[position]);
-        holder.descriptionView.setText(descriptions[position]);
+        holder.titleView.setText(context.getString(titleRes[position]));
+        holder.descriptionView.setText(context.getString(descRes[position]));
     }
 
     @Override

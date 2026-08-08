@@ -8,7 +8,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Nhập số lượng mới:"
+        android:text="@string/xml_nhap_so_luong_moi"
         android:textColor="@color/text_primary"
         android:textSize="16sp" />
 
@@ -18,6 +18,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:inputType="number"
-        android:hint="Ví dụ: 2" />
+        android:hint="@string/xml_vi_du_2" />
 
 </LinearLayout>

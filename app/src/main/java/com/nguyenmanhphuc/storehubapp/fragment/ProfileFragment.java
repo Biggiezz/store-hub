@@ -296,7 +296,7 @@ public class ProfileFragment extends Fragment {
                 sharedPreferencesManager.logout();
                 MainActivity.preloadedProducts = null;
                 MainActivity.preloadedNews = null;
-                Toast.makeText(requireContext().getApplicationContext(), "Đã đăng xuất thành công", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext().getApplicationContext(), getString(R.string.logout_success_toast), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(requireContext().getApplicationContext(), MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
@@ -309,7 +309,7 @@ public class ProfileFragment extends Fragment {
                 sharedPreferencesManager.logout();
                 MainActivity.preloadedProducts = null;
                 MainActivity.preloadedNews = null;
-                Toast.makeText(requireContext().getApplicationContext(), "Đã đăng xuất", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext().getApplicationContext(), getString(R.string.logout_toast), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(requireContext().getApplicationContext(), MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);

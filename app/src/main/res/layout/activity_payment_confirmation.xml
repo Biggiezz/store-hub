@@ -32,7 +32,7 @@
             android:layout_marginStart="12dp"
             android:layout_weight="1"
             android:fontFamily="@font/shopee_display"
-            android:text="Thanh toán"
+            android:text="@string/xml_thanh_toan"
             android:textColor="@color/dark_green"
             android:textSize="20sp" />
     </LinearLayout>
@@ -64,7 +64,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Tóm tắt đơn hàng"
+                    android:text="@string/xml_tom_tat_don_hang"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
@@ -102,7 +102,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Tạm tính"
+                            android:text="@string/xml_tam_tinh"
                             android:textColor="@color/text_secondary"
                             android:textSize="16sp" />
 
@@ -124,7 +124,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Phí vận chuyển"
+                            android:text="@string/xml_phi_van_chuyen"
                             android:textColor="@color/text_secondary"
                             android:textSize="16sp" />
 
@@ -146,7 +146,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Giảm giá"
+                            android:text="@string/xml_giam_gia"
                             android:textColor="#C51D1D"
                             android:textSize="16sp" />
 
@@ -175,7 +175,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Tổng cộng"
+                            android:text="@string/xml_tong_cong"
                             android:textColor="@color/text_secondary"
                             android:textSize="16sp" />
 
@@ -194,7 +194,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="38dp"
-                android:text="Phương thức thanh toán"
+                android:text="@string/xml_phuong_thuc_thanh_toan"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -226,7 +226,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Ví điện tử (ZaloPay)"
+                        android:text="@string/xml_vi_dien_tu_zalopay"
                         android:textColor="@color/text_primary"
                         android:textSize="18sp" />
 
@@ -234,7 +234,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="ZaloPay (Bạn sẽ được chuyển hướng để thanh toán)"
+                        android:text="@string/xml_zalopay_ban_se_duoc_chuyen_huong_de_than"
                         android:textColor="@color/text_secondary"
                         android:textSize="15sp" />
                 </LinearLayout>
@@ -275,7 +275,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Thanh toán khi nhận hàng"
+                        android:text="@string/xml_thanh_toan_khi_nhan_hang"
                         android:textColor="@color/text_primary"
                         android:textSize="18sp" />
 
@@ -305,7 +305,7 @@
         android:layout_height="60dp"
         android:layout_margin="24dp"
         android:backgroundTint="@color/dark_green"
-        android:text="Xác nhận thanh toán"
+        android:text="@string/xml_xac_nhan_thanh_toan"
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:textSize="20sp"
