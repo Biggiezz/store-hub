@@ -90,7 +90,6 @@
                     app:startIconDrawable="@drawable/ic_search"
                     app:startIconTint="#747B76">
 
-<<<<<<< HEAD
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edtSearch"
                         android:layout_width="match_parent"
