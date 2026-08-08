@@ -79,9 +79,8 @@ public class UserManagementAdapter extends RecyclerView.Adapter<UserManagementAd
 
         holder.tvUserName.setText(user.getName());
 
-        boolean isEn = java.util.Locale.getDefault().getLanguage().equals("en");
         String role = !TextUtils.isEmpty(user.getRole()) ? user.getRole() : "customer";
-        holder.tvUserRole.setText(getLocalizedRole(role, isEn));
+        holder.tvUserRole.setText(getLocalizedRole(role));
 
         // Đánh dấu huy hiệu nổi bật cho Super Admin
         if (user.isSuperAdmin()) {
@@ -103,7 +102,7 @@ public class UserManagementAdapter extends RecyclerView.Adapter<UserManagementAd
             holder.tvUserLastActive.setTextColor(Color.parseColor("#000000"));
         }
 
-        String activePrefix = isEn ? "Active: " : "Hoạt động: ";
+        String activePrefix = context.getString(R.string.active_prefix);
         if (!lastActive.startsWith("Hoạt động") && !lastActive.startsWith("Active")) {
             lastActive = activePrefix + lastActive;
         }
@@ -115,8 +114,14 @@ public class UserManagementAdapter extends RecyclerView.Adapter<UserManagementAd
                 .error(R.drawable.ic_avatar)
                 .into(holder.ivUserAvatar);
 
-        // Hiển thị nút xóa nếu là Super Admin và không phải là chính mình
-        if (currentUser != null && currentUser.isSuperAdmin() && !user.getId().equals(currentUser.getId())) {
+        // Hiển thị nút xóa nếu người dùng hiện tại là Super Admin, tài khoản được nhắm tới là Admin thường (không phải Super Admin và không phải chính mình)
+        boolean canDelete = currentUser != null 
+                && currentUser.isSuperAdmin() 
+                && user.isAdmin() 
+                && !user.isSuperAdmin() 
+                && !user.getId().equals(currentUser.getId());
+
+        if (canDelete) {
             holder.btnDeleteUser.setVisibility(View.VISIBLE);
         } else {
             holder.btnDeleteUser.setVisibility(View.GONE);
@@ -140,15 +145,15 @@ public class UserManagementAdapter extends RecyclerView.Adapter<UserManagementAd
         return userList.size();
     }
 
-    private String getLocalizedRole(String role, boolean isEn) {
+    private String getLocalizedRole(String role) {
         if (role == null) return "";
         String r = role.toLowerCase();
         if (r.contains("admin") || r.contains("quản lý")) {
-            return isEn ? "Store Manager" : "Quản lý cửa hàng";
+            return context.getString(R.string.store_manager);
         } else if (r.contains("super")) {
-            return isEn ? "Super Admin" : "Quản trị viên tối cao";
+            return context.getString(R.string.super_admin_role);
         } else if (r.contains("khách") || r.contains("customer")) {
-            return isEn ? "Customer" : "Khách hàng";
+            return context.getString(R.string.customer_role);
         }
         return role;
     }
