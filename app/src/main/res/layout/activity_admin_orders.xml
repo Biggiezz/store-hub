@@ -43,9 +43,102 @@
         android:layout_height="1dp"
         android:background="@color/divider_color" />
 
+    <!-- Tìm kiếm đơn hàng -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_search_input"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="12dp">
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:contentDescription="Search Icon"
+            android:src="@drawable/ic_search"
+            app:tint="@color/hint" />
+
+        <EditText
+            android:id="@+id/etSearchOrders"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:background="@null"
+            android:hint="Tìm kiếm mã, tên, SĐT nhận hàng..."
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/hint"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <!-- Bộ lọc trạng thái đơn hàng -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="8dp"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/layoutFilterTabs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvFilterAll"
+                style="@style/Widget.StoreHub.OrderFilter"
+                android:background="@drawable/bg_order_filter_selected"
+                android:text="Tất cả" />
+
+            <TextView
+                android:id="@+id/tvFilterPending"
+                style="@style/Widget.StoreHub.OrderFilter"
+                android:layout_marginStart="10dp"
+                android:text="Chờ xác nhận" />
+
+            <TextView
+                android:id="@+id/tvFilterConfirmed"
+                style="@style/Widget.StoreHub.OrderFilter"
+                android:layout_marginStart="10dp"
+                android:text="Đã xác nhận" />
+
+            <TextView
+                android:id="@+id/tvFilterShipping"
+                style="@style/Widget.StoreHub.OrderFilter"
+                android:layout_marginStart="10dp"
+                android:text="Đang giao" />
+
+            <TextView
+                android:id="@+id/tvFilterCompleted"
+                style="@style/Widget.StoreHub.OrderFilter"
+                android:layout_marginStart="10dp"
+                android:text="Đã hoàn thành" />
+
+            <TextView
+                android:id="@+id/tvFilterCancelled"
+                style="@style/Widget.StoreHub.OrderFilter"
+                android:layout_marginStart="10dp"
+                android:text="Đã hủy" />
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefreshLayout"

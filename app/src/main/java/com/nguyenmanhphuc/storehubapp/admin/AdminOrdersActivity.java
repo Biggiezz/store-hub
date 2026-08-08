@@ -31,6 +31,11 @@ import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
 import com.nguyenmanhphuc.storehubapp.utils.SharedPreferencesManager;
 
 import java.util.ArrayList;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.widget.EditText;
+import java.util.Locale;
+
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -46,6 +51,12 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
     private Call<Response<ArrayList<Order>>> ordersCall;
     private SharedPreferencesManager preferencesManager;
     private boolean resumedOnce;
+    
+    private EditText etSearchOrders;
+    private TextView tvFilterAll, tvFilterPending, tvFilterConfirmed, tvFilterShipping, tvFilterCompleted, tvFilterCancelled;
+    private final ArrayList<Order> allOrders = new ArrayList<>();
+    private String selectedStatusFilter = "all";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +78,37 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
         tvEmptyState = findViewById(R.id.tvEmptyState);
         progressBar = findViewById(R.id.progressBar);
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+        
+        // Bind Search & Filter Views
+        etSearchOrders = findViewById(R.id.etSearchOrders);
+        tvFilterAll = findViewById(R.id.tvFilterAll);
+        tvFilterPending = findViewById(R.id.tvFilterPending);
+        tvFilterConfirmed = findViewById(R.id.tvFilterConfirmed);
+        tvFilterShipping = findViewById(R.id.tvFilterShipping);
+        tvFilterCompleted = findViewById(R.id.tvFilterCompleted);
+        tvFilterCancelled = findViewById(R.id.tvFilterCancelled);
+
+        // Set Tab Click Listeners
+        tvFilterAll.setOnClickListener(v -> selectFilterTab("all"));
+        tvFilterPending.setOnClickListener(v -> selectFilterTab("Chờ xác nhận"));
+        tvFilterConfirmed.setOnClickListener(v -> selectFilterTab("Đã xác nhận"));
+        tvFilterShipping.setOnClickListener(v -> selectFilterTab("Đang giao"));
+        tvFilterCompleted.setOnClickListener(v -> selectFilterTab("Đã hoàn thành"));
+        tvFilterCancelled.setOnClickListener(v -> selectFilterTab("Đã hủy"));
+
+        // Set Search Input Listener
+        etSearchOrders.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterAndSearchOrders();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
 
         if (swipeRefreshLayout != null) {
             swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.dark_green));
@@ -104,15 +146,11 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
                 setLoading(false);
                 if (response.isSuccessful() && response.body() != null) {
                     ArrayList<Order> orderList = response.body().getData();
-                    if (orderList == null || orderList.isEmpty()) {
-                        tvEmptyState.setVisibility(View.VISIBLE);
-                        if (rvAdminOrders != null) rvAdminOrders.setVisibility(View.GONE);
-                        adapter.updateData(new ArrayList<>());
-                    } else {
-                        tvEmptyState.setVisibility(View.GONE);
-                        if (rvAdminOrders != null) rvAdminOrders.setVisibility(View.VISIBLE);
-                        adapter.updateData(orderList);
+                    allOrders.clear();
+                    if (orderList != null) {
+                        allOrders.addAll(orderList);
                     }
+                    filterAndSearchOrders();
                 } else {
                     Toast.makeText(AdminOrdersActivity.this, "Không thể tải danh sách đơn hàng", Toast.LENGTH_SHORT).show();
                 }
@@ -124,6 +162,8 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
                 setLoading(false);
                 Log.e("AdminOrdersActivity", "Error loading orders", t);
                 Toast.makeText(AdminOrdersActivity.this, "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
+                allOrders.clear();
+                filterAndSearchOrders();
             }
         });
     }
@@ -326,6 +366,102 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
 
     private String getAuthHeader() {
         return "Bearer " + preferencesManager.getToken();
+    }
+
+    private void selectFilterTab(String filter) {
+        selectedStatusFilter = filter;
+        updateFilterTabsUi();
+        filterAndSearchOrders();
+    }
+
+    private void updateFilterTabsUi() {
+        updateTabStyle(tvFilterAll, "all");
+        updateTabStyle(tvFilterPending, "Chờ xác nhận");
+        updateTabStyle(tvFilterConfirmed, "Đã xác nhận");
+        updateTabStyle(tvFilterShipping, "Đang giao");
+        updateTabStyle(tvFilterCompleted, "Đã hoàn thành");
+        updateTabStyle(tvFilterCancelled, "Đã hủy");
+    }
+
+    private void updateTabStyle(TextView tv, String status) {
+        if (tv == null) return;
+        boolean isSelected = status.equals(selectedStatusFilter);
+        tv.setBackgroundResource(isSelected ? R.drawable.bg_order_filter_selected : R.drawable.bg_order_filter);
+        tv.setTextColor(ContextCompat.getColor(this, isSelected ? R.color.text_button : R.color.dark_green));
+    }
+
+    private void filterAndSearchOrders() {
+        String query = etSearchOrders != null ? etSearchOrders.getText().toString().trim().toLowerCase(Locale.getDefault()) : "";
+        ArrayList<Order> filteredList = new ArrayList<>();
+
+        for (Order order : allOrders) {
+            // 1. Filter by Status
+            boolean matchesStatus = false;
+            String status = order.getStatus() != null ? order.getStatus() : "";
+            
+            if ("all".equals(selectedStatusFilter)) {
+                matchesStatus = true;
+            } else if ("Chờ xác nhận".equals(selectedStatusFilter)) {
+                matchesStatus = "Chờ xác nhận".equalsIgnoreCase(status) 
+                        || "pending".equalsIgnoreCase(status) 
+                        || "Chờ xử lý".equalsIgnoreCase(status);
+            } else if ("Đã xác nhận".equals(selectedStatusFilter)) {
+                matchesStatus = "Đã xác nhận".equalsIgnoreCase(status) 
+                        || "Đã rời kho".equalsIgnoreCase(status);
+            } else if ("Đang giao".equals(selectedStatusFilter)) {
+                matchesStatus = "Đang giao hàng".equalsIgnoreCase(status) 
+                        || "shipping".equalsIgnoreCase(status);
+            } else if ("Đã hoàn thành".equals(selectedStatusFilter)) {
+                matchesStatus = "Đã giao hàng".equalsIgnoreCase(status) 
+                        || "Đã hoàn thành".equalsIgnoreCase(status) 
+                        || "completed".equalsIgnoreCase(status);
+            } else if ("Đã hủy".equals(selectedStatusFilter)) {
+                matchesStatus = "Đã hủy".equalsIgnoreCase(status) 
+                        || "cancelled".equalsIgnoreCase(status) 
+                        || "cancel".equalsIgnoreCase(status);
+            }
+
+            if (!matchesStatus) {
+                continue;
+            }
+
+            // 2. Filter by Search Query
+            boolean matchesQuery = true;
+            if (!query.isEmpty()) {
+                String orderCode = order.getOrderCode() != null ? order.getOrderCode().toLowerCase(Locale.getDefault()) : "";
+                String recipientName = order.getRecipientName() != null ? order.getRecipientName().toLowerCase(Locale.getDefault()) : "";
+                String recipientPhone = order.getRecipientPhone() != null ? order.getRecipientPhone().toLowerCase(Locale.getDefault()) : "";
+                
+                matchesQuery = orderCode.contains(query) 
+                        || recipientName.contains(query) 
+                        || recipientPhone.contains(query);
+            }
+
+            if (matchesQuery) {
+                filteredList.add(order);
+            }
+        }
+
+        // 3. Update UI
+        if (filteredList.isEmpty()) {
+            if (tvEmptyState != null) {
+                tvEmptyState.setVisibility(View.VISIBLE);
+                tvEmptyState.setText("Không tìm thấy đơn hàng phù hợp");
+            }
+            if (rvAdminOrders != null) {
+                rvAdminOrders.setVisibility(View.GONE);
+            }
+        } else {
+            if (tvEmptyState != null) {
+                tvEmptyState.setVisibility(View.GONE);
+            }
+            if (rvAdminOrders != null) {
+                rvAdminOrders.setVisibility(View.VISIBLE);
+            }
+        }
+        if (adapter != null) {
+            adapter.updateData(filteredList);
+        }
     }
 
     @Override

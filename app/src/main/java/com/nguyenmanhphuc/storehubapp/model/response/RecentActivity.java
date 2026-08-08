@@ -32,6 +32,9 @@ public class RecentActivity {
     private Long productPrice;
     @SerializedName("productStatus")
     private String productStatus;
+    @SerializedName("targetId")
+    private String targetId;
+
 
     public String getType() { return type; }
     public String getTitle() { return title; }
@@ -46,4 +49,5 @@ public class RecentActivity {
     public Integer getProductStock() { return productStock; }
     public Long getProductPrice() { return productPrice; }
     public String getProductStatus() { return productStatus; }
+    public String getTargetId() { return targetId; }
 }

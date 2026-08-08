@@ -90,6 +90,7 @@
                     app:startIconDrawable="@drawable/ic_search"
                     app:startIconTint="#747B76">
 
+<<<<<<< HEAD
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edtSearch"
                         android:layout_width="match_parent"
@@ -114,8 +115,12 @@
                         android:orientation="horizontal">
 
                         <ImageView
+                            android:id="@+id/btnFilterCategory"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:background="?attr/selectableItemBackgroundBorderless"
                             android:contentDescription="Sắp xếp"
                             android:src="@drawable/ic_sort" />
 

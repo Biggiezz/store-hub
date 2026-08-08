@@ -13,6 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import androidx.appcompat.app.AlertDialog;
+import android.graphics.drawable.ColorDrawable;
+
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,8 +36,10 @@ import com.nguyenmanhphuc.storehubapp.R;
 import com.nguyenmanhphuc.storehubapp.adapter.ProductAdapter;
 import com.nguyenmanhphuc.storehubapp.model.Pagination;
 import com.nguyenmanhphuc.storehubapp.model.Product;
+import com.nguyenmanhphuc.storehubapp.model.Category;
 import com.nguyenmanhphuc.storehubapp.model.response.Response;
 import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
+import androidx.appcompat.widget.PopupMenu;
 
 import java.util.ArrayList;
 
@@ -48,9 +57,13 @@ public class ProductsFragment extends Fragment {
     private NestedScrollView nestedScrollView;
     private ProgressBar progressBar, progressBarLoadMore;
     private MaterialButton btnPrice, btnAZ, btnZA;
+    private ImageView btnFilterCategory;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private final ArrayList<Product> allProducts = new ArrayList<>();
+    private final ArrayList<Category> categoriesList = new ArrayList<>();
+    private String currentCategory = "";
+
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
     private static final int LIMIT = 6;
     private static final long SEARCH_DEBOUNCE_MS = 400;
@@ -78,6 +91,7 @@ public class ProductsFragment extends Fragment {
         initUi(view);
         setUpAdapter();
         setUpListener();
+        loadCategories();
 
         loadFirstPage();
     }
@@ -93,6 +107,7 @@ public class ProductsFragment extends Fragment {
         btnPrice = view.findViewById(R.id.btnPrice);
         btnAZ = view.findViewById(R.id.btnAZ);
         btnZA = view.findViewById(R.id.btnZA);
+        btnFilterCategory = view.findViewById(R.id.btnFilterCategory);
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
 
         if (swipeRefreshLayout != null) {
@@ -144,6 +159,9 @@ public class ProductsFragment extends Fragment {
         btnPrice.setOnClickListener(v -> changeSort("price_asc"));
         btnAZ.setOnClickListener(v -> changeSort("name_asc"));
         btnZA.setOnClickListener(v -> changeSort("name_desc"));
+        if (btnFilterCategory != null) {
+            btnFilterCategory.setOnClickListener(v -> showCategoryFilterMenu(v));
+        }
 
         if (nestedScrollView != null) {
             nestedScrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
@@ -216,8 +234,8 @@ public class ProductsFragment extends Fragment {
 
         HttpResquest request = new HttpResquest();
         currentCall = keyword.isEmpty()
-                ? request.apiServices.getListProduct(page, LIMIT, "", false, currentSort)
-                : request.apiServices.searchProduct(page, LIMIT, keyword, "", false, currentSort);
+                ? request.apiServices.getListProduct(page, LIMIT, currentCategory, false, currentSort)
+                : request.apiServices.searchProduct(page, LIMIT, keyword, currentCategory, false, currentSort);
 
         currentCall.enqueue(new Callback<Response<ArrayList<Product>>>() {
             @Override
@@ -288,12 +306,105 @@ public class ProductsFragment extends Fragment {
         if (currentCall != null && !currentCall.isCanceled()) currentCall.cancel();
     }
 
+    private void loadCategories() {
+        new HttpResquest().callAPI().getCategories().enqueue(new Callback<Response<ArrayList<Category>>>() {
+            @Override
+            public void onResponse(@NonNull Call<Response<ArrayList<Category>>> call, @NonNull retrofit2.Response<Response<ArrayList<Category>>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    categoriesList.clear();
+                    categoriesList.addAll(response.body().getData());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Response<ArrayList<Category>>> call, @NonNull Throwable t) {
+                Log.e("ProductsFragment", "Error loading categories", t);
+            }
+        });
+    }
+
+    private void showCategoryFilterMenu(View anchorView) {
+        if (categoriesList.isEmpty()) {
+            new HttpResquest().callAPI().getCategories().enqueue(new Callback<Response<ArrayList<Category>>>() {
+                @Override
+                public void onResponse(@NonNull Call<Response<ArrayList<Category>>> call, @NonNull retrofit2.Response<Response<ArrayList<Category>>> response) {
+                    if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                        categoriesList.clear();
+                        categoriesList.addAll(response.body().getData());
+                        displayCategoryFilterPopup(anchorView);
+                    } else {
+                        displayCategoryFilterPopup(anchorView);
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<Response<ArrayList<Category>>> call, @NonNull Throwable t) {
+                    displayCategoryFilterPopup(anchorView);
+                }
+            });
+        } else {
+            displayCategoryFilterPopup(anchorView);
+        }
+    }
+
+    private void displayCategoryFilterPopup(View anchorView) {
+        if (!isAdded() || getContext() == null) return;
+
+        View popupView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_category_filter, null);
+        LinearLayout layoutCategoriesList = popupView.findViewById(R.id.layoutCategoriesList);
+
+        PopupWindow popupWindow = new PopupWindow(
+                popupView,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                true
+        );
+
+        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.setFocusable(true);
+
+        // Add "Tất cả danh mục" item
+        View allItemView = LayoutInflater.from(requireContext()).inflate(R.layout.item_dialog_category, layoutCategoriesList, false);
+        TextView tvAllName = allItemView.findViewById(R.id.tvCategoryName);
+        ImageView ivAllCheck = allItemView.findViewById(R.id.ivCheck);
+        tvAllName.setText("Tất cả danh mục");
+        ivAllCheck.setVisibility(currentCategory.isEmpty() ? View.VISIBLE : View.GONE);
+        allItemView.setOnClickListener(v -> {
+            currentCategory = "";
+            loadFirstPage();
+            popupWindow.dismiss();
+        });
+        layoutCategoriesList.addView(allItemView);
+
+        // Add each category item
+        for (Category category : categoriesList) {
+            View itemView = LayoutInflater.from(requireContext()).inflate(R.layout.item_dialog_category, layoutCategoriesList, false);
+            TextView tvName = itemView.findViewById(R.id.tvCategoryName);
+            ImageView ivCheck = itemView.findViewById(R.id.ivCheck);
+            
+            tvName.setText(category.getName());
+            boolean isSelected = category.get_id().equals(currentCategory);
+            ivCheck.setVisibility(isSelected ? View.VISIBLE : View.GONE);
+
+            itemView.setOnClickListener(v -> {
+                currentCategory = category.get_id();
+                loadFirstPage();
+                popupWindow.dismiss();
+            });
+            layoutCategoriesList.addView(itemView);
+        }
+
+        popupWindow.showAsDropDown(anchorView, 0, 10);
+    }
+
     @Override
     public void onDestroyView() {
         cancelCurrentCall();
         if (searchRunnable != null) searchHandler.removeCallbacks(searchRunnable);
         productAdapter = null;
         edtSearch = null;
+        btnFilterCategory = null;
         super.onDestroyView();
     }
 }
