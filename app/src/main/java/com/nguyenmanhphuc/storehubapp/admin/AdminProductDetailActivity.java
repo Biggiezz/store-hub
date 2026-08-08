@@ -3,6 +3,7 @@ package com.nguyenmanhphuc.storehubapp.admin;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -18,10 +19,14 @@ import com.bumptech.glide.Glide;
 import com.nguyenmanhphuc.storehubapp.R;
 import com.nguyenmanhphuc.storehubapp.admin.adapter.AdminColorAdapter;
 import com.nguyenmanhphuc.storehubapp.model.Product;
+import com.nguyenmanhphuc.storehubapp.model.User;
 import com.nguyenmanhphuc.storehubapp.model.response.Response;
 import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
+import com.nguyenmanhphuc.storehubapp.utils.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
+
+import androidx.appcompat.app.AlertDialog;
 
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -39,7 +44,7 @@ public class AdminProductDetailActivity extends AppCompatActivity {
     private RatingBar ratingBar;
     private SwitchMaterial switchStatus;
     private RecyclerView rvColors;
-    private MaterialButton btnEditProduct;
+    private MaterialButton btnEditProduct, btnDeleteProduct;
     private String productId;
     private Product currentProduct;
 
@@ -83,6 +88,15 @@ public class AdminProductDetailActivity extends AppCompatActivity {
         switchStatus = findViewById(R.id.switchStatus);
         rvColors = findViewById(R.id.rvColors);
         btnEditProduct = findViewById(R.id.btnEditProduct);
+        btnDeleteProduct = findViewById(R.id.btnDeleteProduct);
+
+        SharedPreferencesManager prefManager = new SharedPreferencesManager(this);
+        User currentUser = prefManager.getUser();
+        if (currentUser != null && currentUser.isSuperAdmin()) {
+            btnDeleteProduct.setVisibility(View.VISIBLE);
+        } else {
+            btnDeleteProduct.setVisibility(View.GONE);
+        }
 
         rvColors.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
     }
@@ -97,11 +111,44 @@ public class AdminProductDetailActivity extends AppCompatActivity {
             }
         });
 
+        btnDeleteProduct.setOnClickListener(v -> {
+            new AlertDialog.Builder(this)
+                    .setTitle("Xác nhận xóa")
+                    .setMessage("Bạn có chắc chắn muốn xóa sản phẩm này?")
+                    .setPositiveButton("Xóa", (dialog, which) -> {
+                        performDeleteProduct();
+                    })
+                    .setNegativeButton("Hủy", null)
+                    .show();
+        });
+
         switchStatus.setOnCheckedChangeListener((buttonView, isChecked) -> {
             updateSwitchColors(isChecked);
             if (currentProduct != null && currentProduct.isActive() != isChecked) {
                 currentProduct.setActive(isChecked);
                 updateProductOnServer(isChecked);
+            }
+        });
+    }
+
+    private void performDeleteProduct() {
+        SharedPreferencesManager prefManager = new SharedPreferencesManager(this);
+        String token = "Bearer " + prefManager.getToken();
+        HttpResquest request = new HttpResquest();
+        request.callAPI().deleteProduct(token, productId).enqueue(new Callback<Response<Void>>() {
+            @Override
+            public void onResponse(@NonNull Call<Response<Void>> call, @NonNull retrofit2.Response<Response<Void>> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(AdminProductDetailActivity.this, "Đã xóa sản phẩm thành công", Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    Toast.makeText(AdminProductDetailActivity.this, "Không thể xóa sản phẩm", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Response<Void>> call, @NonNull Throwable t) {
+                Toast.makeText(AdminProductDetailActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
             }
         });
     }

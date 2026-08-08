@@ -101,6 +101,31 @@
                             android:textSize="18sp"
                             tools:text="2.490.000đ" />
 
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="24dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:text="@string/product_status"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+
+                            <com.google.android.material.switchmaterial.SwitchMaterial
+                                android:id="@+id/switchStatus"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:checked="true"
+                                app:thumbTint="@color/dark_green"
+                                app:trackTint="@color/dark_green" />
+
+                        </RelativeLayout>
+
                     </RelativeLayout>
 
                     <LinearLayout
@@ -198,30 +223,6 @@
                     </LinearLayout>
 
                     <!-- Status Switch -->
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="24dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:text="@string/product_status"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-
-                        <com.google.android.material.switchmaterial.SwitchMaterial
-                            android:id="@+id/switchStatus"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:checked="true"
-                            app:thumbTint="@color/dark_green"
-                            app:trackTint="@color/dark_green" />
-
-                    </RelativeLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -268,18 +269,39 @@
 
     </androidx.core.widget.NestedScrollView>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnEditProduct"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="64dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_margin="20dp"
-        android:text="@string/edit_product"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        app:backgroundTint="@color/dark_green"
-        app:cornerRadius="14dp"
-        app:elevation="8dp" />
+        android:orientation="horizontal"
+        android:padding="20dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDeleteProduct"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="10dp"
+            android:text="Xóa sản phẩm"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            app:backgroundTint="@color/error_red"
+            app:cornerRadius="14dp"
+            app:elevation="8dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEditProduct"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_weight="1"
+            android:text="@string/edit_product"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            app:backgroundTint="@color/dark_green"
+            app:cornerRadius="14dp"
+            app:elevation="8dp" />
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

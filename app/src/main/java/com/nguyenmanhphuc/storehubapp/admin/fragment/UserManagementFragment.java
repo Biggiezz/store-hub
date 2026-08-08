@@ -176,6 +176,17 @@ public class UserManagementFragment extends Fragment {
             }
         });
 
+        userAdapter.setOnUserDeleteListener(user -> {
+            new AlertDialog.Builder(requireContext())
+                    .setTitle("Xác nhận xóa")
+                    .setMessage("Bạn có chắc chắn muốn xóa người dùng " + user.getName() + "?")
+                    .setPositiveButton("Xóa", (dialog, which) -> {
+                        performDeleteUser(user);
+                    })
+                    .setNegativeButton("Hủy", null)
+                    .show();
+        });
+
         if (llPagination != null) {
             llPagination.setVisibility(View.GONE);
         }
@@ -199,6 +210,35 @@ public class UserManagementFragment extends Fragment {
                         }
                     }
                 }
+            }
+        });
+
+        btnPrevPage.setOnClickListener(v -> {
+            if (currentPage > 1) {
+                currentPage--;
+                // String query = etSearchUser.getText().toString();
+            }
+        });
+    }
+
+    private void performDeleteUser(User user) {
+        SharedPreferencesManager prefManager = new SharedPreferencesManager(requireContext());
+        String token = "Bearer " + prefManager.getToken();
+        HttpResquest httpResquest = new HttpResquest();
+        httpResquest.callAPI().deleteUser(token, user.getId()).enqueue(new retrofit2.Callback<Response<Void>>() {
+            @Override
+            public void onResponse(@NonNull retrofit2.Call<Response<Void>> call, @NonNull retrofit2.Response<Response<Void>> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(requireContext(), "Đã xóa người dùng thành công", Toast.LENGTH_SHORT).show();
+                    fetchUsersFromServer();
+                } else {
+                    Toast.makeText(requireContext(), "Không thể xóa người dùng", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull retrofit2.Call<Response<Void>> call, @NonNull Throwable t) {
+                Toast.makeText(requireContext(), "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -272,7 +312,6 @@ public class UserManagementFragment extends Fragment {
 
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     ArrayList<User> serverUsers = response.body().getData();
-                    
                     // Read total counts from headers
                     String totalStaff = response.headers().get("X-Total-Staff");
                     String totalCustomers = response.headers().get("X-Total-Customers");

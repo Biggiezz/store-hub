@@ -92,6 +92,9 @@ public interface ApiServices {
             @Part MultipartBody.Part image
     );
 
+    @DELETE("api/productsRouter/delete-product/{id}")
+    Call<Response<Void>> deleteProduct(@Header("Authorization") String token, @Path("id") String id);
+
     @GET("api/productsRouter/get-cart")
     Call<Response<ArrayList<CartItem>>> getCart(@Header("Authorization") String token);
 
@@ -185,6 +188,12 @@ public interface ApiServices {
 
     @POST("users/login")
     Call<LoginResponse> login(@Body LoginRequest request);
+
+    @DELETE("users/delete-user/{id}")
+    Call<Response<Void>> deleteUser(@Header("Authorization") String token, @Path("id") String id);
+
+    @GET("users/get-all-users")
+    Call<Response<ArrayList<User>>> getListUsers(@Header("Authorization") String token);
 
     @GET("users/get-all-users")
     Call<Response<ArrayList<User>>> getListUsers(
