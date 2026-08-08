@@ -38,6 +38,12 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".CartActivity"
+            android:exported="false" />
+        <activity
+            android:name=".NewsActivity"
+            android:exported="false" />
+        <activity
             android:name=".admin.AdminRecentActivity"
             android:exported="false" />
         <activity

@@ -20,8 +20,11 @@ import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
+
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.nguyenmanhphuc.storehubapp.CartActivity;
 import com.nguyenmanhphuc.storehubapp.MainActivity;
 import com.nguyenmanhphuc.storehubapp.R;
 import com.nguyenmanhphuc.storehubapp.adapter.ProductAdapter;
@@ -109,10 +112,14 @@ public class ProductsFragment extends Fragment {
 
     private void setUpListener() {
         if (btnBack != null) {
-            btnBack.setOnClickListener(v -> ((MainActivity) requireActivity()).showHome());
+            btnBack.setOnClickListener(v -> {
+                if (getActivity() != null) {
+                    getActivity().getOnBackPressedDispatcher().onBackPressed();
+                }
+            });
         }
         if (btnReceipt != null) {
-            btnReceipt.setOnClickListener(v -> ((MainActivity) requireActivity()).showOder());
+            btnReceipt.setOnClickListener(v -> startActivity(new Intent(requireContext(), CartActivity.class)));
         }
 
         if (edtSearch != null) {

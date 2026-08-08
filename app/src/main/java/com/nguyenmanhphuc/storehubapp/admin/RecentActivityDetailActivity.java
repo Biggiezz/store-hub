@@ -184,8 +184,8 @@ public class RecentActivityDetailActivity extends AppCompatActivity {
             if (productImage != null && !productImage.isEmpty() && imgActivityIcon != null) {
                 Glide.with(this)
                         .load(productImage)
-                        .placeholder(R.drawable.ic_product)
-                        .error(R.drawable.ic_product)
+                        .placeholder(R.drawable.ic_products)
+                        .error(R.drawable.ic_products)
                         .into(imgActivityIcon);
             }
 
@@ -269,7 +269,7 @@ public class RecentActivityDetailActivity extends AppCompatActivity {
     }
 
     private void initUi() {
-        imgBack = findViewById(R.id.imgBack);
+        imgBack = findViewById(R.id.btnBack);
         imgActivityIcon = findViewById(R.id.imgActivityIcon);
         tvActivityTitle = findViewById(R.id.tvActivityTitle);
         tvActivityTime = findViewById(R.id.tvActivityTime);

@@ -129,12 +129,10 @@ public class OderFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        loadOrdersAndCart();
     }
 
     private void loadOrdersAndCart() {
         setLoading(true);
-        ordersContainer.removeAllViews();
 
         if (cartCall != null) {
             cartCall.cancel();
@@ -299,8 +297,8 @@ public class OderFragment extends Fragment {
 
             Glide.with(this)
                     .load(firstItem.getProductImage())
-                    .placeholder(R.drawable.ic_product)
-                    .error(R.drawable.ic_product)
+                    .placeholder(R.drawable.ic_products)
+                    .error(R.drawable.ic_products)
                     .into(imgProduct);
 
             int totalQty = 0;
@@ -382,8 +380,8 @@ public class OderFragment extends Fragment {
 
                 Glide.with(this)
                         .load(firstItem.getProductImage())
-                        .placeholder(R.drawable.ic_product)
-                        .error(R.drawable.ic_product)
+                        .placeholder(R.drawable.ic_products)
+                        .error(R.drawable.ic_products)
                         .into(imgProduct);
 
                 int totalQty = 0;
@@ -591,16 +589,19 @@ public class OderFragment extends Fragment {
             return;
         }
 
-        if (progressBar != null) {
-            progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
-        }
-        if (loading) {
-            if (ordersContainer != null) ordersContainer.setVisibility(View.GONE);
-        } else {
+        if (!loading) {
+            if (progressBar != null) progressBar.setVisibility(View.GONE);
             if (ordersContainer != null) ordersContainer.setVisibility(View.VISIBLE);
-            if (swipeRefreshLayout != null) {
-                swipeRefreshLayout.setRefreshing(false);
-            }
+            if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
+            return;
+        }
+
+        if (ordersContainer != null && ordersContainer.getChildCount() > 0) {
+            if (progressBar != null) progressBar.setVisibility(View.GONE);
+            ordersContainer.setVisibility(View.VISIBLE);
+        } else {
+            if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+            if (ordersContainer != null) ordersContainer.setVisibility(View.GONE);
         }
     }
 

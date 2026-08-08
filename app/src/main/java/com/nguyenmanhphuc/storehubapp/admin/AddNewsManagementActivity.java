@@ -180,7 +180,7 @@ public class AddNewsManagementActivity extends AppCompatActivity {
         if (editingNews.getImage() != null && !editingNews.getImage().isEmpty()) {
             Glide.with(this)
                     .load(editingNews.getImage())
-                    .placeholder(R.drawable.ic_product)
+                    .placeholder(R.drawable.ic_products)
                     .into(imgPreview);
             imgPreview.setVisibility(View.VISIBLE);
             layoutUploadPlaceholder.setVisibility(View.GONE);

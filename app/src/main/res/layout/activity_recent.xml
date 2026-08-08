@@ -9,39 +9,39 @@
     android:orientation="vertical">
 
     <!-- Thanh tiêu đề -->
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="53dp"
-        android:paddingStart="22dp"
-        android:paddingEnd="22dp">
+        android:layout_height="wrap_content"
+        android:background="@color/background"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="12dp">
 
         <ImageView
-            android:id="@+id/imgBack"
+            android:id="@+id/btnBack"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Back"
             android:padding="4dp"
             android:src="@drawable/ic_back"
-            app:tint="#1B2C24" />
+            app:tint="@color/dark_green" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toEndOf="@id/imgBack"
             android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/shopee_display"
             android:text="Hoạt động gần đây"
-            android:textColor="#1B2C24"
+            android:textColor="@color/dark_green"
             android:textSize="20sp" />
-    </RelativeLayout>
+    </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginBottom="16dp"
         android:background="@color/divider_color" />
 
     <!-- Nội dung có thể cuộn -->

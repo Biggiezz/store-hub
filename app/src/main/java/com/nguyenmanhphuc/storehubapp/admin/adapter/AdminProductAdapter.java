@@ -66,8 +66,8 @@ public class AdminProductAdapter extends RecyclerView.Adapter<AdminProductAdapte
                 .format(product.getPriceAsLong()) + "đ");
         Glide.with(holder.image)
                 .load(product.getImage())
-                .placeholder(R.drawable.ic_product)
-                .error(R.drawable.ic_product)
+                .placeholder(R.drawable.ic_products)
+                .error(R.drawable.ic_products)
                 .centerCrop()
                 .into(holder.image);
         holder.itemView.setOnClickListener(v -> listener.onProductClick(product));

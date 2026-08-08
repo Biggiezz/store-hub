@@ -260,7 +260,7 @@ public class StatsManagerFragment extends Fragment {
             ((TextView) item.findViewById(R.id.tvProductName)).setText(product.getName());
             ((TextView) item.findViewById(R.id.tvProductSales))
                     .setText("Đã bán " + product.getSoldCount() + " sản phẩm");
-            Glide.with(this).load(product.getImage()).placeholder(R.drawable.ic_product).into(image);
+            Glide.with(this).load(product.getImage()).placeholder(R.drawable.ic_products).into(image);
             layoutTopProduct.addView(item);
         }
     }

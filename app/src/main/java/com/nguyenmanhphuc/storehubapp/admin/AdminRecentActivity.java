@@ -125,7 +125,7 @@ public class AdminRecentActivity extends AppCompatActivity {
 
         updateTabUi();
 
-        ImageView imgBack = findViewById(R.id.imgBack);
+        ImageView imgBack = findViewById(R.id.btnBack);
         imgBack.setOnClickListener(v -> finish());
 
         rvRecentActivities.setLayoutManager(new LinearLayoutManager(this));

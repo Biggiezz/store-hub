@@ -6,7 +6,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.bumptech.glide.Glide;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,6 +13,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
 import com.nguyenmanhphuc.storehubapp.R;
 import com.nguyenmanhphuc.storehubapp.model.Product;
 import com.nguyenmanhphuc.storehubapp.model.ProductReview;
@@ -55,13 +55,13 @@ public class ReplyReviewActivity extends AppCompatActivity {
         // Bind data
         if (review != null) {
             tvCustomerName.setText(review.getCustomerName().isEmpty() ? "Khách hàng" : review.getCustomerName());
-            
+
             String dateStr = review.getCreatedAt();
             if (dateStr != null && dateStr.contains("T")) {
                 dateStr = dateStr.split("T")[0];
             }
             tvReviewTime.setText(dateStr != null ? dateStr : "");
-            
+
             tvRating.setText(getStarString(review.rating));
             tvReviewContent.setText(review.content != null ? review.content : "");
 
@@ -78,7 +78,7 @@ public class ReplyReviewActivity extends AppCompatActivity {
         if (imgProduct != null && productImage != null && !productImage.isEmpty()) {
             Glide.with(this)
                     .load(productImage)
-                    .placeholder(R.drawable.ic_product)
+                    .placeholder(R.drawable.ic_products)
                     .into(imgProduct);
         }
 

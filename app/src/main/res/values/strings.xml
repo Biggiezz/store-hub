@@ -150,6 +150,7 @@
     <string name="checkout_now_button">Thanh toán ngay</string>
     <string name="subtotal_label_template">Tạm tính (%d sản phẩm):</string>
     <string name="tech_news_title">Tin tức công nghệ</string>
+    <string name="orders_title">Đơn hàng</string>
     <string name="my_orders_title">Đơn hàng của tôi</string>
     <string name="order_filter_all">Tất cả</string>
     <string name="order_filter_pending">Chờ xác nhận</string>

@@ -47,8 +47,8 @@ public class ReviewMediaAdapter extends RecyclerView.Adapter<ReviewMediaAdapter.
         Glide.with(context)
                 .load(url)
                 .centerCrop()
-                .placeholder(R.drawable.ic_product)
-                .error(R.drawable.ic_product)
+                .placeholder(R.drawable.ic_products)
+                .error(R.drawable.ic_products)
                 .into(holder.ivThumbnail);
 
         // Check if the URL points to a video
@@ -121,8 +121,8 @@ public class ReviewMediaAdapter extends RecyclerView.Adapter<ReviewMediaAdapter.
             Glide.with(context)
                     .load(url)
                     .fitCenter()
-                    .placeholder(R.drawable.ic_product)
-                    .error(R.drawable.ic_product)
+                    .placeholder(R.drawable.ic_products)
+                    .error(R.drawable.ic_products)
                     .into(ivFullscreen);
         }
 

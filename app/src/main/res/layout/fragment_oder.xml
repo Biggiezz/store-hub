@@ -1,124 +1,134 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/swipeRefreshLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical"
     tools:context=".fragment.OderFragment">
 
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/background"
-        android:fillViewport="true"
-        android:overScrollMode="never">
-
+    <!-- Custom Header Bar -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingTop="18dp"
-        android:paddingBottom="28dp">
+        android:background="@color/background"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="12dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Quay lại"
+            android:padding="4dp"
+            android:src="@drawable/ic_back"
+            app:tint="@color/dark_green"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <TextView
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp">
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/shopee_display"
+            android:text="@string/my_orders_title"
+            android:textColor="@color/dark_green"
+            android:textSize="20sp" />
+    </LinearLayout>
 
-            <ImageView
-                android:id="@+id/btnBack"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="12dp"
-                android:src="@drawable/ic_back"
-                android:contentDescription="Quay lại"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?attr/selectableItemBackgroundBorderless" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider_color" />
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fontFamily="@font/shopee_display"
-                android:text="@string/my_orders_title"
-                android:textColor="@color/dark_green"
-                android:textSize="20sp" />
+    <!-- SwipeRefreshLayout below the header -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        </LinearLayout>
-
-        <View
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="8dp"
-            android:background="@color/divider_color" />
-
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:clipToPadding="false"
-            android:overScrollMode="never"
-            android:scrollbars="none">
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:overScrollMode="never">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="vertical"
+                android:paddingTop="18dp"
+                android:paddingBottom="12dp">
 
-                <TextView
-                    android:id="@+id/btnFilterAll"
-                    style="@style/Widget.StoreHub.OrderFilter"
-                    android:background="@drawable/bg_order_filter_selected"
-                    android:text="@string/order_filter_all" />
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:clipToPadding="false"
+                    android:overScrollMode="never"
+                    android:scrollbars="none">
 
-                <TextView
-                    android:id="@+id/btnFilterPending"
-                    style="@style/Widget.StoreHub.OrderFilter"
-                    android:layout_marginStart="10dp"
-                    android:text="@string/order_filter_pending" />
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/btnFilterShipping"
-                    style="@style/Widget.StoreHub.OrderFilter"
-                    android:layout_marginStart="10dp"
-                    android:text="@string/order_filter_shipping" />
+                        <TextView
+                            android:id="@+id/btnFilterAll"
+                            style="@style/Widget.StoreHub.OrderFilter"
+                            android:background="@drawable/bg_order_filter_selected"
+                            android:text="@string/order_filter_all" />
 
-                <TextView
-                    android:id="@+id/btnFilterCompleted"
-                    style="@style/Widget.StoreHub.OrderFilter"
-                    android:layout_marginStart="10dp"
-                    android:text="@string/order_filter_completed" />
+                        <TextView
+                            android:id="@+id/btnFilterPending"
+                            style="@style/Widget.StoreHub.OrderFilter"
+                            android:layout_marginStart="10dp"
+                            android:text="@string/order_filter_pending" />
 
-                <TextView
-                    android:id="@+id/btnFilterCancelled"
-                    style="@style/Widget.StoreHub.OrderFilter"
-                    android:layout_marginStart="10dp"
-                    android:text="@string/order_filter_cancelled" />
+                        <TextView
+                            android:id="@+id/btnFilterShipping"
+                            style="@style/Widget.StoreHub.OrderFilter"
+                            android:layout_marginStart="10dp"
+                            android:text="@string/order_filter_shipping" />
+
+                        <TextView
+                            android:id="@+id/btnFilterCompleted"
+                            style="@style/Widget.StoreHub.OrderFilter"
+                            android:layout_marginStart="10dp"
+                            android:text="@string/order_filter_completed" />
+
+                        <TextView
+                            android:id="@+id/btnFilterCancelled"
+                            style="@style/Widget.StoreHub.OrderFilter"
+                            android:layout_marginStart="10dp"
+                            android:text="@string/order_filter_cancelled" />
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="32dp"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:id="@+id/ordersContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:orientation="vertical"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp" />
             </LinearLayout>
-        </HorizontalScrollView>
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="32dp"
-            android:visibility="gone" />
-
-        <LinearLayout
-            android:id="@+id/ordersContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:orientation="vertical"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp" />
-    </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
-</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</LinearLayout>

@@ -1,26 +1,46 @@
 package com.nguyenmanhphuc.storehubapp.services;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import android.widget.Toast;
 
+import com.nguyenmanhphuc.storehubapp.utils.NetworkUtils;
 import com.nguyenmanhphuc.storehubapp.utils.SharedPreferencesManager;
 
+import java.io.IOException;
+
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HttpResquest {
 
-//    public static final String BASE_URL = "http://10.0.2.2:3000/"; // không xóa -> comment lại
-
-//   public static final String BASE_URL = "http://192.168.2.6:5000/";
-//    public static final String BASE_URL = "http://192.168.1.2:3000/";
-//    public static final String BASE_URL = "https://store-hub-server.onrender.com/";
-     public static final String BASE_URL = "https://storehub-server.vercel.app/";
+    public static final String BASE_URL = "https://storehub-server.vercel.app/";
 
     public ApiServices apiServices;
 
     public HttpResquest() {
+        this(null);
+    }
+
+    public HttpResquest(Context context) {
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        if (context != null) {
+            final Context appContext = context.getApplicationContext();
+            builder.addInterceptor(chain -> {
+                if (!NetworkUtils.isNetworkAvailable(appContext)) {
+                    new Handler(Looper.getMainLooper()).post(() ->
+                            Toast.makeText(appContext, "Mạng không khả dụng. Kiểm tra lại mạng.", Toast.LENGTH_SHORT).show()
+                    );
+                    throw new IOException("Mạng không khả dụng. Kiểm tra lại mạng.");
+                }
+                return chain.proceed(chain.request());
+            });
+        }
         apiServices = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
+                .client(builder.build())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(ApiServices.class);

@@ -71,8 +71,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
 
         Glide.with(context)
                 .load(product.getImage())
-                .placeholder(R.drawable.ic_product)
-                .error(R.drawable.ic_product)
+                .placeholder(R.drawable.ic_products)
+                .error(R.drawable.ic_products)
                 .listener(new com.bumptech.glide.request.RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@androidx.annotation.Nullable com.bumptech.glide.load.engine.GlideException e, Object model, com.bumptech.glide.request.target.Target<Drawable> target, boolean isFirstResource) {

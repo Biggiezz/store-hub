@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -42,7 +42,7 @@ public class PaymentConfirmationActivity extends BaseActivity {
     private static final long SHIPPING_FEE = 40000L;
     private final ArrayList<CartItem> cartItems = new ArrayList<>();
     private long subtotal;
-    private ImageButton btnBack;
+    private ImageView btnBack;
     private MaterialButton btnConfirmPayment;
     private LinearLayout layoutProductSummary, optionZaloPay, optionCod;
     private RadioButton rbZaloPay, rbCod;

@@ -193,8 +193,8 @@ public class AdminProductDetailActivity extends AppCompatActivity {
 
         Glide.with(this)
                 .load(product.getImage())
-                .placeholder(R.drawable.ic_product)
-                .error(R.drawable.ic_product)
+                .placeholder(R.drawable.ic_products)
+                .error(R.drawable.ic_products)
                 .into(ivProductImage);
         
         switchStatus.setChecked(product.isActive());

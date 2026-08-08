@@ -150,6 +150,7 @@
     <string name="checkout_now_button">Checkout Now</string>
     <string name="subtotal_label_template">Subtotal (%d products):</string>
     <string name="tech_news_title">Tech News</string>
+    <string name="orders_title">Orders</string>
     <string name="my_orders_title">My Orders</string>
     <string name="order_filter_all">All</string>
     <string name="order_filter_pending">Pending</string>

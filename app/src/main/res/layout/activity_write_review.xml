@@ -72,7 +72,7 @@
                     android:layout_height="72dp"
                     android:scaleType="centerCrop"
                     app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"
-                    tools:src="@drawable/ic_product" />
+                    tools:src="@drawable/ic_products" />
 
                 <LinearLayout
                     android:layout_width="0dp"

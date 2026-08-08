@@ -104,8 +104,8 @@ public class WriteReviewActivity extends BaseActivity {
             tvReviewProductVariant.setText(order.getProductVariant());
             Glide.with(this)
                     .load(order.getProductImage())
-                    .placeholder(R.drawable.ic_product)
-                    .error(R.drawable.ic_product)
+                    .placeholder(R.drawable.ic_products)
+                    .error(R.drawable.ic_products)
                     .into(ivReviewProductImage);
         }
 

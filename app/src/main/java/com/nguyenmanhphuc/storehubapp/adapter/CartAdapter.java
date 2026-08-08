@@ -78,8 +78,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
         Glide.with(context)
                 .load(item.getProductImage())
-                .placeholder(R.drawable.ic_product)
-                .error(R.drawable.ic_product)
+                .placeholder(R.drawable.ic_products)
+                .error(R.drawable.ic_products)
                 .into(holder.ivProduct);
 
         holder.btnDecrease.setOnClickListener(v -> {

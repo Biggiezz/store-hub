@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.nguyenmanhphuc.storehubapp.services.AppLifecycleService;
 import com.nguyenmanhphuc.storehubapp.utils.LocaleHelper;
+import com.nguyenmanhphuc.storehubapp.utils.NetworkUtils;
 import com.nguyenmanhphuc.storehubapp.utils.SharedPreferencesManager;
 
 public class BaseActivity extends AppCompatActivity {
@@ -31,6 +32,11 @@ public class BaseActivity extends AppCompatActivity {
         String lang = SharedPreferencesManager.getInstance(this).getLanguage();
         if (!lang.equals(currentLanguage)) {
             recreate();
+            return;
+        }
+
+        if (!NetworkUtils.isNetworkAvailable(this)) {
+            NetworkUtils.showNoNetworkToast(this);
         }
     }
 
@@ -39,4 +45,3 @@ public class BaseActivity extends AppCompatActivity {
         super.attachBaseContext(LocaleHelper.onAttach(newBase));
     }
 }
-

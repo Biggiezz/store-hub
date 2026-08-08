@@ -123,4 +123,30 @@ public class CartItem implements java.io.Serializable {
     public long getTotalItemPrice() {
         return getPrice() * quantity;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CartItem cartItem = (CartItem) o;
+        if (!getId().isEmpty() && !cartItem.getId().isEmpty()) {
+            return getId().equals(cartItem.getId());
+        }
+        String p1 = getProductId();
+        String p2 = cartItem.getProductId();
+        String c1 = getColorId() != null ? getColorId() : (getColorName() != null ? getColorName() : "");
+        String c2 = cartItem.getColorId() != null ? cartItem.getColorId() : (cartItem.getColorName() != null ? cartItem.getColorName() : "");
+        if (!p1.isEmpty() && !p2.isEmpty()) {
+            return p1.equals(p2) && c1.equals(c2);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        if (!getId().isEmpty()) return getId().hashCode();
+        String p = getProductId();
+        String c = getColorId() != null ? getColorId() : (getColorName() != null ? getColorName() : "");
+        return (p + "_" + c).hashCode();
+    }
 }

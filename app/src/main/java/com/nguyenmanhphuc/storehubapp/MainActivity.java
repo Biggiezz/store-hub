@@ -20,7 +20,9 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
@@ -29,8 +31,6 @@ import com.nguyenmanhphuc.storehubapp.adapter.NewsAdapter;
 import com.nguyenmanhphuc.storehubapp.adapter.ProductAdapter;
 import com.nguyenmanhphuc.storehubapp.adapter.SlideShowAdapter;
 import com.nguyenmanhphuc.storehubapp.auth.LoginActivity;
-import com.nguyenmanhphuc.storehubapp.fragment.CartFragment;
-import com.nguyenmanhphuc.storehubapp.fragment.NewsFragment;
 import com.nguyenmanhphuc.storehubapp.fragment.OderFragment;
 import com.nguyenmanhphuc.storehubapp.fragment.ProductsFragment;
 import com.nguyenmanhphuc.storehubapp.model.Category;
@@ -48,8 +48,6 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 public class MainActivity extends BaseActivity {
 
     public static final String EXTRA_OPEN_TAB = "open_tab";
@@ -58,6 +56,7 @@ public class MainActivity extends BaseActivity {
     public static final String TAB_NEWS = "news";
     public static final String TAB_CART = "cart";
     public static final String TAB_ORDERS = "orders";
+    public static final String TAB_PROFILE = "profile";
     private static final int FEATURED_PRODUCT_LIMIT = 6;
     private static final String STATE_TAB = "selected_tab";
     public static ArrayList<Product> preloadedProducts = null;
@@ -70,8 +69,8 @@ public class MainActivity extends BaseActivity {
     private ImageView imgAvatar;
     private ProductAdapter productAdapter;
     private NewsAdapter newsAdapter;
-    private MaterialButton btnViewAllProducts, btnHome, btnProducts, btnCart, btnNews;
-    private LinearLayout layoutCategories;
+    private MaterialButton btnHome, btnProducts, btnCart, btnProfile;
+    private LinearLayout layoutCategories, btnViewAllProducts, btnViewAllNews;
     private View layoutLoading, mainScrollView;
     private TextView tvLoadingText;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -82,7 +81,6 @@ public class MainActivity extends BaseActivity {
     private String activeCategory = "";
     private List<Category> categoriesList = new ArrayList<>();
     private final ArrayList<MaterialButton> dynamicCategoryButtons = new ArrayList<>();
-
     private boolean isProductsLoaded = false;
     private boolean isCategoriesLoaded = false;
     private boolean isNewsLoaded = false;
@@ -174,10 +172,11 @@ public class MainActivity extends BaseActivity {
 
         // Initialize navigation buttons
         btnViewAllProducts = findViewById(R.id.btnViewAllProducts);
+        btnViewAllNews = findViewById(R.id.btnViewAllNews);
         btnHome = findViewById(R.id.btnHome);
         btnProducts = findViewById(R.id.btnProducts);
         btnCart = findViewById(R.id.btnCart);
-        btnNews = findViewById(R.id.btnNews);
+        btnProfile = findViewById(R.id.btnProfile);
         layoutCategories = findViewById(R.id.layoutCategories);
     }
 
@@ -243,11 +242,16 @@ public class MainActivity extends BaseActivity {
         if (btnViewAllProducts != null) {
             btnViewAllProducts.setOnClickListener(v -> showProducts());
         }
+        if (btnViewAllNews != null) {
+            btnViewAllNews.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, NewsActivity.class)));
+        }
 
         btnHome.setOnClickListener(v -> showHome());
         btnProducts.setOnClickListener(v -> showProducts());
-        btnCart.setOnClickListener(v -> showCart());
-        btnNews.setOnClickListener(v -> showNews());
+        btnCart.setOnClickListener(v -> showOder());
+        if (btnProfile != null) {
+            btnProfile.setOnClickListener(v -> showProfile());
+        }
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -278,6 +282,7 @@ public class MainActivity extends BaseActivity {
         else if (TAB_NEWS.equals(tab)) showNews();
         else if (TAB_ORDERS.equals(tab)) showOder();
         else if (TAB_CART.equals(tab)) showCart();
+        else if (TAB_PROFILE.equals(tab)) showProfile();
         else if (TAB_HOME.equals(tab)) showHome();
     }
 
@@ -314,22 +319,7 @@ public class MainActivity extends BaseActivity {
     }
 
     public void showCart() {
-        SharedPreferencesManager prefManager = new SharedPreferencesManager(this);
-        if (!prefManager.isLoggedIn()) {
-            Toast.makeText(this, "Vui lòng đăng nhập để xem giỏ hàng", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            return;
-        }
-        selectedTab = TAB_CART;
-        if (mainScrollView != null) {
-            mainScrollView.setVisibility(View.GONE);
-        }
-        findViewById(R.id.fragmentContainer).setVisibility(View.VISIBLE);
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragmentContainer, new CartFragment(), "cart")
-                .commit();
-        updateBottomNavigation(btnCart);
+        startActivity(new Intent(this, CartActivity.class));
     }
 
     public void showOder() {
@@ -345,28 +335,47 @@ public class MainActivity extends BaseActivity {
             mainScrollView.setVisibility(View.GONE);
         }
         findViewById(R.id.fragmentContainer).setVisibility(View.VISIBLE);
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragmentContainer, new OderFragment(), "oder")
-                .commit();
-        updateBottomNavigation(btnCart);
-        View bottomNav = findViewById(R.id.bottomNavigation);
-        if (bottomNav != null) {
-            bottomNav.setVisibility(View.GONE);
+        Fragment oderFrag = getSupportFragmentManager().findFragmentByTag("oder");
+        if (oderFrag == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentContainer, new OderFragment(), "oder")
+                    .commit();
+        } else {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentContainer, oderFrag, "oder")
+                    .commit();
         }
+        updateBottomNavigation(btnCart);
     }
 
-    private void showNews() {
-        selectedTab = TAB_NEWS;
+    public void showProfile() {
+        SharedPreferencesManager prefManager = new SharedPreferencesManager(this);
+        if (!prefManager.isLoggedIn()) {
+            Toast.makeText(this, "Vui lòng đăng nhập để xem thông tin tài khoản", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            return;
+        }
+        selectedTab = TAB_PROFILE;
         if (mainScrollView != null) {
             mainScrollView.setVisibility(View.GONE);
         }
         findViewById(R.id.fragmentContainer).setVisibility(View.VISIBLE);
-        if (getSupportFragmentManager().findFragmentByTag("news") == null) {
+        Fragment profileFrag = getSupportFragmentManager().findFragmentByTag("profile");
+        if (profileFrag == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragmentContainer, new NewsFragment(), "news")
+                    .replace(R.id.fragmentContainer, new com.nguyenmanhphuc.storehubapp.fragment.ProfileFragment(), "profile")
+                    .commit();
+        } else {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentContainer, profileFrag, "profile")
                     .commit();
         }
-        updateBottomNavigation(btnNews);
+        updateBottomNavigation(btnProfile);
+    }
+
+    public void showNews() {
+        startActivity(new Intent(this, NewsActivity.class));
     }
 
     private void updateBottomNavigation(MaterialButton activeButton) {
@@ -379,7 +388,7 @@ public class MainActivity extends BaseActivity {
         int inactiveContentColor = Color.parseColor("#AAA49D");
         int activeContentColor = Color.parseColor("#756E67");
 
-        for (MaterialButton button : new MaterialButton[]{btnHome, btnProducts, btnCart, btnNews}) {
+        for (MaterialButton button : new MaterialButton[]{btnHome, btnProducts, btnCart, btnProfile}) {
             if (button == null) continue;
             boolean isActive = button == activeButton;
             button.setBackgroundTintList(ColorStateList.valueOf(isActive ? activeColor : inactiveColor));

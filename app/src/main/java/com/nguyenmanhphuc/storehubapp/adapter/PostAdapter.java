@@ -49,7 +49,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
         Glide.with(context)
                 .load(news.getImage())
-                .placeholder(R.drawable.ic_product)
+                .placeholder(R.drawable.ic_products)
                 .into(holder.imgPost);
 
         holder.btnDelete.setOnClickListener(v -> listener.onDeleteClick(news));

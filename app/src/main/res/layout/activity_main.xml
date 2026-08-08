@@ -176,18 +176,32 @@
                                 android:textSize="24sp"
                                 android:textStyle="bold" />
 
-                            <com.google.android.material.button.MaterialButton
+                            <LinearLayout
                                 android:id="@+id/btnViewAllProducts"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_gravity="bottom|end"
-                                android:text="@string/view_all"
-                                android:textColor="@color/text_secondary"
-                                android:textSize="13sp"
-                                app:backgroundTint="@android:color/transparent"
-                                app:icon="@drawable/ic_right"
-                                app:iconGravity="textEnd"
-                                app:iconTint="@color/text_secondary" />
+                                android:background="?attr/selectableItemBackgroundBorderless"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:paddingVertical="4dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/shopee_display"
+                                    android:text="@string/view_all"
+                                    android:textColor="@color/text_secondary"
+                                    android:textSize="14sp" />
+
+                                <ImageView
+                                    android:layout_width="16dp"
+                                    android:layout_height="16dp"
+                                    android:layout_marginStart="4dp"
+                                    android:src="@drawable/ic_right"
+                                    app:tint="@color/text_secondary" />
+                            </LinearLayout>
 
                         </LinearLayout>
 
@@ -206,15 +220,51 @@
                             app:spanCount="2"
                             tools:listitem="@layout/item_product" />
 
-                        <TextView
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="28dp"
-                            android:fontFamily="@font/shopee_display"
-                            android:text="Tin tức"
-                            android:textColor="@color/dark_green"
-                            android:textSize="28sp"
-                            android:textStyle="bold" />
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/shopee_display"
+                                android:text="Tin tức"
+                                android:textColor="@color/dark_green"
+                                android:textSize="24sp"
+                                android:textStyle="bold" />
+
+                            <LinearLayout
+                                android:id="@+id/btnViewAllNews"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="?attr/selectableItemBackgroundBorderless"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:paddingVertical="4dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/shopee_display"
+                                    android:text="@string/view_all"
+                                    android:textColor="@color/text_secondary"
+                                    android:textSize="14sp" />
+
+                                <ImageView
+                                    android:layout_width="16dp"
+                                    android:layout_height="16dp"
+                                    android:layout_marginStart="4dp"
+                                    android:src="@drawable/ic_right"
+                                    app:tint="@color/text_secondary" />
+                            </LinearLayout>
+
+                        </LinearLayout>
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rvNews"
@@ -286,35 +336,88 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnHome"
-            style="@style/Widget.StoreHub.BottomNavButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:paddingHorizontal="0dp"
+            android:singleLine="true"
+            android:maxLines="1"
+            android:textSize="12sp"
+            android:textAllCaps="false"
+            android:insetLeft="0dp"
+            android:insetTop="0dp"
+            android:insetRight="0dp"
+            android:insetBottom="0dp"
             android:text="@string/nav_home"
             android:textColor="#756E67"
             app:backgroundTint="@color/bottom_nav_active"
             app:icon="@drawable/ic_home"
+            app:iconGravity="textTop"
+            app:iconPadding="2dp"
             app:iconTint="#756E67" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnProducts"
-            style="@style/Widget.StoreHub.BottomNavButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="11sp"
+            android:textAllCaps="false"
             android:text="@string/nav_products"
             android:textColor="#AAA49D"
-            app:icon="@drawable/ic_product"
+            app:backgroundTint="@android:color/transparent"
+            app:icon="@drawable/ic_products"
+            app:iconGravity="textTop"
             app:iconTint="#AAA49D" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCart"
-            style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="@string/nav_cart"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:paddingHorizontal="0dp"
+            android:singleLine="true"
+            android:maxLines="1"
+            android:textSize="12sp"
+            android:textAllCaps="false"
+            android:insetLeft="0dp"
+            android:insetTop="0dp"
+            android:insetRight="0dp"
+            android:insetBottom="0dp"
+            android:text="@string/orders_title"
             android:textColor="#AAA49D"
-            app:icon="@drawable/ic_cart"
+            app:backgroundTint="@android:color/transparent"
+            app:icon="@drawable/ic_receipt"
+            app:iconGravity="textTop"
+            app:iconPadding="2dp"
             app:iconTint="#AAA49D" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnNews"
-            style="@style/Widget.StoreHub.BottomNavButton"
-            android:text="@string/nav_news"
+            android:id="@+id/btnProfile"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:paddingHorizontal="0dp"
+            android:singleLine="true"
+            android:maxLines="1"
+            android:textSize="12sp"
+            android:textAllCaps="false"
+            android:insetLeft="0dp"
+            android:insetTop="0dp"
+            android:insetRight="0dp"
+            android:insetBottom="0dp"
+            android:text="Tài khoản"
             android:textColor="#AAA49D"
-            app:icon="@drawable/ic_new"
+            app:backgroundTint="@android:color/transparent"
+            app:icon="@drawable/ic_user"
+            app:iconGravity="textTop"
+            app:iconPadding="2dp"
             app:iconTint="#AAA49D" />
 
     </LinearLayout>
