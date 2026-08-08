@@ -4,11 +4,40 @@ import com.nguyenmanhphuc.storehubapp.model.response.TimelineStep;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.Gson;
 import java.io.Serializable;
+import java.io.ObjectStreamField;
 import java.util.ArrayList;
 
 public class Order implements Serializable {
+
+    private static final ObjectStreamField[] serialPersistentFields = {
+            new ObjectStreamField("orderId", String.class),
+            new ObjectStreamField("orderCode", String.class),
+            new ObjectStreamField("items", ArrayList.class),
+            new ObjectStreamField("status", String.class),
+            new ObjectStreamField("totalPrice", long.class),
+            new ObjectStreamField("shippingFee", long.class),
+            new ObjectStreamField("discount", long.class),
+            new ObjectStreamField("paymentMethod", String.class),
+            new ObjectStreamField("createdAt", String.class),
+            new ObjectStreamField("productName", String.class),
+            new ObjectStreamField("productImage", String.class),
+            new ObjectStreamField("productVariant", String.class),
+            new ObjectStreamField("recipientName", String.class),
+            new ObjectStreamField("recipientPhone", String.class),
+            new ObjectStreamField("recipientAddress", String.class),
+            new ObjectStreamField("rawUserString", String.class),
+            new ObjectStreamField("populatedUser", User.class),
+            new ObjectStreamField("confirmedAt", String.class),
+            new ObjectStreamField("warehouseAt", String.class),
+            new ObjectStreamField("deliveringAt", String.class),
+            new ObjectStreamField("completedAt", String.class),
+            new ObjectStreamField("cancelReason", String.class),
+            new ObjectStreamField("isReviewed", boolean.class),
+            new ObjectStreamField("appTransId", String.class),
+            new ObjectStreamField("zpTransId", String.class),
+            new ObjectStreamField("timeline", ArrayList.class)
+    };
     // Mã MongoDB ID dạng chuỗi của đơn hàng
     @SerializedName("_id")
     private String orderId;
@@ -338,5 +367,84 @@ public class Order implements Serializable {
 
     public void setZpTransId(String zpTransId) {
         this.zpTransId = zpTransId;
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+        java.io.ObjectOutputStream.PutField putFields = out.putFields();
+        putFields.put("orderId", orderId);
+        putFields.put("orderCode", orderCode);
+        putFields.put("items", items);
+        putFields.put("status", status);
+        putFields.put("totalPrice", totalPrice);
+        putFields.put("shippingFee", shippingFee);
+        putFields.put("discount", discount);
+        putFields.put("paymentMethod", paymentMethod);
+        putFields.put("createdAt", createdAt);
+        putFields.put("productName", productName);
+        putFields.put("productImage", productImage);
+        putFields.put("productVariant", productVariant);
+        putFields.put("recipientName", recipientName);
+        putFields.put("recipientPhone", recipientPhone);
+        putFields.put("recipientAddress", recipientAddress);
+
+        if (rawUser != null && !rawUser.isJsonNull()) {
+            putFields.put("rawUserString", rawUser.toString());
+        } else {
+            putFields.put("rawUserString", null);
+        }
+
+        putFields.put("populatedUser", populatedUser);
+        putFields.put("confirmedAt", confirmedAt);
+        putFields.put("warehouseAt", warehouseAt);
+        putFields.put("deliveringAt", deliveringAt);
+        putFields.put("completedAt", completedAt);
+        putFields.put("cancelReason", cancelReason);
+        putFields.put("isReviewed", isReviewed);
+        putFields.put("appTransId", appTransId);
+        putFields.put("zpTransId", zpTransId);
+        putFields.put("timeline", timeline);
+
+        out.writeFields();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        java.io.ObjectInputStream.GetField getFields = in.readFields();
+        orderId = (String) getFields.get("orderId", null);
+        orderCode = (String) getFields.get("orderCode", null);
+        items = (ArrayList<CartItem>) getFields.get("items", null);
+        status = (String) getFields.get("status", null);
+        totalPrice = getFields.get("totalPrice", 0L);
+        shippingFee = getFields.get("shippingFee", 0L);
+        discount = getFields.get("discount", 0L);
+        paymentMethod = (String) getFields.get("paymentMethod", null);
+        createdAt = (String) getFields.get("createdAt", null);
+        productName = (String) getFields.get("productName", "");
+        productImage = (String) getFields.get("productImage", "");
+        productVariant = (String) getFields.get("productVariant", "");
+        recipientName = (String) getFields.get("recipientName", null);
+        recipientPhone = (String) getFields.get("recipientPhone", null);
+        recipientAddress = (String) getFields.get("recipientAddress", null);
+
+        String rawUserString = (String) getFields.get("rawUserString", null);
+        if (rawUserString != null) {
+            try {
+                rawUser = new com.google.gson.Gson().fromJson(rawUserString, com.google.gson.JsonElement.class);
+            } catch (Exception ignored) {
+                rawUser = null;
+            }
+        } else {
+            rawUser = null;
+        }
+
+        populatedUser = (User) getFields.get("populatedUser", null);
+        confirmedAt = (String) getFields.get("confirmedAt", null);
+        warehouseAt = (String) getFields.get("warehouseAt", null);
+        deliveringAt = (String) getFields.get("deliveringAt", null);
+        completedAt = (String) getFields.get("completedAt", null);
+        cancelReason = (String) getFields.get("cancelReason", null);
+        isReviewed = getFields.get("isReviewed", false);
+        appTransId = (String) getFields.get("appTransId", null);
+        zpTransId = (String) getFields.get("zpTransId", null);
+        timeline = (ArrayList<TimelineStep>) getFields.get("timeline", null);
     }
 }

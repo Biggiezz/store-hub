@@ -99,6 +99,13 @@
     <string name="change_language">Change Language</string>
     <string name="change_language_en">Language: English</string>
     <string name="logout">Logout</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="delete_account_dialog_title">Confirm Account Deletion</string>
+    <string name="delete_account_dialog_message">This action will permanently delete your account and cannot be undone. Please enter your password to confirm:</string>
+    <string name="delete_account_success_toast">Account deleted successfully!</string>
+    <string name="delete_account_failed_toast">Failed to delete account, please try again.</string>
+    <string name="hint_password">Enter your password</string>
+    <string name="error_empty_password">Please enter your password</string>
     <string name="role_admin">Admin</string>
     <string name="role_customer">Customer</string>
     <string name="no_password_change">Password not changed yet</string>

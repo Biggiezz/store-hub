@@ -99,6 +99,13 @@
     <string name="change_language">Đổi ngôn ngữ</string>
     <string name="change_language_en">Change Language</string>
     <string name="logout">Đăng xuất</string>
+    <string name="delete_account">Xóa tài khoản</string>
+    <string name="delete_account_dialog_title">Xác nhận xóa tài khoản</string>
+    <string name="delete_account_dialog_message">Hành động này sẽ xóa vĩnh viễn tài khoản của bạn và không thể khôi phục. Vui lòng nhập mật khẩu để xác nhận:</string>
+    <string name="delete_account_success_toast">Xóa tài khoản thành công!</string>
+    <string name="delete_account_failed_toast">Xóa tài khoản thất bại, vui lòng thử lại sau.</string>
+    <string name="hint_password">Nhập mật khẩu của bạn</string>
+    <string name="error_empty_password">Vui lòng nhập mật khẩu</string>
     <string name="role_admin">Người quản lý</string>
     <string name="role_customer">Khách hàng</string>
     <string name="no_password_change">Chưa đổi mật khẩu</string>
