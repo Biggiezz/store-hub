@@ -159,7 +159,6 @@ public class MainActivity extends BaseActivity {
             pulse.start();
         }
 
-        // Initialize avatar & load user image
         imgAvatar = findViewById(R.id.imgAvatar);
         imgAvatar.setOnClickListener(v -> {
             SharedPreferencesManager prefManager = new SharedPreferencesManager(MainActivity.this);
@@ -168,8 +167,7 @@ public class MainActivity extends BaseActivity {
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intent);
             } else {
-                Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
-                startActivity(intent);
+                showProfile();
             }
         });
         loadAvatar();

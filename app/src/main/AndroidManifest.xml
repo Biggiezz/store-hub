@@ -88,9 +88,7 @@
         <activity
             android:name=".NewsDetailActivity"
             android:exported="false" />
-        <activity
-            android:name=".ProfileActivity"
-            android:exported="false" />
+
         <activity
             android:name=".admin.AddNewsManagementActivity"
             android:exported="false"
