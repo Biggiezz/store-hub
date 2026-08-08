@@ -51,7 +51,9 @@ import androidx.core.content.ContextCompat;
 
 public class ProductsFragment extends Fragment {
     private RecyclerView rvProducts;
-    private ImageView btnBack, btnReceipt;
+    private ImageView btnBack;
+    private View btnCart;
+    private TextView tvCartBadge;
     private ProductAdapter productAdapter;
     private TextInputEditText edtSearch;
     private NestedScrollView nestedScrollView;
@@ -99,7 +101,8 @@ public class ProductsFragment extends Fragment {
     private void initUi(View view) {
         rvProducts = view.findViewById(R.id.rvProducts);
         btnBack = view.findViewById(R.id.btnBack);
-        btnReceipt = view.findViewById(R.id.btnReceipt);
+        btnCart = view.findViewById(R.id.btnCartContainer);
+        tvCartBadge = view.findViewById(R.id.tvCartBadge);
         edtSearch = view.findViewById(R.id.edtSearch);
         nestedScrollView = view.findViewById(R.id.nestedScrollView);
         progressBar = view.findViewById(R.id.progressBar);
@@ -132,8 +135,8 @@ public class ProductsFragment extends Fragment {
                 }
             });
         }
-        if (btnReceipt != null) {
-            btnReceipt.setOnClickListener(v -> startActivity(new Intent(requireContext(), CartActivity.class)));
+        if (btnCart != null) {
+            btnCart.setOnClickListener(v -> startActivity(new Intent(requireContext(), CartActivity.class)));
         }
 
         if (edtSearch != null) {
@@ -399,12 +402,58 @@ public class ProductsFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        fetchCartCount();
+    }
+
+    private void fetchCartCount() {
+        com.nguyenmanhphuc.storehubapp.utils.SharedPreferencesManager prefManager = new com.nguyenmanhphuc.storehubapp.utils.SharedPreferencesManager(requireContext());
+        if (!prefManager.isLoggedIn()) {
+            if (tvCartBadge != null) tvCartBadge.setVisibility(View.GONE);
+            return;
+        }
+        new HttpResquest().apiServices.getCart(HttpResquest.authorizationHeader(requireContext())).enqueue(new Callback<Response<java.util.ArrayList<com.nguyenmanhphuc.storehubapp.model.CartItem>>>() {
+            @Override
+            public void onResponse(@NonNull Call<Response<java.util.ArrayList<com.nguyenmanhphuc.storehubapp.model.CartItem>>> call, @NonNull retrofit2.Response<Response<java.util.ArrayList<com.nguyenmanhphuc.storehubapp.model.CartItem>>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    int count = 0;
+                    for (com.nguyenmanhphuc.storehubapp.model.CartItem item : response.body().getData()) {
+                        count += item.getQuantity();
+                    }
+                    updateCartBadge(count);
+                } else {
+                    updateCartBadge(0);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Response<java.util.ArrayList<com.nguyenmanhphuc.storehubapp.model.CartItem>>> call, @NonNull Throwable t) {
+                updateCartBadge(0);
+            }
+        });
+    }
+
+    private void updateCartBadge(int count) {
+        if (tvCartBadge != null) {
+            if (count > 0) {
+                tvCartBadge.setText(count > 99 ? "99+" : String.valueOf(count));
+                tvCartBadge.setVisibility(View.VISIBLE);
+            } else {
+                tvCartBadge.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    @Override
     public void onDestroyView() {
         cancelCurrentCall();
         if (searchRunnable != null) searchHandler.removeCallbacks(searchRunnable);
         productAdapter = null;
         edtSearch = null;
         btnFilterCategory = null;
+        btnCart = null;
+        tvCartBadge = null;
         super.onDestroyView();
     }
 }

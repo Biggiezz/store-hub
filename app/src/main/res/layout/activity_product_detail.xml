@@ -71,7 +71,7 @@
                 android:layout_gravity="center"
                 android:contentDescription="Receipt"
                 android:padding="4dp"
-                android:src="@drawable/ic_order"
+                android:src="@drawable/ic_cart"
                 app:tint="@color/dark_green" />
 
             <TextView
