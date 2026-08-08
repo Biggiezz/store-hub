@@ -143,15 +143,17 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
         ordersCall.enqueue(new Callback<Response<ArrayList<Order>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<Order>>> call, @NonNull retrofit2.Response<Response<ArrayList<Order>>> response) {
-                setLoading(false);
                 if (response.isSuccessful() && response.body() != null) {
                     ArrayList<Order> orderList = response.body().getData();
-                    allOrders.clear();
-                    if (orderList != null) {
-                        allOrders.addAll(orderList);
+                    if (orderList != null && !orderList.isEmpty()) {
+                        fetchLatestUsersAndUpdateOrders(orderList);
+                    } else {
+                        setLoading(false);
+                        allOrders.clear();
+                        filterAndSearchOrders();
                     }
-                    filterAndSearchOrders();
                 } else {
+                    setLoading(false);
                     Toast.makeText(AdminOrdersActivity.this, AdminOrdersActivity.this.getString(R.string.toast_khong_the_tai_danh_sach_don_hang), Toast.LENGTH_SHORT).show();
                 }
             }
@@ -163,6 +165,48 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
                 Log.e("AdminOrdersActivity", "Error loading orders", t);
                 Toast.makeText(AdminOrdersActivity.this, AdminOrdersActivity.this.getString(R.string.toast_loi_ket_noi_may_chu), Toast.LENGTH_SHORT).show();
                 allOrders.clear();
+                filterAndSearchOrders();
+            }
+        });
+    }
+
+    private void fetchLatestUsersAndUpdateOrders(ArrayList<Order> orderList) {
+        apiService.getListUsers(getAuthHeader(), 1, 1000, null, null).enqueue(new Callback<Response<ArrayList<User>>>() {
+            @Override
+            public void onResponse(@NonNull Call<Response<ArrayList<User>>> call, @NonNull retrofit2.Response<Response<ArrayList<User>>> response) {
+                setLoading(false);
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    ArrayList<User> users = response.body().getData();
+                    Log.d("AdminOrders", "Fetched " + users.size() + " users");
+                    java.util.HashMap<String, User> userMap = new java.util.HashMap<>();
+                    for (User u : users) {
+                        if (u.getId() != null) {
+                            userMap.put(u.getId(), u);
+                        }
+                    }
+                    for (Order o : orderList) {
+                        String uid = o.getUserIdString();
+                        Log.d("AdminOrders", "Order " + o.getOrderCode() + " userId='" + uid + "'");
+                        if (!uid.isEmpty() && userMap.containsKey(uid)) {
+                            o.setPopulatedUser(userMap.get(uid));
+                            Log.d("AdminOrders", "  → Mapped user: " + userMap.get(uid).getName());
+                        }
+                    }
+                }
+                allOrders.clear();
+                if (orderList != null) {
+                    allOrders.addAll(orderList);
+                }
+                filterAndSearchOrders();
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Response<ArrayList<User>>> call, @NonNull Throwable t) {
+                setLoading(false);
+                allOrders.clear();
+                if (orderList != null) {
+                    allOrders.addAll(orderList);
+                }
                 filterAndSearchOrders();
             }
         });
@@ -313,12 +357,12 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
         StatusAdapter adapter = new StatusAdapter(this, allStatuses, finalCurrentStatusIndex, nextValidIndex, cancelIndex, isSuperAdmin);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Chọn trạng thái mới cho đơn hàng " + order.getOrderCode());
+        builder.setTitle(String.format(getString(R.string.choose_new_status_title), order.getOrderCode()));
         builder.setSingleChoiceItems(adapter, finalCurrentStatusIndex, (dialog, which) -> {
             selectedIndex[0] = which;
         });
 
-        builder.setPositiveButton("Cập nhật", (dialog, which) -> {
+        builder.setPositiveButton(getString(R.string.update), (dialog, which) -> {
             if (selectedIndex[0] >= 0 && selectedIndex[0] != finalCurrentStatusIndex) {
                 updateStatus(order.getOrderId(), allStatuses[selectedIndex[0]]);
             } else {
@@ -326,7 +370,7 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
             }
         });
 
-        builder.setNegativeButton("Hủy", null);
+        builder.setNegativeButton(getString(R.string.cancel), null);
         builder.create().show();
     }
 
@@ -446,7 +490,7 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
         if (filteredList.isEmpty()) {
             if (tvEmptyState != null) {
                 tvEmptyState.setVisibility(View.VISIBLE);
-                tvEmptyState.setText("Không tìm thấy đơn hàng phù hợp");
+                tvEmptyState.setText(getString(R.string.no_matching_orders));
             }
             if (rvAdminOrders != null) {
                 rvAdminOrders.setVisibility(View.GONE);

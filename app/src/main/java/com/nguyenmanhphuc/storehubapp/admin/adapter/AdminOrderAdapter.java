@@ -60,6 +60,29 @@ public class AdminOrderAdapter extends RecyclerView.Adapter<AdminOrderAdapter.Or
         return orders.size();
     }
 
+    private String getLocalizedStatus(String status) {
+        if (status == null) return "";
+        if ("Chờ xác nhận".equalsIgnoreCase(status) || "Pending".equalsIgnoreCase(status) || "Chờ xử lý".equalsIgnoreCase(status)) {
+            return context.getString(R.string.status_pending);
+        }
+        if ("Đã xác nhận".equalsIgnoreCase(status) || "Confirmed".equalsIgnoreCase(status)) {
+            return context.getString(R.string.xml_da_xac_nhan);
+        }
+        if ("Đã rời kho".equalsIgnoreCase(status) || "Left Warehouse".equalsIgnoreCase(status)) {
+            return context.getString(R.string.status_dispatched);
+        }
+        if ("Đang giao hàng".equalsIgnoreCase(status) || "Shipping".equalsIgnoreCase(status)) {
+            return context.getString(R.string.status_shipping);
+        }
+        if ("Đã giao hàng".equalsIgnoreCase(status) || "Đã hoàn thành".equalsIgnoreCase(status) || "Completed".equalsIgnoreCase(status)) {
+            return context.getString(R.string.status_completed);
+        }
+        if ("Đã hủy".equalsIgnoreCase(status) || "Cancelled".equalsIgnoreCase(status)) {
+            return context.getString(R.string.status_cancelled);
+        }
+        return status;
+    }
+
     class OrderViewHolder extends RecyclerView.ViewHolder {
         TextView tvOrderCode, tvOrderPaymentMethod, tvOrderDate, tvRecipientNamePhone, tvRecipientAddress, tvItemsCount, tvTotalPrice, tvOrderStatus;
         MaterialButton btnViewDetails, btnUpdateStatus;
@@ -79,7 +102,7 @@ public class AdminOrderAdapter extends RecyclerView.Adapter<AdminOrderAdapter.Or
         }
 
         public void bind(Order order) {
-            tvOrderCode.setText(order.getOrderCode() != null ? order.getOrderCode() : "Không có mã");
+            tvOrderCode.setText(order.getOrderCode() != null ? order.getOrderCode() : itemView.getContext().getString(R.string.no_order_code));
             tvOrderPaymentMethod.setText("ZaloPay".equalsIgnoreCase(order.getPaymentMethod()) ? "ZaloPay" : "COD");
             
             // Format created date or fallback
@@ -94,17 +117,17 @@ public class AdminOrderAdapter extends RecyclerView.Adapter<AdminOrderAdapter.Or
             String name = order.getRecipientName();
             String phone = order.getRecipientPhone();
             if (name.isEmpty() && phone.isEmpty()) {
-                tvRecipientNamePhone.setText("Chưa có thông tin nhận hàng");
+                tvRecipientNamePhone.setText(itemView.getContext().getString(R.string.no_recipient_info_order));
             } else {
                 tvRecipientNamePhone.setText(name + "  •  " + phone);
             }
 
             String address = order.getRecipientAddress();
-            tvRecipientAddress.setText(address.isEmpty() ? "Chưa có địa chỉ" : address);
+            tvRecipientAddress.setText(address.isEmpty() ? itemView.getContext().getString(R.string.no_address_order) : address);
 
             // Bind items count
             int itemsCount = order.getItems() != null ? order.getItems().size() : 0;
-            tvItemsCount.setText("Sản phẩm: " + itemsCount + " món");
+            tvItemsCount.setText(itemView.getContext().getString(R.string.items_count_prefix, itemsCount));
 
             // Bind total price
             long totalPrice = (long) order.getTotalPrice();
@@ -112,7 +135,7 @@ public class AdminOrderAdapter extends RecyclerView.Adapter<AdminOrderAdapter.Or
 
             // Bind status
             String status = order.getStatus();
-            tvOrderStatus.setText(status != null ? status : "Chờ xác nhận");
+            tvOrderStatus.setText(status != null ? getLocalizedStatus(status) : itemView.getContext().getString(R.string.status_pending));
 
             // Update status tag background depending on status
             if ("Đã giao hàng".equalsIgnoreCase(status) || "completed".equalsIgnoreCase(status) || "Đã hoàn thành".equalsIgnoreCase(status)) {

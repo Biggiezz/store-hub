@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -137,9 +138,9 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
         edtQuantity.setText(String.valueOf(item.getQuantity()));
 
         new AlertDialog.Builder(this)
-                .setTitle("Sửa số lượng: " + item.getProductName())
+                .setTitle(String.format(getString(R.string.edit_quantity_title), item.getProductName()))
                 .setView(dialogView)
-                .setPositiveButton("Cập nhật", (dialog, which) -> {
+                .setPositiveButton(getString(R.string.update), (dialog, which) -> {
                     String qtyStr = edtQuantity.getText().toString().trim();
                     if (!qtyStr.isEmpty()) {
                         int newQty = Integer.parseInt(qtyStr);
@@ -148,7 +149,7 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
                         }
                     }
                 })
-                .setNegativeButton("Hủy", null)
+                .setNegativeButton(getString(R.string.cancel), null)
                 .show();
     }
 
@@ -218,13 +219,13 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
             @Override
             public void onResponse(@NonNull Call<Response<Order>> call,
                                    @NonNull retrofit2.Response<Response<Order>> response) {
-                setLoading(false);
                 if (response.isSuccessful() && response.body() != null
                         && response.body().getData() != null) {
                     currentOrder = response.body().getData();
-                    bindOrder(currentOrder);
+                    fetchLatestUserAndBind(currentOrder);
                 } else {
-                    handleProtectedApiError(response.code(), "Không thể tải chi tiết đơn hàng");
+                    setLoading(false);
+                    handleProtectedApiError(response.code(), getString(R.string.load_order_detail_failed));
                 }
             }
 
@@ -237,11 +238,43 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
         });
     }
 
+    private void fetchLatestUserAndBind(Order order) {
+        String userId = order.getUserIdString();
+        Log.d("AdminOrderDetail", "userId from order: '" + userId + "'");
+        if (!userId.isEmpty()) {
+            apiService.getUserById(getAuthHeader(), userId).enqueue(new Callback<Response<User>>() {
+                @Override
+                public void onResponse(@NonNull Call<Response<User>> call, @NonNull retrofit2.Response<Response<User>> response) {
+                    setLoading(false);
+                    Log.d("AdminOrderDetail", "getUserById response code: " + response.code());
+                    if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                        User u = response.body().getData();
+                        Log.d("AdminOrderDetail", "Fetched user name: " + u.getName());
+                        order.setPopulatedUser(u);
+                    }
+                    bindOrder(order);
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<Response<User>> call, @NonNull Throwable t) {
+                    setLoading(false);
+                    Log.e("AdminOrderDetail", "getUserById failed: " + t.getMessage());
+                    bindOrder(order);
+                }
+            });
+        } else {
+            // userId rỗng: có thể backend populate object vào field khác, thử fallback qua email/name từ receiverName
+            Log.w("AdminOrderDetail", "userId is empty, binding with order data only");
+            setLoading(false);
+            bindOrder(order);
+        }
+    }
+
     private void bindOrder(Order order) {
         orderCodeView.setText(order.getOrderCode().isEmpty()
-                ? "Đơn hàng"
+                ? getString(R.string.order_label)
                 : order.getOrderCode());
-        createdAtView.setText("Ngày đặt: " + formatDate(order.getCreatedAt()));
+        createdAtView.setText(String.format(getString(R.string.order_date_prefix), formatDate(order.getCreatedAt())));
 
         String status = order.getStatus();
         statusView.setText(status);
@@ -251,11 +284,13 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
 
         String receiver = order.getRecipientName();
         String phone = order.getRecipientPhone();
+        User u = order.getUser();
+        String email = (u != null && u.getEmail() != null && !u.getEmail().isEmpty()) ? "  •  " + u.getEmail() : "";
         receiverView.setText(receiver.isEmpty() && phone.isEmpty()
-                ? "Chưa có thông tin người nhận"
-                : receiver + (phone.isEmpty() ? "" : "  •  " + phone));
+                ? getString(R.string.no_recipient_info)
+                : receiver + (phone.isEmpty() ? "" : "  •  " + phone) + email);
         addressView.setText(order.getRecipientAddress().isEmpty()
-                ? "Chưa có địa chỉ giao hàng"
+                ? getString(R.string.no_shipping_address)
                 : order.getRecipientAddress());
 
         productAdapter.updateData(order.getItems());
@@ -268,7 +303,7 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
         if (subtotal == 0L) subtotal = order.getTotalPrice();
 
         long shippingFee = order.getShippingFee();
-        itemCountView.setText(totalQuantity + " sản phẩm");
+        itemCountView.setText(String.format(getString(R.string.item_count_suffix), totalQuantity));
         subtotalView.setText(formatPrice(subtotal));
         shippingFeeView.setText(formatPrice(shippingFee));
         totalView.setText(formatPrice(subtotal + shippingFee));
@@ -276,8 +311,8 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
         if ("Đã hủy".equals(status)) {
             cancelReasonView.setVisibility(View.VISIBLE);
             String reason = order.getCancelReason();
-            cancelReasonView.setText("Lý do hủy: " +
-                    (reason.isEmpty() ? "Không có thông tin" : reason));
+            cancelReasonView.setText(String.format(getString(R.string.cancel_reason_prefix),
+                    reason.isEmpty() ? getString(R.string.no_info) : reason));
         } else {
             cancelReasonView.setVisibility(View.GONE);
         }
@@ -394,12 +429,12 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
         StatusAdapter adapter = new StatusAdapter(this, allStatuses, finalCurrentStatusIndex, nextValidIndex, cancelIndex, isSuperAdmin);
 
         new AlertDialog.Builder(this)
-                .setTitle("Cập nhật trạng thái " + currentOrder.getOrderCode())
+                .setTitle(String.format(getString(R.string.update_status_title), currentOrder.getOrderCode()))
                 .setSingleChoiceItems(adapter, finalCurrentStatusIndex, (dialog, which) -> {
                     selectedIndex[0] = which;
                 })
-                .setNegativeButton("Hủy", null)
-                .setPositiveButton("Cập nhật", (dialog, which) -> {
+                .setNegativeButton(getString(R.string.cancel), null)
+                .setPositiveButton(getString(R.string.update), (dialog, which) -> {
                     if (selectedIndex[0] >= 0 && selectedIndex[0] != finalCurrentStatusIndex) {
                         updateOrderStatus(allStatuses[selectedIndex[0]]);
                     } else {
@@ -426,7 +461,7 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
                     Toast.makeText(AdminOrderDetailActivity.this,
                             response.body().getMessage(), Toast.LENGTH_SHORT).show();
                 } else {
-                    handleProtectedApiError(response.code(), "Không thể cập nhật trạng thái");
+                    handleProtectedApiError(response.code(), getString(R.string.update_status_failed));
                 }
             }
 
@@ -454,7 +489,7 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
 
     private void handleProtectedApiError(int statusCode, String fallbackMessage) {
         String message = statusCode == 401 || statusCode == 403
-                ? "Phiên đăng nhập không hợp lệ hoặc bạn không có quyền"
+                ? getString(R.string.invalid_session_or_no_permission)
                 : fallbackMessage;
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         if (statusCode == 401 || statusCode == 403) finish();
@@ -479,7 +514,7 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
 
     private String formatPrice(long value) {
         return NumberFormat.getNumberInstance(new Locale("vi", "VN"))
-                .format(value) + "đ";
+                .format(value) + getString(R.string.admin_price_suffix);
     }
 
     private String formatDate(String value) {

@@ -207,6 +207,12 @@ public interface ApiServices {
     @GET("users/get-user-by-id/{id}")
     Call<Response<User>> getUserById(@Path("id") String id);
 
+    @GET("users/get-user-by-id/{id}")
+    Call<Response<User>> getUserById(
+            @Header("Authorization") String token,
+            @Path("id") String id
+    );
+
     @POST("users/add-user")
     Call<Response<User>> addUser(@Header("Authorization") String token, @Body User user);
 

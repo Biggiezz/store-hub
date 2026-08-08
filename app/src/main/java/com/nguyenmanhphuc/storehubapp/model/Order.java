@@ -2,6 +2,9 @@ package com.nguyenmanhphuc.storehubapp.model;
 
 import com.nguyenmanhphuc.storehubapp.model.response.TimelineStep;
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.Gson;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -58,6 +61,13 @@ public class Order implements Serializable {
     // Địa chỉ giao nhận hàng
     @SerializedName("deliveryAddress")
     private String recipientAddress;
+
+    // Reference tới tài khoản khách hàng (backend trả về "user")
+    @SerializedName("user")
+    private JsonElement rawUser;
+
+    // Thông tin User mới nhất được gán sau khi fetch từ API
+    private User populatedUser;
 
     // Thời điểm xác nhận đơn hàng
     @SerializedName("confirmedAt")
@@ -197,7 +207,36 @@ public class Order implements Serializable {
         this.productVariant = productVariant;
     }
 
+    public User getUser() {
+        return populatedUser;
+    }
+
+    public void setPopulatedUser(User user) {
+        this.populatedUser = user;
+    }
+
+    public String getUserIdString() {
+        return extractIdFromElement(rawUser);
+    }
+
+    private String extractIdFromElement(JsonElement elem) {
+        if (elem == null || elem.isJsonNull()) return "";
+        try {
+            if (elem.isJsonPrimitive()) return elem.getAsString();
+            if (elem.isJsonObject()) {
+                JsonObject obj = elem.getAsJsonObject();
+                if (obj.has("_id") && !obj.get("_id").isJsonNull()) return obj.get("_id").getAsString();
+                if (obj.has("id") && !obj.get("id").isJsonNull()) return obj.get("id").getAsString();
+            }
+        } catch (Exception ignored) {}
+        return "";
+    }
+
     public String getRecipientName() {
+        User u = getUser();
+        if (u != null && u.getName() != null && !u.getName().trim().isEmpty()) {
+            return u.getName().trim();
+        }
         return recipientName != null ? recipientName : "";
     }
 
@@ -206,6 +245,10 @@ public class Order implements Serializable {
     }
 
     public String getRecipientPhone() {
+        User u = getUser();
+        if (u != null && u.getPhone() != null && !u.getPhone().trim().isEmpty()) {
+            return u.getPhone().trim();
+        }
         return recipientPhone != null ? recipientPhone : "";
     }
 
@@ -214,6 +257,10 @@ public class Order implements Serializable {
     }
 
     public String getRecipientAddress() {
+        User u = getUser();
+        if (u != null && u.getAddress() != null && !u.getAddress().trim().isEmpty()) {
+            return u.getAddress().trim();
+        }
         return recipientAddress != null ? recipientAddress : "";
     }
 
