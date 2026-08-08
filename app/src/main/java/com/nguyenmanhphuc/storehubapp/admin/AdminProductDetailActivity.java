@@ -113,12 +113,12 @@ public class AdminProductDetailActivity extends AppCompatActivity {
 
         btnDeleteProduct.setOnClickListener(v -> {
             new AlertDialog.Builder(this)
-                    .setTitle("Xác nhận xóa")
-                    .setMessage("Bạn có chắc chắn muốn xóa sản phẩm này?")
-                    .setPositiveButton("Xóa", (dialog, which) -> {
+                    .setTitle(getString(R.string.confirm_delete_title))
+                    .setMessage(getString(R.string.confirm_delete_product_msg))
+                    .setPositiveButton(getString(R.string.str_delete), (dialog, which) -> {
                         performDeleteProduct();
                     })
-                    .setNegativeButton("Hủy", null)
+                    .setNegativeButton(getString(R.string.cancel), null)
                     .show();
         });
 
@@ -139,16 +139,16 @@ public class AdminProductDetailActivity extends AppCompatActivity {
             @Override
             public void onResponse(@NonNull Call<Response<Void>> call, @NonNull retrofit2.Response<Response<Void>> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(AdminProductDetailActivity.this, "Đã xóa sản phẩm thành công", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AdminProductDetailActivity.this, AdminProductDetailActivity.this.getString(R.string.toast_product_deleted_success), Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
-                    Toast.makeText(AdminProductDetailActivity.this, "Không thể xóa sản phẩm", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AdminProductDetailActivity.this, AdminProductDetailActivity.this.getString(R.string.toast_khong_the_xoa_san_pham), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<Response<Void>> call, @NonNull Throwable t) {
-                Toast.makeText(AdminProductDetailActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AdminProductDetailActivity.this, AdminProductDetailActivity.this.getString(R.string.toast_loi_ket_noi), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -174,7 +174,7 @@ public class AdminProductDetailActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(@NonNull Call<Response<Product>> call, @NonNull retrofit2.Response<Response<Product>> response) {
                         if (response.isSuccessful()) {
-                            String msg = status ? "Đã chuyển sang Đang bán" : "Đã chuyển sang Ngừng bán";
+                            String msg = status ? getString(R.string.toast_product_switch_active) : getString(R.string.toast_product_switch_inactive);
                             Toast.makeText(AdminProductDetailActivity.this, msg, Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(AdminProductDetailActivity.this, AdminProductDetailActivity.this.getString(R.string.toast_khong_the_cap_nhat_trang_thai), Toast.LENGTH_SHORT).show();
@@ -229,14 +229,14 @@ public class AdminProductDetailActivity extends AppCompatActivity {
         tvCategory.setText(product.getCategory() != null ? product.getCategory().getName() : "");
         
         NumberFormat formatter = NumberFormat.getInstance(new Locale("vi", "VN"));
-        tvProductPrice.setText(formatter.format(product.getPriceAsLong()) + "đ");
+        tvProductPrice.setText(formatter.format(product.getPriceAsLong()) + getString(R.string.currency_suffix));
         
         tvDescription.setText(product.getDescription());
         tvStockValue.setText(String.valueOf(product.getStock()));
         tvSoldValue.setText(String.valueOf(product.getSold()));
         
         ratingBar.setRating(product.getRating());
-        tvRatingText.setText(String.format(Locale.getDefault(), "%.1f (%d đánh giá)", product.getRating(), product.getReviewCount()));
+        tvRatingText.setText(String.format(Locale.getDefault(), getString(R.string.rating_format), product.getRating(), product.getReviewCount()));
 
         Glide.with(this)
                 .load(product.getImage())

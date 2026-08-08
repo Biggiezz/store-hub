@@ -172,14 +172,14 @@ public class WriteReviewActivity extends BaseActivity {
             }
 
             btnSubmitReview.setEnabled(false);
-            btnSubmitReview.setText("Đang gửi đánh giá...");
+            btnSubmitReview.setText(getString(R.string.submitting_review));
 
             apiServices.addReview(productIdBody, customerNameBody, customerImageBody, ratingBody, contentBody, orderIdBody, mediaParts)
                     .enqueue(new Callback<com.nguyenmanhphuc.storehubapp.model.response.Response<Product>>() {
                 @Override
                 public void onResponse(@NonNull Call<com.nguyenmanhphuc.storehubapp.model.response.Response<Product>> call, @NonNull Response<com.nguyenmanhphuc.storehubapp.model.response.Response<Product>> response) {
                     btnSubmitReview.setEnabled(true);
-                    btnSubmitReview.setText("Gửi đánh giá");
+                    btnSubmitReview.setText(getString(R.string.submit_review_button));
                     if (response.isSuccessful() && response.body() != null && response.body().getCode() == 200) {
                         Toast.makeText(WriteReviewActivity.this, getString(R.string.toast_submit_success), Toast.LENGTH_SHORT).show();
                         setResult(RESULT_OK);
@@ -193,7 +193,7 @@ public class WriteReviewActivity extends BaseActivity {
                 @Override
                 public void onFailure(@NonNull Call<com.nguyenmanhphuc.storehubapp.model.response.Response<Product>> call, @NonNull Throwable t) {
                     btnSubmitReview.setEnabled(true);
-                    btnSubmitReview.setText("Gửi đánh giá");
+                    btnSubmitReview.setText(getString(R.string.submit_review_button));
                     Toast.makeText(WriteReviewActivity.this, String.format(getString(R.string.toast_connection_error_prefix), t.getMessage()), Toast.LENGTH_SHORT).show();
                 }
             });

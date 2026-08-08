@@ -114,8 +114,8 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         initListener();
         productId = getIntent().getStringExtra(EXTRA_PRODUCT_ID);
         boolean editMode = productId != null && !productId.isBlank();
-        formTitle.setText(editMode ? "Chỉnh sửa sản phẩm" : "Thêm sản phẩm mới");
-        submitButton.setText(editMode ? "Lưu sản phẩm" : "Thêm");
+        formTitle.setText(editMode ? getString(R.string.edit_product_title) : getString(R.string.add_product_title));
+        submitButton.setText(editMode ? getString(R.string.save_product) : getString(R.string.add));
         ViewGroup.LayoutParams submitLayout = submitButton.getLayoutParams();
         submitLayout.width = dp(editMode ? 174 : 110);
         submitButton.setLayoutParams(submitLayout);
@@ -231,7 +231,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
             categoryValue.setText(product.getCategory().getName());
         } else {
             this.selectedCategory = null;
-            categoryValue.setText("Chọn danh mục");
+            categoryValue.setText(getString(R.string.choose_category));
         }
         selectedImage.setVisibility(View.VISIBLE);
         uploadPrompt.setVisibility(View.GONE);
@@ -254,7 +254,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         boolean editMode = productId != null && !productId.isBlank();
 
         if (name.isEmpty()) {
-            nameInput.setError("Vui lòng nhập tên sản phẩm");
+            nameInput.setError(getString(R.string.enter_product_name));
             return;
         }
         if (selectedCategory == null) {
@@ -263,11 +263,11 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         }
         String categoryId = selectedCategory.get_id();
         if (stock.isEmpty()) {
-            stockInput.setError("Vui lòng nhập tồn kho");
+            stockInput.setError(getString(R.string.enter_stock));
             return;
         }
         if (price.isEmpty() || "0".equals(price)) {
-            priceInput.setError("Giá bán phải lớn hơn 0");
+            priceInput.setError(getString(R.string.price_must_be_positive));
             return;
         }
         if (!editMode && selectedImageUri == null) {
@@ -447,26 +447,26 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         if (editing) bindColorDialog(color, colorNameInput, hexInput, defaultCheck);
         addColorPalette(colorNameInput, hexInput, preview, dialogView.findViewById(R.id.adminColorPalette));
         customColorPicker.setOnClickListener(v -> new com.skydoves.colorpickerview.ColorPickerDialog.Builder(this)
-                .setTitle("Chọn màu")
-                .setPositiveButton("Chọn", (com.skydoves.colorpickerview.listeners.ColorEnvelopeListener) (envelope, fromUser) -> {
+                .setTitle(getString(R.string.choose_color))
+                .setPositiveButton(getString(R.string.select), (com.skydoves.colorpickerview.listeners.ColorEnvelopeListener) (envelope, fromUser) -> {
                     colorNameInput.setText(getClosestColorName(envelope.getColor()));
                     hexInput.setText(String.format("#%06X", 0xFFFFFF & envelope.getColor()));
                     setColor(preview, envelope.getColor());
                 })
-                .setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss())
+                .setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.dismiss())
                 .attachAlphaSlideBar(false)
                 .attachBrightnessSlideBar(true)
                 .setBottomSpace(12)
                 .show());
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setTitle(editing ? "Chỉnh sửa màu sắc" : "Thêm biến thể màu sắc")
+                .setTitle(editing ? getString(R.string.edit_color_title) : getString(R.string.add_color_variant_title))
                 .setView(dialogView)
-                .setPositiveButton(editing ? "Lưu" : "Thêm", (dialog, which) ->
+                .setPositiveButton(editing ? getString(R.string.save) : getString(R.string.add), (dialog, which) ->
                         saveColor(color, colorNameInput, hexInput, defaultCheck, editing))
-                .setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss());
+                .setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.dismiss());
         if (editing) {
-            builder.setNeutralButton("Xóa màu", (dialog, which) -> {
+            builder.setNeutralButton(getString(R.string.delete_color), (dialog, which) -> {
                 productColors.remove(index);
                 ensureDefaultColor();
                 renderAdminColors();
@@ -491,7 +491,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
             TextView name = item.findViewById(R.id.tvAdminPaletteColorName);
             setColor(swatch, Color.parseColor(sample[1]));
             name.setText(sample[0]);
-            item.setContentDescription("Màu " + sample[0]);
+            item.setContentDescription(String.format(getString(R.string.color_prefix), sample[0]));
             item.setOnClickListener(v -> {
                 nameInput.setText(sample[0]);
                 hexInput.setText(sample[1]);
@@ -537,8 +537,8 @@ public class ProductFormManagementActivity extends AppCompatActivity {
 
     private void setLoading(boolean loading) {
         submitButton.setEnabled(!loading);
-        submitButton.setText(loading ? "Đang lưu..." :
-                (productId == null || productId.isBlank() ? "Thêm" : "Lưu sản phẩm"));
+        submitButton.setText(loading ? getString(R.string.saving_ellipsis) :
+                (productId == null || productId.isBlank() ? getString(R.string.add) : getString(R.string.save_product)));
     }
 
     private int dp(int value) {
@@ -550,7 +550,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         int g = Color.green(color);
         int b = Color.blue(color);
         
-        String closestName = "Màu tùy chỉnh";
+        String closestName = getString(R.string.custom_color);
         double minDistance = Double.MAX_VALUE;
         
         Object[][] namedColors = {

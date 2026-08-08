@@ -64,9 +64,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
 
         try {
             double priceValue = Double.parseDouble(product.getPrice());
-            holder.tvProductPrice.setText(String.format("%,.0fđ", priceValue).replace(',', '.'));
+            holder.tvProductPrice.setText(String.format(context.getString(R.string.price_format_float), priceValue).replace(',', '.'));
         } catch (NumberFormatException e) {
-            holder.tvProductPrice.setText(product.getPrice() + "đ");
+            holder.tvProductPrice.setText(product.getPrice() + context.getString(R.string.currency_suffix));
         }
 
         Glide.with(context)

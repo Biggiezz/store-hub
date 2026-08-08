@@ -156,10 +156,10 @@ public class AddNewsManagementActivity extends AppCompatActivity {
         if (editingNews == null) return;
 
         if (tvFormTitle != null) {
-            tvFormTitle.setText("Chỉnh sửa bài viết");
+            tvFormTitle.setText(getString(R.string.edit_article_title));
         }
         if (btnAddPost != null) {
-            btnAddPost.setText("Lưu bài viết");
+            btnAddPost.setText(getString(R.string.save_article));
         }
 
         edtTitle.setText(editingNews.getTitle());
@@ -268,7 +268,7 @@ public class AddNewsManagementActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Call<Response<News>> call, @NonNull Throwable t) {
                 btnAddPost.setEnabled(true);
-                Toast.makeText(AddNewsManagementActivity.this, "Lỗi kết nối máy chủ: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(AddNewsManagementActivity.this, String.format(getString(R.string.server_connection_error_prefix), t.getMessage()), Toast.LENGTH_SHORT).show();
             }
         };
     }

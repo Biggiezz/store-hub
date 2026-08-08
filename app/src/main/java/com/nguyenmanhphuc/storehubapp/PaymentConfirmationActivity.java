@@ -135,7 +135,7 @@ public class PaymentConfirmationActivity extends BaseActivity {
 
     private void createZaloPayOrder() {
         btnConfirmPayment.setEnabled(false);
-        btnConfirmPayment.setText("Đang tạo giao dịch...");
+        btnConfirmPayment.setText(getString(R.string.creating_transaction));
 
         long total = subtotal + SHIPPING_FEE;
         java.util.Map<String, Object> body = new java.util.HashMap<>();
@@ -152,26 +152,26 @@ public class PaymentConfirmationActivity extends BaseActivity {
                     String returnCode = data.has("return_code") ? String.valueOf(data.get("return_code").getAsInt()) : "";
                     
                     if (!"1".equals(returnCode) || zpTransToken.isEmpty()) {
-                        String returnMessage = data.has("return_message") ? data.get("return_message").getAsString() : "Lỗi từ ZaloPay";
+                        String returnMessage = data.has("return_message") ? data.get("return_message").getAsString() : getString(R.string.zalopay_error);
                         resetZaloPayButton(returnMessage);
                     } else {
                         payWithZaloPay(zpTransToken);
                     }
                 } else {
-                    resetZaloPayButton("Không tạo được giao dịch. Vui lòng thử lại");
+                    resetZaloPayButton(getString(R.string.zalopay_create_failed));
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<Response<com.google.gson.JsonObject>> call, @NonNull Throwable t) {
                 Log.e("PaymentConfirmation", "Cannot create ZaloPay order", t);
-                resetZaloPayButton("Không kết nối được máy chủ");
+                resetZaloPayButton(getString(R.string.toast_khong_ket_noi_duoc_may_chu));
             }
         });
     }
 
     private void payWithZaloPay(String token) {
-        btnConfirmPayment.setText("Đang mở ZaloPay...");
+        btnConfirmPayment.setText(getString(R.string.opening_zalopay));
         ZaloPaySDK.getInstance().payOrder(
                 this,
                 token,
@@ -187,13 +187,13 @@ public class PaymentConfirmationActivity extends BaseActivity {
 
                     @Override
                     public void onPaymentCanceled(String zpTransToken, String appTransID) {
-                        runOnUiThread(() -> resetZaloPayButton("Bạn đã hủy thanh toán ZaloPay"));
+                        runOnUiThread(() -> resetZaloPayButton(getString(R.string.zalopay_cancelled)));
                     }
 
                     @Override
                     public void onPaymentError(ZaloPayError zaloPayError, String zpTransToken, String appTransID) {
                         Log.e("PaymentConfirmation", "ZaloPay error: " + zaloPayError);
-                        runOnUiThread(() -> resetZaloPayButton("Thanh toán ZaloPay không thành công"));
+                        runOnUiThread(() -> resetZaloPayButton(getString(R.string.zalopay_payment_failed)));
                     }
                 }
         );
@@ -202,12 +202,12 @@ public class PaymentConfirmationActivity extends BaseActivity {
     private void createStoreOrder(String appTransId) {
         final boolean paidWithZaloPay = rbZaloPay.isChecked();
         btnConfirmPayment.setEnabled(false);
-        btnConfirmPayment.setText(paidWithZaloPay ? "Đang tạo đơn hàng..." : "Xác nhận thanh toán");
+        btnConfirmPayment.setText(paidWithZaloPay ? getString(R.string.creating_order) : getString(R.string.xml_xac_nhan_thanh_toan));
         apiService.createOrder(HttpResquest.authorizationHeader(this), paidWithZaloPay ? "ZaloPay" : "COD", appTransId).enqueue(new Callback<Response<Order>>() {
             @Override
             public void onResponse(@NonNull Call<Response<Order>> call, @NonNull retrofit2.Response<Response<Order>> response) {
                 btnConfirmPayment.setEnabled(true);
-                btnConfirmPayment.setText("Xác nhận thanh toán");
+                btnConfirmPayment.setText(getString(R.string.xml_xac_nhan_thanh_toan));
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     if (paidWithZaloPay) {
                         openCustomerOrders();
@@ -225,7 +225,7 @@ public class PaymentConfirmationActivity extends BaseActivity {
             @Override
             public void onFailure(@NonNull Call<Response<Order>> call, @NonNull Throwable t) {
                 btnConfirmPayment.setEnabled(true);
-                btnConfirmPayment.setText("Xác nhận thanh toán");
+                btnConfirmPayment.setText(getString(R.string.xml_xac_nhan_thanh_toan));
                 Toast.makeText(PaymentConfirmationActivity.this, PaymentConfirmationActivity.this.getString(R.string.toast_khong_the_ket_noi_den_may_chu), Toast.LENGTH_SHORT).show();
             }
         });
@@ -233,7 +233,7 @@ public class PaymentConfirmationActivity extends BaseActivity {
 
     private void resetZaloPayButton(String message) {
         btnConfirmPayment.setEnabled(true);
-        btnConfirmPayment.setText("Xác nhận thanh toán");
+        btnConfirmPayment.setText(getString(R.string.xml_xac_nhan_thanh_toan));
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 

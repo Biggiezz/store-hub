@@ -162,14 +162,14 @@ public class UserManagementFragment extends Fragment {
                     return;
                 }
                 new AlertDialog.Builder(requireContext())
-                    .setTitle("Tùy chọn quản lý")
-                    .setMessage("Bạn muốn thực hiện thao tác gì với " + user.getName() + "?")
-                    .setPositiveButton("Chỉnh sửa", (dialog, which) -> {
+                    .setTitle(getString(R.string.management_options_title))
+                    .setMessage(String.format(getString(R.string.management_action_question), user.getName()))
+                    .setPositiveButton(getString(R.string.edit), (dialog, which) -> {
                         Intent intent = new Intent(requireContext(), AddUserActivity.class);
                         intent.putExtra("user_edit", new com.google.gson.Gson().toJson(user));
                         startActivity(intent);
                     })
-                    .setNegativeButton("Hủy", null)
+                    .setNegativeButton(getString(R.string.cancel), null)
                     .show();
             } else {
                 showCustomerDetailDialog(user);
@@ -177,14 +177,13 @@ public class UserManagementFragment extends Fragment {
         });
 
         userAdapter.setOnUserDeleteListener(user -> {
-            boolean isEn = java.util.Locale.getDefault().getLanguage().equals("en");
             new AlertDialog.Builder(requireContext())
-                    .setTitle(isEn ? "Confirm Delete" : "Xác nhận xóa")
-                    .setMessage((isEn ? "Are you sure you want to delete user " : "Bạn có chắc chắn muốn xóa người dùng ") + user.getName() + "?")
-                    .setPositiveButton(isEn ? "Delete" : "Xóa", (dialog, which) -> {
+                    .setTitle(getString(R.string.confirm_delete_title))
+                    .setMessage(String.format(getString(R.string.confirm_delete_user_msg), user.getName()))
+                    .setPositiveButton(getString(R.string.delete), (dialog, which) -> {
                         performDeleteUser(user);
                     })
-                    .setNegativeButton(isEn ? "Cancel" : "Hủy", null)
+                    .setNegativeButton(getString(R.string.cancel), null)
                     .show();
         });
 
@@ -230,16 +229,16 @@ public class UserManagementFragment extends Fragment {
             @Override
             public void onResponse(@NonNull retrofit2.Call<Response<Void>> call, @NonNull retrofit2.Response<Response<Void>> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(requireContext(), "Đã xóa người dùng thành công", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), getString(R.string.user_deleted_success), Toast.LENGTH_SHORT).show();
                     fetchUsersFromServer();
                 } else {
-                    Toast.makeText(requireContext(), "Không thể xóa người dùng", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), getString(R.string.user_delete_failed), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(@NonNull retrofit2.Call<Response<Void>> call, @NonNull Throwable t) {
-                Toast.makeText(requireContext(), "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), getString(R.string.server_connection_error), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -361,32 +360,31 @@ public class UserManagementFragment extends Fragment {
 
     private void showCustomerDetailDialog(User user) {
         if (getContext() == null || user == null) return;
-        boolean isEn = java.util.Locale.getDefault().getLanguage().equals("en");
-        String notUpdated = isEn ? "Not updated" : "Chưa cập nhật";
+        String notUpdated = getString(R.string.not_updated);
         StringBuilder sb = new StringBuilder();
-        sb.append(isEn ? "Full Name: " : "Họ và tên: ").append(user.getName() != null ? user.getName() : notUpdated).append("\n\n");
-        sb.append(isEn ? "Phone: " : "Số điện thoại: ").append(user.getPhone() != null && !user.getPhone().isEmpty() ? user.getPhone() : notUpdated).append("\n\n");
-        sb.append("Email: ").append(user.getEmail() != null ? user.getEmail() : notUpdated).append("\n\n");
-        sb.append(isEn ? "Role: " : "Vai trò: ").append(user.getRole() != null ? getLocalizedRole(user.getRole(), isEn) : notUpdated).append("\n\n");
-        sb.append(isEn ? "Address: " : "Địa chỉ: ").append(user.getAddress() != null && !user.getAddress().isEmpty() ? user.getAddress() : notUpdated).append("\n\n");
-        sb.append(isEn ? "Last Active: " : "Hoạt động lần cuối: ").append(DateTimeUtils.getRelativeTime(user.getLastActive(), user.isOnline()));
+        sb.append(getString(R.string.full_name_label)).append(user.getName() != null ? user.getName() : notUpdated).append("\n\n");
+        sb.append(getString(R.string.phone_label)).append(user.getPhone() != null && !user.getPhone().isEmpty() ? user.getPhone() : notUpdated).append("\n\n");
+        sb.append(getString(R.string.email_label)).append(user.getEmail() != null ? user.getEmail() : notUpdated).append("\n\n");
+        sb.append(getString(R.string.role_label)).append(user.getRole() != null ? getLocalizedRole(user.getRole()) : notUpdated).append("\n\n");
+        sb.append(getString(R.string.address_label)).append(user.getAddress() != null && !user.getAddress().isEmpty() ? user.getAddress() : notUpdated).append("\n\n");
+        sb.append(getString(R.string.last_active_label)).append(DateTimeUtils.getRelativeTime(user.getLastActive(), user.isOnline()));
 
         new AlertDialog.Builder(requireContext())
-            .setTitle(isEn ? "Customer Details" : "Thông tin khách hàng")
+            .setTitle(getString(R.string.customer_details_title))
             .setMessage(sb.toString())
-            .setPositiveButton(isEn ? "Close" : "Đóng", null)
+            .setPositiveButton(getString(R.string.close), null)
             .show();
     }
 
-    private String getLocalizedRole(String role, boolean isEn) {
+    private String getLocalizedRole(String role) {
         if (role == null) return "";
         String r = role.toLowerCase();
         if (r.contains("admin") || r.contains("quản lý")) {
-            return isEn ? "Store Manager" : "Quản lý cửa hàng";
+            return getString(R.string.store_manager);
         } else if (r.contains("super")) {
-            return isEn ? "Super Admin" : "Quản trị viên tối cao";
+            return getString(R.string.super_admin_role);
         } else if (r.contains("khách") || r.contains("customer")) {
-            return isEn ? "Customer" : "Khách hàng";
+            return getString(R.string.customer_role);
         }
         return role;
     }

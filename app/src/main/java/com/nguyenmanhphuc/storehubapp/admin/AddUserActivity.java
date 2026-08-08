@@ -89,9 +89,9 @@ public class AddUserActivity extends AppCompatActivity {
 
         if (userToEdit != null) {
             if (tvHeaderTitle != null) {
-                tvHeaderTitle.setText("Sửa người dùng");
+                tvHeaderTitle.setText(getString(R.string.edit_user_title));
             }
-            btnSaveUser.setText("Lưu thay đổi");
+            btnSaveUser.setText(getString(R.string.save_changes));
 
             etFullName.setText(userToEdit.getName());
             etPhone.setText(userToEdit.getPhone());
@@ -111,7 +111,7 @@ public class AddUserActivity extends AppCompatActivity {
             etPassword.setEnabled(false);
             etPassword.setFocusable(false);
             etPassword.setFocusableInTouchMode(false);
-            etPassword.setHint("Mật khẩu được bảo mật");
+            etPassword.setHint(getString(R.string.password_secured_hint));
             if (ivTogglePassword != null) {
                 ivTogglePassword.setEnabled(false);
                 ivTogglePassword.setVisibility(View.GONE);
@@ -213,19 +213,19 @@ public class AddUserActivity extends AppCompatActivity {
         String address = etAddress.getText().toString().trim();
 
         if (TextUtils.isEmpty(fullName)) {
-            etFullName.setError("Vui lòng nhập họ và tên");
+            etFullName.setError(getString(R.string.register_fullname_required));
             etFullName.requestFocus();
             return;
         }
 
         if (TextUtils.isEmpty(phone)) {
-            etPhone.setError("Vui lòng nhập số điện thoại");
+            etPhone.setError(getString(R.string.register_phone_required));
             etPhone.requestFocus();
             return;
         }
 
         if (TextUtils.isEmpty(email)) {
-            etEmail.setError("Vui lòng nhập email");
+            etEmail.setError(getString(R.string.enter_email_required));
             etEmail.requestFocus();
             return;
         }
@@ -236,7 +236,7 @@ public class AddUserActivity extends AppCompatActivity {
         }
 
         if (userToEdit == null && TextUtils.isEmpty(password)) {
-            etPassword.setError("Vui lòng nhập mật khẩu");
+            etPassword.setError(getString(R.string.register_password_required));
             etPassword.requestFocus();
             return;
         }
@@ -249,7 +249,7 @@ public class AddUserActivity extends AppCompatActivity {
                 role,
                 selectedImageUri != null ? selectedImageUri.toString() : (userToEdit != null ? userToEdit.getRawImage() : ""),
                 address,
-                userToEdit != null ? userToEdit.getLastActive() : "Vừa xong"
+                userToEdit != null ? userToEdit.getLastActive() : getString(R.string.just_now)
         );
         // Mật khẩu chỉ được gán khi thêm mới người dùng (không cho phép sửa)
         if (userToEdit == null && !TextUtils.isEmpty(password)) {
@@ -264,7 +264,7 @@ public class AddUserActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(@NonNull retrofit2.Call<Response<User>> call, @NonNull retrofit2.Response<Response<User>> response) {
                     if (response.isSuccessful() && response.body() != null && response.body().getCode() == 201) {
-                        Toast.makeText(AddUserActivity.this, "Thêm người dùng '" + fullName + "' thành công!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(AddUserActivity.this, String.format(getString(R.string.add_user_success_format), fullName), Toast.LENGTH_LONG).show();
                         setResult(RESULT_OK);
                         finish();
                     } else if (response.body() != null && response.body().getMessage() != null) {
@@ -276,7 +276,7 @@ public class AddUserActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(@NonNull retrofit2.Call<Response<User>> call, @NonNull Throwable t) {
-                    Toast.makeText(AddUserActivity.this, "Lỗi kết nối máy chủ: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(AddUserActivity.this, String.format(getString(R.string.server_connection_error_prefix), t.getMessage()), Toast.LENGTH_LONG).show();
                 }
             });
 
@@ -285,7 +285,7 @@ public class AddUserActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(@NonNull retrofit2.Call<Response<User>> call, @NonNull retrofit2.Response<Response<User>> response) {
                     if (response.isSuccessful() && response.body() != null && response.body().getCode() == 201) {
-                        Toast.makeText(AddUserActivity.this, "Thêm người dùng '" + fullName + "' thành công!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(AddUserActivity.this, String.format(getString(R.string.add_user_success_format), fullName), Toast.LENGTH_LONG).show();
                         setResult(RESULT_OK);
                         finish();
                     } else if (response.body() != null && response.body().getMessage() != null) {
@@ -297,7 +297,7 @@ public class AddUserActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(@NonNull retrofit2.Call<Response<User>> call, @NonNull Throwable t) {
-                    Toast.makeText(AddUserActivity.this, "Lỗi kết nối máy chủ: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(AddUserActivity.this, String.format(getString(R.string.server_connection_error_prefix), t.getMessage()), Toast.LENGTH_LONG).show();
                 }
             });
         }

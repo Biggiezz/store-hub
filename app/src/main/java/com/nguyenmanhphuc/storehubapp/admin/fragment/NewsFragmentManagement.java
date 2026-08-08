@@ -177,10 +177,10 @@ public class NewsFragmentManagement extends Fragment implements PostAdapter.Post
                 }
 
                 tvEmptyPosts.setText("draft".equals(selectedStatus)
-                        ? "Chưa có bài viết bản nháp"
+                        ? getString(R.string.no_draft_news)
                         : "hidden".equals(selectedStatus)
-                        ? "Chưa có bài viết riêng tư"
-                        : "Chưa có bài viết đã xuất bản");
+                        ? getString(R.string.no_private_news)
+                        : getString(R.string.no_published_news));
                 tvEmptyPosts.setVisibility(newsList.isEmpty() ? View.VISIBLE : View.GONE);
             }
 
@@ -225,10 +225,10 @@ public class NewsFragmentManagement extends Fragment implements PostAdapter.Post
     public void onDeleteClick(News news) {
         if (getContext() == null || news == null) return;
         new AlertDialog.Builder(getContext())
-                .setTitle("Xác nhận xóa")
-                .setMessage("Bạn có chắc chắn muốn xóa bài viết này?")
-                .setPositiveButton("Xóa", (dialog, which) -> deleteNews(news.get_id()))
-                .setNegativeButton("Hủy", null)
+                .setTitle(getString(R.string.confirm_delete_title))
+                .setMessage(getString(R.string.confirm_delete_news_msg))
+                .setPositiveButton(getString(R.string.str_delete), (dialog, which) -> deleteNews(news.get_id()))
+                .setNegativeButton(getString(R.string.cancel), null)
                 .show();
     }
 

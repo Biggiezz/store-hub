@@ -456,7 +456,7 @@ public class ProductDetailActivity extends BaseActivity {
                 Response<Object> result = response.body();
 
                 String message = TextUtils.isEmpty(result.getMessage())
-                        ? "Đã thêm sản phẩm vào giỏ"
+                        ? getString(R.string.toast_added_to_cart)
                         : result.getMessage();
 
                 MainActivity.shouldOpenCartOnResume = true;

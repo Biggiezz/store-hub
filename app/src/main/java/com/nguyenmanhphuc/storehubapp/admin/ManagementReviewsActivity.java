@@ -186,7 +186,7 @@ public class ManagementReviewsActivity extends AppCompatActivity {
                 if (isFinishing() || isDestroyed()) return;
                 if (progressBar != null) progressBar.setVisibility(View.GONE);
                 if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
-                Toast.makeText(ManagementReviewsActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ManagementReviewsActivity.this, String.format(getString(R.string.connection_error_prefix), t.getMessage()), Toast.LENGTH_SHORT).show();
                 tvEmptyState.setVisibility(View.VISIBLE);
                 rvReviews.setVisibility(View.GONE);
             }

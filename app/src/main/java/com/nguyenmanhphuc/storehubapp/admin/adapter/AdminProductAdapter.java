@@ -50,12 +50,12 @@ public class AdminProductAdapter extends RecyclerView.Adapter<AdminProductAdapte
         
         if (!product.isActive()) {
             holder.status.setVisibility(View.VISIBLE);
-            holder.status.setText("ĐÃ ẨN");
+            holder.status.setText(holder.itemView.getContext().getString(R.string.label_hidden));
             holder.status.setBackgroundResource(R.drawable.bg_status_hidden);
             holder.status.setTextColor(android.graphics.Color.parseColor("#777777"));
         } else if (product.getStock() <= 0) {
             holder.status.setVisibility(View.VISIBLE);
-            holder.status.setText("HẾT HÀNG");
+            holder.status.setText(holder.itemView.getContext().getString(R.string.xml_het_hang));
             holder.status.setBackgroundResource(R.drawable.bg_status_out_of_stock);
             holder.status.setTextColor(android.graphics.Color.parseColor("#C62828"));
         } else {
@@ -63,7 +63,7 @@ public class AdminProductAdapter extends RecyclerView.Adapter<AdminProductAdapte
         }
 
         holder.price.setText(NumberFormat.getNumberInstance(new Locale("vi", "VN"))
-                .format(product.getPriceAsLong()) + "đ");
+                .format(product.getPriceAsLong()) + holder.itemView.getContext().getString(R.string.currency_suffix));
         Glide.with(holder.image)
                 .load(product.getImage())
                 .placeholder(R.drawable.ic_products)

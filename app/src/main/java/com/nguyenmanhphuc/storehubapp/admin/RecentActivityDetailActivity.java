@@ -157,19 +157,19 @@ public class RecentActivityDetailActivity extends AppCompatActivity {
                     .trim();
         }
         if (resolvedName.isEmpty()) {
-            resolvedName = "Tài khoản hệ thống";
+            resolvedName = getString(R.string.system_account);
         }
         tvCustomerName.setText(resolvedName);
         tvCustomerPhone.setText(value(customerPhone));
-        tvPaymentMethod.setText(value(paymentMethod).isEmpty() ? "Thanh toán khi nhận hàng" : value(paymentMethod));
+        tvPaymentMethod.setText(value(paymentMethod).isEmpty() ? getString(R.string.payment_method_cod) : value(paymentMethod));
         tvTotalAmount.setText(formatPrice(totalAmount));
 
         boolean isOrder = type != null && type.startsWith("order_");
         boolean isProduct = type != null && type.startsWith("product_");
 
         if (isProduct) {
-            if (tvSectionHeader != null) tvSectionHeader.setText("THÔNG TIN SẢN PHẨM");
-            if (tvNameLabel != null) tvNameLabel.setText("Tên sản phẩm");
+            if (tvSectionHeader != null) tvSectionHeader.setText(getString(R.string.product_info_header));
+            if (tvNameLabel != null) tvNameLabel.setText(getString(R.string.product_name_label));
 
             // Ẩn các trường thông tin đơn hàng/khách hàng không thuộc về sản phẩm
             if (layoutCustomerPhone != null) layoutCustomerPhone.setVisibility(View.GONE);
@@ -199,7 +199,7 @@ public class RecentActivityDetailActivity extends AppCompatActivity {
             if (finalStock >= 0) {
                 if (layoutProductStock != null) layoutProductStock.setVisibility(View.VISIBLE);
                 if (dividerProductStock != null) dividerProductStock.setVisibility(View.VISIBLE);
-                if (tvProductStock != null) tvProductStock.setText(finalStock + " sản phẩm");
+                if (tvProductStock != null) tvProductStock.setText(String.format(getString(R.string.item_count_suffix), finalStock));
             } else {
                 if (layoutProductStock != null) layoutProductStock.setVisibility(View.GONE);
                 if (dividerProductStock != null) dividerProductStock.setVisibility(View.GONE);
@@ -232,8 +232,8 @@ public class RecentActivityDetailActivity extends AppCompatActivity {
                 if (dividerProductStatus != null) dividerProductStatus.setVisibility(View.GONE);
             }
         } else {
-            if (tvSectionHeader != null) tvSectionHeader.setText("THÔNG TIN KHÁCH HÀNG");
-            if (tvNameLabel != null) tvNameLabel.setText("Tên người dùng");
+            if (tvSectionHeader != null) tvSectionHeader.setText(getString(R.string.customer_info_header));
+            if (tvNameLabel != null) tvNameLabel.setText(getString(R.string.username_label));
 
             // Ẩn các trường sản phẩm đối với sự kiện khác
             if (layoutProductStock != null) layoutProductStock.setVisibility(View.GONE);

@@ -166,7 +166,7 @@ public class NewsActivity extends AppCompatActivity {
                         newsAdapter.addData(news);
                     }
                 } else {
-                    showLoadFailure(requestGeneration, "Không thể tải danh sách tin tức", null);
+                    showLoadFailure(requestGeneration, getString(R.string.toast_news_list_failed), null);
                 }
             }
 
@@ -178,7 +178,7 @@ public class NewsActivity extends AppCompatActivity {
                 if (swipeRefreshLayout != null) {
                     swipeRefreshLayout.setRefreshing(false);
                 }
-                showLoadFailure(requestGeneration, "Lỗi tải tin tức", t);
+                showLoadFailure(requestGeneration, getString(R.string.toast_news_load_error), t);
             }
         });
     }

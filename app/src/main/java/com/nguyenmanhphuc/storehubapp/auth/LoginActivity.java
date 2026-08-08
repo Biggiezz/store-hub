@@ -175,7 +175,7 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable t) {
                 loadingDialog.dismiss();
-                Toast.makeText(LoginActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, String.format(getString(R.string.connection_error_prefix), t.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -97,7 +97,7 @@ public class StatsManagerFragment extends Fragment {
 
         if (barChart != null) {
             // Mặc định hiển thị thông báo chưa có dữ liệu thống kê nếu không có dữ liệu
-            barChart.setNoDataText("Chưa có dữ liệu thống kê");
+            barChart.setNoDataText(getString(R.string.no_stats_data));
             barChart.setNoDataTextColor(Color.parseColor("#676863"));
         }
     }
@@ -105,8 +105,8 @@ public class StatsManagerFragment extends Fragment {
     private void setUpAdapter() {
         if (spTime != null && getContext() != null) {
             List<String> times = new ArrayList<>();
-            times.add("Tháng này");
-            times.add("Tháng trước");
+            times.add(getString(R.string.this_month));
+            times.add(getString(R.string.last_month));
             times.add("Năm 2026");
 
             StatsTimeAdapter adapter = new StatsTimeAdapter(requireContext(), times);
@@ -189,7 +189,7 @@ public class StatsManagerFragment extends Fragment {
 
         if (barChart == null) return;
 
-        barChart.setNoDataText("Chưa có dữ liệu thống kê");
+        barChart.setNoDataText(getString(R.string.no_stats_data));
         barChart.setNoDataTextColor(Color.parseColor("#676863"));
 
         boolean hasData = entries != null && !entries.isEmpty();
@@ -200,7 +200,7 @@ public class StatsManagerFragment extends Fragment {
             return;
         }
 
-        BarDataSet dataSet = new BarDataSet(entries, "Doanh thu (triệu đ)");
+        BarDataSet dataSet = new BarDataSet(entries, getString(R.string.revenue_unit_suffix));
         dataSet.setColor(Color.parseColor("#1A3B2B"));
         dataSet.setValueTextColor(Color.parseColor("#203028"));
         dataSet.setValueTextSize(10f);
@@ -229,18 +229,18 @@ public class StatsManagerFragment extends Fragment {
         if (layoutRevenue != null) {
             TextView tvStatTitle = layoutRevenue.findViewById(R.id.tvStatTitle);
             TextView tvStatValue = layoutRevenue.findViewById(R.id.tvStatValue);
-            if (tvStatTitle != null) tvStatTitle.setText("Tổng doanh thu");
+            if (tvStatTitle != null) tvStatTitle.setText(getString(R.string.total_revenue));
             if (tvStatValue != null) {
-                tvStatValue.setText(revenue == 0 ? "0 đ" : formatPrice(revenue));
+                tvStatValue.setText(revenue == 0 ? getString(R.string.zero_currency) : formatPrice(revenue));
             }
         }
 
         if (layoutOrder != null) {
             TextView tvStatTitle = layoutOrder.findViewById(R.id.tvStatTitle);
             TextView tvStatValue = layoutOrder.findViewById(R.id.tvStatValue);
-            if (tvStatTitle != null) tvStatTitle.setText("Tổng đơn hàng");
+            if (tvStatTitle != null) tvStatTitle.setText(getString(R.string.total_orders));
             if (tvStatValue != null) {
-                tvStatValue.setText(orders == 0 ? "0 đơn hàng" : orders + " đơn hàng");
+                tvStatValue.setText(orders == 0 ? getString(R.string.zero_orders) : String.format(getString(R.string.orders_count_format), orders));
             }
         }
     }
@@ -250,7 +250,7 @@ public class StatsManagerFragment extends Fragment {
         if (layoutTopProduct == null) return;
         layoutTopProduct.removeAllViews();
         if (products == null || products.isEmpty()) {
-            addEmptyText(layoutTopProduct, "Chưa có sản phẩm bán chạy");
+            addEmptyText(layoutTopProduct, getString(R.string.top_seller_product_empty));
             return;
         }
 
@@ -260,7 +260,7 @@ public class StatsManagerFragment extends Fragment {
             image.setContentDescription(product.getName());
             ((TextView) item.findViewById(R.id.tvProductName)).setText(product.getName());
             ((TextView) item.findViewById(R.id.tvProductSales))
-                    .setText("Đã bán " + product.getSoldCount() + " sản phẩm");
+                    .setText(String.format(getString(R.string.sold_products_format), product.getSoldCount()));
             Glide.with(this).load(product.getImage()).placeholder(R.drawable.ic_products).into(image);
             layoutTopProduct.addView(item);
         }
@@ -271,7 +271,7 @@ public class StatsManagerFragment extends Fragment {
         if (layoutActivity == null) return;
         layoutActivity.removeAllViews();
         if (activities == null || activities.isEmpty()) {
-            addEmptyText(layoutActivity, "Chưa có hoạt động gần đây");
+            addEmptyText(layoutActivity, getString(R.string.no_recent_activity));
             return;
         }
 

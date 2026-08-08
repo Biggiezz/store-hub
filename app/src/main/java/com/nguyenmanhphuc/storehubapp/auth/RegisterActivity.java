@@ -173,7 +173,7 @@ public class RegisterActivity extends BaseActivity {
 
         if (name.isEmpty()) {
             if (tilFullName != null) {
-                tilFullName.setError("Vui lòng nhập họ và tên");
+                tilFullName.setError(getString(R.string.register_fullname_required));
                 if (firstErrorView == null) firstErrorView = tilFullName;
             }
             hasError = true;
@@ -181,13 +181,13 @@ public class RegisterActivity extends BaseActivity {
 
         if (email.isEmpty()) {
             if (tilEmail != null) {
-                tilEmail.setError("Vui lòng nhập Email");
+                tilEmail.setError(getString(R.string.register_email_required));
                 if (firstErrorView == null) firstErrorView = tilEmail;
             }
             hasError = true;
         } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             if (tilEmail != null) {
-                tilEmail.setError("Email không hợp lệ");
+                tilEmail.setError(getString(R.string.register_email_invalid));
                 if (firstErrorView == null) firstErrorView = tilEmail;
             }
             hasError = true;
@@ -195,13 +195,13 @@ public class RegisterActivity extends BaseActivity {
 
         if (phone.isEmpty()) {
             if (tilPhone != null) {
-                tilPhone.setError("Vui lòng nhập số điện thoại");
+                tilPhone.setError(getString(R.string.register_phone_required));
                 if (firstErrorView == null) firstErrorView = tilPhone;
             }
             hasError = true;
         } else if (!phone.matches("^[0-9]{10,11}$")) {
             if (tilPhone != null) {
-                tilPhone.setError("Số điện thoại phải từ 10-11 chữ số");
+                tilPhone.setError(getString(R.string.register_phone_digits));
                 if (firstErrorView == null) firstErrorView = tilPhone;
             }
             hasError = true;
@@ -209,13 +209,13 @@ public class RegisterActivity extends BaseActivity {
 
         if (password.isEmpty()) {
             if (tilPassword != null) {
-                tilPassword.setError("Vui lòng nhập mật khẩu");
+                tilPassword.setError(getString(R.string.register_password_required));
                 if (firstErrorView == null) firstErrorView = tilPassword;
             }
             hasError = true;
         } else if (password.length() < 6) {
             if (tilPassword != null) {
-                tilPassword.setError("Mật khẩu phải có ít nhất 6 ký tự");
+                tilPassword.setError(getString(R.string.register_password_min));
                 if (firstErrorView == null) firstErrorView = tilPassword;
             }
             hasError = true;
@@ -223,13 +223,13 @@ public class RegisterActivity extends BaseActivity {
 
         if (confirmPassword.isEmpty()) {
             if (tilConfirmPassword != null) {
-                tilConfirmPassword.setError("Vui lòng xác nhận mật khẩu");
+                tilConfirmPassword.setError(getString(R.string.register_confirm_required));
                 if (firstErrorView == null) firstErrorView = tilConfirmPassword;
             }
             hasError = true;
         } else if (!password.equals(confirmPassword)) {
             if (tilConfirmPassword != null) {
-                tilConfirmPassword.setError("Mật khẩu nhập lại không khớp");
+                tilConfirmPassword.setError(getString(R.string.register_confirm_mismatch));
                 if (firstErrorView == null) firstErrorView = tilConfirmPassword;
             }
             hasError = true;
@@ -243,7 +243,7 @@ public class RegisterActivity extends BaseActivity {
         }
 
         LoadingDialogHelper loadingDialog = new LoadingDialogHelper(this);
-        loadingDialog.setMessage("Đang đăng ký tài khoản...");
+        loadingDialog.setMessage(getString(R.string.registering_account));
         loadingDialog.show();
 
         // Tạo đối tượng Request gửi đi
@@ -275,7 +275,7 @@ public class RegisterActivity extends BaseActivity {
             @Override
             public void onFailure(@NonNull Call<Response<User>> call, @NonNull Throwable t) {
                 loadingDialog.dismiss();
-                Toast.makeText(RegisterActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterActivity.this, String.format(getString(R.string.connection_error_prefix), t.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -517,7 +517,7 @@ public class OderFragment extends Fragment {
 
     private void executeCancelOrder(Order order, String reason) {
         LoadingDialogHelper loadingDialog = new LoadingDialogHelper(requireContext());
-        loadingDialog.setMessage("Đang hủy đơn hàng...");
+        loadingDialog.setMessage(getString(R.string.cancelling_order));
         loadingDialog.show();
         CancelOrderRequest request = new CancelOrderRequest(order.getOrderId(), reason);
         apiService.cancelOrder(HttpResquest.authorizationHeader(requireContext()), request).enqueue(new Callback<Response<Order>>() {
@@ -552,7 +552,7 @@ public class OderFragment extends Fragment {
 
     private void executeClearCart() {
         LoadingDialogHelper loadingDialog = new LoadingDialogHelper(requireContext());
-        loadingDialog.setMessage("Đang xóa giỏ hàng tạm...");
+        loadingDialog.setMessage(getString(R.string.removing_temp_cart));
         loadingDialog.show();
         apiService.clearCart(HttpResquest.authorizationHeader(requireContext())).enqueue(new Callback<Response<Object>>() {
             @Override

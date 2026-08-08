@@ -124,7 +124,7 @@ public class AdminHomeFragment extends Fragment {
     private void setupCardTitles() {
         if (cardSales != null) {
             txtTitle = cardSales.findViewById(R.id.txtTitle);
-            if (txtTitle != null) txtTitle.setText("Doanh số bán hàng");
+            if (txtTitle != null) txtTitle.setText(getString(R.string.sales_title));
             ImageView imgIcon = cardSales.findViewById(R.id.imgDashboardIcon);
             if (imgIcon != null) imgIcon.setImageResource(R.drawable.ic_store_admin);
         }
@@ -132,9 +132,9 @@ public class AdminHomeFragment extends Fragment {
             txtTitle = cardUsers.findViewById(R.id.txtTitle);
             txtValue = cardUsers.findViewById(R.id.txtValue);
             txtStatus = cardUsers.findViewById(R.id.txtStatus);
-            if (txtTitle != null) txtTitle.setText("Người dùng đăng ký");
+            if (txtTitle != null) txtTitle.setText(getString(R.string.registered_users_title));
             if (txtValue != null) txtValue.setText("0");
-            if (txtStatus != null) txtStatus.setText("+0 thành viên");
+            if (txtStatus != null) txtStatus.setText(String.format(getString(R.string.new_members_format), 0));
             ImageView imgIcon = cardUsers.findViewById(R.id.imgDashboardIcon);
             if (imgIcon != null) imgIcon.setImageResource(R.drawable.ic_users);
         }
@@ -142,9 +142,9 @@ public class AdminHomeFragment extends Fragment {
             txtTitle = cardProducts.findViewById(R.id.txtTitle);
             txtValue = cardProducts.findViewById(R.id.txtValue);
             txtStatus = cardProducts.findViewById(R.id.txtStatus);
-            if (txtTitle != null) txtTitle.setText("Tổng số sản phẩm");
+            if (txtTitle != null) txtTitle.setText(getString(R.string.total_products_title));
             if (txtValue != null) txtValue.setText("0");
-            if (txtStatus != null) txtStatus.setText("Đang kinh doanh");
+            if (txtStatus != null) txtStatus.setText(getString(R.string.actively_selling));
             ImageView imgIcon = cardProducts.findViewById(R.id.imgDashboardIcon);
             if (imgIcon != null) imgIcon.setImageResource(R.drawable.ic_products);
         }
@@ -152,9 +152,9 @@ public class AdminHomeFragment extends Fragment {
             txtTitle = cardOrders.findViewById(R.id.txtTitle);
             txtValue = cardOrders.findViewById(R.id.txtValue);
             txtStatus = cardOrders.findViewById(R.id.txtStatus);
-            if (txtTitle != null) txtTitle.setText("Quản lý đơn hàng");
+            if (txtTitle != null) txtTitle.setText(getString(R.string.order_management_title));
             if (txtValue != null) txtValue.setText("...");
-            if (txtStatus != null) txtStatus.setText("Xem danh sách đơn hàng");
+            if (txtStatus != null) txtStatus.setText(getString(R.string.view_order_list));
             ImageView imgIcon = cardOrders.findViewById(R.id.imgDashboardIcon);
             if (imgIcon != null) imgIcon.setImageResource(R.drawable.ic_receipt);
         }
@@ -247,7 +247,7 @@ public class AdminHomeFragment extends Fragment {
                     }
                     TextView txtStatus = cardUsers.findViewById(R.id.txtStatus);
                     if (txtStatus != null) {
-                        txtStatus.setText("Tổng cộng " + customerCount + " khách hàng");
+                        txtStatus.setText(String.format(getString(R.string.total_customers_format), customerCount));
                     }
                 }
             }
@@ -268,11 +268,11 @@ public class AdminHomeFragment extends Fragment {
 
             if (txtValue != null) {
                 DecimalFormat formatter = new DecimalFormat("#,###");
-                String formattedSales = formatter.format(data.getTotalSales()) + " đ";
+                String formattedSales = formatter.format(data.getTotalSales()) + getString(R.string.admin_price_suffix);
                 txtValue.setText(formattedSales);
             }
             if (txtStatus != null) {
-                txtStatus.setText("Đã bán " + data.getTotalSalesCount() + " sản phẩm");
+                txtStatus.setText(String.format(getString(R.string.sold_products_format), data.getTotalSalesCount()));
             }
         }
 
@@ -285,10 +285,10 @@ public class AdminHomeFragment extends Fragment {
             TextView txtStatus = cardOrders.findViewById(R.id.txtStatus);
 
             if (txtValue != null) {
-                txtValue.setText(String.valueOf(data.getTotalOrders()) + " đơn");
+                txtValue.setText(String.format(getString(R.string.orders_count_format), data.getTotalOrders()));
             }
             if (txtStatus != null) {
-                txtStatus.setText(data.getPendingOrders() + " đơn chờ xử lý");
+                txtStatus.setText(String.format(getString(R.string.pending_orders_format), data.getPendingOrders()));
             }
         }
     }

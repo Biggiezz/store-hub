@@ -107,7 +107,7 @@ public class ChangePasswordActivity extends BaseActivity {
 
         if (oldPass.isEmpty()) {
             if (tilCurrentPassword != null) {
-                tilCurrentPassword.setError("Vui lòng nhập mật khẩu hiện tại");
+                tilCurrentPassword.setError(getString(R.string.password_current_required));
                 tilCurrentPassword.requestFocus();
             } else {
                 Toast.makeText(this, this.getString(R.string.toast_vui_long_nhap_mat_khau_hien_tai), Toast.LENGTH_SHORT).show();
@@ -117,7 +117,7 @@ public class ChangePasswordActivity extends BaseActivity {
 
         if (newPass.isEmpty()) {
             if (tilNewPassword != null) {
-                tilNewPassword.setError("Vui lòng nhập mật khẩu mới");
+                tilNewPassword.setError(getString(R.string.password_new_required));
                 tilNewPassword.requestFocus();
             } else {
                 Toast.makeText(this, this.getString(R.string.toast_vui_long_nhap_mat_khau_moi), Toast.LENGTH_SHORT).show();
@@ -127,7 +127,7 @@ public class ChangePasswordActivity extends BaseActivity {
 
         if (newPass.length() < 8 || !newPass.matches(".*[a-zA-Z].*") || !newPass.matches(".*\\d.*")) {
             if (tilNewPassword != null) {
-                tilNewPassword.setError("Mật khẩu mới phải tối thiểu 8 ký tự, bao gồm cả chữ cái và số");
+                tilNewPassword.setError(getString(R.string.password_new_validation));
                 tilNewPassword.requestFocus();
             } else {
                 Toast.makeText(this, this.getString(R.string.toast_mat_khau_moi_phai_toi_thieu_8_ky_tu_bao_), Toast.LENGTH_LONG).show();
@@ -137,7 +137,7 @@ public class ChangePasswordActivity extends BaseActivity {
 
         if (confirmPass.isEmpty()) {
             if (tilConfirmNewPassword != null) {
-                tilConfirmNewPassword.setError("Vui lòng xác nhận mật khẩu mới");
+                tilConfirmNewPassword.setError(getString(R.string.password_confirm_required));
                 tilConfirmNewPassword.requestFocus();
             } else {
                 Toast.makeText(this, this.getString(R.string.toast_vui_long_xac_nhan_mat_khau_moi), Toast.LENGTH_SHORT).show();
@@ -147,7 +147,7 @@ public class ChangePasswordActivity extends BaseActivity {
 
         if (!newPass.equals(confirmPass)) {
             if (tilConfirmNewPassword != null) {
-                tilConfirmNewPassword.setError("Mật khẩu xác nhận không khớp");
+                tilConfirmNewPassword.setError(getString(R.string.password_confirm_mismatch));
                 tilConfirmNewPassword.requestFocus();
             } else {
                 Toast.makeText(this, this.getString(R.string.toast_mat_khau_xac_nhan_khong_khop), Toast.LENGTH_SHORT).show();
@@ -156,7 +156,7 @@ public class ChangePasswordActivity extends BaseActivity {
         }
 
         LoadingDialogHelper loadingDialog = new LoadingDialogHelper(this);
-        loadingDialog.setMessage("Đang cập nhật mật khẩu...");
+        loadingDialog.setMessage(getString(R.string.updating_password));
         loadingDialog.show();
 
         Map<String, String> body = new HashMap<>();
@@ -188,7 +188,7 @@ public class ChangePasswordActivity extends BaseActivity {
                     }
                 } else {
                     if (tilCurrentPassword != null) {
-                        tilCurrentPassword.setError("Mật khẩu hiện tại không chính xác");
+                        tilCurrentPassword.setError(getString(R.string.password_incorrect));
                         tilCurrentPassword.requestFocus();
                     } else {
                         Toast.makeText(ChangePasswordActivity.this, ChangePasswordActivity.this.getString(R.string.toast_mat_khau_hien_tai_khong_chinh_xac), Toast.LENGTH_SHORT).show();

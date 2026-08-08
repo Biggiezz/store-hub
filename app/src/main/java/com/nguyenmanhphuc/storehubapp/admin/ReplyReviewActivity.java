@@ -54,7 +54,7 @@ public class ReplyReviewActivity extends AppCompatActivity {
 
         // Bind data
         if (review != null) {
-            tvCustomerName.setText(review.getCustomerName().isEmpty() ? "Khách hàng" : review.getCustomerName());
+            tvCustomerName.setText(review.getCustomerName().isEmpty() ? getString(R.string.role_customer) : review.getCustomerName());
 
             String dateStr = review.getCreatedAt();
             if (dateStr != null && dateStr.contains("T")) {
@@ -108,13 +108,13 @@ public class ReplyReviewActivity extends AppCompatActivity {
                                 setResult(RESULT_OK);
                                 finish();
                             } else {
-                                Toast.makeText(ReplyReviewActivity.this, "Gửi phản hồi thất bại: " + (response.body() != null ? response.body().getMessage() : "Lỗi server"), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ReplyReviewActivity.this, String.format(getString(R.string.reply_failed_prefix), response.body() != null ? response.body().getMessage() : getString(R.string.server_error)), Toast.LENGTH_SHORT).show();
                             }
                         }
 
                         @Override
                         public void onFailure(Call<Response<Product>> call, Throwable t) {
-                            Toast.makeText(ReplyReviewActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ReplyReviewActivity.this, String.format(getString(R.string.connection_error_prefix), t.getMessage()), Toast.LENGTH_SHORT).show();
                         }
                     });
         });

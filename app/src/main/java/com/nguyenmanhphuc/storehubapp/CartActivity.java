@@ -121,7 +121,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         User user = prefManager.getUser();
 
         if (user != null) {
-            String name = !TextUtils.isEmpty(user.getName()) ? user.getName() : "Khách hàng";
+            String name = !TextUtils.isEmpty(user.getName()) ? user.getName() : getString(R.string.role_customer);
             String phone = !TextUtils.isEmpty(user.getPhone()) ? user.getPhone() : "";
             String receiverInfo = !TextUtils.isEmpty(phone) ? name + " | " + phone : name;
 
@@ -131,7 +131,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
 
             String address = !TextUtils.isEmpty(user.getAddress())
                     ? user.getAddress()
-                    : "123 Đường Lê Lợi, Phường Bến Thành, Quận 1, TP. Hồ Chí Minh";
+                    : getString(R.string.default_customer_address);
 
             if (tvDeliveryAddress != null) {
                 tvDeliveryAddress.setText(address);

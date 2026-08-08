@@ -145,7 +145,7 @@ public class EditProfileActivity extends BaseActivity {
         UCrop.Options options = new UCrop.Options();
         options.setCircleDimmedLayer(true);
         options.setShowCropGrid(false);
-        options.setToolbarTitle("Cắt ảnh đại diện");
+        options.setToolbarTitle(getString(R.string.crop_avatar_title));
         options.setCompressionFormat(android.graphics.Bitmap.CompressFormat.JPEG);
         options.setCompressionQuality(90);
         options.setToolbarColor(ContextCompat.getColor(this, R.color.dark_green));
@@ -174,7 +174,7 @@ public class EditProfileActivity extends BaseActivity {
 
         if (name.isEmpty()) {
             if (tilProfileName != null) {
-                tilProfileName.setError("Vui lòng nhập họ và tên");
+                tilProfileName.setError(getString(R.string.toast_vui_long_nhap_ho_va_ten));
                 tilProfileName.requestFocus();
             } else {
                 Toast.makeText(this, this.getString(R.string.toast_vui_long_nhap_ho_va_ten), Toast.LENGTH_SHORT).show();
@@ -184,7 +184,7 @@ public class EditProfileActivity extends BaseActivity {
 
         if (phone.isEmpty()) {
             if (tilProfilePhone != null) {
-                tilProfilePhone.setError("Vui lòng nhập số điện thoại");
+                tilProfilePhone.setError(getString(R.string.toast_vui_long_nhap_so_dien_thoai));
                 tilProfilePhone.requestFocus();
             } else {
                 Toast.makeText(this, this.getString(R.string.toast_vui_long_nhap_so_dien_thoai), Toast.LENGTH_SHORT).show();
@@ -194,7 +194,7 @@ public class EditProfileActivity extends BaseActivity {
 
         if (!phone.matches("^[0-9]{10,11}$")) {
             if (tilProfilePhone != null) {
-                tilProfilePhone.setError("Số điện thoại phải từ 10-11 chữ số");
+                tilProfilePhone.setError(getString(R.string.toast_so_dien_thoai_phai_tu_10_11_chu_so));
                 tilProfilePhone.requestFocus();
             } else {
                 Toast.makeText(this, this.getString(R.string.toast_so_dien_thoai_phai_tu_10_11_chu_so), Toast.LENGTH_SHORT).show();
@@ -204,7 +204,7 @@ public class EditProfileActivity extends BaseActivity {
 
         if (address.isEmpty()) {
             if (tilProfileAddress != null) {
-                tilProfileAddress.setError("Vui lòng nhập địa chỉ");
+                tilProfileAddress.setError(getString(R.string.toast_vui_long_nhap_dia_chi));
                 tilProfileAddress.requestFocus();
             } else {
                 Toast.makeText(this, this.getString(R.string.toast_vui_long_nhap_dia_chi), Toast.LENGTH_SHORT).show();
@@ -213,7 +213,7 @@ public class EditProfileActivity extends BaseActivity {
         }
 
         LoadingDialogHelper loadingDialog = new LoadingDialogHelper(this);
-        loadingDialog.setMessage("Đang lưu thay đổi...");
+        loadingDialog.setMessage(getString(R.string.saving_changes_loading));
         loadingDialog.show();
 
         String tokenHeader = "Bearer " + sharedPreferencesManager.getToken();
