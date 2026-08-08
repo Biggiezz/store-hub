@@ -114,7 +114,7 @@ public class PaymentConfirmationActivity extends BaseActivity {
                     R.layout.item_payment_product_summary, layoutProductSummary, false);
             ((TextView) product.findViewById(R.id.tvPaymentProductName)).setText(item.getProductName());
             ((TextView) product.findViewById(R.id.tvPaymentProductPrice)).setText(formatPrice(item.getPrice()));
-            ((TextView) product.findViewById(R.id.tvPaymentProductQuantity)).setText("Số lượng: " + item.getQuantity());
+            ((TextView) product.findViewById(R.id.tvPaymentProductQuantity)).setText(getString(R.string.quantity) + item.getQuantity());
             layoutProductSummary.addView(product);
         }
 

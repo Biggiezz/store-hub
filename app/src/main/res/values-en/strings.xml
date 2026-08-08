@@ -132,6 +132,7 @@
     <!-- Products, Cart, News, Orders and Toasts -->
     <string name="product_list_title">Product List</string>
     <string name="sort_by">Sort by:</string>
+    <string name="quantity">"Quantity: "</string>
     <string name="sort_price_asc">Price: Low to High</string>
     <string name="sort_a_z">A - Z</string>
     <string name="sort_z_a">Z - A</string>
@@ -248,6 +249,7 @@
     <string name="toast_connection_error_prefix">Connection error: %s</string>
 
     <!-- New Localization Strings -->
+    <string name="btn_edit_reply">"Edit response "</string>
     <string name="network_unavailable_toast">Network unavailable. Please check your connection.</string>
     <string name="login_view_personal_info_toast">Please log in to view personal info</string>
     <string name="login_view_account_info_toast">Please log in to view account info</string>
@@ -538,4 +540,23 @@
     <string name="toast_vui_long_nhap_phan_hoi_hoac_chon_goi_y">Please enter a reply or select a suggestion!</string>
     <string name="toast_vui_long_nhap_so_dien_thoai">Please enter phone number</string>
     <string name="toast_vui_long_xac_nhan_mat_khau_moi">Please confirm new password</string>
+    <string name="empty_state_title">"Have no data "</string>
+    <string name="empty_state_desc">No relevant information found here.</string>
+    <string name="empty_orders_title">No orders yet</string>
+    <string name="empty_orders_desc">"You haven't made any transactions yet. Explore and start shopping now! "</string>
+    <string name="loading_dialog_message">"Processing. Please wait a moment... "</string>
+    <string name="review_anonymous">"Anonymous customer "</string>
+    <string name="btn_empty_action_shop">Shop now</string>
+    <string name="btn_empty_action_retry">Retry</string>
+    <string name="see_more">"See more "</string>
+    <string name="see_less">"Collapse "</string>
+    <string name="action_reply_edit">"Reply / Edit "</string>
+    <string name="action_hide_review">"Hide reviews "</string>
+    <string name="action_delete_review">"Delete review "</string>
+    <string name="feature_under_development">"The [%s] feature is under development! "</string>
+    <string name="toast_enter_email">"Please enter your email. "</string>
+    <string name="toast_enter_password">"Please enter your password. "</string>
+    <string name="toast_invalid_email">"Invalid email format "</string>
+    <string name="shop_reply">"Response from the Store "</string>
+    <string name="status_responded">Responded</string>
 </resources>

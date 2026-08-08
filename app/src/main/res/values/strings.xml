@@ -132,6 +132,7 @@
     <!-- Màn hình Sản phẩm, Giỏ hàng, Tin tức, Đơn hàng và Thông báo -->
     <string name="product_list_title">Danh sách sản phẩm</string>
     <string name="sort_by">Sắp xếp:</string>
+    <string name="quantity">"Số lượng: "</string>
     <string name="sort_price_asc">Giá thấp đến cao</string>
     <string name="sort_a_z">A - Z</string>
     <string name="sort_z_a">Z - A</string>
@@ -255,7 +256,6 @@
     <string name="empty_orders_desc">Bạn chưa thực hiện bất kỳ giao dịch nào. Hãy khám phá và mua sắm ngay nhé!</string>
     <string name="loading_dialog_message">Đang xử lý. Vui lòng đợi trong giây lát...</string>
     <string name="review_anonymous">Khách hàng ẩn danh</string>
-    <string name="btn_empty_action_shop">Mua sắm ngay</string>
     <string name="btn_empty_action_retry">Thử lại</string>
     <string name="see_more">Xem thêm</string>
     <string name="see_less">Thu gọn</string>
@@ -267,7 +267,6 @@
     <string name="toast_enter_password">Vui lòng nhập Mật khẩu</string>
     <string name="toast_invalid_email">Email không đúng định dạng</string>
     <string name="shop_reply">Phản hồi từ Cửa hàng</string>
-    <string name="status_responded">Đã phản hồi</string>
     <string name="btn_edit_reply">Sửa phản hồi</string>
     
     <!-- New Localization Strings -->
@@ -561,4 +560,6 @@
     <string name="toast_vui_long_nhap_phan_hoi_hoac_chon_goi_y">Vui lòng nhập phản hồi hoặc chọn gợi ý!</string>
     <string name="toast_vui_long_nhap_so_dien_thoai">Vui lòng nhập số điện thoại</string>
     <string name="toast_vui_long_xac_nhan_mat_khau_moi">Vui lòng xác nhận mật khẩu mới</string>
+    <string name="btn_empty_action_shop">Mua sắm ngay</string>
+    <string name="status_responded">Đã phản hồi</string>
 </resources>
