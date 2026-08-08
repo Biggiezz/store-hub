@@ -152,11 +152,12 @@ public class DateTimeUtils {
     }
 
     public static String getRelativeTime(String isoString, boolean isOnline) {
+        boolean isEn = Locale.getDefault().getLanguage().equals("en");
         if (isoString == null || isoString.isEmpty()) {
-            return "Chưa hoạt động";
+            return isEn ? "Inactive" : "Chưa hoạt động";
         }
-        if (isoString.equals("Vừa xong")) {
-            return "Vừa xong";
+        if (isoString.equals("Vừa xong") || isoString.equals("Just now")) {
+            return isEn ? "Just now" : "Vừa xong";
         }
         Date date = parseISO(isoString);
         if (date == null) {
@@ -166,13 +167,12 @@ public class DateTimeUtils {
         long time = date.getTime();
         long diff = now - time;
 
-        // Trạng thái online: hiển thị "Đang hoạt động" nếu isOnline=true và hoạt động gần đây dưới 5 phút
         if (isOnline && diff >= 0 && diff < 5 * 60 * 1000) {
-            return "Đang hoạt động";
+            return isEn ? "Active now" : "Đang hoạt động";
         }
 
         if (diff < 0) {
-            return "Đang hoạt động";
+            return isEn ? "Active now" : "Đang hoạt động";
         }
         long diffSeconds = diff / 1000;
         long diffMinutes = diffSeconds / 60;
@@ -180,13 +180,13 @@ public class DateTimeUtils {
         long diffDays = diffHours / 24;
 
         if (diffSeconds < 60) {
-            return "Vừa xong";
+            return isEn ? "Just now" : "Vừa xong";
         } else if (diffMinutes < 60) {
-            return diffMinutes + " phút trước";
+            return isEn ? diffMinutes + "m ago" : diffMinutes + " phút trước";
         } else if (diffHours < 24) {
-            return diffHours + " giờ trước";
+            return isEn ? diffHours + "h ago" : diffHours + " giờ trước";
         } else if (diffDays < 7) {
-            return diffDays + " ngày trước";
+            return isEn ? diffDays + "d ago" : diffDays + " ngày trước";
         } else {
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
             formatter.setTimeZone(TimeZone.getTimeZone("GMT+7"));

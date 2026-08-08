@@ -282,7 +282,7 @@
             android:layout_height="64dp"
             android:layout_weight="1"
             android:layout_marginEnd="10dp"
-            android:text="Xóa sản phẩm"
+            android:text="@string/delete_product"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="18sp"

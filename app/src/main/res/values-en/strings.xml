@@ -559,4 +559,6 @@
     <string name="toast_invalid_email">"Invalid email format "</string>
     <string name="shop_reply">"Response from the Store "</string>
     <string name="status_responded">Responded</string>
+    <string name="delete_product">Delete Product</string>
+    <string name="delete_user">Delete User</string>
 </resources>

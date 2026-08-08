@@ -79,8 +79,9 @@ public class UserManagementAdapter extends RecyclerView.Adapter<UserManagementAd
 
         holder.tvUserName.setText(user.getName());
 
+        boolean isEn = java.util.Locale.getDefault().getLanguage().equals("en");
         String role = !TextUtils.isEmpty(user.getRole()) ? user.getRole() : "customer";
-        holder.tvUserRole.setText(role);
+        holder.tvUserRole.setText(getLocalizedRole(role, isEn));
 
         // Đánh dấu huy hiệu nổi bật cho Super Admin
         if (user.isSuperAdmin()) {
@@ -96,14 +97,15 @@ public class UserManagementAdapter extends RecyclerView.Adapter<UserManagementAd
         String rawLastActive = user.getLastActive();
         String lastActive = DateTimeUtils.getRelativeTime(rawLastActive, user.isOnline());
 
-        if (lastActive.contains("Đang hoạt động")) {
-            holder.tvUserLastActive.setTextColor(Color.parseColor("#2E7D32")); // Xanh lá cây
+        if (lastActive.contains("Đang hoạt động") || lastActive.contains("Active now")) {
+            holder.tvUserLastActive.setTextColor(Color.parseColor("#2E7D32"));
         } else {
-            holder.tvUserLastActive.setTextColor(Color.parseColor("#000000")); // Màu đen
+            holder.tvUserLastActive.setTextColor(Color.parseColor("#000000"));
         }
 
-        if (!lastActive.startsWith("Hoạt động")) {
-            lastActive = "Hoạt động: " + lastActive;
+        String activePrefix = isEn ? "Active: " : "Hoạt động: ";
+        if (!lastActive.startsWith("Hoạt động") && !lastActive.startsWith("Active")) {
+            lastActive = activePrefix + lastActive;
         }
         holder.tvUserLastActive.setText(lastActive);
 
@@ -136,6 +138,19 @@ public class UserManagementAdapter extends RecyclerView.Adapter<UserManagementAd
     @Override
     public int getItemCount() {
         return userList.size();
+    }
+
+    private String getLocalizedRole(String role, boolean isEn) {
+        if (role == null) return "";
+        String r = role.toLowerCase();
+        if (r.contains("admin") || r.contains("quản lý")) {
+            return isEn ? "Store Manager" : "Quản lý cửa hàng";
+        } else if (r.contains("super")) {
+            return isEn ? "Super Admin" : "Quản trị viên tối cao";
+        } else if (r.contains("khách") || r.contains("customer")) {
+            return isEn ? "Customer" : "Khách hàng";
+        }
+        return role;
     }
 
     static class UserViewHolder extends RecyclerView.ViewHolder {

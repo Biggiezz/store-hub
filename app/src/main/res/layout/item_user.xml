@@ -114,7 +114,7 @@
         android:layout_height="40dp"
         android:layout_gravity="center_vertical"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Xóa người dùng"
+        android:contentDescription="@string/delete_user"
         android:src="@drawable/ic_delete"
         android:visibility="gone"
         app:tint="@color/error_red" />

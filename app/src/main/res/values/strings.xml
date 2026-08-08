@@ -562,4 +562,6 @@
     <string name="toast_vui_long_xac_nhan_mat_khau_moi">Vui lòng xác nhận mật khẩu mới</string>
     <string name="btn_empty_action_shop">Mua sắm ngay</string>
     <string name="status_responded">Đã phản hồi</string>
+    <string name="delete_product">Xóa sản phẩm</string>
+    <string name="delete_user">Xóa người dùng</string>
 </resources>

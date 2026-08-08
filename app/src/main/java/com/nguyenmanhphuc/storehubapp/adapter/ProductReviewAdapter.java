@@ -77,7 +77,7 @@ public class ProductReviewAdapter extends RecyclerView.Adapter<ProductReviewAdap
         }
 
         public void bind(ProductReview review) {
-            tvReviewerName.setText(review.getCustomerName().isEmpty() ? "Khách hàng" : review.getCustomerName());
+            tvReviewerName.setText(review.getCustomerName().isEmpty() ? itemView.getContext().getString(R.string.customer) : review.getCustomerName());
             
             String dateStr = review.getCreatedAt();
             if (dateStr != null && dateStr.contains("T")) {
