@@ -47,12 +47,13 @@ import retrofit2.Callback;
 public class ProductDetailActivity extends BaseActivity {
 
     public static final String EXTRA_PRODUCT_ID = "product_id";
-    private ImageView ivProduct;
-    private ImageButton btnBack;
-    private TextView tvCategory, tvProductName, tvPrice, tvRatingSummary, tvReviewScore, tvSold,tvDescription, tvEmptyReview, tvError, tvQuantity, btnMinus, btnPlus, tvColorLabel, tvStockStatus;
+    private ImageView ivProduct, btnBack, btnHeaderCart;
+    private View btnHeaderCartContainer;
+    private TextView tvCategory, tvProductName, tvPrice, tvRatingSummary, tvReviewScore, tvSold,tvDescription, tvEmptyReview, tvError, tvQuantity, btnMinus, btnPlus, tvColorLabel, tvStockStatus, tvCartBadge;
     private RatingBar ratingProduct;
     private LinearLayout colorContainer;
     private ProgressBar progressBar;
+    private androidx.swiperefreshlayout.widget.SwipeRefreshLayout swipeRefreshLayout;
     private MaterialButton btnAddToCart, btnEditProduct, btnReadAllReviews;
     private RecyclerView rvProductReviews;
     private ProductReviewAdapter reviewAdapter;
@@ -98,12 +99,18 @@ public class ProductDetailActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        loadProduct();
+        if (currentProduct == null) {
+            loadProduct();
+        }
+        fetchCartCount();
     }
 
     private void initUi() {
         ivProduct = findViewById(R.id.ivProduct);
         btnBack = findViewById(R.id.btnBack);
+        btnHeaderCartContainer = findViewById(R.id.btnHeaderCartContainer);
+        btnHeaderCart = findViewById(R.id.btnHeaderCart);
+        tvCartBadge = findViewById(R.id.tvCartBadge);
 
         tvCategory = findViewById(R.id.tvCategory);
         tvProductName = findViewById(R.id.tvProductName);
@@ -123,6 +130,7 @@ public class ProductDetailActivity extends BaseActivity {
         ratingProduct = findViewById(R.id.ratingProduct);
         colorContainer = findViewById(R.id.colorContainer);
         progressBar = findViewById(R.id.progressBar);
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         btnAddToCart = findViewById(R.id.btnAddToCart);
         btnReadAllReviews = findViewById(R.id.btnReadAllReviews);
 
@@ -145,7 +153,17 @@ public class ProductDetailActivity extends BaseActivity {
     }
 
     private void setUpListener() {
-        btnBack.setOnClickListener(view -> finish());
+        if (btnBack != null) {
+            btnBack.setOnClickListener(view -> finish());
+        }
+
+        if (btnHeaderCartContainer != null) {
+            btnHeaderCartContainer.setOnClickListener(v -> startActivity(new Intent(this, CartActivity.class)));
+        }
+
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setOnRefreshListener(() -> loadProduct());
+        }
 
         btnEditProduct.setOnClickListener(v -> {
             if (currentProduct != null) {
@@ -255,8 +273,8 @@ public class ProductDetailActivity extends BaseActivity {
 
         Glide.with(this)
                 .load(product.getImageUrl())
-                .placeholder(R.drawable.ic_product)
-                .error(R.drawable.ic_product)
+                .placeholder(R.drawable.ic_products)
+                .error(R.drawable.ic_products)
                 .centerCrop()
                 .into(ivProduct);
 
@@ -445,6 +463,7 @@ public class ProductDetailActivity extends BaseActivity {
                 MainActivity.shouldOpenCartOnResume = true;
 
                 Toast.makeText(ProductDetailActivity.this, message, Toast.LENGTH_SHORT).show();
+                runFlyToCartAnimation(btnAddToCart, btnHeaderCart != null ? btnHeaderCart : btnHeaderCartContainer);
             }
 
             @Override
@@ -452,15 +471,119 @@ public class ProductDetailActivity extends BaseActivity {
                 if (call.isCanceled()) {
                     return;
                 }
-                setCartLoading(false);
-                Toast.makeText(ProductDetailActivity.this, "Không thể kết nối đến máy chủ", Toast.LENGTH_SHORT).show();
+                if (!com.nguyenmanhphuc.storehubapp.utils.NetworkUtils.isNetworkAvailable(ProductDetailActivity.this)) {
+                    com.nguyenmanhphuc.storehubapp.utils.NetworkUtils.showNoNetworkToast(ProductDetailActivity.this);
+                } else {
+                    Toast.makeText(ProductDetailActivity.this, "Không thể kết nối đến máy chủ", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
 
+    private void fetchCartCount() {
+        SharedPreferencesManager prefManager = new SharedPreferencesManager(this);
+        if (!prefManager.isLoggedIn()) {
+            if (tvCartBadge != null) tvCartBadge.setVisibility(View.GONE);
+            return;
+        }
+        apiService.getCart(HttpResquest.authorizationHeader(this)).enqueue(new Callback<Response<java.util.ArrayList<com.nguyenmanhphuc.storehubapp.model.CartItem>>>() {
+            @Override
+            public void onResponse(@NonNull Call<Response<java.util.ArrayList<com.nguyenmanhphuc.storehubapp.model.CartItem>>> call, @NonNull retrofit2.Response<Response<java.util.ArrayList<com.nguyenmanhphuc.storehubapp.model.CartItem>>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    int count = 0;
+                    for (com.nguyenmanhphuc.storehubapp.model.CartItem item : response.body().getData()) {
+                        count += item.getQuantity();
+                    }
+                    updateCartBadge(count);
+                } else {
+                    updateCartBadge(0);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Response<java.util.ArrayList<com.nguyenmanhphuc.storehubapp.model.CartItem>>> call, @NonNull Throwable t) {
+                updateCartBadge(0);
+            }
+        });
+    }
+
+    private void updateCartBadge(int count) {
+        if (tvCartBadge != null) {
+            if (count > 0) {
+                tvCartBadge.setText(count > 99 ? "99+" : String.valueOf(count));
+                tvCartBadge.setVisibility(View.VISIBLE);
+            } else {
+                tvCartBadge.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    private void runFlyToCartAnimation(View sourceView, View targetView) {
+        if (sourceView == null || targetView == null) return;
+
+        ViewGroup decorView = (ViewGroup) getWindow().getDecorView();
+        if (decorView == null) return;
+
+        int[] startLoc = new int[2];
+        int[] targetLoc = new int[2];
+
+        sourceView.getLocationOnScreen(startLoc);
+        targetView.getLocationOnScreen(targetLoc);
+
+        ImageView animImg = new ImageView(this);
+        animImg.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+        if (currentProduct != null && currentProduct.getImage() != null && !currentProduct.getImage().isEmpty()) {
+            Glide.with(this).load(currentProduct.getImage()).into(animImg);
+        } else {
+            animImg.setImageResource(R.drawable.ic_products);
+        }
+
+        int animSize = (int) (60 * getResources().getDisplayMetrics().density);
+        android.widget.FrameLayout.LayoutParams params = new android.widget.FrameLayout.LayoutParams(animSize, animSize);
+        params.leftMargin = startLoc[0] + (sourceView.getWidth() - animSize) / 2;
+        params.topMargin = startLoc[1] + (sourceView.getHeight() - animSize) / 2;
+
+        animImg.setLayoutParams(params);
+        decorView.addView(animImg);
+
+        float deltaX = (targetLoc[0] - startLoc[0]) + (targetView.getWidth() - sourceView.getWidth()) / 2f;
+        float deltaY = (targetLoc[1] - startLoc[1]) + (targetView.getHeight() - sourceView.getHeight()) / 2f;
+
+        animImg.animate()
+                .translationX(deltaX)
+                .translationY(deltaY)
+                .scaleX(0.2f)
+                .scaleY(0.2f)
+                .alpha(0.4f)
+                .setDuration(1000)
+                .setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator())
+                .withEndAction(() -> {
+                    decorView.removeView(animImg);
+                    targetView.animate()
+                            .scaleX(1.3f)
+                            .scaleY(1.3f)
+                            .setDuration(120)
+                            .withEndAction(() -> targetView.animate().scaleX(1.0f).scaleY(1.0f).setDuration(120).start())
+                            .start();
+                    fetchCartCount();
+                })
+                .start();
+    }
+
     private void setLoading(boolean loading) {
+        if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
+            if (progressBar != null) progressBar.setVisibility(View.GONE);
+            if (!loading) swipeRefreshLayout.setRefreshing(false);
+            btnAddToCart.setEnabled(!loading && currentProduct != null);
+            return;
+        }
+
         if (progressBar != null) {
             progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
+        }
+        if (swipeRefreshLayout != null && !loading) {
+            swipeRefreshLayout.setRefreshing(false);
         }
         btnAddToCart.setEnabled(!loading && currentProduct != null);
     }
