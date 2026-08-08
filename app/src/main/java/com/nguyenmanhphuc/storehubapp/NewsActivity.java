@@ -38,7 +38,7 @@ public class NewsActivity extends AppCompatActivity {
     private int currentPage = 1;
     private ProgressBar progressBarNews;
     private ProgressBar progressBarNewsLoadMore;
-    private View llPaginationNews;
+
     private SwipeRefreshLayout swipeRefreshLayout;
     private boolean isLoading = false;
     private boolean hasReachedEnd = false;
@@ -70,7 +70,7 @@ public class NewsActivity extends AppCompatActivity {
         btnBackNews = findViewById(R.id.btnBackNews);
         progressBarNews = findViewById(R.id.progressBarNews);
         progressBarNewsLoadMore = findViewById(R.id.progressBarNewsLoadMore);
-        llPaginationNews = findViewById(R.id.llPaginationNews);
+
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
 
         if (swipeRefreshLayout != null) {
@@ -96,9 +96,7 @@ public class NewsActivity extends AppCompatActivity {
             btnBackNews.setOnClickListener(v -> finish());
         }
 
-        if (llPaginationNews != null) {
-            llPaginationNews.setVisibility(View.GONE);
-        }
+
 
         if (rvAllNews != null) {
             rvAllNews.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -136,7 +134,7 @@ public class NewsActivity extends AppCompatActivity {
             if (rvAllNews != null && page == 1) rvAllNews.setVisibility(View.GONE);
         }
         if (progressBarNewsLoadMore != null && page > 1) progressBarNewsLoadMore.setVisibility(View.VISIBLE);
-        if (llPaginationNews != null) llPaginationNews.setVisibility(View.GONE);
+
 
         isLoading = true;
         if (currentCall != null) currentCall.cancel();
