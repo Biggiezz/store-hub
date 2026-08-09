@@ -176,7 +176,7 @@ public class AdminRecentActivity extends AppCompatActivity {
     private void selectTab(String tab) {
         selectedTabFilter = tab;
         updateTabUi();
-        filterActivities();
+        loadActivities();
     }
 
     private void updateTabUi() {
