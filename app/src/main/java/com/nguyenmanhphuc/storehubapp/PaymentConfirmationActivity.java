@@ -50,6 +50,7 @@ public class PaymentConfirmationActivity extends BaseActivity {
     private RadioButton rbZaloPay, rbCod;
     private TextView tvSubtotal, tvShippingFee, tvDiscount, tvTotal;
     private ApiServices apiService;
+    private String currentAppTransId = null;
 
     public static Intent createIntent(Context context, ArrayList<CartItem> items) {
         Intent intent = new Intent(context, PaymentConfirmationActivity.class);
@@ -149,15 +150,18 @@ public class PaymentConfirmationActivity extends BaseActivity {
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     com.google.gson.JsonObject data = response.body().getData();
                     String zpTransToken = data.has("zp_trans_token") ? data.get("zp_trans_token").getAsString() : "";
+                    currentAppTransId = data.has("app_trans_id") ? data.get("app_trans_id").getAsString() : null;
                     String returnCode = data.has("return_code") ? String.valueOf(data.get("return_code").getAsInt()) : "";
-                    
+
                     if (!"1".equals(returnCode) || zpTransToken.isEmpty()) {
+                        currentAppTransId = null;
                         String returnMessage = data.has("return_message") ? data.get("return_message").getAsString() : getString(R.string.zalopay_error);
                         resetZaloPayButton(returnMessage);
                     } else {
                         payWithZaloPay(zpTransToken);
                     }
                 } else {
+                    currentAppTransId = null;
                     resetZaloPayButton(getString(R.string.zalopay_create_failed));
                 }
             }
@@ -179,6 +183,7 @@ public class PaymentConfirmationActivity extends BaseActivity {
                 new PayOrderListener() {
                     @Override
                     public void onPaymentSucceeded(String transactionId, String transToken, String appTransID) {
+                        currentAppTransId = null;
                         runOnUiThread(() -> {
                             Toast.makeText(PaymentConfirmationActivity.this, PaymentConfirmationActivity.this.getString(R.string.toast_thanh_toan_zalopay_thanh_cong), Toast.LENGTH_SHORT).show();
                             createStoreOrder(appTransID);
@@ -187,13 +192,27 @@ public class PaymentConfirmationActivity extends BaseActivity {
 
                     @Override
                     public void onPaymentCanceled(String zpTransToken, String appTransID) {
+                        currentAppTransId = null;
                         runOnUiThread(() -> resetZaloPayButton(getString(R.string.zalopay_cancelled)));
                     }
 
                     @Override
                     public void onPaymentError(ZaloPayError zaloPayError, String zpTransToken, String appTransID) {
+                        currentAppTransId = null;
                         Log.e("PaymentConfirmation", "ZaloPay error: " + zaloPayError);
-                        runOnUiThread(() -> resetZaloPayButton(getString(R.string.zalopay_payment_failed)));
+                        runOnUiThread(() -> {
+                            if (zaloPayError == ZaloPayError.PAYMENT_APP_NOT_FOUND) {
+                                Toast.makeText(PaymentConfirmationActivity.this, getString(R.string.zalopay_not_installed), Toast.LENGTH_LONG).show();
+                                try {
+                                    Intent intent = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse("market://details?id=vn.com.vng.zalopay"));
+                                    startActivity(intent);
+                                } catch (android.content.ActivityNotFoundException anfe) {
+                                    Intent intent = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://play.google.com/store/apps/details?id=vn.com.vng.zalopay"));
+                                    startActivity(intent);
+                                }
+                            }
+                            resetZaloPayButton(getString(R.string.zalopay_payment_failed));
+                        });
                     }
                 }
         );
@@ -252,6 +271,45 @@ public class PaymentConfirmationActivity extends BaseActivity {
     private void selectPayment(RadioButton selected, RadioButton other) {
         selected.setChecked(true);
         other.setChecked(false);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (currentAppTransId != null) {
+            verifyZaloPayPayment(currentAppTransId);
+        }
+    }
+
+    private void verifyZaloPayPayment(final String appTransId) {
+        currentAppTransId = null;
+        final android.app.ProgressDialog progressDialog = new android.app.ProgressDialog(this);
+        progressDialog.setMessage(getString(R.string.verifying_payment));
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        apiService.createOrder(HttpResquest.authorizationHeader(this), "ZaloPay", appTransId).enqueue(new Callback<Response<Order>>() {
+            @Override
+            public void onResponse(@NonNull Call<Response<Order>> call, @NonNull retrofit2.Response<Response<Order>> response) {
+                if (progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    Toast.makeText(PaymentConfirmationActivity.this, getString(R.string.payment_success_order_created), Toast.LENGTH_SHORT).show();
+                    openCustomerOrders();
+                } else {
+                    resetZaloPayButton(getString(R.string.payment_not_completed));
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Response<Order>> call, @NonNull Throwable t) {
+                if (progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+                resetZaloPayButton(getString(R.string.cannot_verify_payment));
+            }
+        });
     }
 
     @Override

@@ -2,9 +2,13 @@ package com.nguyenmanhphuc.storehubapp;
 
 import com.nguyenmanhphuc.storehubapp.R;
 
+import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -47,7 +51,7 @@ public class ShippingOrderDetailActivity extends BaseActivity {
 
     private ImageView btnBack;
     private Order order;
-    private LinearLayout layoutConfirmed, layoutWarehouse, layoutDelivering, layoutCompleted;
+    private LinearLayout layoutConfirmed, layoutWarehouse, layoutDelivering, layoutCompleted, layoutStatusHeader;
     private View btnCancelOrder;
     private ImageView ivConfirmed, ivWarehouse, ivDelivering, ivCompleted;
     private RecyclerView rvOrderProducts;
@@ -99,6 +103,7 @@ public class ShippingOrderDetailActivity extends BaseActivity {
         tvEstimatedDelivery = findViewById(R.id.tvEstimatedDelivery);
         rvOrderProducts = findViewById(R.id.rvOrderProducts);
         btnCancelOrder = findViewById(R.id.btnCancelOrder);
+        layoutStatusHeader = findViewById(R.id.layoutStatusHeader);
     }
 
     private void setUpListener() {
@@ -126,7 +131,7 @@ public class ShippingOrderDetailActivity extends BaseActivity {
             return getString(R.string.status_pending);
         }
         if ("Đã xác nhận".equalsIgnoreCase(status) || "Confirmed".equalsIgnoreCase(status)) {
-            return getString(R.string.status_confirmed_at, "").trim();
+            return getString(R.string.status_confirmed);
         }
         if ("Đã rời kho".equalsIgnoreCase(status) || "Left Warehouse".equalsIgnoreCase(status)) {
             return getString(R.string.status_dispatched);
@@ -157,6 +162,33 @@ public class ShippingOrderDetailActivity extends BaseActivity {
         }
         if (tvStatusBadge != null) {
             tvStatusBadge.setText(getLocalizedStatus(status));
+            if ("Đã hoàn thành".equalsIgnoreCase(status) || "completed".equalsIgnoreCase(status) || "done".equalsIgnoreCase(status)) {
+                tvStatusBadge.setTextColor(android.graphics.Color.parseColor("#2E7D32"));
+                tvStatusBadge.setBackgroundResource(R.drawable.bg_status_completed);
+            } else if ("Đã hủy".equalsIgnoreCase(status) || "cancelled".equalsIgnoreCase(status) || "cancel".equalsIgnoreCase(status)) {
+                tvStatusBadge.setTextColor(android.graphics.Color.parseColor("#C62828"));
+                tvStatusBadge.setBackgroundResource(R.drawable.bg_status_cancelled);
+            } else if ("Chờ xác nhận".equalsIgnoreCase(status) || "pending".equalsIgnoreCase(status) || "Chờ xử lý".equalsIgnoreCase(status)) {
+                tvStatusBadge.setTextColor(android.graphics.Color.parseColor("#B78103"));
+                tvStatusBadge.setBackgroundResource(R.drawable.bg_status_pending);
+            } else if ("Đã xác nhận".equalsIgnoreCase(status) || "confirmed".equalsIgnoreCase(status)) {
+                tvStatusBadge.setTextColor(android.graphics.Color.parseColor("#1565C0"));
+                tvStatusBadge.setBackgroundResource(R.drawable.bg_status_shipping);
+            } else {
+                tvStatusBadge.setTextColor(android.graphics.Color.parseColor("#1565C0"));
+                tvStatusBadge.setBackgroundResource(R.drawable.bg_status_shipping);
+            }
+        }
+        if (layoutStatusHeader != null) {
+            if ("Đã hoàn thành".equalsIgnoreCase(status) || "completed".equalsIgnoreCase(status) || "done".equalsIgnoreCase(status)) {
+                layoutStatusHeader.setBackgroundResource(R.drawable.bg_detail_section_completed);
+            } else if ("Đã hủy".equalsIgnoreCase(status) || "cancelled".equalsIgnoreCase(status) || "cancel".equalsIgnoreCase(status)) {
+                layoutStatusHeader.setBackgroundResource(R.drawable.bg_detail_section_cancelled);
+            } else if ("Chờ xác nhận".equalsIgnoreCase(status) || "pending".equalsIgnoreCase(status) || "Chờ xử lý".equalsIgnoreCase(status)) {
+                layoutStatusHeader.setBackgroundResource(R.drawable.bg_detail_section_warm);
+            } else {
+                layoutStatusHeader.setBackgroundResource(R.drawable.bg_detail_section_shipping);
+            }
         }
         if (btnCancelOrder != null) {
             String norm = status.trim().toLowerCase();
@@ -168,7 +200,7 @@ public class ShippingOrderDetailActivity extends BaseActivity {
             }
         }
         if (tvEstimatedDelivery != null) {
-            tvEstimatedDelivery.setText(getString(R.string.estimated_delivery_prefix, DateTimeUtils.calculateVNEstimatedDelivery(order.getCreatedAt())));
+            tvEstimatedDelivery.setText(getString(R.string.estimated_delivery_prefix, DateTimeUtils.calculateVNEstimatedDelivery(this, order.getCreatedAt())));
         }
 
         updateTimeline(order);
@@ -192,7 +224,7 @@ public class ShippingOrderDetailActivity extends BaseActivity {
             }
         }
 
-        java.util.ArrayList<CartItem> safeItems = order.getItems() != null ? order.getItems() : new java.util.ArrayList<>();
+        ArrayList<CartItem> safeItems = order.getItems() != null ? order.getItems() : new ArrayList<>();
         adapter.updateData(safeItems);
 
         long subtotal = 0;
@@ -271,7 +303,7 @@ public class ShippingOrderDetailActivity extends BaseActivity {
     }
 
     private void showCancelOrderDialog(final Order order) {
-        final android.app.Dialog dialog = new android.app.Dialog(this);
+        final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_cancel_order);
 
 
@@ -304,7 +336,7 @@ public class ShippingOrderDetailActivity extends BaseActivity {
                     if (reason.isEmpty()) {
                         reason = note;
                     } else {
-                        reason += " - Ghi chú: " + note;
+                        reason += getString(R.string.note_prefix) + note;
                     }
                 }
 
@@ -320,8 +352,8 @@ public class ShippingOrderDetailActivity extends BaseActivity {
 
         dialog.show();
         if (dialog.getWindow() != null) {
-            dialog.getWindow().setLayout(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-            dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
     }
 
