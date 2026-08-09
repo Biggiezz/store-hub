@@ -149,7 +149,7 @@ public class NewsFragment extends Fragment {
             if (targetPage < 1 || pageCache.containsKey(targetPage)) continue;
 
             Call<Response<ArrayList<News>>> call =
-                    new HttpResquest().callAPI().getListNews(targetPage, LIMIT);
+                    new HttpResquest().callAPI().getListNews(targetPage, LIMIT, "published");
             prefetchCalls.add(call);
 
             final int page = targetPage;
@@ -209,7 +209,7 @@ public class NewsFragment extends Fragment {
 
         if (currentCall != null) currentCall.cancel();
         int requestGeneration = ++loadGeneration;
-        currentCall = new HttpResquest().callAPI().getListNews(page, LIMIT);
+        currentCall = new HttpResquest().callAPI().getListNews(page, LIMIT, "published");
         currentCall.enqueue(new Callback<Response<ArrayList<News>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<News>>> call, @NonNull retrofit2.Response<Response<ArrayList<News>>> response) {

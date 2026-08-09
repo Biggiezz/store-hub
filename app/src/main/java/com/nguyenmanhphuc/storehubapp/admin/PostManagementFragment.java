@@ -62,7 +62,7 @@ public class PostManagementFragment extends Fragment implements PostManagementAd
     }
 
     private void loadNews() {
-        apiServices.getListNews(1, 100).enqueue(new Callback<Response<ArrayList<News>>>() {
+        apiServices.getListNews(1, 100, "").enqueue(new Callback<Response<ArrayList<News>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<News>>> call, @NonNull retrofit2.Response<Response<ArrayList<News>>> response) {
                 if (response.isSuccessful() && response.body() != null) {

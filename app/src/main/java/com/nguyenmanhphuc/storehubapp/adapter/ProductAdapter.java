@@ -68,10 +68,15 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             holder.tvProductPrice.setText(product.getPrice() + "đ");
         }
 
+        String imgUrl = product.getImage();
+        Log.d("ProductAdapter", "Loading image: " + imgUrl);
+
         Glide.with(context)
-                .load(product.getImage())
+                .load(imgUrl)
                 .placeholder(R.drawable.ic_product)
                 .error(R.drawable.ic_product)
+                .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
                 .into(holder.imgProduct);
 
         holder.tvSold.setText("Đã bán: " + product.getSold());

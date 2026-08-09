@@ -51,7 +51,8 @@ public class ProductReview implements java.io.Serializable {
     }
 
     public String getCustomerImage() {
-        return customerImage != null && !customerImage.isEmpty() ? customerImage : (altCustomerImage != null ? altCustomerImage : "");
+        String rawImg = customerImage != null && !customerImage.isEmpty() ? customerImage : (altCustomerImage != null ? altCustomerImage : "");
+        return com.nguyenmanhphuc.storehubapp.utils.ImageUtils.getCorrectedImageUrl(rawImg, com.nguyenmanhphuc.storehubapp.services.HttpResquest.BASE_URL);
     }
 
     public String getCreatedAt() {

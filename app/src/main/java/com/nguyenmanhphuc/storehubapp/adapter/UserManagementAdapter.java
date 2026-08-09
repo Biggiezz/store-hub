@@ -111,6 +111,7 @@ public class UserManagementAdapter extends RecyclerView.Adapter<UserManagementAd
                 .load(user.getImage())
                 .placeholder(R.drawable.ic_avatar)
                 .error(R.drawable.ic_avatar)
+                .thumbnail(Glide.with(context).load(user.getImage()).override(10))
                 .into(holder.ivUserAvatar);
 
         // Hiển thị nút xóa nếu là Super Admin và không phải là chính mình

@@ -57,6 +57,7 @@ public class PostManagementAdapter extends RecyclerView.Adapter<PostManagementAd
                 .load(news.getImage())
                 .placeholder(R.drawable.ic_new)
                 .error(R.drawable.ic_new)
+                .thumbnail(Glide.with(context).load(news.getImage()).override(10))
                 .into(holder.ivNewsImage);
 
         holder.btnDelete.setOnClickListener(v -> {

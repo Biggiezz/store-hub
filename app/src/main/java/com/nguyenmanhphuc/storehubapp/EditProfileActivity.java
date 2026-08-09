@@ -117,6 +117,7 @@ public class EditProfileActivity extends BaseActivity {
                     .load(currentUser.getImage())
                     .placeholder(R.drawable.ic_avatar)
                     .error(R.drawable.ic_avatar)
+                    .thumbnail(Glide.with(this).load(currentUser.getImage()).override(10))
                     .into(imgLargeAvatar);
         }
     }
