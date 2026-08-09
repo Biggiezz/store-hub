@@ -80,6 +80,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                 .load(item.getProductImage())
                 .placeholder(R.drawable.ic_products)
                 .error(R.drawable.ic_products)
+                .thumbnail(Glide.with(context).load(item.getProductImage()).override(10))
                 .into(holder.ivProduct);
 
         holder.btnDecrease.setOnClickListener(v -> {

@@ -54,10 +54,13 @@ public class AdminRecentActivity extends AppCompatActivity {
     private final ArrayList<RecentActivity> filteredActivities = new ArrayList<>();
     private final ArrayList<RecentActivity> displayedActivities = new ArrayList<>();
     private ProgressBar progressBar;
-    private Call<Response<RevenueData>> activityCall;
+    private Call<Response<ArrayList<RecentActivity>>> activityCall;
     private int currentPage = 1;
+    private int totalPages = 1;
+    private boolean isLoading = false;
     private String selectedTabFilter = "all"; // "all", "order", "product", "user"
     private SwipeRefreshLayout swipeRefreshLayout;
+    private com.nguyenmanhphuc.storehubapp.services.ApiServices apiServices;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +73,7 @@ public class AdminRecentActivity extends AppCompatActivity {
             return insets;
         });
         initUi();
+        apiServices = new HttpResquest().callAPI();
         loadActivities();
 
         edtSearchOrder.addTextChangedListener(new TextWatcher() {
@@ -157,17 +161,11 @@ public class AdminRecentActivity extends AppCompatActivity {
         androidx.core.widget.NestedScrollView nestedScrollView = findViewById(R.id.nestedScrollViewRecent);
         if (nestedScrollView != null) {
             nestedScrollView.setOnScrollChangeListener((androidx.core.widget.NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
-                if (scrollY > oldScrollY && currentPage < getTotalPages()) {
+                if (scrollY > oldScrollY && currentPage < totalPages && !isLoading) {
                     if (v.getChildAt(0) != null) {
                         int diff = v.getChildAt(0).getMeasuredHeight() - (v.getHeight() + scrollY);
-                        if (diff <= 400) {
-                            currentPage++;
-                            int fromIndex = Math.min((currentPage - 1) * ITEMS_PER_PAGE, filteredActivities.size());
-                            int toIndex = Math.min(fromIndex + ITEMS_PER_PAGE, filteredActivities.size());
-                            if (fromIndex < filteredActivities.size()) {
-                                displayedActivities.addAll(filteredActivities.subList(fromIndex, toIndex));
-                                adapter.updateData(displayedActivities);
-                            }
+                        if (diff <= 600) {
+                            loadMoreActivities();
                         }
                     }
                 }
@@ -196,39 +194,73 @@ public class AdminRecentActivity extends AppCompatActivity {
     }
 
     private void loadActivities() {
+        if (activityCall != null) activityCall.cancel();
+        currentPage = 1;
+        isLoading = true;
         boolean isSwipeRefreshing = swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing();
         if (!isSwipeRefreshing) {
             if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
         }
         if (rvRecentActivities != null) rvRecentActivities.setVisibility(View.GONE);
         if (layoutEmpty != null) layoutEmpty.setVisibility(View.GONE);
-        if (layoutPagination != null) layoutPagination.setVisibility(View.GONE);
 
-        activityCall = new HttpResquest().callAPI().getRevenueStatsWithLimit(2, 0);
-        activityCall.enqueue(new Callback<Response<RevenueData>>() {
+        String typeParam = selectedTabFilter.equals("all") ? "" : selectedTabFilter;
+        String token = HttpResquest.authorizationHeader(this);
+        
+        activityCall = apiServices.getRecentActivities(token, currentPage, 15, typeParam);
+        activityCall.enqueue(new Callback<Response<ArrayList<RecentActivity>>>() {
             @Override
-            public void onResponse(@NonNull Call<Response<RevenueData>> call,
-                                   @NonNull retrofit2.Response<Response<RevenueData>> response) {
+            public void onResponse(@NonNull Call<Response<ArrayList<RecentActivity>>> call,
+                                   @NonNull retrofit2.Response<Response<ArrayList<RecentActivity>>> response) {
+                isLoading = false;
                 if (progressBar != null) progressBar.setVisibility(View.GONE);
                 if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
+
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     allActivities.clear();
-                    List<RecentActivity> activities = response.body().getData().getRecentActivities();
-                    if (activities != null) {
-                        allActivities.addAll(activities);
-                    }
+                    allActivities.addAll(response.body().getData());
+                    totalPages = response.body().getPagination() != null ? response.body().getPagination().getTotalPages() : 1;
+                } else {
+                    allActivities.clear();
                 }
                 filterActivities();
             }
 
             @Override
-            public void onFailure(@NonNull Call<Response<RevenueData>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<Response<ArrayList<RecentActivity>>> call, @NonNull Throwable t) {
                 if (!call.isCanceled()) {
+                    isLoading = false;
                     if (progressBar != null) progressBar.setVisibility(View.GONE);
                     if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                     allActivities.clear();
                     filterActivities();
                 }
+            }
+        });
+    }
+
+    private void loadMoreActivities() {
+        isLoading = true;
+        currentPage++;
+        
+        String typeParam = selectedTabFilter.equals("all") ? "" : selectedTabFilter;
+        String token = HttpResquest.authorizationHeader(this);
+        
+        apiServices.getRecentActivities(token, currentPage, 15, typeParam).enqueue(new Callback<Response<ArrayList<RecentActivity>>>() {
+            @Override
+            public void onResponse(@NonNull Call<Response<ArrayList<RecentActivity>>> call, @NonNull retrofit2.Response<Response<ArrayList<RecentActivity>>> response) {
+                isLoading = false;
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    ArrayList<RecentActivity> moreData = response.body().getData();
+                    allActivities.addAll(moreData);
+                    filterActivities();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Response<ArrayList<RecentActivity>>> call, @NonNull Throwable t) {
+                isLoading = false;
+                currentPage--;
             }
         });
     }
@@ -272,21 +304,13 @@ public class AdminRecentActivity extends AppCompatActivity {
         }
 
         filteredActivities.clear();
-
-        for (RecentActivity activity : allActivities) {
+        filteredActivities.addAll(allActivities);
+        // We still support local keyword/date filtering on the data we have
+        ArrayList<RecentActivity> searchResults = new ArrayList<>();
+        
+        for (RecentActivity activity : filteredActivities) {
             String title = activity.getTitle() == null ? "" : activity.getTitle();
             String detail = activity.getDetail() == null ? "" : activity.getDetail();
-            String type = activity.getType() == null ? "" : activity.getType().toLowerCase(Locale.getDefault());
-
-            if ("order".equals(selectedTabFilter) && !type.startsWith("order")) {
-                continue;
-            }
-            if ("product".equals(selectedTabFilter) && !type.startsWith("product")) {
-                continue;
-            }
-            if ("user".equals(selectedTabFilter) && (!type.startsWith("user") && !type.startsWith("login"))) {
-                continue;
-            }
 
             boolean matchesKeyword = keyword.isEmpty()
                     || title.toLowerCase(Locale.getDefault()).contains(keyword)
@@ -310,33 +334,13 @@ public class AdminRecentActivity extends AppCompatActivity {
                 }
             }
 
-            filteredActivities.add(activity);
+            searchResults.add(activity);
         }
 
-        currentPage = 1;
-        displayedActivities.clear();
-        int fromIndex = 0;
-        int toIndex = Math.min(ITEMS_PER_PAGE, filteredActivities.size());
-        if (fromIndex < filteredActivities.size()) {
-            displayedActivities.addAll(filteredActivities.subList(fromIndex, toIndex));
-        }
-        renderPage();
-    }
-
-    private void renderPage() {
-        int totalItems = filteredActivities.size();
-        adapter.updateData(displayedActivities);
-
-        boolean isEmpty = totalItems == 0;
+        adapter.updateData(searchResults);
+        boolean isEmpty = searchResults.isEmpty();
         layoutEmpty.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
         rvRecentActivities.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
-        if (layoutPagination != null) {
-            layoutPagination.setVisibility(View.GONE);
-        }
-    }
-
-    private int getTotalPages() {
-        return Math.max(1, (int) Math.ceil(filteredActivities.size() / (double) ITEMS_PER_PAGE));
     }
 
     @Override

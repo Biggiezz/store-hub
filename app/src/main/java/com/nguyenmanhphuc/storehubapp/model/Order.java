@@ -225,7 +225,7 @@ public class Order implements Serializable {
     }
 
     public String getProductImage() {
-        return productImage != null ? productImage : "";
+        return com.nguyenmanhphuc.storehubapp.utils.ImageUtils.getCorrectedImageUrl(productImage, com.nguyenmanhphuc.storehubapp.services.HttpResquest.BASE_URL);
     }
 
     public void setProductImage(String productImage) {

@@ -182,6 +182,8 @@ public class AddNewsManagementActivity extends AppCompatActivity {
             Glide.with(this)
                     .load(editingNews.getImage())
                     .placeholder(R.drawable.ic_products)
+                    .error(R.drawable.ic_products)
+                    .thumbnail(Glide.with(this).load(editingNews.getImage()).override(10))
                     .into(imgPreview);
             imgPreview.setVisibility(View.VISIBLE);
             layoutUploadPlaceholder.setVisibility(View.GONE);

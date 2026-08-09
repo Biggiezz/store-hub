@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.nguyenmanhphuc.storehubapp.R;
 import com.nguyenmanhphuc.storehubapp.model.News;
 
@@ -50,6 +51,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         Glide.with(context)
                 .load(news.getImage())
                 .placeholder(R.drawable.ic_products)
+                .thumbnail(Glide.with(context).load(news.getImage()).override(10))
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(holder.imgPost);
 
         holder.btnDelete.setOnClickListener(v -> listener.onDeleteClick(news));
@@ -65,6 +68,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     public void updateData(List<News> newList) {
         this.newsList = newList;
         notifyDataSetChanged();
+    }
+
+    public void addData(List<News> moreNews) {
+        if (moreNews != null && !moreNews.isEmpty()) {
+            int startPosition = this.newsList.size();
+            this.newsList.addAll(moreNews);
+            notifyItemRangeInserted(startPosition, moreNews.size());
+        }
     }
 
     public static class PostViewHolder extends RecyclerView.ViewHolder {

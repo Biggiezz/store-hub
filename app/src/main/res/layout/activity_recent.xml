@@ -141,7 +141,6 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
                             android:text="@string/xml_khoang_thoi_gian"
-                            android:textColor="#26352E"
                             android:textSize="13sp"
                             android:textStyle="bold" />
 
@@ -150,124 +149,88 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
                         android:orientation="horizontal">
 
-                        <!-- Từ ngày -->
                         <com.google.android.material.card.MaterialCardView
                             android:id="@+id/cardFromDate"
                             android:layout_width="0dp"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="6dp"
                             android:layout_weight="1"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:foreground="?attr/selectableItemBackground"
-                            app:cardBackgroundColor="#FAF9F7"
+                            app:cardBackgroundColor="#FFFFFF"
                             app:cardCornerRadius="8dp"
                             app:cardElevation="0dp"
-                            app:strokeColor="#E9E5E1"
+                            app:strokeColor="#E9E6E0"
                             app:strokeWidth="1dp">
 
                             <LinearLayout
-                                android:id="@+id/layoutFromDate"
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent"
+                                android:layout_height="wrap_content"
                                 android:gravity="center_vertical"
-                                android:orientation="horizontal"
-                                android:paddingHorizontal="8dp"
+                                android:orientation="vertical"
+                                android:paddingHorizontal="12dp"
                                 android:paddingVertical="8dp">
 
-                                <LinearLayout
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:orientation="vertical">
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:includeFontPadding="false"
-                                        android:paddingTop="2dp"
-                                        android:text="@string/xml_tu_ngay"
-                                        android:textColor="#92928E"
-                                        android:textSize="11sp" />
-
-                                    <TextView
-                                        android:id="@+id/tvFromDate"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginTop="3dp"
-                                        android:includeFontPadding="false"
-                                        android:textColor="#29332F"
-                                        android:textSize="14sp" />
-
-                                </LinearLayout>
-
-                                <ImageView
+                                <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:contentDescription="@null"
-                                    android:src="@drawable/ic_calendar" />
+                                    android:text="@string/xml_tu_ngay"
+                                    android:textColor="#A5A7A3"
+                                    android:textSize="10sp"
+                                    tools:ignore="SmallSp" />
+
+                                <TextView
+                                    android:id="@+id/tvFromDate"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:textColor="#26342D"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold"
+                                    tools:text="08/08/2026" />
 
                             </LinearLayout>
 
                         </com.google.android.material.card.MaterialCardView>
 
-                        <!-- Đến ngày -->
                         <com.google.android.material.card.MaterialCardView
                             android:id="@+id/cardToDate"
                             android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_marginStart="8dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
                             android:layout_weight="1"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:foreground="?attr/selectableItemBackground"
-                            app:cardBackgroundColor="#FAF9F7"
+                            app:cardBackgroundColor="#FFFFFF"
                             app:cardCornerRadius="8dp"
                             app:cardElevation="0dp"
-                            app:strokeColor="#E9E5E1"
+                            app:strokeColor="#E9E6E0"
                             app:strokeWidth="1dp">
 
                             <LinearLayout
-                                android:id="@+id/layoutToDate"
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent"
+                                android:layout_height="wrap_content"
                                 android:gravity="center_vertical"
-                                android:orientation="horizontal"
-                                android:paddingStart="10dp"
-                                android:paddingEnd="8dp">
+                                android:orientation="vertical"
+                                android:paddingHorizontal="12dp"
+                                android:paddingVertical="8dp">
 
-                                <LinearLayout
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:orientation="vertical"
-                                    android:paddingHorizontal="8dp"
-                                    android:paddingVertical="8dp">
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:includeFontPadding="false"
-                                        android:paddingTop="2dp"
-                                        android:text="@string/xml_den_ngay"
-                                        android:textSize="11sp" />
-
-                                    <TextView
-                                        android:id="@+id/tvToDate"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginTop="3dp"
-                                        android:includeFontPadding="false"
-                                        android:textSize="14sp" />
-
-                                </LinearLayout>
-
-                                <ImageView
+                                <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:contentDescription="@null"
-                                    android:src="@drawable/ic_calendar" />
+                                    android:text="@string/xml_den_ngay"
+                                    android:textColor="#A5A7A3"
+                                    android:textSize="10sp"
+                                    tools:ignore="SmallSp" />
+
+                                <TextView
+                                    android:id="@+id/tvToDate"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:textColor="#26342D"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold"
+                                    tools:text="09/08/2026" />
 
                             </LinearLayout>
 
@@ -276,6 +239,7 @@
                     </LinearLayout>
 
                 </LinearLayout>
+
                 <!-- Tìm kiếm -->
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -335,7 +299,7 @@
                             android:layout_marginStart="10dp"
                             android:layout_weight="1"
                             android:background="@null"
-                            android:hint="@string/xml_tim_theo_ma_don_hang_vd_8842"
+                            android:hint="@string/xml_tim_kiem_ma_ten_sdt_nhan_hang"
                             android:imeOptions="actionSearch"
                             android:inputType="text"
                             android:maxLines="1"
@@ -356,7 +320,7 @@
                     android:layout_marginTop="14dp"
                     android:layout_marginEnd="16dp"
                     app:cardBackgroundColor="#FFFFFF"
-                    app:cardCornerRadius="8dp"
+                    app:cardCornerRadius="14dp"
                     app:cardElevation="0dp"
                     app:strokeColor="#E9E6E0"
                     app:strokeWidth="1dp">
@@ -381,6 +345,16 @@
                     android:indeterminateTint="#2F4238"
                     android:visibility="gone" />
 
+                <ProgressBar
+                    android:id="@+id/progressBarLoadMore"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="12dp"
+                    android:indeterminateTint="#2F4238"
+                    android:visibility="gone" />
+
                 <!-- Trạng thái không có dữ liệu -->
                 <LinearLayout
                     android:id="@+id/layoutEmpty"
@@ -401,63 +375,6 @@
 
                 </LinearLayout>
 
-                <!-- Phân trang -->
-                <LinearLayout
-                    android:id="@+id/layoutPagination"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="12dp">
-
-                    <ImageButton
-                        android:id="@+id/btnPreviousPage"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:background="@drawable/bg_pagination_inactive"
-                        android:padding="12dp"
-                        android:rotation="180"
-                        android:src="@drawable/ic_chevron_right"
-                        app:tint="#29362F" />
-
-                    <TextView
-                        android:id="@+id/tvPage1"
-                        style="@style/PaginationSelected"
-                        android:layout_marginStart="8dp"
-                        android:text="1" />
-
-                    <TextView
-                        android:id="@+id/tvPage2"
-                        style="@style/PaginationNormal"
-                        android:layout_marginStart="6dp"
-                        android:text="2" />
-
-                    <TextView
-                        android:id="@+id/tvPage3"
-                        style="@style/PaginationNormal"
-                        android:layout_marginStart="6dp"
-                        android:text="3" />
-
-                    <TextView
-                        android:id="@+id/tvPage4"
-                        style="@style/PaginationNormal"
-                        android:layout_marginStart="6dp"
-                        android:text="4" />
-
-                    <ImageButton
-                        android:id="@+id/btnNextPage"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginStart="8dp"
-                        android:background="@drawable/bg_pagination_inactive"
-                        android:padding="12dp"
-                        android:src="@drawable/ic_chevron_right"
-                        app:tint="#29362F" />
-
-                </LinearLayout>
-
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -474,5 +391,57 @@
         </androidx.core.widget.NestedScrollView>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutPagination"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:visibility="gone">
+
+        <ImageButton
+            android:id="@+id/btnPreviousPage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_back" />
+
+        <TextView
+            android:id="@+id/tvPage1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="1" />
+
+        <TextView
+            android:id="@+id/tvPage2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="2" />
+
+        <TextView
+            android:id="@+id/tvPage3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="3" />
+
+        <TextView
+            android:id="@+id/tvPage4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="..." />
+
+        <ImageButton
+            android:id="@+id/btnNextPage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_arrow_right" />
+    </LinearLayout>
 
 </LinearLayout>

@@ -36,7 +36,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 
 public class NewsFragmentManagement extends Fragment implements PostAdapter.PostItemListener {
-
+    private static final int ITEMS_PER_PAGE = 10;
     private RecyclerView rvPosts;
     private TextView tvEmptyPosts;
     private PostAdapter adapter;
@@ -45,13 +45,13 @@ public class NewsFragmentManagement extends Fragment implements PostAdapter.Post
     private HttpResquest httpRequest;
     private SharedPreferencesManager sharedPreferencesManager;
     private String selectedStatus = "published";
-    private ProgressBar progressBar;
-
+    private ProgressBar progressBar, progressBarLoadMore;
     private int currentPage = 1;
-    private static final int PAGE_SIZE = 10;
     private boolean isLoading = false;
+    private boolean isLastPage = false;
     private boolean hasMoreData = true;
-    private static final String CACHE_KEY = "admin_news_" ; // nối thêm status
+    private static final int PAGE_SIZE = 10;
+    private static final String CACHE_KEY = "admin_news_"; // nối thêm status
 
     @Nullable
     @Override
@@ -75,6 +75,7 @@ public class NewsFragmentManagement extends Fragment implements PostAdapter.Post
         btnDraft = view.findViewById(R.id.btnDraft);
         btnPrivate = view.findViewById(R.id.btnPrivate);
         progressBar = view.findViewById(R.id.progressBar);
+        progressBarLoadMore = view.findViewById(R.id.progressBarLoadMore);
         httpRequest = new HttpResquest();
         if (getContext() != null) {
             sharedPreferencesManager = new SharedPreferencesManager(getContext());
@@ -84,7 +85,8 @@ public class NewsFragmentManagement extends Fragment implements PostAdapter.Post
     private void setUpAdapter() {
         if (getContext() != null && rvPosts != null) {
             adapter = new PostAdapter(getContext(), newsList, this);
-            rvPosts.setLayoutManager(new LinearLayoutManager(getContext()));
+            LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+            rvPosts.setLayoutManager(layoutManager);
             rvPosts.setAdapter(adapter);
 
             rvPosts.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -161,7 +163,7 @@ public class NewsFragmentManagement extends Fragment implements PostAdapter.Post
             if (rvPosts != null) rvPosts.setVisibility(View.GONE);
             if (tvEmptyPosts != null) tvEmptyPosts.setVisibility(View.GONE);
         } else {
-            if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+            if (progressBarLoadMore != null) progressBarLoadMore.setVisibility(View.VISIBLE);
         }
 
         httpRequest.callAPI().getAdminListNews(authHeader, page, PAGE_SIZE, selectedStatus).enqueue(new Callback<Response<ArrayList<News>>>() {
@@ -170,6 +172,7 @@ public class NewsFragmentManagement extends Fragment implements PostAdapter.Post
                 if (!isAdded()) return;
                 isLoading = false;
                 if (progressBar != null) progressBar.setVisibility(View.GONE);
+                if (progressBarLoadMore != null) progressBarLoadMore.setVisibility(View.GONE);
                 if (rvPosts != null) rvPosts.setVisibility(View.VISIBLE);
 
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
@@ -203,6 +206,7 @@ public class NewsFragmentManagement extends Fragment implements PostAdapter.Post
                 if (!isAdded()) return;
                 isLoading = false;
                 if (progressBar != null) progressBar.setVisibility(View.GONE);
+                if (progressBarLoadMore != null) progressBarLoadMore.setVisibility(View.GONE);
                 if (rvPosts != null) rvPosts.setVisibility(View.VISIBLE);
                 Toast.makeText(getContext(), getContext().getString(R.string.toast_loi_tai_danh_sach_bai_viet), Toast.LENGTH_SHORT).show();
             }
@@ -213,7 +217,10 @@ public class NewsFragmentManagement extends Fragment implements PostAdapter.Post
         selectedStatus = status;
         currentPage = 1;
         hasMoreData = true;
+        updateTabButtonsUi(status);
+    }
 
+    private void updateTabButtonsUi(String status) {
         int activeBackground = Color.parseColor("#14291F");
         int inactiveBackground = Color.parseColor("#F5F3F0");
         int activeText = Color.WHITE;

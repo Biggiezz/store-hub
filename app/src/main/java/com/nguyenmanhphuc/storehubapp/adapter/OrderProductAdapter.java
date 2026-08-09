@@ -71,6 +71,7 @@ public class OrderProductAdapter extends RecyclerView.Adapter<OrderProductAdapte
                 .load(item.getProductImage())
                 .placeholder(R.drawable.ic_product)
                 .error(R.drawable.ic_product)
+                .thumbnail(Glide.with(context).load(item.getProductImage()).override(10))
                 .into(holder.imgProduct);
 
         holder.itemView.setOnClickListener(v -> {

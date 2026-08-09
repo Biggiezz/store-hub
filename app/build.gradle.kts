@@ -9,9 +9,9 @@ android {
     defaultConfig {
         applicationId = "com.nguyenmanhphuc.storehubapp"
         minSdk = 29
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 10
-        versionName = "1.0.9"
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -43,6 +43,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation(libs.swiperefreshlayout)
     implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation(libs.swiperefreshlayout)

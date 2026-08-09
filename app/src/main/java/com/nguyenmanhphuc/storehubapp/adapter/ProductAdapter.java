@@ -69,6 +69,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             holder.tvProductPrice.setText(product.getPrice() + context.getString(R.string.currency_suffix));
         }
 
+        String imgUrl = product.getImage();
+        Log.d("ProductAdapter", "Loading image: " + imgUrl);
+
         Glide.with(context)
                 .load(product.getImage())
                 .placeholder(R.drawable.ic_products)

@@ -239,7 +239,13 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         }
         selectedImage.setVisibility(View.VISIBLE);
         uploadPrompt.setVisibility(View.GONE);
-        Glide.with(this).load(product.getImage()).centerCrop().into(selectedImage);
+        Glide.with(this)
+                .load(product.getImage())
+                .placeholder(R.drawable.ic_product)
+                .error(R.drawable.ic_product)
+                .thumbnail(Glide.with(this).load(product.getImage()).override(10))
+                .centerCrop()
+                .into(selectedImage);
 
         productColors.clear();
         if (product.getColors() != null) {

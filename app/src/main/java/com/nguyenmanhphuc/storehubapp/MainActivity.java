@@ -553,7 +553,7 @@ public class MainActivity extends BaseActivity {
 
     private void fetchNews() {
         HttpResquest httpResquest = new HttpResquest();
-        httpResquest.callAPI().getListNews(1, 5).enqueue(new Callback<Response<ArrayList<News>>>() {
+        httpResquest.callAPI().getListNews(1, 5, "published").enqueue(new Callback<Response<ArrayList<News>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<News>>> call, @NonNull retrofit2.Response<Response<ArrayList<News>>> response) {
                 if (response.isSuccessful() && response.body() != null) {

@@ -152,7 +152,7 @@ public class NewsActivity extends AppCompatActivity {
         isLoading = true;
         if (currentCall != null) currentCall.cancel();
         int requestGeneration = ++loadGeneration;
-        currentCall = new HttpResquest().callAPI().getListNews(page, LIMIT);
+        currentCall = new HttpResquest().callAPI().getListNews(page, LIMIT, "published");
         currentCall.enqueue(new Callback<Response<ArrayList<News>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<News>>> call, @NonNull retrofit2.Response<Response<ArrayList<News>>> response) {

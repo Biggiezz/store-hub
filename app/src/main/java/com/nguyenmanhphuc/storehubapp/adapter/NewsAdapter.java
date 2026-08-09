@@ -110,6 +110,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
                     .load(news.getImage())
                     .placeholder(R.drawable.ic_new) // Ảnh mặc định trong khi tải
                     .error(R.drawable.ic_new)       // Ảnh khi tải lỗi
+                    .thumbnail(Glide.with(context).load(news.getImage()).override(10))
                     .into(holder.ivNewsImage);
         }
 

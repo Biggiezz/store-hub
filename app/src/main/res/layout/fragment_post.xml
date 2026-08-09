@@ -108,6 +108,14 @@
                 android:layout_gravity="center"
                 android:visibility="gone" />
 
+            <ProgressBar
+                android:id="@+id/progressBarLoadMore"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone" />
+
             <TextView
                 android:id="@+id/tvEmptyPosts"
                 android:layout_width="wrap_content"

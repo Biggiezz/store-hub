@@ -68,6 +68,7 @@ public class AdminProductAdapter extends RecyclerView.Adapter<AdminProductAdapte
                 .load(product.getImage())
                 .placeholder(R.drawable.ic_products)
                 .error(R.drawable.ic_products)
+                .thumbnail(Glide.with(holder.image).load(product.getImage()).override(10))
                 .centerCrop()
                 .into(holder.image);
         holder.itemView.setOnClickListener(v -> listener.onProductClick(product));

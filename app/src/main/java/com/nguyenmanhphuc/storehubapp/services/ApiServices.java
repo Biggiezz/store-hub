@@ -18,6 +18,7 @@ import com.nguyenmanhphuc.storehubapp.model.response.LoginResponse;
 import com.nguyenmanhphuc.storehubapp.model.response.Response;
 import com.nguyenmanhphuc.storehubapp.model.response.RevenueData;
 
+import com.nguyenmanhphuc.storehubapp.model.response.RecentActivity;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -91,9 +92,6 @@ public interface ApiServices {
             @Part("colors") RequestBody colors,
             @Part MultipartBody.Part image
     );
-
-    @DELETE("api/productsRouter/delete-product/{id}")
-    Call<Response<Void>> deleteProduct(@Header("Authorization") String token, @Path("id") String id);
 
     @GET("api/productsRouter/get-cart")
     Call<Response<ArrayList<CartItem>>> getCart(@Header("Authorization") String token);
@@ -171,7 +169,8 @@ public interface ApiServices {
     // Lấy danh sách toàn bộ tin tức đã xuất bản
     @GET("api/newsRouter/get-all-news")
     Call<Response<ArrayList<News>>> getListNews(@Query("page") int page,
-                                                @Query("limit") int limit);
+                                                @Query("limit") int limit,
+                                                @Query("status") String status);
 
     // Lấy chi tiết một bài viết tin tức dựa vào ID
     @GET("api/newsRouter/get-news-by-id/{id}")
@@ -183,14 +182,25 @@ public interface ApiServices {
     @DELETE("api/newsRouter/delete-news/{id}")
     Call<Response<Void>> deleteNews(@Path("id") String id);
 
+    @GET("api/usersRouter/admin/recent-activities")
+    Call<Response<ArrayList<RecentActivity>>> getRecentActivities(
+            @Header("Authorization") String token,
+            @Query("page") int page,
+            @Query("limit") int limit,
+            @Query("type") String type
+    );
+
+    @DELETE("api/productsRouter/delete-product/{id}")
+    Call<Response<Void>> deleteProduct(@Header("Authorization") String token, @Path("id") String productId);
+
+    @DELETE("users/delete-user/{id}")
+    Call<Response<Void>> deleteUser(@Header("Authorization") String token, @Path("id") String userId);
+
     @POST("users/register")
     Call<Response<User>> register(@Body RegisterRequest request);
 
     @POST("users/login")
     Call<LoginResponse> login(@Body LoginRequest request);
-
-    @DELETE("users/delete-user/{id}")
-    Call<Response<Void>> deleteUser(@Header("Authorization") String token, @Path("id") String id);
 
     @GET("users/get-all-users")
     Call<Response<ArrayList<User>>> getListUsers(@Header("Authorization") String token);
