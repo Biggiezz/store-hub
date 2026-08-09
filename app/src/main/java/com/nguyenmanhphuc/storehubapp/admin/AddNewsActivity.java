@@ -96,7 +96,7 @@ public class AddNewsActivity extends AppCompatActivity {
         }
 
         // Setup Status Spinner
-        String[] statuses = {"Bản nháp", "Đã xuất bản"};
+        String[] statuses = {getString(R.string.xml_ban_nhap), getString(R.string.xml_da_xuat_ban)};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, statuses);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spStatus.setAdapter(adapter);
@@ -117,13 +117,15 @@ public class AddNewsActivity extends AppCompatActivity {
     private void saveNews() {
         String title = etTitle.getText().toString().trim();
         String content = etContent.getText().toString().trim();
-        String status = spStatus.getSelectedItem().toString();
+        String selectedStatus = spStatus.getSelectedItem() != null ? spStatus.getSelectedItem().toString() : "";
         String author = tvAuthor.getText().toString();
 
         if (title.isEmpty() || content.isEmpty()) {
             Toast.makeText(this, this.getString(R.string.toast_vui_long_nhap_day_du_thong_tin), Toast.LENGTH_SHORT).show();
             return;
         }
+
+        String status = getString(R.string.xml_da_xuat_ban).equals(selectedStatus) ? "published" : "draft";
 
         News news = new News();
         news.setTitle(title);

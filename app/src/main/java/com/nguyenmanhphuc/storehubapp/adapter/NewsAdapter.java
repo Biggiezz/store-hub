@@ -38,7 +38,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     }
 
     /**
-     * Bật hoặc tắt chế độ hiển thị hỗn hợp (Dùng để tắt chế độ thẻ to ở màn hình Trang chủ)
+     * Bật hoặc tắt chế độ hiển thị hỗn hợp (Dùng để tắt chế độ thẻ to ở màn hình Tôi)
      */
     public void setMultiTypeEnabled(boolean enabled) {
         this.isMultiTypeEnabled = enabled;

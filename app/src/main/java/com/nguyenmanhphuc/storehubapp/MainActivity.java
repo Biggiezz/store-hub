@@ -57,8 +57,6 @@ public class MainActivity extends BaseActivity {
     public static final String EXTRA_OPEN_TAB = "open_tab";
     public static final String TAB_HOME = "home";
     public static final String TAB_PRODUCTS = "products";
-    public static final String TAB_NEWS = "news";
-    public static final String TAB_CART = "cart";
     public static final String TAB_ORDERS = "orders";
     public static final String TAB_PROFILE = "profile";
     private static final int FEATURED_PRODUCT_LIMIT = 6;
@@ -66,22 +64,18 @@ public class MainActivity extends BaseActivity {
     public static ArrayList<Product> preloadedProducts = null;
     public static boolean shouldOpenCartOnResume = false;
     public static ArrayList<News> preloadedNews = null;
-
     private ViewPager2 sliderBanner;
-    private TextView dotOne, dotTwo, dotThree;
+    private TextView dotOne, dotTwo, dotThree, tvLoadingText;
     private RecyclerView rvProducts, rvNews;
-    private ImageView imgAvatar;
+//    private ImageView imgAvatar;
     private ProductAdapter productAdapter;
     private NewsAdapter newsAdapter;
     private MaterialButton btnHome, btnProducts, btnCart, btnProfile;
     private LinearLayout layoutCategories, btnViewAllProducts, btnViewAllNews;
     private View layoutLoading, mainScrollView;
-    private TextView tvLoadingText;
     private SwipeRefreshLayout swipeRefreshLayout;
-
     private ArrayList<Product> allProductsList = new ArrayList<>();
     private ArrayList<News> newsList;
-
     private final Handler slideHandler = new Handler(Looper.getMainLooper());
     private final Runnable slideRunnable = new Runnable() {
         @Override
@@ -161,18 +155,18 @@ public class MainActivity extends BaseActivity {
             pulse.start();
         }
 
-        imgAvatar = findViewById(R.id.imgAvatar);
-        imgAvatar.setOnClickListener(v -> {
-            SharedPreferencesManager prefManager = new SharedPreferencesManager(MainActivity.this);
-            if (!prefManager.isLoggedIn()) {
-                Toast.makeText(MainActivity.this, getString(R.string.login_view_personal_info_toast), Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
-            } else {
-                showProfile();
-            }
-        });
-        loadAvatar();
+//        imgAvatar = findViewById(R.id.imgAvatar);
+//        imgAvatar.setOnClickListener(v -> {
+//            SharedPreferencesManager prefManager = new SharedPreferencesManager(MainActivity.this);
+//            if (!prefManager.isLoggedIn()) {
+//                Toast.makeText(MainActivity.this, getString(R.string.login_view_personal_info_toast), Toast.LENGTH_SHORT).show();
+//                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+//                startActivity(intent);
+//            } else {
+//                showProfile();
+//            }
+//        });
+//        loadAvatar();
 
         // Initialize SlideShow ViewPager2 & Adapter
         sliderBanner = findViewById(R.id.sliderBanner);
@@ -297,10 +291,11 @@ public class MainActivity extends BaseActivity {
     }
 
     private void openTab(String tab) {
+        if (tab == null || tab.isEmpty()) {
+            tab = TAB_HOME;
+        }
         if (TAB_PRODUCTS.equals(tab)) showProducts();
-        else if (TAB_NEWS.equals(tab)) showNews();
         else if (TAB_ORDERS.equals(tab)) showOder();
-        else if (TAB_CART.equals(tab)) showCart();
         else if (TAB_PROFILE.equals(tab)) showProfile();
         else if (TAB_HOME.equals(tab)) showHome();
     }
@@ -313,6 +308,7 @@ public class MainActivity extends BaseActivity {
 
     public void showHome() {
         selectedTab = TAB_HOME;
+        updateBottomNavigation(btnHome);
         if (layoutLoading != null && layoutLoading.getVisibility() == View.VISIBLE) {
             return;
         }
@@ -320,7 +316,6 @@ public class MainActivity extends BaseActivity {
             mainScrollView.setVisibility(View.VISIBLE);
         }
         findViewById(R.id.fragmentContainer).setVisibility(View.GONE);
-        updateBottomNavigation(btnHome);
     }
 
     public void showProducts() {
@@ -337,9 +332,6 @@ public class MainActivity extends BaseActivity {
         updateBottomNavigation(btnProducts);
     }
 
-    public void showCart() {
-        startActivity(new Intent(this, CartActivity.class));
-    }
 
     public void showOder() {
         SharedPreferencesManager prefManager = new SharedPreferencesManager(this);
@@ -393,25 +385,32 @@ public class MainActivity extends BaseActivity {
         updateBottomNavigation(btnProfile);
     }
 
-    public void showNews() {
-        startActivity(new Intent(this, NewsActivity.class));
-    }
 
     private void updateBottomNavigation(MaterialButton activeButton) {
         View bottomNav = findViewById(R.id.bottomNavigation);
         if (bottomNav != null) {
             bottomNav.setVisibility(View.VISIBLE);
         }
-        int inactiveColor = ContextCompat.getColor(this, android.R.color.transparent);
-        int activeColor = ContextCompat.getColor(this, R.color.bottom_nav_active);
+        int transparentColor = ContextCompat.getColor(this, android.R.color.transparent);
         int inactiveContentColor = Color.parseColor("#AAA49D");
-        int activeContentColor = Color.parseColor("#756E67");
+        int activeContentColor = ContextCompat.getColor(this, R.color.dark_green);
 
-        for (MaterialButton button : new MaterialButton[]{btnHome, btnProducts, btnCart, btnProfile}) {
+        int[] iconResIds = new int[]{
+            R.drawable.ic_home,
+            R.drawable.ic_products,
+            R.drawable.ic_receipt,
+            R.drawable.ic_user
+        };
+        MaterialButton[] buttons = new MaterialButton[]{btnHome, btnProducts, btnCart, btnProfile};
+
+        for (int i = 0; i < buttons.length; i++) {
+            MaterialButton button = buttons[i];
             if (button == null) continue;
             boolean isActive = button == activeButton;
-            button.setBackgroundTintList(ColorStateList.valueOf(isActive ? activeColor : inactiveColor));
+            
+            button.setBackgroundTintList(ColorStateList.valueOf(transparentColor));
             button.setTextColor(isActive ? activeContentColor : inactiveContentColor);
+            button.setIconResource(iconResIds[i]);
             button.setIconTint(ColorStateList.valueOf(isActive ? activeContentColor : inactiveContentColor));
         }
     }
@@ -590,22 +589,22 @@ public class MainActivity extends BaseActivity {
         dotThree.setTextColor(position == 2 ? activeColor : inactiveColor);
     }
 
-    private void loadAvatar() {
-        User user = new SharedPreferencesManager(this).getUser();
-        if (user != null && user.getImage() != null && !user.getImage().isEmpty()) {
-            Glide.with(this)
-                    .load(user.getImage())
-                    .placeholder(R.drawable.ic_avatar)
-                    .error(R.drawable.ic_avatar)
-                    .circleCrop()
-                    .into(imgAvatar);
-        }
-    }
+//    private void loadAvatar() {
+//        User user = new SharedPreferencesManager(this).getUser();
+//        if (user != null && user.getImage() != null && !user.getImage().isEmpty()) {
+//            Glide.with(this)
+//                    .load(user.getImage())
+//                    .placeholder(R.drawable.ic_avatar)
+//                    .error(R.drawable.ic_avatar)
+//                    .circleCrop()
+//                    .into(imgAvatar);
+//        }
+//    }
 
     @Override
     protected void onResume() {
         super.onResume();
-        loadAvatar();
+//        loadAvatar();
         slideHandler.postDelayed(slideRunnable, 3000);
     }
 

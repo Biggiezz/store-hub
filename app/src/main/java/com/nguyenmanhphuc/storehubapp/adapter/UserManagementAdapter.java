@@ -94,7 +94,7 @@ public class UserManagementAdapter extends RecyclerView.Adapter<UserManagementAd
         holder.tvUserEmail.setText(user.getEmail());
 
         String rawLastActive = user.getLastActive();
-        String lastActive = DateTimeUtils.getRelativeTime(rawLastActive, user.isOnline());
+        String lastActive = DateTimeUtils.getRelativeTime(context, rawLastActive, user.isOnline());
 
         if (lastActive.contains("Đang hoạt động") || lastActive.contains("Active now")) {
             holder.tvUserLastActive.setTextColor(Color.parseColor("#2E7D32"));
@@ -103,7 +103,7 @@ public class UserManagementAdapter extends RecyclerView.Adapter<UserManagementAd
         }
 
         String activePrefix = context.getString(R.string.active_prefix);
-        if (!lastActive.startsWith("Hoạt động") && !lastActive.startsWith("Active")) {
+        if (!lastActive.startsWith("Hoạt động: ") && !lastActive.startsWith("Active")) {
             lastActive = activePrefix + lastActive;
         }
         holder.tvUserLastActive.setText(lastActive);

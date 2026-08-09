@@ -4,6 +4,8 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.widget.TextView;
 
+import com.nguyenmanhphuc.storehubapp.R;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -70,28 +72,28 @@ public class DateTimeUtils {
     }
 
     /**
-     * Calculates delivery date +5 days later and formats it in VN Locale.
+     * Calculates delivery date +5 days later and formats it localized.
      */
-    public static String calculateVNEstimatedDelivery(String createdAtString) {
+    public static String calculateVNEstimatedDelivery(Context context, String createdAtString) {
         if (createdAtString == null || createdAtString.isEmpty()) {
-            return "Sau 5 ngày";
+            return context.getString(R.string.after_5_days);
         }
         try {
             SimpleDateFormat parser = new SimpleDateFormat(ISO_FORMAT_MS, Locale.US);
             parser.setTimeZone(TimeZone.getTimeZone("UTC"));
             Date date = parser.parse(createdAtString);
-            if (date == null) return "Sau 5 ngày";
+            if (date == null) return context.getString(R.string.after_5_days);
 
             Calendar cal = Calendar.getInstance();
             cal.setTime(date);
             cal.add(Calendar.DAY_OF_YEAR, 5);
             Date estimatedDate = cal.getTime();
 
-            SimpleDateFormat formatter = new SimpleDateFormat("dd 'Tháng' MM, yyyy", Locale.US);
+            SimpleDateFormat formatter = new SimpleDateFormat(context.getString(R.string.date_pattern_month), Locale.US);
             formatter.setTimeZone(TimeZone.getTimeZone("GMT+7"));
             return formatter.format(estimatedDate);
         } catch (Exception e) {
-            return "Sau 5 ngày";
+            return context.getString(R.string.after_5_days);
         }
     }
 
@@ -147,17 +149,16 @@ public class DateTimeUtils {
         }
     }
 
-    public static String getRelativeTime(String isoString) {
-        return getRelativeTime(isoString, false);
+    public static String getRelativeTime(Context context, String isoString) {
+        return getRelativeTime(context, isoString, false);
     }
 
-    public static String getRelativeTime(String isoString, boolean isOnline) {
-        boolean isEn = Locale.getDefault().getLanguage().equals("en");
+    public static String getRelativeTime(Context context, String isoString, boolean isOnline) {
         if (isoString == null || isoString.isEmpty()) {
-            return isEn ? "Inactive" : "Chưa hoạt động";
+            return context.getString(R.string.time_inactive);
         }
         if (isoString.equals("Vừa xong") || isoString.equals("Just now")) {
-            return isEn ? "Just now" : "Vừa xong";
+            return context.getString(R.string.time_just_now);
         }
         Date date = parseISO(isoString);
         if (date == null) {
@@ -168,11 +169,11 @@ public class DateTimeUtils {
         long diff = now - time;
 
         if (isOnline && diff >= 0 && diff < 5 * 60 * 1000) {
-            return isEn ? "Active now" : "Đang hoạt động";
+            return context.getString(R.string.time_active_now);
         }
 
         if (diff < 0) {
-            return isEn ? "Active now" : "Đang hoạt động";
+            return context.getString(R.string.time_active_now);
         }
         long diffSeconds = diff / 1000;
         long diffMinutes = diffSeconds / 60;
@@ -180,13 +181,13 @@ public class DateTimeUtils {
         long diffDays = diffHours / 24;
 
         if (diffSeconds < 60) {
-            return isEn ? "Just now" : "Vừa xong";
+            return context.getString(R.string.time_just_now);
         } else if (diffMinutes < 60) {
-            return isEn ? diffMinutes + "m ago" : diffMinutes + " phút trước";
+            return context.getString(R.string.time_minutes_ago, diffMinutes);
         } else if (diffHours < 24) {
-            return isEn ? diffHours + "h ago" : diffHours + " giờ trước";
+            return context.getString(R.string.time_hours_ago, diffHours);
         } else if (diffDays < 7) {
-            return isEn ? diffDays + "d ago" : diffDays + " ngày trước";
+            return context.getString(R.string.time_days_ago, diffDays);
         } else {
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
             formatter.setTimeZone(TimeZone.getTimeZone("GMT+7"));

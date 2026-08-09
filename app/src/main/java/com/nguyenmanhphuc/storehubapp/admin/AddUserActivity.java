@@ -161,7 +161,7 @@ public class AddUserActivity extends AppCompatActivity {
         User currentUser = prefManager.getUser();
 
         ArrayList<String> roleList = new ArrayList<>();
-        roleList.add("Chọn vai trò");
+        roleList.add(getString(R.string.select_role));
         if (currentUser != null && currentUser.isSuperAdmin()) {
             roleList.add("superadmin");
         }
@@ -230,7 +230,7 @@ public class AddUserActivity extends AppCompatActivity {
             return;
         }
 
-        if ("Chọn vai trò".equals(role) || TextUtils.isEmpty(role)) {
+        if (getString(R.string.select_role).equals(role) || TextUtils.isEmpty(role)) {
             Toast.makeText(this, this.getString(R.string.toast_vui_long_chon_vai_tro_cho_nguoi_dung), Toast.LENGTH_SHORT).show();
             return;
         }

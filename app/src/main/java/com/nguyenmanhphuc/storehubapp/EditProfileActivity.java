@@ -337,7 +337,7 @@ public class EditProfileActivity extends BaseActivity {
 
     private void performDeleteAccount(String password) {
         LoadingDialogHelper loadingDialog = new LoadingDialogHelper(this);
-        loadingDialog.setMessage("Đang xóa tài khoản...");
+        loadingDialog.setMessage(getString(R.string.deleting_profile));
         loadingDialog.show();
 
         String tokenHeader = "Bearer " + sharedPreferencesManager.getToken();

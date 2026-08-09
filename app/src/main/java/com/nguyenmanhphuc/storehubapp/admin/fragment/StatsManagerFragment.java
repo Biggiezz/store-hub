@@ -107,7 +107,7 @@ public class StatsManagerFragment extends Fragment {
             List<String> times = new ArrayList<>();
             times.add(getString(R.string.this_month));
             times.add(getString(R.string.last_month));
-            times.add("Năm 2026");
+            times.add(getString(R.string.year_label_format, 2026));
 
             StatsTimeAdapter adapter = new StatsTimeAdapter(requireContext(), times);
             spTime.setAdapter(adapter);

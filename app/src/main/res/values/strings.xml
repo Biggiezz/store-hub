@@ -11,7 +11,7 @@
     <string name="nav_products">Sản Phẩm</string>
     <string name="nav_cart">Giỏ Hàng</string>
     <string name="nav_news">Tin Tức</string>
-    <string name="nav_profile">Tài khoản</string>
+    <string name="nav_profile">Tôi</string>
     <string name="featured_products">Sản phẩm nổi bật</string>
     <string name="view_all">Xem tất cả</string>
     <string name="phone">Điện thoại</string>
@@ -759,4 +759,33 @@
     <string name="saving_ellipsis">Đang lưu...</string>
     <string name="customer_info_header">THÔNG TIN KHÁCH HÀNG</string>
     <string name="active_prefix">Hoạt động: </string>
+
+    <!-- Hardcoded Vietnamese UI strings externalized -->
+    <string name="status_confirmed">Đã xác nhận</string>
+    <string name="time_inactive">Chưa hoạt động</string>
+    <string name="time_active_now">Đang hoạt động</string>
+    <string name="time_just_now">Vừa xong</string>
+    <string name="time_minutes_ago">%d phút trước</string>
+    <string name="time_hours_ago">%d giờ trước</string>
+    <string name="time_days_ago">%d ngày trước</string>
+    <string name="date_pattern_month">dd \'Tháng\' MM, yyyy</string>
+    <string name="zalopay_not_installed">Ứng dụng ZaloPay chưa được cài đặt. Đang mở cửa hàng ứng dụng...</string>
+    <string name="verifying_payment">Đang xác minh trạng thái thanh toán từ ZaloPay...</string>
+    <string name="payment_success_order_created">Thanh toán thành công và đơn hàng đã được tạo!</string>
+    <string name="payment_not_completed">Thanh toán chưa hoàn tất hoặc giao dịch bị hủy.</string>
+    <string name="cannot_verify_payment">Không thể kết nối đến máy chủ để xác minh thanh toán.</string>
+    <string name="deleting_profile">Đang xóa trang cá nhân...</string>
+    <string name="color_black">Đen</string>
+    <string name="color_white">Trắng</string>
+    <string name="color_gray">Xám</string>
+    <string name="color_red">Đỏ</string>
+    <string name="color_blue">Xanh dương</string>
+    <string name="color_green">Xanh lá</string>
+    <string name="color_yellow">Vàng</string>
+    <string name="color_orange">Cam</string>
+    <string name="color_purple">Tím</string>
+    <string name="color_pink">Hồng</string>
+    <string name="color_brown">Nâu</string>
+    <string name="color_cyan">Xanh lam</string>
+    <string name="color_olive">Xanh rêu</string>
 </resources>
