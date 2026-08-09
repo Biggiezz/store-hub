@@ -392,6 +392,8 @@ public class UserManagementFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        fetchUsersFromServer();
+        if (displayedUsers.isEmpty() && !isLoading) {
+            fetchUsersFromServer();
+        }
     }
 }

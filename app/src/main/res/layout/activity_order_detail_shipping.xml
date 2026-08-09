@@ -96,6 +96,7 @@
                         android:layout_height="24dp"
                         android:background="@drawable/bg_status_dark"
                         android:gravity="center"
+                        android:padding="4dp"
                         android:textColor="#FFFFFF"
                         android:textSize="12sp" />
                 </LinearLayout>

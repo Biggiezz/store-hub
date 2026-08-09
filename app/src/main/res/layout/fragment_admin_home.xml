@@ -76,6 +76,7 @@
                 layout="@layout/item_dashboard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="16dp" />
 
             <!-- Card Users -->
@@ -84,6 +85,7 @@
                 layout="@layout/item_dashboard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="16dp" />
 
             <!-- Card Products -->
@@ -92,6 +94,7 @@
                 layout="@layout/item_dashboard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="16dp" />
 
             <!-- Card Orders -->
@@ -100,6 +103,7 @@
                 layout="@layout/item_dashboard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="16dp" />
 
         </LinearLayout>
