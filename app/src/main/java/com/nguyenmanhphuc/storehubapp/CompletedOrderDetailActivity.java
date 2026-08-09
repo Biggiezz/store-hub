@@ -110,7 +110,7 @@ public class CompletedOrderDetailActivity extends BaseActivity {
                             order.setProductVariant(firstItem.getColorName());
                         }
                     }
-                    intent.putExtra("order_item", order);
+                    intent.putExtra("order_item", order.resolveFields());
                     writeReviewLauncher.launch(intent);
                 }
             });

@@ -91,9 +91,13 @@ public class Order implements Serializable {
     @SerializedName("deliveryAddress")
     private String recipientAddress;
 
-    // Reference tới tài khoản khách hàng (backend trả về "user")
+    // Reference toi tai khoan khach hang (backend tra ve "user")
+    // Danh dau transient de khong tham gia Java Serialization (JsonElement khong Serializable)
     @SerializedName("user")
-    private JsonElement rawUser;
+    private transient JsonElement rawUser;
+
+    // ID nguoi dung duoc giai ma tu rawUser, luu thanh String de truyen qua Intent an toan
+    private String resolvedUserId = "";
 
     // Thông tin User mới nhất được gán sau khi fetch từ API
     private User populatedUser;
@@ -245,7 +249,11 @@ public class Order implements Serializable {
     }
 
     public String getUserIdString() {
-        return extractIdFromElement(rawUser);
+        // Neu da giai ma roi thi dung luon
+        if (resolvedUserId != null && !resolvedUserId.isEmpty()) return resolvedUserId;
+        // Giai ma tu rawUser (chi co khi vua duoc Gson parse, truoc khi serialize qua Intent)
+        resolvedUserId = extractIdFromElement(rawUser);
+        return resolvedUserId;
     }
 
     private String extractIdFromElement(JsonElement elem) {
@@ -255,10 +263,19 @@ public class Order implements Serializable {
             if (elem.isJsonObject()) {
                 JsonObject obj = elem.getAsJsonObject();
                 if (obj.has("_id") && !obj.get("_id").isJsonNull()) return obj.get("_id").getAsString();
-                if (obj.has("id") && !obj.get("id").isJsonNull()) return obj.get("id").getAsString();
+                if (obj.has("id")  && !obj.get("id").isJsonNull())  return obj.get("id").getAsString();
             }
         } catch (Exception ignored) {}
         return "";
+    }
+
+    /**
+     * Duoc goi ngay sau khi Gson parse xong (truoc khi object co the bi serialize).
+     * Dam bao resolvedUserId duoc giai ma truoc khi rawUser bi mat khi truyen qua Intent.
+     */
+    public Order resolveFields() {
+        resolvedUserId = extractIdFromElement(rawUser);
+        return this;
     }
 
     public String getRecipientName() {

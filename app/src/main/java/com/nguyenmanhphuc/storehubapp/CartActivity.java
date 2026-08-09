@@ -31,6 +31,7 @@ import com.nguyenmanhphuc.storehubapp.model.request.UpdateQuantityRequest;
 import com.nguyenmanhphuc.storehubapp.model.response.Response;
 import com.nguyenmanhphuc.storehubapp.services.ApiServices;
 import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
+import com.nguyenmanhphuc.storehubapp.utils.DataCache;
 import com.nguyenmanhphuc.storehubapp.utils.SharedPreferencesManager;
 
 import java.text.NumberFormat;
@@ -58,6 +59,9 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
     private final ArrayList<CartItem> cartItems = new ArrayList<>();
     private static final long DEFAULT_SHIPPING_FEE = 40000L;
     private final long discountAmount = 0L;
+    /** TTL riêng cho giỏ hàng: 2 phút */
+    private static final long CART_TTL_MS = 2 * 60 * 1000L;
+    private static final String CACHE_KEY = "user_cart";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,13 +85,27 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         setUpListener();
         loadUserInfo();
 
-        loadCartFromServer();
+        // Nếu cache giỏ hàng còn hợp lệ (< 2 phút) → hiện ngay, không spinner
+        ArrayList<CartItem> cached = DataCache.get().get(CACHE_KEY, ArrayList.class);
+        if (cached != null) {
+            updateCartUi(cached);
+        } else {
+            loadCartFromServer();
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         loadUserInfo();
+
+        // Neu cache bi invalidate (vi du: vua them SP vao gio tu ProductDetail)
+        // thi fetch lai de hien san pham moi
+        ArrayList<CartItem> cached = DataCache.get().get(CACHE_KEY, ArrayList.class);
+        if (cached == null) {
+            loadCartFromServer();
+        }
+        // Neu van con cache hop le: giu nguyen, khong reload (tranh nhap nhay)
     }
 
     private void initUi() {
@@ -112,7 +130,11 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
 
         if (swipeRefreshLayout != null) {
             swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.dark_green));
-            swipeRefreshLayout.setOnRefreshListener(this::loadCartFromServer);
+            swipeRefreshLayout.setOnRefreshListener(() -> {
+                // SwipeRefresh: buộc fetch mới
+                DataCache.get().invalidateExact(CACHE_KEY);
+                loadCartFromServer();
+            });
         }
     }
 
@@ -183,7 +205,10 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
             public void onResponse(@NonNull Call<Response<ArrayList<CartItem>>> call, @NonNull retrofit2.Response<Response<ArrayList<CartItem>>> response) {
                 setLoading(false);
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
-                    updateCartUi(response.body().getData());
+                    ArrayList<CartItem> items = response.body().getData();
+                    // Lưu vào cache với TTL 2 phút
+                    DataCache.get().put(CACHE_KEY, items, CART_TTL_MS);
+                    updateCartUi(items);
                 } else {
                     updateCartUi(new ArrayList<>());
                 }
@@ -266,6 +291,8 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         if (cartAdapter != null) {
             cartAdapter.notifyDataSetChanged();
         }
+        // Cập nhật cache tại chỗ (optimistic update)
+        DataCache.get().put(CACHE_KEY, new ArrayList<>(cartItems), CART_TTL_MS);
 
         UpdateQuantityRequest request = new UpdateQuantityRequest(cartItem.getId(), newQuantity);
         apiService.updateCartQuantity(HttpResquest.authorizationHeader(this), request).enqueue(new Callback<Response<ArrayList<CartItem>>>() {
@@ -307,6 +334,8 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
 
         Toast.makeText(CartActivity.this, getString(R.string.removed_from_cart_toast), Toast.LENGTH_SHORT).show();
         updateCartUi(this.cartItems);
+        // Xóa cache sau khi xóa item → lần sau sẽ fetch lại chính xác
+        DataCache.get().invalidateExact(CACHE_KEY);
 
         String deleteId = !cartItem.getId().isEmpty() ? cartItem.getId() : cartItem.getProductId();
         apiService.deleteCartItem(HttpResquest.authorizationHeader(this), deleteId).enqueue(new Callback<Response<ArrayList<CartItem>>>() {

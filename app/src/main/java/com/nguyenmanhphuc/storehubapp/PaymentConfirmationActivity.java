@@ -24,6 +24,7 @@ import com.nguyenmanhphuc.storehubapp.model.Order;
 import com.nguyenmanhphuc.storehubapp.model.response.Response;
 import com.nguyenmanhphuc.storehubapp.services.ApiServices;
 import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
+import com.nguyenmanhphuc.storehubapp.utils.DataCache;
 import com.nguyenmanhphuc.storehubapp.zalopay.Constant.AppInfo;
 import com.google.android.material.button.MaterialButton;
 
@@ -228,11 +229,18 @@ public class PaymentConfirmationActivity extends BaseActivity {
                 btnConfirmPayment.setEnabled(true);
                 btnConfirmPayment.setText(getString(R.string.xml_xac_nhan_thanh_toan));
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    // Xóa cache giỏ hàng và đơn hàng sau khi đặt hàng thành công
+                    DataCache.get().invalidateExact("user_cart");
+                    DataCache.get().invalidate("user_orders");
                     if (paidWithZaloPay) {
                         openCustomerOrders();
                     } else {
+                        Order order = response.body().getData();
+                        // Giai ma JsonElement (rawUser) thanh String truoc khi truyen qua Intent
+                        // Tranh crash BadParcelableException / NotSerializableException
+                        order.resolveFields();
                         Intent intent = new Intent(PaymentConfirmationActivity.this, ShippingOrderDetailActivity.class);
-                        intent.putExtra("order_data", response.body().getData());
+                        intent.putExtra("order_data", order);
                         startActivity(intent);
                         finish();
                     }

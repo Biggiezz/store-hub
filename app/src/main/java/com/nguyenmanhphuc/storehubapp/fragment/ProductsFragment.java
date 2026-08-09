@@ -39,6 +39,7 @@ import com.nguyenmanhphuc.storehubapp.model.Product;
 import com.nguyenmanhphuc.storehubapp.model.Category;
 import com.nguyenmanhphuc.storehubapp.model.response.Response;
 import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
+import com.nguyenmanhphuc.storehubapp.utils.DataCache;
 import androidx.appcompat.widget.PopupMenu;
 
 import java.util.ArrayList;
@@ -78,6 +79,7 @@ public class ProductsFragment extends Fragment {
     private Runnable searchRunnable;
     private Call<Response<ArrayList<Product>>> currentCall;
     private int loadGeneration;
+    private static final String CACHE_KEY = "user_products";
 
     @Nullable
     @Override
@@ -95,7 +97,17 @@ public class ProductsFragment extends Fragment {
         setUpListener();
         loadCategories();
 
-        loadFirstPage();
+        // Nếu cache còn hợp lệ → hiện data ngay, không fetch lại
+        ArrayList<Product> cached = DataCache.get().get(CACHE_KEY, ArrayList.class);
+        if (cached != null && !cached.isEmpty()) {
+            allProducts.clear();
+            allProducts.addAll(cached);
+            productAdapter.updateData(allProducts);
+            if (progressBar != null) progressBar.setVisibility(View.GONE);
+            if (rvProducts != null) rvProducts.setVisibility(View.VISIBLE);
+        } else {
+            loadFirstPage();
+        }
     }
 
     private void initUi(View view) {
@@ -115,7 +127,11 @@ public class ProductsFragment extends Fragment {
 
         if (swipeRefreshLayout != null) {
             swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.dark_green));
-            swipeRefreshLayout.setOnRefreshListener(this::loadFirstPage);
+            swipeRefreshLayout.setOnRefreshListener(() -> {
+                // SwipeRefresh: xóa cache rồi fetch mới
+                DataCache.get().invalidate(CACHE_KEY);
+                loadFirstPage();
+            });
         }
         updateSortButtons();
     }
@@ -273,6 +289,11 @@ public class ProductsFragment extends Fragment {
         }
         allProducts.addAll(products);
 
+        // Chỉ cache trang đầu (kết quả mặc định, không search, không filter)
+        if (currentPage == 1 && currentSearchKeyword.isEmpty() && currentCategory.isEmpty() && currentSort.isEmpty()) {
+            DataCache.get().put(CACHE_KEY, new ArrayList<>(allProducts));
+        }
+
         if (pagination != null) {
             totalPages = Math.max(1, pagination.getTotalPages());
             currentPage = pagination.getCurrentPage();
@@ -372,7 +393,12 @@ public class ProductsFragment extends Fragment {
         TextView tvAllName = allItemView.findViewById(R.id.tvCategoryName);
         ImageView ivAllCheck = allItemView.findViewById(R.id.ivCheck);
         tvAllName.setText(getString(R.string.all_categories));
-        ivAllCheck.setVisibility(currentCategory.isEmpty() ? View.VISIBLE : View.GONE);
+        boolean allSelected = currentCategory.isEmpty();
+        ivAllCheck.setVisibility(allSelected ? View.VISIBLE : View.GONE);
+        if (allSelected) {
+            allItemView.setBackgroundColor(Color.parseColor("#F0DED2"));
+            tvAllName.setTextColor(Color.parseColor("#6B6157"));
+        }
         allItemView.setOnClickListener(v -> {
             currentCategory = "";
             loadFirstPage();
@@ -389,6 +415,10 @@ public class ProductsFragment extends Fragment {
             tvName.setText(getLocalizedCategoryName(category.getName()));
             boolean isSelected = category.get_id().equals(currentCategory);
             ivCheck.setVisibility(isSelected ? View.VISIBLE : View.GONE);
+            if (isSelected) {
+                itemView.setBackgroundColor(Color.parseColor("#F0DED2"));
+                tvName.setTextColor(Color.parseColor("#6B6157"));
+            }
 
             itemView.setOnClickListener(v -> {
                 currentCategory = category.get_id();

@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:fontFamily="@font/shopee_display"
-        android:textColor="#37474F"
+        android:textColor="@color/dark_green"
         android:textSize="14sp" />
 
     <ImageView

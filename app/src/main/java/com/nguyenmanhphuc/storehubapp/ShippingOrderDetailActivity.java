@@ -30,6 +30,7 @@ import com.nguyenmanhphuc.storehubapp.model.request.CancelOrderRequest;
 import com.nguyenmanhphuc.storehubapp.model.response.Response;
 import com.nguyenmanhphuc.storehubapp.services.ApiServices;
 import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
+import com.nguyenmanhphuc.storehubapp.utils.DataCache;
 import com.nguyenmanhphuc.storehubapp.utils.DateTimeUtils;
 import com.google.android.material.button.MaterialButton;
 
@@ -365,7 +366,8 @@ public class ShippingOrderDetailActivity extends BaseActivity {
                                    @NonNull retrofit2.Response<Response<Order>> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(ShippingOrderDetailActivity.this, ShippingOrderDetailActivity.this.getString(R.string.toast_da_huy_don_hang_thanh_cong), Toast.LENGTH_SHORT).show();
-                    // Go back to Orders list fragment by finishing
+                    // Xóa cache đơn hàng → OderFragment sẽ hiện trạng thái mới ngay khi quay lại
+                    DataCache.get().invalidate("user_orders");
                     finish();
                 } else {
                     Toast.makeText(ShippingOrderDetailActivity.this, ShippingOrderDetailActivity.this.getString(R.string.toast_khong_the_huy_don_hang), Toast.LENGTH_SHORT).show();
