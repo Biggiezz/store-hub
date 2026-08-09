@@ -2,6 +2,8 @@ package com.nguyenmanhphuc.storehubapp.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -40,7 +42,7 @@ import retrofit2.Callback;
 
 public class ProfileFragment extends Fragment {
 
-    private TextView txtProfileName, txtEmailValue, txtPhoneValue, txtAddressValue, txtPasswordChangedSub, btnLangVI, btnLangEN;
+    private TextView txtProfileName, txtEmailValue, txtPhoneValue, txtAddressValue, txtPasswordChangedSub, btnLangVI, btnLangEN, tvAppVersion;
     private ImageView imgProfileAvatar, btnBack;
     private View btnEditPersonalInfo, btnChangePassword, btnLogout;
 
@@ -127,6 +129,15 @@ public class ProfileFragment extends Fragment {
         btnEditPersonalInfo = view.findViewById(R.id.btnEditPersonalInfo);
         btnChangePassword = view.findViewById(R.id.btnChangePassword);
         btnLogout = view.findViewById(R.id.btnLogout);
+
+        tvAppVersion = view.findViewById(R.id.tvAppVersion);
+        if (tvAppVersion != null) {
+            try {
+                PackageInfo pInfo = requireContext().getPackageManager()
+                        .getPackageInfo(requireContext().getPackageName(), 0);
+                tvAppVersion.setText("StoreHub v" + pInfo.versionName);
+            } catch (PackageManager.NameNotFoundException ignored) {}
+        }
     }
 
     private void bindUserData() {

@@ -402,6 +402,15 @@
 
                 </RelativeLayout>
 
+                <TextView
+                    android:id="@+id/tvAppVersion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center"
+                    android:textColor="#9B9C98"
+                    android:textSize="12sp" />
+
             </LinearLayout>
 
             <!-- Logout Button -->
