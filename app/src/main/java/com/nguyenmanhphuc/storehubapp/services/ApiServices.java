@@ -268,6 +268,9 @@ public interface ApiServices {
     @POST("users/logout")
     Call<Response<Void>> logout(@Header("Authorization") String authHeader);
 
+    @POST("users/delete-me")
+    Call<Response<Void>> deleteMe(@Header("Authorization") String authHeader, @Body Map<String, String> body);
+
     @POST("users/set-offline")
     Call<Response<Void>> setOffline(@Header("Authorization") String authHeader);
 

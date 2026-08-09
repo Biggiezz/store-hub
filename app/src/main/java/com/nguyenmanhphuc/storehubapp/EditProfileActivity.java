@@ -40,12 +40,22 @@ import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 
+import androidx.appcompat.app.AlertDialog;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.WindowManager;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.Color;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 public class EditProfileActivity extends BaseActivity {
 
     private EditText edtProfileName, edtProfileEmail, edtProfilePhone, edtProfileAddress;
     private TextInputLayout tilProfileName, tilProfilePhone, tilProfileAddress;
     private ImageView imgLargeAvatar;
-    private MaterialButton btnSaveChanges;
+    private MaterialButton btnSaveChanges, btnDeleteAccount;
     private SharedPreferencesManager sharedPreferencesManager;
     private User currentUser;
     private Uri croppedImageUri;
@@ -113,6 +123,13 @@ public class EditProfileActivity extends BaseActivity {
 
         imgLargeAvatar = findViewById(R.id.imgLargeAvatar);
         btnSaveChanges = findViewById(R.id.btnSaveChanges);
+        btnDeleteAccount = findViewById(R.id.btnDeleteAccount);
+
+        if (currentUser != null && currentUser.isSuperAdmin()) {
+            btnDeleteAccount.setVisibility(View.GONE);
+        } else {
+            btnDeleteAccount.setVisibility(View.VISIBLE);
+        }
     }
 
     private void bindUserData() {
@@ -138,6 +155,7 @@ public class EditProfileActivity extends BaseActivity {
         });
 
         btnSaveChanges.setOnClickListener(v -> saveProfileChanges());
+        btnDeleteAccount.setOnClickListener(v -> showDeleteAccountDialog());
     }
 
     private void startCrop(@NonNull Uri uri) {
@@ -266,6 +284,101 @@ public class EditProfileActivity extends BaseActivity {
             public void onFailure(@NonNull Call<Response<User>> call, @NonNull Throwable t) {
                 loadingDialog.dismiss();
                 Toast.makeText(EditProfileActivity.this, EditProfileActivity.this.getString(R.string.toast_loi_ket_noi_may_chu), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void showDeleteAccountDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_confirm_delete_account, null);
+        builder.setView(dialogView);
+
+        AlertDialog dialog = builder.create();
+
+        TextInputLayout tilDeletePassword = dialogView.findViewById(R.id.tilDeletePassword);
+        TextInputEditText edtDeletePassword = dialogView.findViewById(R.id.edtDeletePassword);
+        MaterialButton btnConfirmDelete = dialogView.findViewById(R.id.btnConfirmDelete);
+        MaterialButton btnCancelDelete = dialogView.findViewById(R.id.btnCancelDelete);
+
+        if (btnConfirmDelete != null) {
+            btnConfirmDelete.setOnClickListener(v -> {
+                String password = edtDeletePassword != null && edtDeletePassword.getText() != null 
+                        ? edtDeletePassword.getText().toString().trim() : "";
+                
+                if (password.isEmpty()) {
+                    if (tilDeletePassword != null) {
+                        tilDeletePassword.setError(getString(R.string.error_empty_password));
+                    } else {
+                        Toast.makeText(this, getString(R.string.error_empty_password), Toast.LENGTH_SHORT).show();
+                    }
+                    return;
+                }
+
+                if (tilDeletePassword != null) {
+                    tilDeletePassword.setError(null);
+                }
+
+                dialog.dismiss();
+                performDeleteAccount(password);
+            });
+        }
+
+        if (btnCancelDelete != null) {
+            btnCancelDelete.setOnClickListener(v -> dialog.dismiss());
+        }
+
+        dialog.show();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        }
+    }
+
+    private void performDeleteAccount(String password) {
+        LoadingDialogHelper loadingDialog = new LoadingDialogHelper(this);
+        loadingDialog.setMessage("Đang xóa tài khoản...");
+        loadingDialog.show();
+
+        String tokenHeader = "Bearer " + sharedPreferencesManager.getToken();
+        Map<String, String> body = new HashMap<>();
+        body.put("password", password);
+
+        HttpResquest httpResquest = new HttpResquest();
+        httpResquest.callAPI().deleteMe(tokenHeader, body).enqueue(new Callback<Response<Void>>() {
+            @Override
+            public void onResponse(@NonNull Call<Response<Void>> call, @NonNull retrofit2.Response<Response<Void>> response) {
+                loadingDialog.dismiss();
+                if (response.isSuccessful()) {
+                    sharedPreferencesManager.logout();
+                    MainActivity.preloadedProducts = null;
+                    MainActivity.preloadedNews = null;
+
+                    Toast.makeText(EditProfileActivity.this, getString(R.string.delete_account_success_toast), Toast.LENGTH_SHORT).show();
+                    
+                    Intent intent = new Intent(EditProfileActivity.this, MainActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    String errorMsg = getString(R.string.delete_account_failed_toast);
+                    try {
+                        if (response.errorBody() != null) {
+                            String errStr = response.errorBody().string();
+                            JsonObject errObj = new Gson().fromJson(errStr, JsonObject.class);
+                            if (errObj.has("message")) {
+                                errorMsg = errObj.get("message").getAsString();
+                            }
+                        }
+                    } catch (Exception ignored) {}
+                    Toast.makeText(EditProfileActivity.this, errorMsg, Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Response<Void>> call, @NonNull Throwable t) {
+                loadingDialog.dismiss();
+                Toast.makeText(EditProfileActivity.this, getString(R.string.toast_loi_ket_noi_may_chu), Toast.LENGTH_SHORT).show();
             }
         });
     }

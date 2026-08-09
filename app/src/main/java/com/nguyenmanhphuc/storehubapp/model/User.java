@@ -4,7 +4,7 @@ import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
 import com.nguyenmanhphuc.storehubapp.utils.ImageUtils;
 import com.google.gson.annotations.SerializedName;
 
-public class User {
+public class User implements java.io.Serializable {
     // Mã MongoDB ID dạng chuỗi của tài khoản
     @SerializedName("_id")
     private String mongoId;
