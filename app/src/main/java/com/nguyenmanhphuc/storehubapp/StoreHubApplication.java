@@ -36,7 +36,7 @@ public class StoreHubApplication extends Application implements Application.Acti
             if (lastBackgroundTime > 0) {
                 long elapsedSeconds = (System.currentTimeMillis() - lastBackgroundTime) / 1000;
                 lastBackgroundTime = 0;
-                if (elapsedSeconds > 30) {
+                if (elapsedSeconds > 300 && !(activity instanceof PaymentConfirmationActivity)) {
                     // Reload app by launching SplashActivity and clearing stack
                     Intent intent = new Intent(activity, SplashActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

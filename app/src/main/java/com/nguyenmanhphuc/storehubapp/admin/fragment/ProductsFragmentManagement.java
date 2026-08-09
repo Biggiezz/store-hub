@@ -11,11 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ProgressBar;
-import java.util.List;
-
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,18 +23,19 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.nguyenmanhphuc.storehubapp.admin.AdminProductDetailActivity;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.nguyenmanhphuc.storehubapp.R;
+import com.nguyenmanhphuc.storehubapp.admin.AdminProductDetailActivity;
 import com.nguyenmanhphuc.storehubapp.admin.ProductFormManagementActivity;
 import com.nguyenmanhphuc.storehubapp.admin.adapter.AdminProductAdapter;
+import com.nguyenmanhphuc.storehubapp.model.Category;
 import com.nguyenmanhphuc.storehubapp.model.Pagination;
 import com.nguyenmanhphuc.storehubapp.model.Product;
-import com.nguyenmanhphuc.storehubapp.model.Category;
 import com.nguyenmanhphuc.storehubapp.model.response.Response;
 import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -48,12 +47,10 @@ public class ProductsFragmentManagement extends Fragment {
     private Call<Response<ArrayList<Product>>> currentCall;
     private EditText searchInput;
     private LinearLayout layoutAdminChips;
-    private TextView page1, page2, page3, lastPage, tvEllipsis;
     private int currentPage = 1;
     private int totalPages = 1;
     private String selectedCategory = "";
     private ProgressBar progressBar;
-    private View layoutPagination;
     private RecyclerView grid;
     private List<Category> categoriesList = new ArrayList<>();
     private final ArrayList<TextView> dynamicChips = new ArrayList<>();
@@ -85,17 +82,8 @@ public class ProductsFragmentManagement extends Fragment {
 
         searchInput = view.findViewById(R.id.edtAdminProductSearch);
         layoutAdminChips = view.findViewById(R.id.layoutAdminChips);
-        page1 = view.findViewById(R.id.btnAdminPage1);
-        page2 = view.findViewById(R.id.btnAdminPage2);
-        page3 = view.findViewById(R.id.btnAdminPage3);
-        lastPage = view.findViewById(R.id.tvAdminLastPage);
-        tvEllipsis = view.findViewById(R.id.tvAdminEllipsis);
         progressBar = view.findViewById(R.id.progressBar);
         progressBarLoadMore = view.findViewById(R.id.progressBarLoadMore);
-        layoutPagination = view.findViewById(R.id.layoutPagination);
-        if (layoutPagination != null) {
-            layoutPagination.setVisibility(View.GONE);
-        }
 
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
         if (swipeRefreshLayout != null) {
@@ -106,18 +94,28 @@ public class ProductsFragmentManagement extends Fragment {
                 loadProducts();
             });
         }
- 
+
         loadCategoriesFromServer();
- 
+
         searchInput.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-                searchHandler.removeCallbacksAndMessages(null);
-                searchHandler.postDelayed(() -> { currentPage = 1; loadProducts(); }, 350);
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
-            @Override public void afterTextChanged(Editable s) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                searchHandler.removeCallbacksAndMessages(null);
+                searchHandler.postDelayed(() -> {
+                    currentPage = 1;
+                    loadProducts();
+                }, 350);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
         });
- 
+
         androidx.core.widget.NestedScrollView nestedScrollView = view.findViewById(R.id.nestedScrollViewAdminProducts);
         if (nestedScrollView != null) {
             nestedScrollView.setOnScrollChangeListener((androidx.core.widget.NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
@@ -131,12 +129,17 @@ public class ProductsFragmentManagement extends Fragment {
                 }
             });
         }
- 
+
         FloatingActionButton add = view.findViewById(R.id.fabAddProduct);
         add.setOnClickListener(v -> startActivity(ProductFormManagementActivity.createAddIntent(requireContext())));
     }
 
-    @Override public void onResume() { super.onResume(); loadProducts(); }
+    @Override
+    public void onResume() {
+        super.onResume();
+        currentPage = 1;
+        loadProducts();
+    }
 
     private void loadCategoriesFromServer() {
         new HttpResquest().callAPI().getCategories().enqueue(new Callback<Response<ArrayList<Category>>>() {
@@ -231,13 +234,13 @@ public class ProductsFragmentManagement extends Fragment {
     private void loadProducts() {
         if (!isAdded() || adapter == null) return;
         if (currentCall != null) currentCall.cancel();
-        
+
         if (currentPage == 1) {
             allProducts.clear();
-            adapter.submitList(allProducts);
+            adapter.submitList(new ArrayList<>(allProducts));
         }
         isLoading = true;
- 
+
         // Chỉ hiện Loading Spinner và ẩn danh sách ở lần đầu tiên tải (khi danh sách đang trống)
         boolean isFirstLoad = allProducts.isEmpty();
         boolean isSwipeRefreshing = swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing();
@@ -247,10 +250,8 @@ public class ProductsFragmentManagement extends Fragment {
         } else if (!isFirstLoad) {
             if (progressBarLoadMore != null) progressBarLoadMore.setVisibility(View.VISIBLE);
         }
-        if (layoutPagination != null) {
-            layoutPagination.setVisibility(View.GONE);
-        }
- 
+
+
         String keyword = searchInput == null ? "" : searchInput.getText().toString().trim();
         HttpResquest request = new HttpResquest();
         currentCall = keyword.isEmpty()
@@ -261,17 +262,17 @@ public class ProductsFragmentManagement extends Fragment {
             public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
                 if (!isAdded() || call.isCanceled()) return;
                 isLoading = false;
- 
+
                 if (progressBar != null) progressBar.setVisibility(View.GONE);
                 if (progressBarLoadMore != null) progressBarLoadMore.setVisibility(View.GONE);
                 if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                 if (grid != null) grid.setVisibility(View.VISIBLE);
- 
+
                 if (response.isSuccessful() && response.body() != null) {
                     ArrayList<Product> newData = response.body().getData();
                     if (newData != null) {
                         allProducts.addAll(newData);
-                        adapter.submitList(allProducts);
+                        adapter.submitList(new ArrayList<>(allProducts));
                     }
                     Pagination pagination = response.body().getPagination();
                     totalPages = pagination == null ? 1 : Math.max(1, pagination.getTotalPages());
@@ -280,7 +281,7 @@ public class ProductsFragmentManagement extends Fragment {
                     Toast.makeText(requireContext(), requireContext().getString(R.string.toast_khong_the_tai_danh_sach_san_pham), Toast.LENGTH_SHORT).show();
                 }
             }
- 
+
             @Override
             public void onFailure(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull Throwable throwable) {
                 if (!isAdded() || call.isCanceled()) return;
@@ -292,54 +293,6 @@ public class ProductsFragmentManagement extends Fragment {
                 Toast.makeText(requireContext(), requireContext().getString(R.string.toast_loi_ket_noi_server), Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    private void updatePagination() {
-        lastPage.setText(String.valueOf(totalPages));
-        lastPage.setVisibility(totalPages > 3 ? View.VISIBLE : View.GONE);
-        
-        int p1, p2, p3;
-        if (totalPages <= 3) {
-            p1 = 1;
-            p2 = 2;
-            p3 = 3;
-            page2.setVisibility(totalPages >= 2 ? View.VISIBLE : View.GONE);
-            page3.setVisibility(totalPages >= 3 ? View.VISIBLE : View.GONE);
-        } else {
-            page2.setVisibility(View.VISIBLE);
-            page3.setVisibility(View.VISIBLE);
-            if (currentPage <= 2) {
-                p1 = 1;
-                p2 = 2;
-                p3 = 3;
-            } else if (currentPage >= totalPages - 1) {
-                p1 = totalPages - 3;
-                p2 = totalPages - 2;
-                p3 = totalPages - 1;
-            } else {
-                p1 = currentPage - 1;
-                p2 = currentPage;
-                p3 = currentPage + 1;
-            }
-        }
-        
-        page1.setText(String.valueOf(p1));
-        page2.setText(String.valueOf(p2));
-        page3.setText(String.valueOf(p3));
-
-        if (tvEllipsis != null) {
-            tvEllipsis.setVisibility(totalPages > p3 + 1 ? View.VISIBLE : View.GONE);
-        }
-
-        TextView[] pages = {page1, page2, page3, lastPage};
-        for (TextView tv : pages) {
-            try {
-                int val = Integer.parseInt(tv.getText().toString());
-                boolean active = currentPage == val;
-                tv.setBackgroundResource(active ? R.drawable.bg_admin_chip_active : R.drawable.bg_circle_button);
-                tv.setTextColor(ContextCompat.getColor(requireContext(), active ? R.color.white : R.color.text_secondary));
-            } catch (Exception ignored) {}
-        }
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.nguyenmanhphuc.storehubapp.admin.fragment;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +21,7 @@ import com.nguyenmanhphuc.storehubapp.admin.AdminOrdersActivity;
 import com.nguyenmanhphuc.storehubapp.admin.ManagementReviewsActivity;
 import com.nguyenmanhphuc.storehubapp.auth.LoginActivity;
 import com.nguyenmanhphuc.storehubapp.model.Product;
+import com.nguyenmanhphuc.storehubapp.model.User;
 import com.nguyenmanhphuc.storehubapp.model.response.DashboardData;
 import com.nguyenmanhphuc.storehubapp.model.response.Response;
 import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
@@ -88,6 +91,8 @@ public class AdminHomeFragment extends Fragment {
         if (btnLogout != null) {
             btnLogout.setOnClickListener(v -> {
                 SharedPreferencesManager prefManager = new SharedPreferencesManager(requireContext());
+                final Context appContext = requireContext().getApplicationContext();
+                final Activity activity = getActivity();
                 String tokenHeader = "Bearer " + prefManager.getToken();
 
                 HttpResquest httpResquest = new HttpResquest();
@@ -105,13 +110,12 @@ public class AdminHomeFragment extends Fragment {
                     }
 
                     private void navigateToLogin() {
-                        android.content.Context appContext = requireContext().getApplicationContext();
                         Toast.makeText(appContext, appContext.getString(R.string.toast_da_dang_xuat_tai_khoan), Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(appContext, LoginActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
-                        if (getActivity() != null) {
-                            getActivity().finish();
+                        if (activity != null) {
+                            activity.finish();
                         }
                     }
                 });
@@ -181,6 +185,7 @@ public class AdminHomeFragment extends Fragment {
             @Override
             public void onResponse(@NonNull Call<Response<DashboardData>> call, @NonNull retrofit2.Response<Response<DashboardData>> response) {
                 checkRefreshComplete();
+                if (!isAdded()) return;
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     bindData(response.body().getData());
                 } else {
@@ -204,6 +209,7 @@ public class AdminHomeFragment extends Fragment {
                     @Override
                     public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
                         checkRefreshComplete();
+                        if (!isAdded()) return;
                         if (response.isSuccessful() && response.body() != null
                                 && response.body().getPagination() != null && cardProducts != null) {
                             TextView txtValue = cardProducts.findViewById(R.id.txtValue);
@@ -225,13 +231,14 @@ public class AdminHomeFragment extends Fragment {
     private void fetchUserCount() {
         SharedPreferencesManager prefManager = new SharedPreferencesManager(requireContext());
         String token = "Bearer " + prefManager.getToken();
-        new HttpResquest().callAPI().getListUsers(token).enqueue(new Callback<Response<ArrayList<com.nguyenmanhphuc.storehubapp.model.User>>>() {
+        new HttpResquest().callAPI().getListUsers(token).enqueue(new Callback<Response<ArrayList<User>>>() {
             @Override
-            public void onResponse(@NonNull Call<Response<ArrayList<com.nguyenmanhphuc.storehubapp.model.User>>> call, @NonNull retrofit2.Response<Response<ArrayList<com.nguyenmanhphuc.storehubapp.model.User>>> response) {
+            public void onResponse(@NonNull Call<Response<ArrayList<User>>> call, @NonNull retrofit2.Response<Response<ArrayList<User>>> response) {
+                if (!isAdded()) return;
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null && cardUsers != null) {
-                    ArrayList<com.nguyenmanhphuc.storehubapp.model.User> allUsers = response.body().getData();
+                    ArrayList<User> allUsers = response.body().getData();
                     int customerCount = 0;
-                    for (com.nguyenmanhphuc.storehubapp.model.User u : allUsers) {
+                    for (User u : allUsers) {
                         // Chỉ đếm khách hàng đăng ký, không đếm superadmin hoặc nhân viên
                         if (u.isSuperAdmin()) {
                             continue;

@@ -3,6 +3,8 @@ package com.nguyenmanhphuc.storehubapp.fragment;
 import static com.nguyenmanhphuc.storehubapp.R.drawable.ic_receipt;
 
 import android.content.Intent;
+
+import com.nguyenmanhphuc.storehubapp.CartActivity;
 import com.nguyenmanhphuc.storehubapp.utils.LoadingDialogHelper;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -84,8 +86,6 @@ public class OderFragment extends Fragment {
 
         initUi(view);
         initListener();
-
-        loadOrdersAndCart();
     }
 
     private void initUi(View view) {
@@ -128,6 +128,7 @@ public class OderFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        loadOrdersAndCart();
     }
 
     private void loadOrdersAndCart() {
@@ -251,7 +252,7 @@ public class OderFragment extends Fragment {
             return getString(R.string.status_pending);
         }
         if ("Đã xác nhận".equalsIgnoreCase(status) || "Confirmed".equalsIgnoreCase(status)) {
-            return getString(R.string.status_confirmed_at, "").trim();
+            return getString(R.string.status_confirmed);
         }
         if ("Đã rời kho".equalsIgnoreCase(status) || "Left Warehouse".equalsIgnoreCase(status)) {
             return getString(R.string.status_dispatched);
@@ -355,7 +356,7 @@ public class OderFragment extends Fragment {
                 tvOrderStatus.setBackgroundResource(R.drawable.bg_status_cancelled);
                 btnCancelOrder.setVisibility(View.GONE);
             } else if ("Chờ xác nhận".equalsIgnoreCase(status) || "pending".equalsIgnoreCase(status) || "Chờ xử lý".equalsIgnoreCase(status)) {
-                tvOrderStatus.setText(status != null ? getLocalizedStatus(status) : "Chờ xác nhận");
+                tvOrderStatus.setText(status != null ? getLocalizedStatus(status) : getString(R.string.status_pending));
                 tvOrderStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_car_waiting, 0, 0, 0);
                 tvOrderStatus.setTextColor(Color.parseColor("#B78103"));
                 tvOrderStatus.setBackgroundResource(R.drawable.bg_status_pending);
@@ -363,7 +364,7 @@ public class OderFragment extends Fragment {
                 btnCancelOrder.setText(getString(R.string.btn_cancel_order));
                 btnCancelOrder.setOnClickListener(v -> showCancelOrderDialog(order));
             } else if ("Đã xác nhận".equalsIgnoreCase(status) || "confirmed".equalsIgnoreCase(status)) {
-                tvOrderStatus.setText(status != null ? getLocalizedStatus(status) : "Đã xác nhận");
+                tvOrderStatus.setText(status != null ? getLocalizedStatus(status) : getString(R.string.status_confirmed));
                 tvOrderStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_car_waiting, 0, 0, 0);
                 tvOrderStatus.setTextColor(Color.parseColor("#1565C0"));
                 tvOrderStatus.setBackgroundResource(R.drawable.bg_status_shipping);
@@ -449,7 +450,7 @@ public class OderFragment extends Fragment {
     }
 
     private void openCartScreen() {
-        if (getActivity() instanceof MainActivity) ((MainActivity) getActivity()).showCart();
+        startActivity(new Intent(getActivity(), CartActivity.class));
     }
 
     private void openOrderDetail(Order order) {
@@ -509,7 +510,7 @@ public class OderFragment extends Fragment {
                     if (reason.isEmpty()) {
                         reason = note;
                     } else {
-                        reason += " - Ghi chú: " + note;
+                        reason += getString(R.string.note_prefix) + note;
                     }
                 }
 
