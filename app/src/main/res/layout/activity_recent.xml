@@ -186,6 +186,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:includeFontPadding="false"
+                                        android:paddingTop="2dp"
                                         android:text="@string/xml_tu_ngay"
                                         android:textColor="#92928E"
                                         android:textSize="11sp" />
@@ -248,6 +249,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:includeFontPadding="false"
+                                        android:paddingTop="2dp"
                                         android:text="@string/xml_den_ngay"
                                         android:textSize="11sp" />
 
@@ -354,7 +356,7 @@
                     android:layout_marginTop="14dp"
                     android:layout_marginEnd="16dp"
                     app:cardBackgroundColor="#FFFFFF"
-                    app:cardCornerRadius="14dp"
+                    app:cardCornerRadius="8dp"
                     app:cardElevation="0dp"
                     app:strokeColor="#E9E6E0"
                     app:strokeWidth="1dp">

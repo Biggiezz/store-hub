@@ -76,7 +76,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="340dp"
                     android:layout_marginTop="18dp"
-                    app:cardCornerRadius="18dp">
+                    app:cardCornerRadius="8dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -170,7 +170,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     app:cardBackgroundColor="#FFFFFF"
-                    app:cardCornerRadius="14dp"
+                    app:cardCornerRadius="8dp"
                     app:cardElevation="0dp"
                     app:strokeColor="#E9E6E0"
                     app:strokeWidth="1dp">

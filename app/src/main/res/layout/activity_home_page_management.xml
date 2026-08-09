@@ -33,42 +33,46 @@
             android:id="@+id/btnHome"
             style="@style/Widget.StoreHub.BottomNavButton"
             android:text="@string/xml_trang_chu"
-            android:textColor="#434844"
-            app:backgroundTint="@color/bottom_nav_active"
+            android:textColor="#AAA49D"
+            app:backgroundTint="@android:color/transparent"
             app:icon="@drawable/ic_home"
-            app:iconTint="#434844" />
+            app:iconTint="#AAA49D" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnProducts"
             style="@style/Widget.StoreHub.BottomNavButton"
             android:text="@string/xml_san_pham"
-            android:textColor="#434844"
+            android:textColor="#AAA49D"
+            app:backgroundTint="@android:color/transparent"
             app:icon="@drawable/ic_products"
-            app:iconTint="#434844" />
+            app:iconTint="#AAA49D" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnNews"
             style="@style/Widget.StoreHub.BottomNavButton"
             android:text="@string/xml_bai_viet"
-            android:textColor="#434844"
+            android:textColor="#AAA49D"
+            app:backgroundTint="@android:color/transparent"
             app:icon="@drawable/ic_news"
-            app:iconTint="#434844" />
+            app:iconTint="#AAA49D" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnUsers"
             style="@style/Widget.StoreHub.BottomNavButton"
             android:text="@string/xml_nguoi_dung"
-            android:textColor="#434844"
+            android:textColor="#AAA49D"
+            app:backgroundTint="@android:color/transparent"
             app:icon="@drawable/ic_users"
-            app:iconTint="#434844" />
+            app:iconTint="#AAA49D" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnStats"
             style="@style/Widget.StoreHub.BottomNavButton"
             android:text="@string/xml_thong_ke"
-            android:textColor="#434844"
+            android:textColor="#AAA49D"
+            app:backgroundTint="@android:color/transparent"
             app:icon="@drawable/ic_stats"
-            app:iconTint="#434844" />
+            app:iconTint="#AAA49D" />
 
     </LinearLayout>
 

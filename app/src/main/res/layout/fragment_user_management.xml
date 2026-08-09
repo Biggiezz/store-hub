@@ -50,7 +50,7 @@
             android:text="@string/add_new_user"
             android:textColor="@color/white"
             android:textSize="14sp"
-            app:cornerRadius="10dp"
+            app:cornerRadius="8dp"
             app:icon="@drawable/ic_user_add"
             app:iconGravity="textStart"
             app:iconPadding="8dp"

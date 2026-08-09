@@ -27,4 +27,4 @@
     app:backgroundTint="@color/selector_category_bg"
     app:strokeColor="@color/selector_category_stroke"
     app:strokeWidth="1dp"
-    app:cornerRadius="99dp" />
+    app:cornerRadius="8dp" />

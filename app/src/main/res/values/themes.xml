@@ -17,6 +17,6 @@
     </style>
 
     <style name="circleImageView" parent="">
-        <item name="cornerSize">50%</item>
+        <item name="cornerSize">8dp</item>
     </style>
 </resources>

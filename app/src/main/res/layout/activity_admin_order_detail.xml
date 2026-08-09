@@ -73,7 +73,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:cardBackgroundColor="#F5F2EE"
-                        app:cardCornerRadius="12dp"
+                        app:cardCornerRadius="8dp"
                         app:cardElevation="0dp"
                         app:strokeColor="#DEDAD4"
                         app:strokeWidth="1dp">
@@ -136,7 +136,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         app:cardBackgroundColor="#FFFFFF"
-                        app:cardCornerRadius="12dp"
+                        app:cardCornerRadius="8dp"
                         app:cardElevation="0dp"
                         app:strokeColor="#DEDAD4"
                         app:strokeWidth="1dp">
@@ -213,7 +213,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         app:cardBackgroundColor="#FFFFFF"
-                        app:cardCornerRadius="12dp"
+                        app:cardCornerRadius="8dp"
                         app:cardElevation="0dp"
                         app:strokeColor="#DEDAD4"
                         app:strokeWidth="1dp">
@@ -287,7 +287,7 @@
             android:textColor="@color/white"
             android:textSize="16sp"
             app:backgroundTint="@color/dark_green"
-            app:cornerRadius="14dp" />
+            app:cornerRadius="8dp" />
     </LinearLayout>
 
     <ProgressBar

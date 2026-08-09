@@ -47,16 +47,15 @@
                 android:id="@+id/btnPublished"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
                 android:layout_weight="1"
                 android:text="@string/xml_da_xuat_ban"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
-                android:textSize="12sp"
+                android:textSize="11sp"
                 app:backgroundTint="@color/dark_green"
                 app:strokeColor="@color/dark_green"
                 app:strokeWidth="1dp"
-                app:cornerRadius="99dp" />
+                app:cornerRadius="8dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDraft"
@@ -67,11 +66,11 @@
                 android:text="@string/xml_ban_nhap"
                 android:textAllCaps="false"
                 android:textColor="#8A8077"
-                android:textSize="12sp"
+                android:textSize="11sp"
                 app:backgroundTint="#F5F3F0"
                 app:strokeColor="#D5D2CD"
                 app:strokeWidth="1dp"
-                app:cornerRadius="99dp" />
+                app:cornerRadius="8dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnPrivate"
@@ -82,11 +81,11 @@
                 android:text="@string/xml_rieng_tu"
                 android:textAllCaps="false"
                 android:textColor="#8A8077"
-                android:textSize="12sp"
+                android:textSize="11sp"
                 app:backgroundTint="#F5F3F0"
                 app:strokeColor="#D5D2CD"
                 app:strokeWidth="1dp"
-                app:cornerRadius="99dp" />
+                app:cornerRadius="8dp" />
 
         </LinearLayout>
 

@@ -37,9 +37,12 @@
 
             <TextView
                 android:id="@+id/tvUserName"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
                 android:fontFamily="@font/shopee_display"
+                android:maxLines="1"
                 android:textColor="@color/text_primary"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -90,33 +93,43 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:contentDescription="Clock Icon"
-                android:src="@drawable/ic_clock"
-                app:tint="#8A8077" />
-
-            <TextView
-                android:id="@+id/tvUserLastActive"
-                android:layout_width="wrap_content"
+            <!-- Status Left Side Container (Clock + Text) -->
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                android:textColor="#8A8077"
-                android:textSize="12sp"
-                tools:text="Hoạt động: 2 giờ trước" />
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:contentDescription="Clock Icon"
+                    android:src="@drawable/ic_clock"
+                    app:tint="#8A8077" />
+
+                <TextView
+                    android:id="@+id/tvUserLastActive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:textColor="#8A8077"
+                    android:textSize="12sp"
+                    tools:text="Hoạt động: 2 giờ trước" />
+            </LinearLayout>
+
+            <!-- Delete Button on the Right Side -->
+            <ImageButton
+                android:id="@+id/btnDeleteUser"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/delete_user"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_delete"
+                android:visibility="gone"
+                app:tint="@color/error_red" />
         </LinearLayout>
     </LinearLayout>
-
-    <ImageButton
-        android:id="@+id/btnDeleteUser"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_gravity="center_vertical"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/delete_user"
-        android:src="@drawable/ic_delete"
-        android:visibility="gone"
-        app:tint="@color/error_red" />
 
 </LinearLayout>

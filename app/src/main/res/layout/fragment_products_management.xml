@@ -27,8 +27,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="53dp"
                     android:gravity="center_vertical"
-                    android:paddingStart="22dp"
-                    android:paddingEnd="22dp"
+                    android:paddingHorizontal="22dp"
                     android:text="@string/admin_product_management"
                     android:textColor="#1B2C24"
                     android:textSize="20sp" />
@@ -41,10 +40,9 @@
                 <HorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="39dp"
+                    android:layout_marginTop="16dp"
                     android:clipToPadding="false"
-                    android:paddingStart="22dp"
-                    android:paddingEnd="22dp"
+                    android:paddingHorizontal="16dp"
                     android:scrollbars="none">
 
                     <LinearLayout
@@ -59,9 +57,7 @@
                     android:id="@+id/edtAdminProductSearch"
                     android:layout_width="match_parent"
                     android:layout_height="47dp"
-                    android:layout_marginStart="22dp"
-                    android:layout_marginTop="25dp"
-                    android:layout_marginEnd="22dp"
+                    android:layout_margin="16dp"
                     android:background="@drawable/bg_admin_search"
                     android:drawableStart="@drawable/ic_search"
                     android:drawablePadding="12dp"
@@ -78,17 +74,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginTop="30dp"
-                    android:layout_marginBottom="30dp"
+                    android:layout_margin="16dp"
                     android:visibility="gone" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvAdminProducts"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginTop="25dp"
-                    android:layout_marginEnd="15dp"
+                    android:layout_marginHorizontal="15dp"
                     android:clipToPadding="false"
                     android:paddingBottom="8dp" />
 
@@ -97,60 +90,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginBottom="12dp"
+                    android:layout_marginVertical="12dp"
                     android:visibility="gone" />
 
-                <LinearLayout
-                    android:id="@+id/layoutPagination"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/btnAdminPreviousPage"
-                        style="@style/Widget.StoreHub.AdminPageButton"
-                        android:text="‹"
-                        android:textSize="28sp" />
-
-                    <TextView
-                        android:id="@+id/btnAdminPage1"
-                        style="@style/Widget.StoreHub.AdminPageButton"
-                        android:background="@drawable/bg_admin_chip_active"
-                        android:text="1"
-                        android:textColor="#FFFFFF" />
-
-                    <TextView
-                        android:id="@+id/btnAdminPage2"
-                        style="@style/Widget.StoreHub.AdminPageButton"
-                        android:text="2" />
-
-                    <TextView
-                        android:id="@+id/btnAdminPage3"
-                        style="@style/Widget.StoreHub.AdminPageButton"
-                        android:text="3" />
-
-                    <TextView
-                        android:id="@+id/tvAdminEllipsis"
-                        android:layout_width="34dp"
-                        android:layout_height="42dp"
-                        android:gravity="center"
-                        android:text="..."
-                        android:textColor="#5D625F" />
-
-                    <TextView
-                        android:id="@+id/tvAdminLastPage"
-                        style="@style/Widget.StoreHub.AdminPageButton"
-                        android:text="12" />
-
-                    <TextView
-                        android:id="@+id/btnAdminNextPage"
-                        style="@style/Widget.StoreHub.AdminPageButton"
-                        android:text="›"
-                        android:textSize="28sp" />
-                </LinearLayout>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
@@ -165,7 +107,7 @@
         android:layout_marginBottom="18dp"
         android:contentDescription="@string/add_product"
         app:backgroundTint="#172C22"
-        app:cornerSize="16dp"
+        app:cornerSize="8dp"
         app:elevation="0dp"
         app:srcCompat="@drawable/ic_admin_plus"
         app:tint="#FFFFFF" />

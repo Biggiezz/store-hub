@@ -8,7 +8,6 @@
     android:orientation="vertical">
 
     <!-- Header -->
-    <!-- Header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -50,8 +49,8 @@
 
             <ImageView
                 android:id="@+id/btnCart"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:contentDescription="Cart"
                 android:padding="4dp"
@@ -103,10 +102,10 @@
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:boxCornerRadiusBottomEnd="12dp"
-                    app:boxCornerRadiusBottomStart="12dp"
-                    app:boxCornerRadiusTopEnd="12dp"
-                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusBottomEnd="8dp"
+                    app:boxCornerRadiusBottomStart="8dp"
+                    app:boxCornerRadiusTopEnd="8dp"
+                    app:boxCornerRadiusTopStart="8dp"
                     app:boxStrokeColor="@color/dark_green"
                     app:boxStrokeWidth="1dp"
                     app:boxStrokeWidthFocused="1.5dp"
@@ -166,7 +165,7 @@
                             android:textColor="#6B6157"
                             android:textSize="14sp"
                             app:backgroundTint="#F0DED2"
-                            app:cornerRadius="20dp"
+                            app:cornerRadius="8dp"
                             app:strokeWidth="0dp" />
 
                         <com.google.android.material.button.MaterialButton
@@ -181,7 +180,7 @@
                             android:textColor="#5D625F"
                             android:textSize="14sp"
                             app:backgroundTint="#EEEDEA"
-                            app:cornerRadius="20dp"
+                            app:cornerRadius="8dp"
                             app:strokeWidth="0dp" />
 
                         <com.google.android.material.button.MaterialButton
@@ -196,7 +195,7 @@
                             android:textColor="#5D625F"
                             android:textSize="14sp"
                             app:backgroundTint="#EEEDEA"
-                            app:cornerRadius="20dp"
+                            app:cornerRadius="8dp"
                             app:strokeWidth="0dp" />
                     </LinearLayout>
                 </HorizontalScrollView>

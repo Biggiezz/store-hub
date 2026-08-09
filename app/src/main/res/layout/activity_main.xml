@@ -53,30 +53,25 @@
                             android:textSize="38sp"
                             android:textStyle="bold" />
 
-                        <com.google.android.material.card.MaterialCardView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            app:cardCornerRadius="23dp"
-                            app:cardElevation="0dp"
-                            app:strokeColor="#DDD8D2"
-                            app:strokeWidth="1dp">
+                        <!--                        <com.google.android.material.card.MaterialCardView-->
+                        <!--                            android:layout_width="wrap_content"-->
+                        <!--                            android:layout_height="wrap_content">-->
 
-                            <ImageView
-                                android:id="@+id/imgAvatar"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:contentDescription="@string/xml_anh_dai_dien"
-                                android:scaleType="centerCrop"
-                                android:src="@drawable/ic_avatar" />
+                        <!--                            <ImageView-->
+                        <!--                                android:id="@+id/imgAvatar"-->
+                        <!--                                android:layout_width="match_parent"-->
+                        <!--                                android:layout_height="match_parent"-->
+                        <!--                                android:scaleType="centerCrop"-->
+                        <!--                                android:src="@drawable/ic_avatar" />-->
 
-                        </com.google.android.material.card.MaterialCardView>
+                        <!--                        </com.google.android.material.card.MaterialCardView>-->
 
                     </LinearLayout>
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="8dp"
                         android:background="@color/divider_color" />
 
                     <!-- Nội dung chính có padding ngang, đường kẻ phía trên vẫn full màn hình -->
@@ -146,11 +141,11 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:paddingTop="16dp"
+                            android:gravity="center_vertical"
                             android:orientation="horizontal"
                             android:paddingStart="12dp"
-                            android:paddingEnd="12dp"
-                            android:gravity="center_vertical" />
+                            android:paddingTop="16dp"
+                            android:paddingEnd="12dp" />
 
                         <!-- Tiêu đề sản phẩm -->
                         <LinearLayout
@@ -325,21 +320,20 @@
         android:background="@color/background"
         android:elevation="8dp"
         android:gravity="center"
-        android:orientation="horizontal"
-        android:paddingTop="8dp">
+        android:orientation="horizontal">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnHome"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:singleLine="true"
             android:maxLines="1"
-            android:textSize="11sp"
-            android:textAllCaps="false"
+            android:singleLine="true"
             android:text="@string/nav_home"
+            android:textAllCaps="false"
             android:textColor="#756E67"
-            app:backgroundTint="@color/bottom_nav_active"
+            android:textSize="11sp"
+            app:backgroundTint="@android:color/transparent"
             app:icon="@drawable/ic_home"
             app:iconGravity="textTop"
             app:iconPadding="2dp"
@@ -350,14 +344,15 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textSize="11sp"
-            android:textAllCaps="false"
             android:maxLines="1"
             android:text="@string/nav_products"
+            android:textAllCaps="false"
             android:textColor="#AAA49D"
+            android:textSize="11sp"
             app:backgroundTint="@android:color/transparent"
             app:icon="@drawable/ic_products"
             app:iconGravity="textTop"
+            app:iconPadding="2dp"
             app:iconTint="#AAA49D" />
 
         <com.google.android.material.button.MaterialButton
@@ -365,12 +360,12 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:singleLine="true"
             android:maxLines="1"
-            android:textSize="11sp"
-            android:textAllCaps="false"
+            android:singleLine="true"
             android:text="@string/orders_title"
+            android:textAllCaps="false"
             android:textColor="#AAA49D"
+            android:textSize="11sp"
             app:backgroundTint="@android:color/transparent"
             app:icon="@drawable/ic_receipt"
             app:iconGravity="textTop"
@@ -382,13 +377,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:maxLines="1"
             android:paddingHorizontal="0dp"
             android:singleLine="true"
-            android:maxLines="1"
-            android:textSize="11sp"
-            android:textAllCaps="false"
             android:text="@string/nav_profile"
+            android:textAllCaps="false"
             android:textColor="#AAA49D"
+            android:textSize="11sp"
             app:backgroundTint="@android:color/transparent"
             app:icon="@drawable/ic_user"
             app:iconGravity="textTop"

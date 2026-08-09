@@ -51,6 +51,6 @@
         android:textSize="@dimen/text_body_small"
         android:visibility="gone"
         app:backgroundTint="@color/dark_green"
-        app:cornerRadius="18dp" />
+        app:cornerRadius="8dp" />
 
 </LinearLayout>

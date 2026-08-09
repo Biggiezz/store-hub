@@ -16,6 +16,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="16dp"
             android:orientation="vertical">
 
             <FrameLayout
@@ -29,29 +30,13 @@
                     android:scaleType="centerCrop"
                     android:src="@drawable/ic_products" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="120dp"
-                    android:layout_gravity="top"
-                    android:background="@drawable/bg_gradient_top_shadow" />
-
-                <ImageButton
-                    android:id="@+id/btnBack"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_margin="30dp"
-                    android:background="@drawable/bg_circle_white_alpha"
-                    android:contentDescription="@string/back"
-                    android:src="@drawable/ic_back"
-                    app:tint="@color/text_primary" />
-
             </FrameLayout>
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="-40dp"
-                app:cardCornerRadius="40dp"
+                app:cardCornerRadius="8dp"
                 app:cardElevation="0dp"
                 app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.StoreHub.TopRounded">
 
@@ -74,37 +59,47 @@
                         android:textStyle="bold"
                         tools:text="ĐIỆN TỬ" />
 
-                    <RelativeLayout
+                    <!-- Name, Price & Status Container -->
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp">
+                        android:layout_marginTop="16dp"
+                        android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/tvProductName"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentStart="true"
-                            android:layout_toStartOf="@+id/tvProductPrice"
-                            android:fontFamily="@font/shopee_display"
-                            android:textColor="@color/text_primary"
-                            android:textSize="32sp"
-                            android:textStyle="bold"
-                            tools:text="Tai nghe Wireless H1" />
+                        <!-- Name and Price Row -->
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
 
-                        <TextView
-                            android:id="@+id/tvProductPrice"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_marginStart="16dp"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="18sp"
-                            tools:text="2.490.000đ" />
+                            <TextView
+                                android:id="@+id/tvProductName"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:layout_toStartOf="@+id/tvProductPrice"
+                                android:fontFamily="@font/shopee_display"
+                                android:textColor="@color/text_primary"
+                                android:textSize="32sp"
+                                android:textStyle="bold"
+                                tools:text="Tai nghe Wireless H1" />
 
+                            <TextView
+                                android:id="@+id/tvProductPrice"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginStart="16dp"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="18sp"
+                                tools:text="2.490.000đ" />
+                        </RelativeLayout>
+
+                        <!-- Product Status Row -->
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="24dp">
+                            android:layout_marginTop="16dp">
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -123,10 +118,9 @@
                                 android:checked="true"
                                 app:thumbTint="@color/dark_green"
                                 app:trackTint="@color/dark_green" />
-
                         </RelativeLayout>
 
-                    </RelativeLayout>
+                    </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -279,29 +273,46 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnDeleteProduct"
             android:layout_width="0dp"
-            android:layout_height="64dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
+            android:layout_weight="1"
             android:text="@string/delete_product"
             android:textAllCaps="false"
             android:textColor="@color/white"
-            android:textSize="18sp"
+            android:textSize="16sp"
             app:backgroundTint="@color/error_red"
-            app:cornerRadius="14dp"
+            app:cornerRadius="8dp"
             app:elevation="8dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnEditProduct"
             android:layout_width="0dp"
-            android:layout_height="64dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/edit_product"
             android:textAllCaps="false"
             android:textColor="@color/white"
-            android:textSize="18sp"
+            android:textSize="16sp"
             app:backgroundTint="@color/dark_green"
-            app:cornerRadius="14dp"
+            app:cornerRadius="8dp"
             app:elevation="8dp" />
     </LinearLayout>
+
+    <!-- Fixed Header Overlay -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_gravity="top"
+        android:background="@drawable/bg_gradient_top_shadow" />
+
+    <ImageButton
+        android:id="@+id/btnBack"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="30dp"
+        android:background="@drawable/bg_circle_white_alpha"
+        android:contentDescription="@string/back"
+        android:src="@drawable/ic_back"
+        app:tint="@color/text_primary" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -141,7 +141,7 @@
             android:textColor="@color/text_primary"
             android:textSize="14sp"
             app:backgroundTint="#F0EBE3"
-            app:cornerRadius="99dp" />
+            app:cornerRadius="8dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnConfirmCancel"
@@ -155,7 +155,7 @@
             android:textSize="14sp"
             android:textStyle="bold"
             app:backgroundTint="@color/dark_green"
-            app:cornerRadius="99dp" />
+            app:cornerRadius="8dp" />
 
     </LinearLayout>
 

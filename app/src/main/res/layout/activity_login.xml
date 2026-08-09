@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
     android:id="@+id/login_activity"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
     android:fillViewport="true">
@@ -57,10 +57,10 @@
             android:hint="@string/email"
             app:boxBackgroundColor="@color/background"
             app:boxBackgroundMode="outline"
-            app:boxCornerRadiusBottomEnd="12dp"
-            app:boxCornerRadiusBottomStart="12dp"
-            app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusBottomEnd="8dp"
+            app:boxCornerRadiusBottomStart="8dp"
+            app:boxCornerRadiusTopEnd="8dp"
+            app:boxCornerRadiusTopStart="8dp"
             app:boxStrokeColor="@color/dark_green"
             app:placeholderText="@string/email_hint">
 
@@ -88,7 +88,8 @@
             android:paddingBottom="8dp"
             android:text="@string/forgot_password"
             android:textColor="@color/text_primary"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            android:textStyle="bold" />
 
         <!-- Mật khẩu -->
         <com.google.android.material.textfield.TextInputLayout
@@ -98,10 +99,10 @@
             android:hint="@string/password"
             app:boxBackgroundColor="@color/background"
             app:boxBackgroundMode="outline"
-            app:boxCornerRadiusBottomEnd="12dp"
-            app:boxCornerRadiusBottomStart="12dp"
-            app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusBottomEnd="8dp"
+            app:boxCornerRadiusBottomStart="8dp"
+            app:boxCornerRadiusTopEnd="8dp"
+            app:boxCornerRadiusTopStart="8dp"
             app:boxStrokeColor="@color/dark_green"
             app:endIconMode="password_toggle"
             app:endIconTint="@color/text_secondary"
@@ -133,7 +134,7 @@
             android:textColor="@color/white"
             android:textSize="22sp"
             app:backgroundTint="@color/dark_green"
-            app:cornerRadius="14dp" />
+            app:cornerRadius="8dp" />
 
         <Space
             android:layout_width="match_parent"
@@ -161,7 +162,8 @@
                 android:padding="4dp"
                 android:text="@string/register_now"
                 android:textColor="@color/dark_green"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 

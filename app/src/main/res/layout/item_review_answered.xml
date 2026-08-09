@@ -6,7 +6,7 @@
     android:layout_marginHorizontal="@dimen/spacing_medium"
     android:layout_marginVertical="@dimen/spacing_small"
     app:cardBackgroundColor="@color/card_background"
-    app:cardCornerRadius="@dimen/card_corner_radius"
+    app:cardCornerRadius="8dp"
     app:cardElevation="1dp"
     app:strokeColor="@color/stroke_color"
     app:strokeWidth="1dp">
@@ -272,7 +272,7 @@
                 android:textSize="@dimen/text_body_small"
                 android:textStyle="bold"
                 app:backgroundTint="@color/dark_green"
-                app:cornerRadius="18dp"
+                app:cornerRadius="8dp"
                 app:icon="@drawable/ic_edit"
                 app:iconSize="14dp"
                 app:iconTint="@color/white" />

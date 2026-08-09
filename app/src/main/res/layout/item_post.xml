@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    app:cardCornerRadius="16dp"
+    app:cardCornerRadius="8dp"
     app:cardElevation="2dp"
     app:strokeColor="@color/stroke_color"
     app:strokeWidth="1dp"
@@ -70,16 +70,16 @@
 
             <ImageView
                 android:id="@+id/btnDeletePost"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:padding="4dp"
-                android:src="@android:drawable/ic_menu_delete"
+                android:src="@drawable/ic_delete"
                 app:tint="#FF5252" />
 
             <ImageView
                 android:id="@+id/btnEditPost"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:padding="4dp"
                 android:src="@drawable/ic_edit"

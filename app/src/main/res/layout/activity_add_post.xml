@@ -245,7 +245,7 @@
                     android:textColor="@color/text_primary"
                     android:textSize="17sp"
                     android:textStyle="bold"
-                    app:cornerRadius="27dp"
+                    app:cornerRadius="8dp"
                     app:strokeColor="#8F8E8A" />
 
                 <com.google.android.material.button.MaterialButton
@@ -259,7 +259,7 @@
                     android:textSize="17sp"
                     android:textStyle="bold"
                     app:backgroundTint="#2E3B33"
-                    app:cornerRadius="27dp" />
+                    app:cornerRadius="8dp" />
             </LinearLayout>
 
         </LinearLayout>

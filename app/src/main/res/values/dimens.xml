@@ -25,9 +25,9 @@
     <dimen name="text_mega">44sp</dimen>
 
     <!-- Component specific dimensions -->
-    <dimen name="card_corner_radius">16dp</dimen>
-    <dimen name="button_corner_radius">14dp</dimen>
-    <dimen name="input_corner_radius">12dp</dimen>
+    <dimen name="card_corner_radius">8dp</dimen>
+    <dimen name="button_corner_radius">8dp</dimen>
+    <dimen name="input_corner_radius">8dp</dimen>
     <dimen name="button_height">64dp</dimen>
     <dimen name="button_height_small">36dp</dimen>
     <dimen name="avatar_size_small">44dp</dimen>

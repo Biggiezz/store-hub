@@ -79,7 +79,7 @@
                         android:id="@+id/cvAvatarContainer"
                         android:layout_width="130dp"
                         android:layout_height="130dp"
-                        app:cardCornerRadius="65dp"
+                        app:cardCornerRadius="8dp"
                         app:cardElevation="0dp"
                         app:strokeColor="#DDD8D2"
                         app:strokeWidth="1dp">

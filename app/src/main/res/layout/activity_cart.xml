@@ -121,7 +121,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="24dp"
                         app:cardBackgroundColor="#F9F8F5"
-                        app:cardCornerRadius="16dp"
+                        app:cardCornerRadius="8dp"
                         app:cardElevation="1dp"
                         app:strokeColor="#E5E2DD"
                         app:strokeWidth="1dp">
@@ -215,7 +215,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="24dp"
                         app:cardBackgroundColor="#F9F8F5"
-                        app:cardCornerRadius="16dp"
+                        app:cardCornerRadius="8dp"
                         app:cardElevation="1dp"
                         app:strokeColor="#E5E2DD"
                         app:strokeWidth="1dp">
@@ -263,10 +263,10 @@
                                     android:layout_height="match_parent"
                                     android:layout_weight="1"
                                     app:boxBackgroundColor="#FFFFFF"
-                                    app:boxCornerRadiusBottomEnd="12dp"
-                                    app:boxCornerRadiusBottomStart="12dp"
-                                    app:boxCornerRadiusTopEnd="12dp"
-                                    app:boxCornerRadiusTopStart="12dp"
+                                    app:boxCornerRadiusBottomEnd="8dp"
+                                    app:boxCornerRadiusBottomStart="8dp"
+                                    app:boxCornerRadiusTopEnd="8dp"
+                                    app:boxCornerRadiusTopStart="8dp"
                                     app:boxStrokeColor="@color/dark_green"
                                     app:boxStrokeWidth="1dp"
                                     app:hintEnabled="false">
@@ -295,7 +295,7 @@
                                     android:textColor="#726B64"
                                     android:textSize="14sp"
                                     app:backgroundTint="#EEE0D4"
-                                    app:cornerRadius="10dp"
+                                    app:cornerRadius="8dp"
                                     app:strokeColor="#D6C5B7"
                                     app:strokeWidth="1dp" />
                             </LinearLayout>
@@ -454,7 +454,7 @@
                                 android:textSize="22sp"
                                 android:textStyle="bold"
                                 app:backgroundTint="#263F34"
-                                app:cornerRadius="14dp" />
+                                app:cornerRadius="8dp" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>
