@@ -19,6 +19,7 @@ import com.nguyenmanhphuc.storehubapp.model.response.LoginResponse;
 import com.nguyenmanhphuc.storehubapp.model.response.Response;
 import com.nguyenmanhphuc.storehubapp.model.response.RevenueData;
 
+import com.nguyenmanhphuc.storehubapp.model.response.RecentActivity;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -65,6 +66,7 @@ public interface ApiServices {
     @Multipart
     @POST("api/productsRouter/add-product")
     Call<Response<Product>> addProduct(
+            @Header("Authorization") String token,
             @Part("name") RequestBody name,
             @Part("price") RequestBody price,
             @Part("category") RequestBody category,
@@ -79,6 +81,7 @@ public interface ApiServices {
     @Multipart
     @PUT("api/productsRouter/update-product/{id}")
     Call<Response<Product>> updateProduct(
+            @Header("Authorization") String token,
             @Path("id") String id,
             @Part("name") RequestBody name,
             @Part("price") RequestBody price,
@@ -90,9 +93,6 @@ public interface ApiServices {
             @Part("colors") RequestBody colors,
             @Part MultipartBody.Part image
     );
-
-    @DELETE("api/productsRouter/delete-product/{id}")
-    Call<Response<Void>> deleteProduct(@Header("Authorization") String token, @Path("id") String id);
 
     @GET("api/productsRouter/get-cart")
     Call<Response<ArrayList<CartItem>>> getCart(@Header("Authorization") String token);
@@ -106,8 +106,17 @@ public interface ApiServices {
     @DELETE("api/productsRouter/delete-cart-item/{id}")
     Call<Response<ArrayList<CartItem>>> deleteCartItem(@Header("Authorization") String token, @Path("id") String id);
 
+    @Multipart
     @POST("api/productsRouter/add-review")
-    Call<Response<Product>> addReview(@Body AddReviewRequest request);
+    Call<Response<Product>> addReview(
+            @Part("productId") okhttp3.RequestBody productId,
+            @Part("customerName") okhttp3.RequestBody customerName,
+            @Part("customerImage") okhttp3.RequestBody customerImage,
+            @Part("rating") okhttp3.RequestBody rating,
+            @Part("content") okhttp3.RequestBody content,
+            @Part("orderId") okhttp3.RequestBody orderId,
+            @Part java.util.List<okhttp3.MultipartBody.Part> mediaFiles
+    );
 
     @POST("api/productsRouter/reply-review")
     Call<Response<Product>> replyReview(@Body ReplyReviewRequest request);
@@ -115,7 +124,8 @@ public interface ApiServices {
     @POST("api/oderRouter/create-order")
     Call<Response<Order>> createOrder(
             @Header("Authorization") String token,
-            @Query("paymentMethod") String paymentMethod
+            @Query("paymentMethod") String paymentMethod,
+            @Query("appTransId") String appTransId
     );
 
     @GET("api/oderRouter/get-orders")
@@ -151,7 +161,8 @@ public interface ApiServices {
     // Lấy danh sách toàn bộ tin tức đã xuất bản
     @GET("api/newsRouter/get-all-news")
     Call<Response<ArrayList<News>>> getListNews(@Query("page") int page,
-                                                @Query("limit") int limit);
+                                                @Query("limit") int limit,
+                                                @Query("status") String status);
 
     // Lấy chi tiết một bài viết tin tức dựa vào ID
     @GET("api/newsRouter/get-news-by-id/{id}")
@@ -163,14 +174,25 @@ public interface ApiServices {
     @DELETE("api/newsRouter/delete-news/{id}")
     Call<Response<Void>> deleteNews(@Path("id") String id);
 
+    @GET("api/usersRouter/admin/recent-activities")
+    Call<Response<ArrayList<RecentActivity>>> getRecentActivities(
+            @Header("Authorization") String token,
+            @Query("page") int page,
+            @Query("limit") int limit,
+            @Query("type") String type
+    );
+
+    @DELETE("api/productsRouter/delete-product/{id}")
+    Call<Response<Void>> deleteProduct(@Header("Authorization") String token, @Path("id") String productId);
+
+    @DELETE("users/delete-user/{id}")
+    Call<Response<Void>> deleteUser(@Header("Authorization") String token, @Path("id") String userId);
+
     @POST("users/register")
     Call<Response<User>> register(@Body RegisterRequest request);
 
     @POST("users/login")
     Call<LoginResponse> login(@Body LoginRequest request);
-
-    @DELETE("users/delete-user/{id}")
-    Call<Response<Void>> deleteUser(@Header("Authorization") String token, @Path("id") String id);
 
     @GET("users/get-all-users")
     Call<Response<ArrayList<User>>> getListUsers(@Header("Authorization") String token);

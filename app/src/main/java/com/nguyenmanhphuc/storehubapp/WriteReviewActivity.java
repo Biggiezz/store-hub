@@ -90,8 +90,16 @@ public class WriteReviewActivity extends BaseActivity {
                 }
             }
 
-            AddReviewRequest request = new AddReviewRequest(productId, customerName, customerImage, selectedRating, content, order.getOrderId());
-            apiServices.addReview(request).enqueue(new Callback<com.nguyenmanhphuc.storehubapp.model.response.Response<Product>>() {
+            okhttp3.MediaType textType = okhttp3.MediaType.parse("text/plain");
+            okhttp3.RequestBody rbProductId = okhttp3.RequestBody.create(textType, productId);
+            okhttp3.RequestBody rbCustomerName = okhttp3.RequestBody.create(textType, customerName);
+            okhttp3.RequestBody rbCustomerImage = okhttp3.RequestBody.create(textType, customerImage);
+            okhttp3.RequestBody rbRating = okhttp3.RequestBody.create(textType, String.valueOf(selectedRating));
+            okhttp3.RequestBody rbContent = okhttp3.RequestBody.create(textType, content);
+            okhttp3.RequestBody rbOrderId = okhttp3.RequestBody.create(textType, order.getOrderId());
+            java.util.List<okhttp3.MultipartBody.Part> mediaFiles = new java.util.ArrayList<>();
+
+            apiServices.addReview(rbProductId, rbCustomerName, rbCustomerImage, rbRating, rbContent, rbOrderId, mediaFiles).enqueue(new Callback<com.nguyenmanhphuc.storehubapp.model.response.Response<Product>>() {
                 @Override
                 public void onResponse(@NonNull Call<com.nguyenmanhphuc.storehubapp.model.response.Response<Product>> call, @NonNull Response<com.nguyenmanhphuc.storehubapp.model.response.Response<Product>> response) {
                     if (response.isSuccessful() && response.body() != null && response.body().getCode() == 200) {

@@ -236,7 +236,13 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         }
         selectedImage.setVisibility(View.VISIBLE);
         uploadPrompt.setVisibility(View.GONE);
-        Glide.with(this).load(product.getImage()).centerCrop().into(selectedImage);
+        Glide.with(this)
+                .load(product.getImage())
+                .placeholder(R.drawable.ic_product)
+                .error(R.drawable.ic_product)
+                .thumbnail(Glide.with(this).load(product.getImage()).override(10))
+                .centerCrop()
+                .into(selectedImage);
 
         productColors.clear();
         if (product.getColors() != null) {
@@ -289,11 +295,12 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         int currentSold = currentProduct != null ? currentProduct.getSold() : 0;
         setLoading(true);
         HttpResquest request = new HttpResquest();
+        String token = HttpResquest.authorizationHeader(this);
         currentCall = editMode
-                ? request.callAPI().updateProduct(productId, text(name), text(price), text(categoryId),
+                ? request.callAPI().updateProduct(token, productId, text(name), text(price), text(categoryId),
                 text(description), text(stock), text(String.valueOf(currentSold)), text(String.valueOf(originalIsActive)),
                 text(colorsJson), imagePart)
-                : request.callAPI().addProduct(text(name), text(price), text(categoryId),
+                : request.callAPI().addProduct(token, text(name), text(price), text(categoryId),
                 text(description), text(stock), text("0"), text("true"), text(colorsJson), imagePart);
         currentCall.enqueue(new Callback<Response<Product>>() {
             @Override

@@ -20,6 +20,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.nguyenmanhphuc.storehubapp.R;
 import com.nguyenmanhphuc.storehubapp.admin.adapter.RecentActivityAdapter;
@@ -53,9 +54,13 @@ public class AdminRecentActivity extends AppCompatActivity {
     private final ArrayList<RecentActivity> allActivities = new ArrayList<>();
     private final ArrayList<RecentActivity> filteredActivities = new ArrayList<>();
     private ProgressBar progressBar;
-    private Call<Response<RevenueData>> activityCall;
+    private Call<Response<ArrayList<RecentActivity>>> activityCall;
     private int currentPage = 1;
+    private int totalPages = 1;
+    private boolean isLoading = false;
     private String selectedTabFilter = "all"; // "all", "order", "product", "user"
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private com.nguyenmanhphuc.storehubapp.services.ApiServices apiServices;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +73,7 @@ public class AdminRecentActivity extends AppCompatActivity {
             return insets;
         });
         initUi();
+        apiServices = new HttpResquest().callAPI();
         loadActivities();
 
         edtSearchOrder.addTextChangedListener(new TextWatcher() {
@@ -114,6 +120,12 @@ public class AdminRecentActivity extends AppCompatActivity {
         if (tvFilterProduct != null) tvFilterProduct.setOnClickListener(v -> selectTab("product"));
         if (tvFilterEmployee != null) tvFilterEmployee.setOnClickListener(v -> selectTab("user"));
 
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.dark_green));
+            swipeRefreshLayout.setOnRefreshListener(this::loadActivities);
+        }
+
         updateTabUi();
 
         ImageView imgBack = findViewById(R.id.imgBack);
@@ -142,12 +154,23 @@ public class AdminRecentActivity extends AppCompatActivity {
         tvFromDate.addTextChangedListener(dateFilterWatcher);
         tvToDate.addTextChangedListener(dateFilterWatcher);
 
-        btnPreviousPage.setOnClickListener(v -> goToPage(currentPage - 1));
-        btnNextPage.setOnClickListener(v -> goToPage(currentPage + 1));
-        tvPage1.setOnClickListener(v -> goToPage(readPage(tvPage1)));
-        tvPage2.setOnClickListener(v -> goToPage(readPage(tvPage2)));
-        tvPage3.setOnClickListener(v -> goToPage(readPage(tvPage3)));
-        tvPage4.setOnClickListener(v -> goToPage(readPage(tvPage4)));
+        if (layoutPagination != null) {
+            layoutPagination.setVisibility(View.GONE);
+        }
+
+        androidx.core.widget.NestedScrollView nestedScrollView = findViewById(R.id.nestedScrollViewRecent);
+        if (nestedScrollView != null) {
+            nestedScrollView.setOnScrollChangeListener((androidx.core.widget.NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+                if (scrollY > oldScrollY && currentPage < totalPages && !isLoading) {
+                    if (v.getChildAt(0) != null) {
+                        int diff = v.getChildAt(0).getMeasuredHeight() - (v.getHeight() + scrollY);
+                        if (diff <= 600) {
+                            loadMoreActivities();
+                        }
+                    }
+                }
+            });
+        }
     }
 
     private void selectTab(String tab) {
@@ -171,34 +194,75 @@ public class AdminRecentActivity extends AppCompatActivity {
     }
 
     private void loadActivities() {
-        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+        if (activityCall != null) activityCall.cancel();
+        
+        currentPage = 1;
+        isLoading = true;
+        
+        boolean isSwipeRefreshing = swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing();
+        if (!isSwipeRefreshing) {
+            if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+        }
         if (rvRecentActivities != null) rvRecentActivities.setVisibility(View.GONE);
         if (layoutEmpty != null) layoutEmpty.setVisibility(View.GONE);
-        if (layoutPagination != null) layoutPagination.setVisibility(View.GONE);
 
-        activityCall = new HttpResquest().callAPI().getRevenueStatsWithLimit(2, 0);
-        activityCall.enqueue(new Callback<Response<RevenueData>>() {
+        String typeParam = selectedTabFilter.equals("all") ? "" : selectedTabFilter;
+        String token = HttpResquest.authorizationHeader(this);
+        
+        activityCall = apiServices.getRecentActivities(token, currentPage, 15, typeParam);
+        activityCall.enqueue(new Callback<Response<ArrayList<RecentActivity>>>() {
             @Override
-            public void onResponse(@NonNull Call<Response<RevenueData>> call,
-                                   @NonNull retrofit2.Response<Response<RevenueData>> response) {
+            public void onResponse(@NonNull Call<Response<ArrayList<RecentActivity>>> call,
+                                   @NonNull retrofit2.Response<Response<ArrayList<RecentActivity>>> response) {
+                isLoading = false;
                 if (progressBar != null) progressBar.setVisibility(View.GONE);
+                if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
+                
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     allActivities.clear();
-                    List<RecentActivity> activities = response.body().getData().getRecentActivities();
-                    if (activities != null) {
-                        allActivities.addAll(activities);
-                    }
+                    allActivities.addAll(response.body().getData());
+                    totalPages = response.body().getPagination() != null ? response.body().getPagination().getTotalPages() : 1;
+                } else {
+                    allActivities.clear();
                 }
                 filterActivities();
             }
 
             @Override
-            public void onFailure(@NonNull Call<Response<RevenueData>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<Response<ArrayList<RecentActivity>>> call, @NonNull Throwable t) {
                 if (!call.isCanceled()) {
+                    isLoading = false;
                     if (progressBar != null) progressBar.setVisibility(View.GONE);
+                    if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                     allActivities.clear();
                     filterActivities();
                 }
+            }
+        });
+    }
+
+    private void loadMoreActivities() {
+        isLoading = true;
+        currentPage++;
+        
+        String typeParam = selectedTabFilter.equals("all") ? "" : selectedTabFilter;
+        String token = HttpResquest.authorizationHeader(this);
+        
+        apiServices.getRecentActivities(token, currentPage, 15, typeParam).enqueue(new Callback<Response<ArrayList<RecentActivity>>>() {
+            @Override
+            public void onResponse(@NonNull Call<Response<ArrayList<RecentActivity>>> call, @NonNull retrofit2.Response<Response<ArrayList<RecentActivity>>> response) {
+                isLoading = false;
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    ArrayList<RecentActivity> moreData = response.body().getData();
+                    allActivities.addAll(moreData);
+                    filterActivities();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Response<ArrayList<RecentActivity>>> call, @NonNull Throwable t) {
+                isLoading = false;
+                currentPage--;
             }
         });
     }
@@ -242,21 +306,13 @@ public class AdminRecentActivity extends AppCompatActivity {
         }
 
         filteredActivities.clear();
-
-        for (RecentActivity activity : allActivities) {
+        filteredActivities.addAll(allActivities);
+        // We still support local keyword/date filtering on the data we have
+        ArrayList<RecentActivity> searchResults = new ArrayList<>();
+        
+        for (RecentActivity activity : filteredActivities) {
             String title = activity.getTitle() == null ? "" : activity.getTitle();
             String detail = activity.getDetail() == null ? "" : activity.getDetail();
-            String type = activity.getType() == null ? "" : activity.getType().toLowerCase(Locale.getDefault());
-
-            if ("order".equals(selectedTabFilter) && !type.startsWith("order")) {
-                continue;
-            }
-            if ("product".equals(selectedTabFilter) && !type.startsWith("product")) {
-                continue;
-            }
-            if ("user".equals(selectedTabFilter) && (!type.startsWith("user") && !type.startsWith("login"))) {
-                continue;
-            }
 
             boolean matchesKeyword = keyword.isEmpty()
                     || title.toLowerCase(Locale.getDefault()).contains(keyword)
@@ -280,86 +336,13 @@ public class AdminRecentActivity extends AppCompatActivity {
                 }
             }
 
-            filteredActivities.add(activity);
+            searchResults.add(activity);
         }
 
-        currentPage = 1;
-        renderPage();
-    }
-
-    private void renderPage() {
-        int totalItems = filteredActivities.size();
-        int totalPages = getTotalPages();
-        if (currentPage > totalPages) {
-            currentPage = totalPages;
-        }
-
-        int fromIndex = Math.min((currentPage - 1) * ITEMS_PER_PAGE, totalItems);
-        int toIndex = Math.min(fromIndex + ITEMS_PER_PAGE, totalItems);
-        adapter.updateData(filteredActivities.subList(fromIndex, toIndex));
-
-        boolean isEmpty = totalItems == 0;
+        adapter.updateData(searchResults);
+        boolean isEmpty = searchResults.isEmpty();
         layoutEmpty.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
         rvRecentActivities.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
-        updatePaginationUi(totalPages);
-    }
-
-    private int getTotalPages() {
-        return Math.max(1, (int) Math.ceil(filteredActivities.size() / (double) ITEMS_PER_PAGE));
-    }
-
-    private void goToPage(int page) {
-        int totalPages = getTotalPages();
-        if (page < 1 || page > totalPages || page == currentPage) {
-            return;
-        }
-        currentPage = page;
-        renderPage();
-    }
-
-    private int readPage(TextView pageView) {
-        try {
-            return Integer.parseInt(pageView.getText().toString());
-        } catch (NumberFormatException e) {
-            return currentPage;
-        }
-    }
-
-    private void updatePaginationUi(int totalPages) {
-        layoutPagination.setVisibility(totalPages > 1 ? View.VISIBLE : View.GONE);
-        if (totalPages <= 1) {
-            return;
-        }
-
-        int startPage = Math.max(1, currentPage - 2);
-        if (startPage + 3 > totalPages) {
-            startPage = Math.max(1, totalPages - 3);
-        }
-
-        tvPage1.setText(String.valueOf(startPage));
-        tvPage2.setText(String.valueOf(startPage + 1));
-        tvPage3.setText(String.valueOf(startPage + 2));
-        tvPage4.setText(String.valueOf(startPage + 3));
-
-        tvPage1.setVisibility(View.VISIBLE);
-        tvPage2.setVisibility(startPage + 1 <= totalPages ? View.VISIBLE : View.GONE);
-        tvPage3.setVisibility(startPage + 2 <= totalPages ? View.VISIBLE : View.GONE);
-        tvPage4.setVisibility(startPage + 3 <= totalPages ? View.VISIBLE : View.GONE);
-
-        setPageStyle(tvPage1, readPage(tvPage1) == currentPage);
-        setPageStyle(tvPage2, readPage(tvPage2) == currentPage);
-        setPageStyle(tvPage3, readPage(tvPage3) == currentPage);
-        setPageStyle(tvPage4, readPage(tvPage4) == currentPage);
-
-        btnPreviousPage.setEnabled(currentPage > 1);
-        btnPreviousPage.setAlpha(currentPage > 1 ? 1.0f : 0.4f);
-        btnNextPage.setEnabled(currentPage < totalPages);
-        btnNextPage.setAlpha(currentPage < totalPages ? 1.0f : 0.4f);
-    }
-
-    private void setPageStyle(TextView pageView, boolean active) {
-        pageView.setBackgroundResource(active ? R.drawable.bg_pagination_active : R.drawable.bg_pagination_inactive);
-        pageView.setTextColor(active ? Color.WHITE : Color.parseColor("#29362F"));
     }
 
     @Override

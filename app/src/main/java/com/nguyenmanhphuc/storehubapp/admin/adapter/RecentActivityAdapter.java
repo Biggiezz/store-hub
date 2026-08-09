@@ -12,6 +12,8 @@ import android.graphics.Color;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.nguyenmanhphuc.storehubapp.R;
 import com.nguyenmanhphuc.storehubapp.model.response.RecentActivity;
 import com.nguyenmanhphuc.storehubapp.utils.DateTimeUtils;
@@ -41,6 +43,14 @@ public class RecentActivityAdapter extends RecyclerView.Adapter<RecentActivityAd
             activities.addAll(newActivities);
         }
         notifyDataSetChanged();
+    }
+
+    public void addData(List<RecentActivity> moreActivities) {
+        if (moreActivities != null && !moreActivities.isEmpty()) {
+            int startPosition = activities.size();
+            activities.addAll(moreActivities);
+            notifyItemRangeInserted(startPosition, moreActivities.size());
+        }
     }
 
     @NonNull

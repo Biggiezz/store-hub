@@ -168,7 +168,8 @@ public class AdminProductDetailActivity extends AppCompatActivity {
         okhttp3.MultipartBody.Part imagePart = null;
 
         HttpResquest request = new HttpResquest();
-        request.callAPI().updateProduct(productId, name, price, category, description, stock, soldQuantity, statusBody, colors, imagePart)
+        String token = HttpResquest.authorizationHeader(this);
+        request.callAPI().updateProduct(token, productId, name, price, category, description, stock, soldQuantity, statusBody, colors, imagePart)
                 .enqueue(new Callback<Response<Product>>() {
                     @Override
                     public void onResponse(@NonNull Call<Response<Product>> call, @NonNull retrofit2.Response<Response<Product>> response) {

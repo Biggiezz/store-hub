@@ -230,7 +230,8 @@ public class CartFragment extends Fragment implements CartAdapter.OnCartChangeLi
         RequestBody isActive = RequestBody.create(textType, String.valueOf(product.isActive()));
         RequestBody colors = RequestBody.create(textType, new Gson().toJson(product.getColors()));
 
-        apiService.updateProduct(product.get_id(), name, price, category,
+        String token = HttpResquest.authorizationHeader(getContext());
+        apiService.updateProduct(token, product.get_id(), name, price, category,
                 description, stock, soldQuantity, isActive, colors, null)
                 .enqueue(new Callback<Response<Product>>() {
                     @Override
