@@ -367,7 +367,7 @@ public class UserManagementFragment extends Fragment {
         sb.append(getString(R.string.email_label)).append(user.getEmail() != null ? user.getEmail() : notUpdated).append("\n\n");
         sb.append(getString(R.string.role_label)).append(user.getRole() != null ? getLocalizedRole(user.getRole()) : notUpdated).append("\n\n");
         sb.append(getString(R.string.address_label)).append(user.getAddress() != null && !user.getAddress().isEmpty() ? user.getAddress() : notUpdated).append("\n\n");
-        sb.append(getString(R.string.last_active_label)).append(DateTimeUtils.getRelativeTime(user.getLastActive(), user.isOnline()));
+        sb.append(getString(R.string.last_active_label)).append(DateTimeUtils.getRelativeTime(getContext(), user.getLastActive(), user.isOnline()));
 
         new AlertDialog.Builder(requireContext())
             .setTitle(getString(R.string.customer_details_title))

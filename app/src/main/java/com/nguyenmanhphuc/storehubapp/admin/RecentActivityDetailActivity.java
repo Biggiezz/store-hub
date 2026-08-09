@@ -223,7 +223,7 @@ public class RecentActivityDetailActivity extends AppCompatActivity {
                 if (layoutProductStatus != null) layoutProductStatus.setVisibility(View.VISIBLE);
                 if (dividerProductStatus != null) dividerProductStatus.setVisibility(View.VISIBLE);
                 if (tvProductStatus != null) {
-                    tvProductStatus.setText(finalStatus);
+                    tvProductStatus.setText(getLocalizedProductStatus(finalStatus));
                     boolean isAvailable = "Đang bán".equalsIgnoreCase(finalStatus);
                     tvProductStatus.setTextColor(Color.parseColor(isAvailable ? "#2E7D32" : "#E53935"));
                 }
@@ -316,6 +316,20 @@ public class RecentActivityDetailActivity extends AppCompatActivity {
         dividerPhone = findViewById(R.id.dividerPhone);
         dividerPayment = findViewById(R.id.dividerPayment);
         dividerTotal = findViewById(R.id.dividerTotal);
+    }
+
+    private String getLocalizedProductStatus(String status) {
+        if (status == null) return "";
+        if ("Đang bán".equalsIgnoreCase(status)) {
+            return getString(R.string.status_active);
+        }
+        if ("Hết hàng".equalsIgnoreCase(status)) {
+            return getString(R.string.out_of_stock);
+        }
+        if ("Ngừng bán".equalsIgnoreCase(status)) {
+            return getString(R.string.status_inactive);
+        }
+        return status;
     }
 
     private static String value(String text) {

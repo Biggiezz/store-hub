@@ -123,16 +123,16 @@ public class HomePageManagementActivity extends BaseActivity {
     }
 
     private void updateBottomNavigation(String activeTab) {
-        int activeBackground = ContextCompat.getColor(this, R.color.bottom_nav_active);
-        int activeContent = Color.parseColor("#756E67");
+        int transparentColor = ContextCompat.getColor(this, android.R.color.transparent);
+        int activeContent = ContextCompat.getColor(this, R.color.dark_green);
         int inactiveContent = Color.parseColor("#AAA49D");
 
         MaterialButton[] buttons = {btnHome, btnProducts, btnNews, btnStats, btnUsers};
         String[] tabs = {TAB_HOME, TAB_PRODUCTS, TAB_NEWS, TAB_STATS, TAB_USERS};
         for (int i = 0; i < buttons.length; i++) {
+            if (buttons[i] == null) continue;
             boolean isActive = tabs[i].equals(activeTab);
-            buttons[i].setBackgroundTintList(ColorStateList.valueOf(
-                    isActive ? activeBackground : Color.TRANSPARENT));
+            buttons[i].setBackgroundTintList(ColorStateList.valueOf(transparentColor));
             buttons[i].setTextColor(isActive ? activeContent : inactiveContent);
             buttons[i].setIconTint(ColorStateList.valueOf(isActive ? activeContent : inactiveContent));
         }

@@ -17,6 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HttpResquest {
 
+//    public static final String BASE_URL = "http://192.168.0.104:3000/";
     public static final String BASE_URL = "https://storehub-server.vercel.app/";
 
     public ApiServices apiServices;

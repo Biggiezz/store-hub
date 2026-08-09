@@ -115,7 +115,7 @@ public class AddNewsManagementActivity extends AppCompatActivity {
     }
 
     private void setUpAdapter() {
-        String[] statusOptions = {"Đã xuất bản", "Bản nháp", "Riêng tư"};
+        String[] statusOptions = {getString(R.string.xml_da_xuat_ban), getString(R.string.xml_ban_nhap), getString(R.string.xml_rieng_tu)};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, statusOptions);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         if (spinnerStatus != null) {
@@ -191,7 +191,7 @@ public class AddNewsManagementActivity extends AppCompatActivity {
     private void handleAddPost() {
         String title = edtTitle != null && edtTitle.getText() != null ? edtTitle.getText().toString().trim() : "";
         String content = edtContent != null && edtContent.getText() != null ? edtContent.getText().toString().trim() : "";
-        String selectedStatus = spinnerStatus != null && spinnerStatus.getSelectedItem() != null ? spinnerStatus.getSelectedItem().toString() : "Đã xuất bản";
+        String selectedStatus = spinnerStatus != null && spinnerStatus.getSelectedItem() != null ? spinnerStatus.getSelectedItem().toString() : getString(R.string.xml_da_xuat_ban);
 
         if (title.isEmpty() || content.isEmpty()) {
             Toast.makeText(this, this.getString(R.string.toast_vui_long_nhap_day_du_tieu_de_va_noi_dung), Toast.LENGTH_SHORT).show();
@@ -204,9 +204,9 @@ public class AddNewsManagementActivity extends AppCompatActivity {
         }
 
         String status = "published";
-        if ("Bản nháp".equals(selectedStatus)) {
+        if (getString(R.string.xml_ban_nhap).equals(selectedStatus)) {
             status = "draft";
-        } else if ("Riêng tư".equals(selectedStatus)) {
+        } else if (getString(R.string.xml_rieng_tu).equals(selectedStatus)) {
             status = "hidden";
         }
 

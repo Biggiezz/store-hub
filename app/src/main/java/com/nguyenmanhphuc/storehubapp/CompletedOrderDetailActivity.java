@@ -211,7 +211,7 @@ public class CompletedOrderDetailActivity extends BaseActivity {
             return getString(R.string.status_pending);
         }
         if ("Đã xác nhận".equalsIgnoreCase(status) || "Confirmed".equalsIgnoreCase(status)) {
-            return getString(R.string.status_confirmed_at, "").trim();
+            return getString(R.string.status_confirmed);
         }
         if ("Đã rời kho".equalsIgnoreCase(status) || "Left Warehouse".equalsIgnoreCase(status)) {
             return getString(R.string.status_dispatched);

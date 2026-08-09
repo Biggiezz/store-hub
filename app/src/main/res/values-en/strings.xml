@@ -11,7 +11,7 @@
     <string name="nav_products">Products</string>
     <string name="nav_cart">Cart</string>
     <string name="nav_news">NEWS</string>
-    <string name="nav_profile">Profile</string>
+    <string name="nav_profile">Me</string>
     <string name="featured_products">Featured Products</string>
     <string name="view_all">View all</string>
     <string name="phone">Phone</string>
@@ -756,4 +756,33 @@
     <string name="saving_ellipsis">Saving...</string>
     <string name="customer_info_header">CUSTOMER INFORMATION</string>
     <string name="active_prefix">Active: </string>
+
+    <!-- Hardcoded Vietnamese UI strings externalized -->
+    <string name="status_confirmed">Confirmed</string>
+    <string name="time_inactive">Inactive</string>
+    <string name="time_active_now">Active now</string>
+    <string name="time_just_now">Just now</string>
+    <string name="time_minutes_ago">%d min ago</string>
+    <string name="time_hours_ago">%d hours ago</string>
+    <string name="time_days_ago">%d days ago</string>
+    <string name="date_pattern_month">MMM d, yyyy</string>
+    <string name="zalopay_not_installed">ZaloPay app is not installed. Opening app store...</string>
+    <string name="verifying_payment">Verifying payment status from ZaloPay...</string>
+    <string name="payment_success_order_created">Payment successful and order created!</string>
+    <string name="payment_not_completed">Payment not completed or transaction was cancelled.</string>
+    <string name="cannot_verify_payment">Cannot connect to the server to verify payment.</string>
+    <string name="deleting_profile">Deleting profile...</string>
+    <string name="color_black">Black</string>
+    <string name="color_white">White</string>
+    <string name="color_gray">Gray</string>
+    <string name="color_red">Red</string>
+    <string name="color_blue">Blue</string>
+    <string name="color_green">Green</string>
+    <string name="color_yellow">Yellow</string>
+    <string name="color_orange">Orange</string>
+    <string name="color_purple">Purple</string>
+    <string name="color_pink">Pink</string>
+    <string name="color_brown">Brown</string>
+    <string name="color_cyan">Cyan</string>
+    <string name="color_olive">Olive</string>
 </resources>

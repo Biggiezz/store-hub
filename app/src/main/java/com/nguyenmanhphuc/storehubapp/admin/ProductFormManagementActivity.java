@@ -57,13 +57,16 @@ import retrofit2.Callback;
 public class ProductFormManagementActivity extends AppCompatActivity {
     private static final String EXTRA_PRODUCT_ID = "product_id";
     private static final MediaType TEXT = MediaType.get("text/plain; charset=utf-8");
-    private static final String[][] COLOR_PALETTE = {
-            {"Đen", "#000000"},
-            {"Trắng", "#FFFFFF"},
-            {"Xám", "#808080"},
-            {"Đỏ", "#FF0000"},
-            {"Xanh dương", "#0000FF"}
-    };
+
+    private String[][] getColorPalette() {
+        return new String[][]{
+                {getString(R.string.color_black), "#000000"},
+                {getString(R.string.color_white), "#FFFFFF"},
+                {getString(R.string.color_gray), "#808080"},
+                {getString(R.string.color_red), "#FF0000"},
+                {getString(R.string.color_blue), "#0000FF"}
+        };
+    }
 
     private EditText nameInput, descriptionInput, stockInput, priceInput;
     private TextView formTitle, categoryValue, uploadPrompt;
@@ -484,7 +487,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
 
     private void addColorPalette(EditText nameInput, EditText hexInput,
                                  View preview, LinearLayout colors) {
-        for (String[] sample : COLOR_PALETTE) {
+        for (String[] sample : getColorPalette()) {
             View item = LayoutInflater.from(this).inflate(
                     R.layout.item_admin_color_palette, colors, false);
             View swatch = item.findViewById(R.id.ivAdminPaletteSwatch);
@@ -554,19 +557,19 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         double minDistance = Double.MAX_VALUE;
         
         Object[][] namedColors = {
-            {"Đen", 0, 0, 0},
-            {"Trắng", 255, 255, 255},
-            {"Xám", 128, 128, 128},
-            {"Đỏ", 255, 0, 0},
-            {"Xanh lá", 0, 255, 0},
-            {"Xanh dương", 0, 0, 255},
-            {"Vàng", 255, 255, 0},
-            {"Cam", 255, 165, 0},
-            {"Tím", 128, 0, 128},
-            {"Hồng", 255, 192, 203},
-            {"Nâu", 165, 42, 42},
-            {"Xanh lam", 0, 206, 209},
-            {"Xanh rêu", 85, 107, 47}
+            {getString(R.string.color_black), 0, 0, 0},
+            {getString(R.string.color_white), 255, 255, 255},
+            {getString(R.string.color_gray), 128, 128, 128},
+            {getString(R.string.color_red), 255, 0, 0},
+            {getString(R.string.color_green), 0, 255, 0},
+            {getString(R.string.color_blue), 0, 0, 255},
+            {getString(R.string.color_yellow), 255, 255, 0},
+            {getString(R.string.color_orange), 255, 165, 0},
+            {getString(R.string.color_purple), 128, 0, 128},
+            {getString(R.string.color_pink), 255, 192, 203},
+            {getString(R.string.color_brown), 165, 42, 42},
+            {getString(R.string.color_cyan), 0, 206, 209},
+            {getString(R.string.color_olive), 85, 107, 47}
         };
         
         for (Object[] nc : namedColors) {

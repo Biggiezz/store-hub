@@ -268,6 +268,29 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
         return "Chờ xác nhận";
     }
 
+    private String getLocalizedStatus(String status) {
+        if (status == null) return "";
+        if ("Chờ xác nhận".equalsIgnoreCase(status) || "Pending".equalsIgnoreCase(status) || "Chờ xử lý".equalsIgnoreCase(status)) {
+            return getString(R.string.status_pending);
+        }
+        if ("Đã xác nhận".equalsIgnoreCase(status) || "Confirmed".equalsIgnoreCase(status)) {
+            return getString(R.string.status_confirmed);
+        }
+        if ("Đã rời kho".equalsIgnoreCase(status) || "Left Warehouse".equalsIgnoreCase(status)) {
+            return getString(R.string.status_dispatched);
+        }
+        if ("Đang giao hàng".equalsIgnoreCase(status) || "Shipping".equalsIgnoreCase(status)) {
+            return getString(R.string.status_shipping);
+        }
+        if ("Đã giao hàng".equalsIgnoreCase(status) || "Đã hoàn thành".equalsIgnoreCase(status) || "Completed".equalsIgnoreCase(status)) {
+            return getString(R.string.status_completed);
+        }
+        if ("Đã hủy".equalsIgnoreCase(status) || "Cancelled".equalsIgnoreCase(status)) {
+            return getString(R.string.status_cancelled);
+        }
+        return status;
+    }
+
     private static final String[] allStatuses = {
             "Chờ xác nhận",
             "Đã xác nhận",
@@ -304,6 +327,7 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
         public android.view.View getView(int position, android.view.View convertView, @androidx.annotation.NonNull android.view.ViewGroup parent) {
             android.view.View view = super.getView(position, convertView, parent);
             android.widget.TextView textView = view.findViewById(android.R.id.text1);
+            textView.setText(getLocalizedStatus(getItem(position)));
 
             if (position == currentStatusIndex) {
                 textView.setTypeface(null, android.graphics.Typeface.BOLD);
