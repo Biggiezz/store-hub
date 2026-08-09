@@ -54,6 +54,7 @@ public class AdminRecentActivity extends AppCompatActivity {
     private final ArrayList<RecentActivity> filteredActivities = new ArrayList<>();
     private final ArrayList<RecentActivity> displayedActivities = new ArrayList<>();
     private ProgressBar progressBar;
+    private ProgressBar progressBarLoadMore;
     private Call<Response<ArrayList<RecentActivity>>> activityCall;
     private int currentPage = 1;
     private int totalPages = 1;
@@ -100,6 +101,7 @@ public class AdminRecentActivity extends AppCompatActivity {
         layoutEmpty = findViewById(R.id.layoutEmpty);
         layoutPagination = findViewById(R.id.layoutPagination);
         progressBar = findViewById(R.id.progressBar);
+        progressBarLoadMore = findViewById(R.id.progressBarLoadMore);
 
         tvFromDate = findViewById(R.id.tvFromDate);
         tvToDate = findViewById(R.id.tvToDate);
@@ -240,26 +242,38 @@ public class AdminRecentActivity extends AppCompatActivity {
     }
 
     private void loadMoreActivities() {
+        if (isLoading) return;
         isLoading = true;
         currentPage++;
-        
+        if (progressBarLoadMore != null) progressBarLoadMore.setVisibility(View.VISIBLE);
+
         String typeParam = selectedTabFilter.equals("all") ? "" : selectedTabFilter;
         String token = HttpResquest.authorizationHeader(this);
-        
+
         apiServices.getRecentActivities(token, currentPage, 15, typeParam).enqueue(new Callback<Response<ArrayList<RecentActivity>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<RecentActivity>>> call, @NonNull retrofit2.Response<Response<ArrayList<RecentActivity>>> response) {
                 isLoading = false;
+                if (progressBarLoadMore != null) progressBarLoadMore.setVisibility(View.GONE);
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     ArrayList<RecentActivity> moreData = response.body().getData();
-                    allActivities.addAll(moreData);
-                    filterActivities();
+                    if (moreData.isEmpty()) {
+                        // Không còn dữ liệu, không tăng page thêm nữa
+                        currentPage--;
+                        totalPages = currentPage;
+                    } else {
+                        allActivities.addAll(moreData);
+                        filterActivities();
+                    }
+                } else {
+                    currentPage--;
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<Response<ArrayList<RecentActivity>>> call, @NonNull Throwable t) {
                 isLoading = false;
+                if (progressBarLoadMore != null) progressBarLoadMore.setVisibility(View.GONE);
                 currentPage--;
             }
         });
