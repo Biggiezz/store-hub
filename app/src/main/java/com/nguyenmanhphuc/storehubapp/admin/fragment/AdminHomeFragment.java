@@ -1,11 +1,14 @@
 package com.nguyenmanhphuc.storehubapp.admin.fragment;
 
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +25,7 @@ import com.nguyenmanhphuc.storehubapp.model.Product;
 import com.nguyenmanhphuc.storehubapp.model.response.DashboardData;
 import com.nguyenmanhphuc.storehubapp.model.response.Response;
 import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
+import com.nguyenmanhphuc.storehubapp.utils.DataCache;
 import com.nguyenmanhphuc.storehubapp.utils.SharedPreferencesManager;
 
 import java.text.DecimalFormat;
@@ -40,6 +44,10 @@ public class AdminHomeFragment extends Fragment {
     private SwipeRefreshLayout swipeRefreshLayout;
     private int completedCalls = 0;
 
+    private static final String CACHE_DASHBOARD = "admin_dashboard";
+    private static final String CACHE_PRODUCTS  = "admin_dashboard_products";
+    private static final String CACHE_USERS     = "admin_dashboard_users";
+
     public AdminHomeFragment() {
     }
 
@@ -54,10 +62,109 @@ public class AdminHomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         initUi(view);
-        fetchDashboardStats();
-        fetchProductCount();
-        fetchUserCount();
+
+        // Hiện skeleton ngay khi fragment load
+        showSkeletonAll();
+
+        // Nếu có cache hợp lệ → dùng ngay, không fetch lại
+        DashboardData cachedDash = DataCache.get().get(CACHE_DASHBOARD, DashboardData.class);
+        Integer cachedProducts = DataCache.get().get(CACHE_PRODUCTS, Integer.class);
+        Integer cachedUsers = DataCache.get().get(CACHE_USERS, Integer.class);
+
+        boolean allCached = cachedDash != null && cachedProducts != null && cachedUsers != null;
+        if (allCached) {
+            bindData(cachedDash);
+            // Sản phẩm
+            if (cardProducts != null) {
+                TextView tv = cardProducts.findViewById(R.id.txtValue);
+                showSkeleton(cardProducts, false);
+                animateCountUp(tv, cachedProducts, "");
+            }
+            // Người dùng
+            if (cardUsers != null) {
+                TextView tv = cardUsers.findViewById(R.id.txtValue);
+                TextView tvS = cardUsers.findViewById(R.id.txtStatus);
+                if (tvS != null) tvS.setText(String.format(getString(R.string.total_customers_format), cachedUsers));
+                showSkeleton(cardUsers, false);
+                animateCountUp(tv, cachedUsers, "");
+            }
+        } else {
+            fetchDashboardStats();
+            fetchProductCount();
+            fetchUserCount();
+        }
     }
+
+    // ─── Skeleton helpers ────────────────────────────────────────────────────
+
+    /** Bật skeleton trên tất cả 4 card */
+    private void showSkeletonAll() {
+        showSkeleton(cardSales, true);
+        showSkeleton(cardUsers, true);
+        showSkeleton(cardProducts, true);
+        showSkeleton(cardOrders, true);
+    }
+
+    /**
+     * Hiện / ẩn skeleton overlay của một card.
+     * Khi ẩn (show=false) sẽ fade out nhẹ nhàng.
+     */
+    private void showSkeleton(View card, boolean show) {
+        if (card == null) return;
+        View skeleton = card.findViewById(R.id.layoutSkeleton);
+        if (skeleton == null) return;
+
+        if (show) {
+            skeleton.setVisibility(View.VISIBLE);
+            skeleton.setAlpha(1f);
+            // Chạy pulse animation cho tất cả skeleton bar bên trong
+            Animation pulse = AnimationUtils.loadAnimation(requireContext(), R.anim.skeleton_pulse);
+            skeleton.startAnimation(pulse);
+        } else {
+            skeleton.clearAnimation();
+            skeleton.animate()
+                    .alpha(0f)
+                    .setDuration(300)
+                    .withEndAction(() -> skeleton.setVisibility(View.GONE))
+                    .start();
+        }
+    }
+
+    // ─── Count-up animation ───────────────────────────────────────────────────
+
+    /**
+     * Hoạt hình đếm số từ 0 lên target (dùng cho các card số nguyên: đơn hàng, người dùng, sản phẩm).
+     */
+    private void animateCountUp(TextView tv, int target, String suffix) {
+        if (tv == null) return;
+        ValueAnimator animator = ValueAnimator.ofInt(0, target);
+        animator.setDuration(800);
+        animator.setInterpolator(new android.view.animation.DecelerateInterpolator());
+        animator.addUpdateListener(a -> {
+            if (isAdded()) tv.setText(a.getAnimatedValue() + suffix);
+        });
+        animator.start();
+    }
+
+    /**
+     * Hoạt hình đếm tiền từ 0 lên target (dùng cho card doanh số).
+     */
+    private void animateSalesCountUp(TextView tv, long target) {
+        if (tv == null) return;
+        DecimalFormat formatter = new DecimalFormat("#,###");
+        ValueAnimator animator = ValueAnimator.ofFloat(0f, (float) target);
+        animator.setDuration(1000);
+        animator.setInterpolator(new android.view.animation.DecelerateInterpolator());
+        animator.addUpdateListener(a -> {
+            if (isAdded()) {
+                long val = ((Number) a.getAnimatedValue()).longValue();
+                tv.setText(formatter.format(val) + getString(R.string.admin_price_suffix));
+            }
+        });
+        animator.start();
+    }
+
+    // ─── UI init ──────────────────────────────────────────────────────────────
 
     private void initUi(View view) {
         cardSales = view.findViewById(R.id.cardSales);
@@ -95,30 +202,29 @@ public class AdminHomeFragment extends Fragment {
                     @Override
                     public void onResponse(@NonNull retrofit2.Call<Response<Void>> call, @NonNull retrofit2.Response<Response<Void>> response) {
                         prefManager.logout();
-                        navigateToLogin();
+                        navigateToLogin(prefManager);
                     }
 
                     @Override
                     public void onFailure(@NonNull retrofit2.Call<Response<Void>> call, @NonNull Throwable t) {
                         prefManager.logout();
-                        navigateToLogin();
-                    }
-
-                    private void navigateToLogin() {
-                        android.content.Context appContext = requireContext().getApplicationContext();
-                        Toast.makeText(appContext, appContext.getString(R.string.toast_da_dang_xuat_tai_khoan), Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(appContext, LoginActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
-                        if (getActivity() != null) {
-                            getActivity().finish();
-                        }
+                        navigateToLogin(prefManager);
                     }
                 });
             });
         }
 
         setupCardTitles();
+    }
+
+    private void navigateToLogin(SharedPreferencesManager prefManager) {
+        if (!isAdded()) return;
+        android.content.Context appContext = requireContext().getApplicationContext();
+        Toast.makeText(appContext, appContext.getString(R.string.toast_da_dang_xuat_tai_khoan), Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(appContext, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        if (getActivity() != null) getActivity().finish();
     }
 
     private void setupCardTitles() {
@@ -160,8 +266,13 @@ public class AdminHomeFragment extends Fragment {
         }
     }
 
+    // ─── Refresh ──────────────────────────────────────────────────────────────
+
     private void refreshData() {
         completedCalls = 0;
+        // Xóa cache dashboard khi refresh thủ công
+        DataCache.get().invalidate("admin_dashboard");
+        showSkeletonAll();
         fetchDashboardStats();
         fetchProductCount();
     }
@@ -175,51 +286,61 @@ public class AdminHomeFragment extends Fragment {
         }
     }
 
+    // ─── API Calls ────────────────────────────────────────────────────────────
+
     private void fetchDashboardStats() {
         HttpResquest request = new HttpResquest();
         request.callAPI().getAdminDashboardStats().enqueue(new Callback<Response<DashboardData>>() {
             @Override
             public void onResponse(@NonNull Call<Response<DashboardData>> call, @NonNull retrofit2.Response<Response<DashboardData>> response) {
                 checkRefreshComplete();
+                if (!isAdded()) return;
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
-                    bindData(response.body().getData());
+                    DashboardData data = response.body().getData();
+                    DataCache.get().put(CACHE_DASHBOARD, data);
+                    bindData(data);
                 } else {
-                    Log.e("AdminHomeFragment", "Không thể lấy dữ liệu thống kê từ máy chủ");
+                    showSkeleton(cardSales, false);
+                    showSkeleton(cardOrders, false);
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<Response<DashboardData>> call, @NonNull Throwable t) {
                 checkRefreshComplete();
-                Log.e("AdminHomeFragment", "Lỗi khi gọi API thống kê", t);
-                if (isAdded()) {
-                    Toast.makeText(requireContext(), requireContext().getString(R.string.toast_loi_ket_noi_may_chu), Toast.LENGTH_SHORT).show();
-                }
+                if (!isAdded()) return;
+                showSkeleton(cardSales, false);
+                showSkeleton(cardOrders, false);
+                Toast.makeText(requireContext(), requireContext().getString(R.string.toast_loi_ket_noi_may_chu), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void fetchProductCount() {
         new HttpResquest().callAPI().getListProduct(1, 1, "", false, "").enqueue(new Callback<Response<ArrayList<Product>>>() {
-                    @Override
-                    public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
-                        checkRefreshComplete();
-                        if (response.isSuccessful() && response.body() != null
-                                && response.body().getPagination() != null && cardProducts != null) {
-                            TextView txtValue = cardProducts.findViewById(R.id.txtValue);
-                            if (txtValue != null) {
-                                txtValue.setText(String.valueOf(
-                                        response.body().getPagination().getTotalProducts()));
-                            }
-                        }
-                    }
+            @Override
+            public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
+                checkRefreshComplete();
+                if (!isAdded()) return;
+                if (response.isSuccessful() && response.body() != null
+                        && response.body().getPagination() != null && cardProducts != null) {
+                    int total = response.body().getPagination().getTotalProducts();
+                    DataCache.get().put(CACHE_PRODUCTS, total);
+                    TextView tv = cardProducts.findViewById(R.id.txtValue);
+                    showSkeleton(cardProducts, false);
+                    animateCountUp(tv, total, "");
+                } else {
+                    showSkeleton(cardProducts, false);
+                }
+            }
 
-                    @Override
-                    public void onFailure(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull Throwable t) {
-                        checkRefreshComplete();
-                        Log.e("AdminHomeFragment", "Lỗi khi lấy tổng số sản phẩm", t);
-                    }
-                });
+            @Override
+            public void onFailure(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull Throwable t) {
+                checkRefreshComplete();
+                if (!isAdded()) return;
+                showSkeleton(cardProducts, false);
+            }
+        });
     }
 
     private void fetchUserCount() {
@@ -227,69 +348,73 @@ public class AdminHomeFragment extends Fragment {
         String token = "Bearer " + prefManager.getToken();
         new HttpResquest().callAPI().getListUsers(token).enqueue(new Callback<Response<ArrayList<com.nguyenmanhphuc.storehubapp.model.User>>>() {
             @Override
-            public void onResponse(@NonNull Call<Response<ArrayList<com.nguyenmanhphuc.storehubapp.model.User>>> call, @NonNull retrofit2.Response<Response<ArrayList<com.nguyenmanhphuc.storehubapp.model.User>>> response) {
+            public void onResponse(@NonNull Call<Response<ArrayList<com.nguyenmanhphuc.storehubapp.model.User>>> call,
+                                   @NonNull retrofit2.Response<Response<ArrayList<com.nguyenmanhphuc.storehubapp.model.User>>> response) {
+                if (!isAdded()) return;
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null && cardUsers != null) {
                     ArrayList<com.nguyenmanhphuc.storehubapp.model.User> allUsers = response.body().getData();
                     int customerCount = 0;
                     for (com.nguyenmanhphuc.storehubapp.model.User u : allUsers) {
-                        // Chỉ đếm khách hàng đăng ký, không đếm superadmin hoặc nhân viên
-                        if (u.isSuperAdmin()) {
-                            continue;
-                        }
+                        if (u.isSuperAdmin()) continue;
                         String role = u.getRole() != null ? u.getRole().toLowerCase() : "";
                         if (role.contains("khách hàng") || role.contains("customer")) {
                             customerCount++;
                         }
                     }
-                    TextView txtValue = cardUsers.findViewById(R.id.txtValue);
-                    if (txtValue != null) {
-                        txtValue.setText(String.valueOf(customerCount));
+                    final int finalCount = customerCount;
+                    DataCache.get().put(CACHE_USERS, finalCount);
+                    TextView tv = cardUsers.findViewById(R.id.txtValue);
+                    TextView tvStatus = cardUsers.findViewById(R.id.txtStatus);
+                    if (tvStatus != null) {
+                        tvStatus.setText(String.format(getString(R.string.total_customers_format), finalCount));
                     }
-                    TextView txtStatus = cardUsers.findViewById(R.id.txtStatus);
-                    if (txtStatus != null) {
-                        txtStatus.setText(String.format(getString(R.string.total_customers_format), customerCount));
-                    }
+                    showSkeleton(cardUsers, false);
+                    animateCountUp(tv, finalCount, "");
+                } else {
+                    showSkeleton(cardUsers, false);
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<Response<ArrayList<com.nguyenmanhphuc.storehubapp.model.User>>> call, @NonNull Throwable t) {
-                Log.e("AdminHomeFragment", "Lỗi khi lấy danh sách người dùng", t);
+                if (!isAdded()) return;
+                showSkeleton(cardUsers, false);
             }
         });
     }
 
+    // ─── Bind data ────────────────────────────────────────────────────────────
+
     private void bindData(DashboardData data) {
-        if (data == null) return;
+        if (data == null || !isAdded()) return;
 
         if (cardSales != null) {
-            TextView txtValue = cardSales.findViewById(R.id.txtValue);
-            TextView txtStatus = cardSales.findViewById(R.id.txtStatus);
-
-            if (txtValue != null) {
-                DecimalFormat formatter = new DecimalFormat("#,###");
-                String formattedSales = formatter.format(data.getTotalSales()) + getString(R.string.admin_price_suffix);
-                txtValue.setText(formattedSales);
+            TextView tv = cardSales.findViewById(R.id.txtValue);
+            TextView tvStatus = cardSales.findViewById(R.id.txtStatus);
+            if (tvStatus != null) {
+                tvStatus.setText(String.format(getString(R.string.sold_products_format), data.getTotalSalesCount()));
             }
-            if (txtStatus != null) {
-                txtStatus.setText(String.format(getString(R.string.sold_products_format), data.getTotalSalesCount()));
-            }
-        }
-
-        if (cardUsers != null) {
-            // Đã cập nhật riêng trong fetchUserCount() để lọc theo yêu cầu
+            showSkeleton(cardSales, false);
+            animateSalesCountUp(tv, data.getTotalSales());
         }
 
         if (cardOrders != null) {
-            TextView txtValue = cardOrders.findViewById(R.id.txtValue);
-            TextView txtStatus = cardOrders.findViewById(R.id.txtStatus);
-
-            if (txtValue != null) {
-                txtValue.setText(String.format(getString(R.string.orders_count_format), data.getTotalOrders()));
+            TextView tv = cardOrders.findViewById(R.id.txtValue);
+            TextView tvStatus = cardOrders.findViewById(R.id.txtStatus);
+            if (tvStatus != null) {
+                tvStatus.setText(String.format(getString(R.string.pending_orders_format), data.getPendingOrders()));
             }
-            if (txtStatus != null) {
-                txtStatus.setText(String.format(getString(R.string.pending_orders_format), data.getPendingOrders()));
-            }
+            showSkeleton(cardOrders, false);
+            // Format "X đơn" với count-up
+            ValueAnimator animator = ValueAnimator.ofInt(0, data.getTotalOrders());
+            animator.setDuration(800);
+            animator.setInterpolator(new android.view.animation.DecelerateInterpolator());
+            animator.addUpdateListener(a -> {
+                if (isAdded() && tv != null) {
+                    tv.setText(String.format(getString(R.string.orders_count_format), a.getAnimatedValue()));
+                }
+            });
+            animator.start();
         }
     }
 }

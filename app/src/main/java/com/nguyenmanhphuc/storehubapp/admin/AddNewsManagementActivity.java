@@ -27,6 +27,7 @@ import com.nguyenmanhphuc.storehubapp.model.News;
 import com.nguyenmanhphuc.storehubapp.model.response.Response;
 import com.nguyenmanhphuc.storehubapp.model.User;
 import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
+import com.nguyenmanhphuc.storehubapp.utils.DataCache;
 import com.nguyenmanhphuc.storehubapp.utils.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
 
@@ -257,6 +258,8 @@ public class AddNewsManagementActivity extends AppCompatActivity {
                 btnAddPost.setEnabled(true);
                 if (response.isSuccessful() && response.body() != null && response.body().getCode() == 201) {
                     Toast.makeText(AddNewsManagementActivity.this, AddNewsManagementActivity.this.getString(R.string.toast_tao_bai_viet_moi_thanh_cong), Toast.LENGTH_SHORT).show();
+                    DataCache.get().invalidate("admin_news_");
+                    DataCache.get().invalidate("user_news");
                     finish();
                 } else if (response.body() != null && response.body().getMessage() != null) {
                     Toast.makeText(AddNewsManagementActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
@@ -280,6 +283,8 @@ public class AddNewsManagementActivity extends AppCompatActivity {
                 btnAddPost.setEnabled(true);
                 if (response.isSuccessful() && response.body() != null) {
                     Toast.makeText(AddNewsManagementActivity.this, AddNewsManagementActivity.this.getString(R.string.toast_cap_nhat_bai_viet_thanh_cong), Toast.LENGTH_SHORT).show();
+                    DataCache.get().invalidate("admin_news_");
+                    DataCache.get().invalidate("user_news");
                     finish();
                 } else if (response.body() != null && response.body().getMessage() != null) {
                     Toast.makeText(AddNewsManagementActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();

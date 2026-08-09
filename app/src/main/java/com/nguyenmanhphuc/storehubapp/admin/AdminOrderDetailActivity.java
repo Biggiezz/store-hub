@@ -28,6 +28,7 @@ import com.nguyenmanhphuc.storehubapp.model.request.UpdateStatusRequest;
 import com.nguyenmanhphuc.storehubapp.model.User;
 import com.nguyenmanhphuc.storehubapp.services.ApiServices;
 import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
+import com.nguyenmanhphuc.storehubapp.utils.DataCache;
 import com.nguyenmanhphuc.storehubapp.utils.SharedPreferencesManager;
 import com.nguyenmanhphuc.storehubapp.model.Product;
 import com.google.android.material.button.MaterialButton;
@@ -458,6 +459,8 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
                         && response.body().getData() != null) {
                     currentOrder = response.body().getData();
                     bindOrder(currentOrder);
+                    // Xóa cache đơn hàng phía user → lần sau vào sẽ thấy trạng thái mới
+                    DataCache.get().invalidate("user_orders");
                     Toast.makeText(AdminOrderDetailActivity.this,
                             response.body().getMessage(), Toast.LENGTH_SHORT).show();
                 } else {

@@ -24,6 +24,7 @@ import com.nguyenmanhphuc.storehubapp.admin.AddNewsManagementActivity;
 import com.nguyenmanhphuc.storehubapp.model.News;
 import com.nguyenmanhphuc.storehubapp.model.response.Response;
 import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
+import com.nguyenmanhphuc.storehubapp.utils.DataCache;
 import com.nguyenmanhphuc.storehubapp.utils.SharedPreferencesManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -50,6 +51,7 @@ public class NewsFragmentManagement extends Fragment implements PostAdapter.Post
     private static final int PAGE_SIZE = 10;
     private boolean isLoading = false;
     private boolean hasMoreData = true;
+    private static final String CACHE_KEY = "admin_news_" ; // nối thêm status
 
     @Nullable
     @Override
@@ -125,7 +127,19 @@ public class NewsFragmentManagement extends Fragment implements PostAdapter.Post
     @Override
     public void onResume() {
         super.onResume();
-        fetchPosts();
+        String cacheKey = CACHE_KEY + selectedStatus;
+        // Nếu có cache hợp lệ và danh sách đang trống → dùng cache ngay
+        ArrayList<News> cached = DataCache.get().get(cacheKey, ArrayList.class);
+        if (cached != null && !cached.isEmpty() && newsList.isEmpty()) {
+            newsList.clear();
+            newsList.addAll(cached);
+            if (adapter != null) adapter.updateData(newsList);
+            if (progressBar != null) progressBar.setVisibility(View.GONE);
+            if (rvPosts != null) rvPosts.setVisibility(View.VISIBLE);
+            if (tvEmptyPosts != null) tvEmptyPosts.setVisibility(View.GONE);
+        } else {
+            fetchPosts();
+        }
     }
 
     private void fetchPosts() {
@@ -164,14 +178,14 @@ public class NewsFragmentManagement extends Fragment implements PostAdapter.Post
                         newsList.clear();
                     }
 
-                    if (serverNews.size() < PAGE_SIZE) {
-                        hasMoreData = false;
-                    } else {
-                        hasMoreData = true;
-                    }
-
+                    hasMoreData = serverNews.size() >= PAGE_SIZE;
                     newsList.addAll(serverNews);
                     if (adapter != null) adapter.updateData(newsList);
+
+                    // Cache trang 1 theo status
+                    if (!isLoadMore) {
+                        DataCache.get().put(CACHE_KEY + selectedStatus, new ArrayList<>(newsList));
+                    }
                 } else {
                     Toast.makeText(getContext(), getContext().getString(R.string.toast_khong_nhan_duoc_phan_hoi_tu_may_chu), Toast.LENGTH_SHORT).show();
                 }
@@ -242,6 +256,10 @@ public class NewsFragmentManagement extends Fragment implements PostAdapter.Post
             public void onResponse(@NonNull Call<Response<Void>> call, @NonNull retrofit2.Response<Response<Void>> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(getContext(), getContext().getString(R.string.toast_da_xoa_bai_viet_thanh_cong), Toast.LENGTH_SHORT).show();
+                    // Xóa cache của cả admin lẫn user khi có thay đổi
+                    DataCache.get().invalidate("admin_news_");
+                    DataCache.get().invalidate("user_news");
+                    newsList.clear();
                     fetchPosts();
                 }
             }

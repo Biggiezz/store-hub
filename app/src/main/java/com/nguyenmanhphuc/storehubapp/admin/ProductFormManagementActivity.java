@@ -41,6 +41,7 @@ import com.nguyenmanhphuc.storehubapp.model.Category;
 import com.nguyenmanhphuc.storehubapp.model.ProductColor;
 import com.nguyenmanhphuc.storehubapp.model.response.Response;
 import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
+import com.nguyenmanhphuc.storehubapp.utils.DataCache;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -301,6 +302,9 @@ public class ProductFormManagementActivity extends AppCompatActivity {
                 setLoading(false);
                 if (response.isSuccessful() && response.body() != null) {
                     Toast.makeText(ProductFormManagementActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    // Xóa cache sản phẩm (cả admin & user) sau khi thêm/sửa thành công
+                    DataCache.get().invalidate("admin_products");
+                    DataCache.get().invalidate("user_products");
                     setResult(RESULT_OK);
                     finish();
                 } else {

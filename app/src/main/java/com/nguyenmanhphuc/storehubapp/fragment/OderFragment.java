@@ -35,6 +35,7 @@ import com.nguyenmanhphuc.storehubapp.model.request.CancelOrderRequest;
 import com.nguyenmanhphuc.storehubapp.model.response.Response;
 import com.nguyenmanhphuc.storehubapp.services.ApiServices;
 import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
+import com.nguyenmanhphuc.storehubapp.utils.DataCache;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -71,6 +72,9 @@ public class OderFragment extends Fragment {
     private final ArrayList<CartItem> loadedCartItems = new ArrayList<>();
     private final ArrayList<Order> loadedOrders = new ArrayList<>();
     private String selectedFilter = FILTER_ALL;
+    private static final long ORDERS_TTL_MS = 60 * 1000L; // 1 phút
+    private static final String CACHE_ORDERS = "user_orders";
+    private static final String CACHE_CART   = "user_cart";
 
     @Nullable
     @Override
@@ -85,7 +89,22 @@ public class OderFragment extends Fragment {
         initUi(view);
         initListener();
 
-        loadOrdersAndCart();
+        // Stale-While-Revalidate: hiện cache cũ ngay nếu có, rồi fetch mới ở background
+        ArrayList<Order> cachedOrders = DataCache.get().get(CACHE_ORDERS, ArrayList.class);
+        ArrayList<CartItem> cachedCart = DataCache.get().get(CACHE_CART, ArrayList.class);
+        if (cachedOrders != null) {
+            loadedOrders.clear();
+            loadedOrders.addAll(cachedOrders);
+            if (cachedCart != null) {
+                loadedCartItems.clear();
+                loadedCartItems.addAll(cachedCart);
+            }
+            renderFilteredOrders();
+            // Fetch ngầm ở background để cập nhật nếu có thay đổi
+            fetchOrdersInBackground();
+        } else {
+            loadOrdersAndCart();
+        }
     }
 
     private void initUi(View view) {
@@ -101,7 +120,12 @@ public class OderFragment extends Fragment {
 
         if (swipeRefreshLayout != null) {
             swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.dark_green));
-            swipeRefreshLayout.setOnRefreshListener(this::loadOrdersAndCart);
+            swipeRefreshLayout.setOnRefreshListener(() -> {
+                // SwipeRefresh: xóa cache và buộc fetch mới
+                DataCache.get().invalidate(CACHE_ORDERS);
+                DataCache.get().invalidateExact(CACHE_CART);
+                loadOrdersAndCart();
+            });
         }
     }
 
@@ -131,40 +155,39 @@ public class OderFragment extends Fragment {
     }
 
     private void loadOrdersAndCart() {
+        if (!isAdded()) return;
         setLoading(true);
 
-        if (cartCall != null) {
-            cartCall.cancel();
-        }
-        if (ordersCall != null) {
-            ordersCall.cancel();
-        }
+        if (cartCall != null) cartCall.cancel();
+        if (ordersCall != null) ordersCall.cancel();
 
-        // 1. Lấy dữ liệu Giỏ hàng để kiểm tra mục tạm
-        cartCall = apiService.getCart(HttpResquest.authorizationHeader(requireContext()));
+        // Capture token TRƯỜC khi vào callback
+        final String authHeader = HttpResquest.authorizationHeader(requireContext());
+
+        cartCall = apiService.getCart(authHeader);
         cartCall.enqueue(new Callback<Response<ArrayList<CartItem>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<CartItem>>> call,
                                    @NonNull retrofit2.Response<Response<ArrayList<CartItem>>> response) {
+                if (call.isCanceled() || !isAdded()) return;
                 final ArrayList<CartItem> cartItems = new ArrayList<>();
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     cartItems.addAll(response.body().getData());
                 }
-
-                // 2. Lấy danh sách Đơn hàng thật từ Server
-                fetchRealOrders(cartItems);
+                fetchRealOrders(cartItems, authHeader);
             }
 
             @Override
             public void onFailure(@NonNull Call<Response<ArrayList<CartItem>>> call, @NonNull Throwable t) {
-                if (call.isCanceled()) return;
-                fetchRealOrders(new ArrayList<>());
+                if (call.isCanceled() || !isAdded()) return;
+                fetchRealOrders(new ArrayList<>(), authHeader);
             }
         });
     }
 
-    private void fetchRealOrders(final ArrayList<CartItem> cartItems) {
-        ordersCall = apiService.getOrders(HttpResquest.authorizationHeader(requireContext()));
+    private void fetchRealOrders(final ArrayList<CartItem> cartItems, final String authHeader) {
+        if (!isAdded()) return;
+        ordersCall = apiService.getOrders(authHeader);
 
         ordersCall.enqueue(new Callback<Response<ArrayList<Order>>>() {
             @Override
@@ -174,7 +197,9 @@ public class OderFragment extends Fragment {
                 ArrayList<Order> orders = new ArrayList<>();
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     orders = response.body().getData();
-                    Log.d("OderFragment", "Orders: " + orders);
+                    // Lưu vào cache với TTL 1 phút
+                    DataCache.get().put(CACHE_ORDERS, orders, ORDERS_TTL_MS);
+                    DataCache.get().put(CACHE_CART, cartItems, ORDERS_TTL_MS);
                 }
                 loadedCartItems.clear();
                 loadedCartItems.addAll(cartItems);
@@ -185,16 +210,66 @@ public class OderFragment extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<Response<ArrayList<Order>>> call, @NonNull Throwable t) {
-                if (call.isCanceled()) return;
-                if (!isAdded()) return;
+                if (call.isCanceled() || !isAdded()) return;
                 setLoading(false);
-                Log.e("OderFragment", "Error fetching orders", t);
                 loadedCartItems.clear();
                 loadedCartItems.addAll(cartItems);
                 loadedOrders.clear();
                 renderFilteredOrders();
             }
         });
+    }
+
+    /**
+     * Fetch đơn hàng ngầm ở background (Stale-While-Revalidate).
+     * Không hiện spinner — chỉ cập nhật UI nếu data có thay đổi.
+     */
+    private void fetchOrdersInBackground() {
+        if (!isAdded()) return;
+        // Lấy token TRƯỚC khi vào callback để tránh gọi requireContext() khi Fragment đã detach
+        final String authHeader = HttpResquest.authorizationHeader(requireContext());
+        apiService.getCart(authHeader)
+                .enqueue(new Callback<Response<ArrayList<CartItem>>>() {
+                    @Override
+                    public void onResponse(@NonNull Call<Response<ArrayList<CartItem>>> call,
+                                           @NonNull retrofit2.Response<Response<ArrayList<CartItem>>> cartResp) {
+                        // Guard: Fragment có thể đã bị detach khi callback trả về
+                        if (!isAdded()) return;
+                        final ArrayList<CartItem> freshCart = new ArrayList<>();
+                        if (cartResp.isSuccessful() && cartResp.body() != null && cartResp.body().getData() != null) {
+                            freshCart.addAll(cartResp.body().getData());
+                        }
+                        // Dùng lại authHeader đã capture, không gọi requireContext() lại
+                        apiService.getOrders(authHeader)
+                                .enqueue(new Callback<Response<ArrayList<Order>>>() {
+                                    @Override
+                                    public void onResponse(@NonNull Call<Response<ArrayList<Order>>> call2,
+                                                           @NonNull retrofit2.Response<Response<ArrayList<Order>>> ordersResp) {
+                                        if (!isAdded()) return;
+                                        if (ordersResp.isSuccessful() && ordersResp.body() != null && ordersResp.body().getData() != null) {
+                                            ArrayList<Order> freshOrders = ordersResp.body().getData();
+                                            // Cập nhật cache
+                                            DataCache.get().put(CACHE_ORDERS, freshOrders, ORDERS_TTL_MS);
+                                            DataCache.get().put(CACHE_CART, freshCart, ORDERS_TTL_MS);
+                                            // Chỉ re-render nếu data đã thay đổi (so sánh size đơn giản)
+                                            boolean ordersChanged = freshOrders.size() != loadedOrders.size();
+                                            boolean cartChanged   = freshCart.size() != loadedCartItems.size();
+                                            if (ordersChanged || cartChanged) {
+                                                loadedOrders.clear();
+                                                loadedOrders.addAll(freshOrders);
+                                                loadedCartItems.clear();
+                                                loadedCartItems.addAll(freshCart);
+                                                renderFilteredOrders();
+                                            }
+                                        }
+                                    }
+                                    @Override
+                                    public void onFailure(@NonNull Call<Response<ArrayList<Order>>> call2, @NonNull Throwable t) { /* silent */ }
+                                });
+                    }
+                    @Override
+                    public void onFailure(@NonNull Call<Response<ArrayList<CartItem>>> call, @NonNull Throwable t) { /* silent */ }
+                });
     }
 
     private void selectFilter(String filter) {
@@ -455,6 +530,7 @@ public class OderFragment extends Fragment {
         }
 
         Intent intent = new Intent(requireContext(), destination);
+        order.resolveFields(); // Giai ma JsonElement truoc khi truyen qua Intent
         intent.putExtra("order_data", order);
         startActivity(intent);
     }
@@ -516,6 +592,7 @@ public class OderFragment extends Fragment {
     }
 
     private void executeCancelOrder(Order order, String reason) {
+        if (!isAdded()) return;
         LoadingDialogHelper loadingDialog = new LoadingDialogHelper(requireContext());
         loadingDialog.setMessage(getString(R.string.cancelling_order));
         loadingDialog.show();
@@ -524,18 +601,21 @@ public class OderFragment extends Fragment {
             @Override
             public void onResponse(@NonNull Call<Response<Order>> call, @NonNull retrofit2.Response<Response<Order>> response) {
                 loadingDialog.dismiss();
+                if (!isAdded() || getContext() == null) return;
                 if (response.isSuccessful()) {
-                    Toast.makeText(requireContext(), getString(R.string.cancel_order_success_toast), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.cancel_order_success_toast), Toast.LENGTH_SHORT).show();
+                    DataCache.get().invalidate(CACHE_ORDERS);
                     loadOrdersAndCart();
                 } else {
-                    Toast.makeText(requireContext(), getString(R.string.cancel_order_failed_toast), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.cancel_order_failed_toast), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<Response<Order>> call, @NonNull Throwable t) {
                 loadingDialog.dismiss();
-                Toast.makeText(requireContext(), getString(R.string.cannot_connect_server_toast), Toast.LENGTH_SHORT).show();
+                if (!isAdded() || getContext() == null) return;
+                Toast.makeText(getContext(), getString(R.string.cannot_connect_server_toast), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -551,6 +631,7 @@ public class OderFragment extends Fragment {
     }
 
     private void executeClearCart() {
+        if (!isAdded()) return;
         LoadingDialogHelper loadingDialog = new LoadingDialogHelper(requireContext());
         loadingDialog.setMessage(getString(R.string.removing_temp_cart));
         loadingDialog.show();
@@ -558,18 +639,22 @@ public class OderFragment extends Fragment {
             @Override
             public void onResponse(@NonNull Call<Response<Object>> call, @NonNull retrofit2.Response<Response<Object>> response) {
                 loadingDialog.dismiss();
+                if (!isAdded() || getContext() == null) return;
                 if (response.isSuccessful()) {
-                    Toast.makeText(requireContext(), getString(R.string.clear_temp_cart_success_toast), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.clear_temp_cart_success_toast), Toast.LENGTH_SHORT).show();
+                    DataCache.get().invalidateExact(CACHE_CART);
+                    DataCache.get().invalidateExact("user_cart");
                     loadOrdersAndCart();
                 } else {
-                    Toast.makeText(requireContext(), getString(R.string.clear_temp_cart_failed_toast), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.clear_temp_cart_failed_toast), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<Response<Object>> call, @NonNull Throwable t) {
                 loadingDialog.dismiss();
-                Toast.makeText(requireContext(), getString(R.string.cannot_connect_server_toast), Toast.LENGTH_SHORT).show();
+                if (!isAdded() || getContext() == null) return;
+                Toast.makeText(getContext(), getString(R.string.cannot_connect_server_toast), Toast.LENGTH_SHORT).show();
             }
         });
     }

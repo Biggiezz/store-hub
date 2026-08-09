@@ -32,6 +32,7 @@ import com.nguyenmanhphuc.storehubapp.admin.ProductFormManagementActivity;
 import com.nguyenmanhphuc.storehubapp.utils.SharedPreferencesManager;
 import com.nguyenmanhphuc.storehubapp.services.ApiServices;
 import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
+import com.nguyenmanhphuc.storehubapp.utils.DataCache;
 import com.google.android.material.button.MaterialButton;
 import android.content.Intent;
 import com.nguyenmanhphuc.storehubapp.auth.LoginActivity;
@@ -460,6 +461,8 @@ public class ProductDetailActivity extends BaseActivity {
                         : result.getMessage();
 
                 MainActivity.shouldOpenCartOnResume = true;
+                // Xóa cache giỏ hàng → lần sau vào Cart sẽ thấy sản phẩm mới
+                DataCache.get().invalidateExact("user_cart");
 
                 Toast.makeText(ProductDetailActivity.this, message, Toast.LENGTH_SHORT).show();
                 runFlyToCartAnimation(btnAddToCart, btnHeaderCart != null ? btnHeaderCart : btnHeaderCartContainer);

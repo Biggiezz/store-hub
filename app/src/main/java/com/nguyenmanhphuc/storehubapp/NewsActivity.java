@@ -23,6 +23,7 @@ import com.nguyenmanhphuc.storehubapp.adapter.NewsAdapter;
 import com.nguyenmanhphuc.storehubapp.model.News;
 import com.nguyenmanhphuc.storehubapp.model.response.Response;
 import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
+import com.nguyenmanhphuc.storehubapp.utils.DataCache;
 
 import java.util.ArrayList;
 
@@ -44,6 +45,7 @@ public class NewsActivity extends AppCompatActivity {
     private SwipeRefreshLayout swipeRefreshLayout;
     private boolean isLoading = false;
     private boolean hasReachedEnd = false;
+    private static final String CACHE_KEY = "user_news";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +66,15 @@ public class NewsActivity extends AppCompatActivity {
         setUpAdapter();
         setUpListener();
 
-        loadNews(1);
+        // Nếu cache còn hợp lệ → hiện data ngay, không fetch
+        ArrayList<News> cached = DataCache.get().get(CACHE_KEY, ArrayList.class);
+        if (cached != null && !cached.isEmpty()) {
+            newsAdapter.updateData(cached);
+            if (progressBarNews != null) progressBarNews.setVisibility(View.GONE);
+            if (rvAllNews != null) rvAllNews.setVisibility(View.VISIBLE);
+        } else {
+            loadNews(1);
+        }
     }
 
     private void initUi() {
@@ -80,6 +90,7 @@ public class NewsActivity extends AppCompatActivity {
             swipeRefreshLayout.setOnRefreshListener(() -> {
                 currentPage = 1;
                 hasReachedEnd = false;
+                DataCache.get().invalidate(CACHE_KEY);
                 loadNews(1);
             });
         }
@@ -162,6 +173,8 @@ public class NewsActivity extends AppCompatActivity {
                     }
                     if (page == 1) {
                         newsAdapter.updateData(news);
+                        // Cache trang 1 (danh sách mặc định)
+                        DataCache.get().put(CACHE_KEY, new ArrayList<>(news));
                     } else {
                         newsAdapter.addData(news);
                     }

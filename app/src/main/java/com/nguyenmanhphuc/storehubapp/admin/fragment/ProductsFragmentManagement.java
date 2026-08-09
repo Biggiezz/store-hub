@@ -34,6 +34,7 @@ import com.nguyenmanhphuc.storehubapp.model.Product;
 import com.nguyenmanhphuc.storehubapp.model.Category;
 import com.nguyenmanhphuc.storehubapp.model.response.Response;
 import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
+import com.nguyenmanhphuc.storehubapp.utils.DataCache;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -62,6 +63,7 @@ public class ProductsFragmentManagement extends Fragment {
     private boolean isLoading = false;
     private ProgressBar progressBarLoadMore;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private static final String CACHE_KEY = "admin_products";
 
     @Nullable
     @Override
@@ -103,6 +105,8 @@ public class ProductsFragmentManagement extends Fragment {
             swipeRefreshLayout.setOnRefreshListener(() -> {
                 currentPage = 1;
                 allProducts.clear();
+                // Xóa cache để đảm bảo dữ liệu mới nhất
+                DataCache.get().invalidate(CACHE_KEY);
                 loadProducts();
             });
         }
@@ -136,7 +140,19 @@ public class ProductsFragmentManagement extends Fragment {
         add.setOnClickListener(v -> startActivity(ProductFormManagementActivity.createAddIntent(requireContext())));
     }
 
-    @Override public void onResume() { super.onResume(); loadProducts(); }
+    @Override public void onResume() {
+        super.onResume();
+        // Nếu cache còn hợp lệ và chưa có dữ liệu → dùng cache ngay
+        ArrayList<Product> cached = DataCache.get().get(CACHE_KEY, ArrayList.class);
+        if (cached != null && !cached.isEmpty() && allProducts.isEmpty()) {
+            allProducts.addAll(cached);
+            if (adapter != null) adapter.submitList(new ArrayList<>(allProducts));
+            if (progressBar != null) progressBar.setVisibility(View.GONE);
+            if (grid != null) grid.setVisibility(View.VISIBLE);
+        } else {
+            loadProducts();
+        }
+    }
 
     private void loadCategoriesFromServer() {
         new HttpResquest().callAPI().getCategories().enqueue(new Callback<Response<ArrayList<Category>>>() {
@@ -272,6 +288,11 @@ public class ProductsFragmentManagement extends Fragment {
                     if (newData != null) {
                         allProducts.addAll(newData);
                         adapter.submitList(allProducts);
+                        // Cache kết quả trang 1 mặc định (không search, không filter)
+                        String keyword = searchInput == null ? "" : searchInput.getText().toString().trim();
+                        if (currentPage == 1 && keyword.isEmpty() && selectedCategory.isEmpty()) {
+                            DataCache.get().put(CACHE_KEY, new ArrayList<>(allProducts));
+                        }
                     }
                     Pagination pagination = response.body().getPagination();
                     totalPages = pagination == null ? 1 : Math.max(1, pagination.getTotalPages());
