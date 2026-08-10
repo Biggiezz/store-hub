@@ -277,14 +277,17 @@ public class AdminHomeFragment extends Fragment {
         completedCalls = 0;
         // Xóa cache dashboard khi refresh thủ công
         DataCache.get().invalidate("admin_dashboard");
+        DataCache.get().invalidate("admin_dashboard_products");
+        DataCache.get().invalidate("admin_dashboard_users");
         showSkeletonAll();
         fetchDashboardStats();
         fetchProductCount();
+        fetchUserCount();
     }
 
     private synchronized void checkRefreshComplete() {
         completedCalls++;
-        if (completedCalls >= 2) {
+        if (completedCalls >= 3) {
             if (swipeRefreshLayout != null) {
                 swipeRefreshLayout.setRefreshing(false);
             }
@@ -354,6 +357,7 @@ public class AdminHomeFragment extends Fragment {
         new HttpResquest().callAPI().getListUsers(token).enqueue(new Callback<Response<ArrayList<User>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<User>>> call, @NonNull retrofit2.Response<Response<ArrayList<User>>> response) {
+                checkRefreshComplete();
                 if (!isAdded()) return;
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null && cardUsers != null) {
                     ArrayList<User> allUsers = response.body().getData();
@@ -381,6 +385,7 @@ public class AdminHomeFragment extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<Response<ArrayList<com.nguyenmanhphuc.storehubapp.model.User>>> call, @NonNull Throwable t) {
+                checkRefreshComplete();
                 if (!isAdded()) return;
                 showSkeleton(cardUsers, false);
             }
