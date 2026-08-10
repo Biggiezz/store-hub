@@ -270,6 +270,17 @@
                         android:textColor="#A73B3B"
                         android:textSize="13sp"
                         android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/tvAdminDetailDisputeReason"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:background="@drawable/bg_order_status_cancelled"
+                        android:padding="14dp"
+                        android:textColor="#A73B3B"
+                        android:textSize="13sp"
+                        android:visibility="gone" />
                 </LinearLayout>
             </androidx.core.widget.NestedScrollView>
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

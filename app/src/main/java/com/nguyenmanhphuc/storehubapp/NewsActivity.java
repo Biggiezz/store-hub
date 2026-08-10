@@ -72,6 +72,7 @@ public class NewsActivity extends AppCompatActivity {
             newsAdapter.updateData(cached);
             if (progressBarNews != null) progressBarNews.setVisibility(View.GONE);
             if (rvAllNews != null) rvAllNews.setVisibility(View.VISIBLE);
+            checkIfNeedMoreData();
         } else {
             loadNews(1);
         }
@@ -178,6 +179,7 @@ public class NewsActivity extends AppCompatActivity {
                     } else {
                         newsAdapter.addData(news);
                     }
+                    checkIfNeedMoreData();
                 } else {
                     showLoadFailure(requestGeneration, getString(R.string.toast_news_list_failed), null);
                 }
@@ -209,6 +211,19 @@ public class NewsActivity extends AppCompatActivity {
         } else if (error != null) {
             Toast.makeText(this, this.getString(R.string.toast_khong_the_ket_noi_den_may_chu), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void checkIfNeedMoreData() {
+        if (rvAllNews == null) return;
+        rvAllNews.post(() -> {
+            if (isFinishing() || isDestroyed()) return;
+            if (!isLoading && !hasReachedEnd) {
+                // canScrollVertically(1) trả về false nếu nội dung không thể cuộn xuống thêm (chưa lấp đầy màn hình)
+                if (!rvAllNews.canScrollVertically(1)) {
+                    loadNextPage();
+                }
+            }
+        });
     }
 
     @Override

@@ -31,9 +31,13 @@ public class Order implements Serializable {
             new ObjectStreamField("confirmedAt", String.class),
             new ObjectStreamField("warehouseAt", String.class),
             new ObjectStreamField("deliveringAt", String.class),
+            new ObjectStreamField("deliveredAt", String.class),
             new ObjectStreamField("completedAt", String.class),
             new ObjectStreamField("cancelReason", String.class),
+            new ObjectStreamField("disputeReason", String.class),
+            new ObjectStreamField("disputedAt", String.class),
             new ObjectStreamField("isReviewed", boolean.class),
+            new ObjectStreamField("isCustomerConfirmed", boolean.class),
             new ObjectStreamField("appTransId", String.class),
             new ObjectStreamField("zpTransId", String.class),
             new ObjectStreamField("timeline", ArrayList.class)
@@ -117,6 +121,21 @@ public class Order implements Serializable {
     // Thời điểm đơn hàng được giao thành công / hoàn thành
     @SerializedName("completedAt")
     private String completedAt;
+
+    // Thời điểm shipper giao hàng thành công đến địa chỉ
+    @SerializedName("deliveredAt")
+    private String deliveredAt;
+
+    // Lý do khiếu nại (nếu có)
+    @SerializedName("disputeReason")
+    private String disputeReason;
+
+    // Thời điểm đơn hàng bị khiếu nại
+    @SerializedName("disputedAt")
+    private String disputedAt;
+
+    @SerializedName("isCustomerConfirmed")
+    private boolean isCustomerConfirmed;
 
     // Lý do hủy đơn hàng (nếu có)
     @SerializedName("cancelReason")
@@ -362,12 +381,44 @@ public class Order implements Serializable {
         this.completedAt = completedAt;
     }
 
+    public String getDeliveredAt() {
+        return deliveredAt;
+    }
+
+    public void setDeliveredAt(String deliveredAt) {
+        this.deliveredAt = deliveredAt;
+    }
+
+    public String getDisputeReason() {
+        return disputeReason != null ? disputeReason : "";
+    }
+
+    public void setDisputeReason(String disputeReason) {
+        this.disputeReason = disputeReason;
+    }
+
+    public String getDisputedAt() {
+        return disputedAt;
+    }
+
+    public void setDisputedAt(String disputedAt) {
+        this.disputedAt = disputedAt;
+    }
+
     public boolean isReviewed() {
         return isReviewed;
     }
 
     public void setReviewed(boolean reviewed) {
         isReviewed = reviewed;
+    }
+
+    public boolean isCustomerConfirmed() {
+        return isCustomerConfirmed;
+    }
+
+    public void setCustomerConfirmed(boolean customerConfirmed) {
+        isCustomerConfirmed = customerConfirmed;
     }
 
     public String getAppTransId() {
@@ -414,9 +465,13 @@ public class Order implements Serializable {
         putFields.put("confirmedAt", confirmedAt);
         putFields.put("warehouseAt", warehouseAt);
         putFields.put("deliveringAt", deliveringAt);
+        putFields.put("deliveredAt", deliveredAt);
         putFields.put("completedAt", completedAt);
         putFields.put("cancelReason", cancelReason);
+        putFields.put("disputeReason", disputeReason);
+        putFields.put("disputedAt", disputedAt);
         putFields.put("isReviewed", isReviewed);
+        putFields.put("isCustomerConfirmed", isCustomerConfirmed);
         putFields.put("appTransId", appTransId);
         putFields.put("zpTransId", zpTransId);
         putFields.put("timeline", timeline);
@@ -457,9 +512,13 @@ public class Order implements Serializable {
         confirmedAt = (String) getFields.get("confirmedAt", null);
         warehouseAt = (String) getFields.get("warehouseAt", null);
         deliveringAt = (String) getFields.get("deliveringAt", null);
+        deliveredAt = (String) getFields.get("deliveredAt", null);
         completedAt = (String) getFields.get("completedAt", null);
         cancelReason = (String) getFields.get("cancelReason", null);
+        disputeReason = (String) getFields.get("disputeReason", null);
+        disputedAt = (String) getFields.get("disputedAt", null);
         isReviewed = getFields.get("isReviewed", false);
+        isCustomerConfirmed = getFields.get("isCustomerConfirmed", false);
         appTransId = (String) getFields.get("appTransId", null);
         zpTransId = (String) getFields.get("zpTransId", null);
         timeline = (ArrayList<TimelineStep>) getFields.get("timeline", null);

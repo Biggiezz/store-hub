@@ -310,6 +310,39 @@
                 android:layout_marginTop="16dp" />
 
 
+            <LinearLayout
+                android:id="@+id/layoutCustomerActions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/btnConfirmReceipt"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="24dp"
+                    android:background="@drawable/bg_button"
+                    android:fontFamily="@font/shopee_display"
+                    android:gravity="center"
+                    android:text="Đã nhận hàng"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/btnDisputeOrder"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_detail_secondary_button"
+                    android:gravity="center"
+                    android:text="Chưa nhận được hàng / Khiếu nại"
+                    android:textColor="#C62828"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="56dp"

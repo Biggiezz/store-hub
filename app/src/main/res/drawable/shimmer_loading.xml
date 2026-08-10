@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt">
+
+    <aapt:attr name="android:drawable">
+        <vector
+            android:width="400dp"
+            android:height="100dp"
+            android:viewportWidth="400"
+            android:viewportHeight="100">
+            <path
+                android:name="shimmerPath"
+                android:fillColor="#E0E0E0"
+                android:pathData="M0,0 L400,0 L400,100 L0,100 Z" />
+            <path
+                android:name="shimmerHighlight"
+                android:fillColor="#F5F5F5"
+                android:pathData="M-100,0 L-60,0 L-20,100 L-60,100 Z" />
+        </vector>
+    </aapt:attr>
+
+    <target android:name="shimmerHighlight">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:duration="1200"
+                android:interpolator="@android:interpolator/linear"
+                android:propertyName="translateX"
+                android:repeatCount="infinite"
+                android:repeatMode="restart"
+                android:valueFrom="-100"
+                android:valueTo="500"
+                android:valueType="floatType" />
+        </aapt:attr>
+    </target>
+</animated-vector>

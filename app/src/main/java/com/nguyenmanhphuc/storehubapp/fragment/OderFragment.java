@@ -296,12 +296,14 @@ public class OderFragment extends Fragment {
         if (FILTER_SHIPPING.equals(selectedFilter)) {
             return "Đã xác nhận".equalsIgnoreCase(status)
                     || "Đã rời kho".equalsIgnoreCase(status)
-                    || "Đang giao hàng".equalsIgnoreCase(status);
+                    || "Đang giao hàng".equalsIgnoreCase(status)
+                    || "Đã giao hàng".equalsIgnoreCase(status)
+                    || "Khiếu nại".equalsIgnoreCase(status);
         }
         if (FILTER_COMPLETED.equals(selectedFilter)) {
-            return "Đã giao hàng".equalsIgnoreCase(status)
-                    || "Đã hoàn thành".equalsIgnoreCase(status)
-                    || "completed".equalsIgnoreCase(status);
+            return "Đã hoàn thành".equalsIgnoreCase(status)
+                    || "completed".equalsIgnoreCase(status)
+                    || "done".equalsIgnoreCase(status);
         }
         return "Đã hủy".equalsIgnoreCase(status)
                 || "cancelled".equalsIgnoreCase(status)
@@ -336,7 +338,13 @@ public class OderFragment extends Fragment {
         if ("Đang giao hàng".equalsIgnoreCase(status) || "Shipping".equalsIgnoreCase(status)) {
             return getString(R.string.status_shipping);
         }
-        if ("Đã giao hàng".equalsIgnoreCase(status) || "Đã hoàn thành".equalsIgnoreCase(status) || "Completed".equalsIgnoreCase(status)) {
+        if ("Đã giao hàng".equalsIgnoreCase(status) || "Delivered".equalsIgnoreCase(status)) {
+            return "Đã giao hàng";
+        }
+        if ("Khiếu nại".equalsIgnoreCase(status) || "Disputed".equalsIgnoreCase(status)) {
+            return "Khiếu nại";
+        }
+        if ("Đã hoàn thành".equalsIgnoreCase(status) || "Completed".equalsIgnoreCase(status)) {
             return getString(R.string.status_completed);
         }
         if ("Đã hủy".equalsIgnoreCase(status) || "Cancelled".equalsIgnoreCase(status)) {
@@ -447,6 +455,18 @@ public class OderFragment extends Fragment {
                 btnCancelOrder.setVisibility(View.VISIBLE);
                 btnCancelOrder.setText(getString(R.string.btn_cancel_order));
                 btnCancelOrder.setOnClickListener(v -> showCancelOrderDialog(order));
+            } else if ("Đã giao hàng".equalsIgnoreCase(status)) {
+                tvOrderStatus.setText(getLocalizedStatus(status));
+                tvOrderStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_check_done, 0, 0, 0);
+                tvOrderStatus.setTextColor(Color.parseColor("#2E7D32"));
+                tvOrderStatus.setBackgroundResource(R.drawable.bg_status_completed);
+                btnCancelOrder.setVisibility(View.GONE);
+            } else if ("Khiếu nại".equalsIgnoreCase(status)) {
+                tvOrderStatus.setText(getLocalizedStatus(status));
+                tvOrderStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_reject, 0, 0, 0);
+                tvOrderStatus.setTextColor(Color.parseColor("#C62828"));
+                tvOrderStatus.setBackgroundResource(R.drawable.bg_status_cancelled);
+                btnCancelOrder.setVisibility(View.GONE);
             } else {
                 tvOrderStatus.setText(status != null ? getLocalizedStatus(status) : getString(R.string.status_shipping));
                 tvOrderStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_car_waiting, 0, 0, 0);
@@ -525,18 +545,14 @@ public class OderFragment extends Fragment {
         }
     }
 
-    private void openCartScreen() {
-        startActivity(new Intent(getActivity(), CartActivity.class));
-    }
-
     private void openOrderDetail(Order order) {
         if (order == null) return;
         Class<? extends AppCompatActivity> destination;
         String status = order.getStatus();
-        if ("Đã hoàn thành".equalsIgnoreCase(status)
-                || "Đã giao hàng".equalsIgnoreCase(status)
+        if (("Đã hoàn thành".equalsIgnoreCase(status)
                 || "completed".equalsIgnoreCase(status)
-                || "done".equalsIgnoreCase(status)) {
+                || "done".equalsIgnoreCase(status))
+                && order.isCustomerConfirmed()) {
             destination = CompletedOrderDetailActivity.class;
         } else if ("Đã hủy".equalsIgnoreCase(status)
                 || "cancelled".equalsIgnoreCase(status)

@@ -63,6 +63,7 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
     private Call<Response<Order>> currentCall;
     private String orderId;
     private Order currentOrder;
+    private TextView disputeReasonView;
 
     public static Intent createIntent(Context context, String orderId) {
         return new Intent(context, AdminOrderDetailActivity.class)
@@ -115,6 +116,7 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
         shippingFeeView = findViewById(R.id.tvAdminDetailShippingFee);
         totalView = findViewById(R.id.tvAdminDetailTotal);
         cancelReasonView = findViewById(R.id.tvAdminDetailCancelReason);
+        disputeReasonView = findViewById(R.id.tvAdminDetailDisputeReason);
         updateStatusButton = findViewById(R.id.btnAdminDetailUpdateStatus);
         progressBar = findViewById(R.id.progressAdminOrderDetail);
 
@@ -279,7 +281,7 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
 
         String status = order.getStatus();
         statusView.setText(getLocalizedStatus(status));
-        statusView.setBackgroundResource("Đã hủy".equals(status)
+        statusView.setBackgroundResource(("Đã hủy".equals(status) || "Khiếu nại".equalsIgnoreCase(status))
                 ? R.drawable.bg_order_status_cancelled
                 : R.drawable.bg_status_dark);
 
@@ -317,6 +319,18 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
         } else {
             cancelReasonView.setVisibility(View.GONE);
         }
+
+        if ("Khiếu nại".equalsIgnoreCase(status)) {
+            if (disputeReasonView != null) {
+                disputeReasonView.setVisibility(View.VISIBLE);
+                String reason = order.getDisputeReason();
+                disputeReasonView.setText("Lý do khiếu nại: " + (reason.isEmpty() ? getString(R.string.no_info) : reason));
+            }
+        } else {
+            if (disputeReasonView != null) {
+                disputeReasonView.setVisibility(View.GONE);
+            }
+        }
     }
 
     private String normalizeStatus(String status) {
@@ -333,6 +347,12 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
         }
         if (s.contains("đang giao hàng") || s.contains("shipping") || s.contains("delivering")) {
             return "Đang giao hàng";
+        }
+        if (s.contains("đã giao hàng") || s.contains("delivered")) {
+            return "Đã giao hàng";
+        }
+        if (s.contains("khiếu nại") || s.contains("disputed") || s.contains("dispute") || s.contains("complain")) {
+            return "Khiếu nại";
         }
         if (s.contains("đã hoàn thành") || s.contains("completed") || s.contains("done")) {
             return "Đã hoàn thành";
@@ -357,7 +377,13 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
         if ("Đang giao hàng".equalsIgnoreCase(status) || "Shipping".equalsIgnoreCase(status)) {
             return getString(R.string.status_shipping);
         }
-        if ("Đã giao hàng".equalsIgnoreCase(status) || "Đã hoàn thành".equalsIgnoreCase(status) || "Completed".equalsIgnoreCase(status)) {
+        if ("Đã giao hàng".equalsIgnoreCase(status) || "Delivered".equalsIgnoreCase(status)) {
+            return "Đã giao hàng";
+        }
+        if ("Khiếu nại".equalsIgnoreCase(status) || "Disputed".equalsIgnoreCase(status)) {
+            return "Khiếu nại";
+        }
+        if ("Đã hoàn thành".equalsIgnoreCase(status) || "Completed".equalsIgnoreCase(status)) {
             return getString(R.string.status_completed);
         }
         if ("Đã hủy".equalsIgnoreCase(status) || "Cancelled".equalsIgnoreCase(status)) {
@@ -371,6 +397,8 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
             "Đã xác nhận",
             "Đã rời kho",
             "Đang giao hàng",
+            "Đã giao hàng",
+            "Khiếu nại",
             "Đã hoàn thành",
             "Đã hủy"
     };
@@ -391,10 +419,24 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
 
         @Override
         public boolean isEnabled(int position) {
-            if (position == cancelIndex) {
-                return isSuperAdmin && (currentStatusIndex == 0 || currentStatusIndex == 1);
+            String targetStatus = getItem(position);
+            String normCurrent = normalizeStatus(currentOrder != null ? currentOrder.getStatus() : "");
+            String normTarget = normalizeStatus(targetStatus);
+            
+            if (normCurrent.equals(normTarget)) return false;
+            
+            if ("Đã hủy".equals(normTarget)) {
+                return isSuperAdmin && ("Chờ xác nhận".equals(normCurrent) || "Đã xác nhận".equals(normCurrent) || "Khiếu nại".equals(normCurrent));
             }
-            return position == nextValidIndex;
+            
+            if ("Chờ xác nhận".equals(normCurrent) && "Đã xác nhận".equals(normTarget)) return true;
+            if ("Đã xác nhận".equals(normCurrent) && "Đã rời kho".equals(normTarget)) return true;
+            if ("Đã rời kho".equals(normCurrent) && "Đang giao hàng".equals(normTarget)) return true;
+            if ("Đang giao hàng".equals(normCurrent) && ("Đã giao hàng".equals(normTarget) || "Đã hoàn thành".equals(normTarget))) return true;
+            if ("Đã giao hàng".equals(normCurrent) && ("Đã hoàn thành".equals(normTarget) || "Khiếu nại".equals(normTarget))) return true;
+            if ("Khiếu nại".equals(normCurrent) && ("Đang giao hàng".equals(normTarget) || "Đã hoàn thành".equals(normTarget))) return true;
+            
+            return false;
         }
 
         @androidx.annotation.NonNull
@@ -441,7 +483,7 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
 
         int cancelIndex = 5;
 
-        if (currentStatusIndex == 4 || currentStatusIndex == 5) {
+        if ("Đã hoàn thành".equals(normalized) || "Đã hủy".equals(normalized)) {
             Toast.makeText(this, this.getString(R.string.toast_don_hang_da_o_trang_thai_cuoi_cung_khong), Toast.LENGTH_SHORT).show();
             return;
         }
@@ -451,7 +493,7 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
 
         final int finalCurrentStatusIndex = currentStatusIndex;
         final int[] selectedIndex = {finalCurrentStatusIndex};
-        StatusAdapter adapter = new StatusAdapter(this, allStatuses, finalCurrentStatusIndex, nextValidIndex, cancelIndex, isSuperAdmin);
+        StatusAdapter adapter = new StatusAdapter(this, allStatuses, finalCurrentStatusIndex, -1, -1, isSuperAdmin);
 
         new AlertDialog.Builder(this)
                 .setTitle(String.format(getString(R.string.update_status_title), currentOrder.getOrderCode()))

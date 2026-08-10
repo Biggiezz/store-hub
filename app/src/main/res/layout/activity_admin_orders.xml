@@ -126,6 +126,12 @@
                 android:text="@string/xml_da_hoan_thanh" />
 
             <TextView
+                android:id="@+id/tvFilterDisputed"
+                style="@style/Widget.StoreHub.OrderFilter"
+                android:layout_marginStart="10dp"
+                android:text="Khiếu nại" />
+
+            <TextView
                 android:id="@+id/tvFilterCancelled"
                 style="@style/Widget.StoreHub.OrderFilter"
                 android:layout_marginStart="10dp"

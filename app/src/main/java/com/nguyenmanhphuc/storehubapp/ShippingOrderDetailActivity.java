@@ -52,8 +52,8 @@ public class ShippingOrderDetailActivity extends BaseActivity {
 
     private ImageView btnBack;
     private Order order;
-    private LinearLayout layoutConfirmed, layoutWarehouse, layoutDelivering, layoutCompleted, layoutStatusHeader;
-    private View btnCancelOrder;
+    private LinearLayout layoutConfirmed, layoutWarehouse, layoutDelivering, layoutCompleted, layoutStatusHeader, layoutCustomerActions;
+    private View btnCancelOrder, btnConfirmReceipt, btnDisputeOrder;
     private ImageView ivConfirmed, ivWarehouse, ivDelivering, ivCompleted;
     private RecyclerView rvOrderProducts;
     private OrderProductAdapter adapter;
@@ -105,6 +105,9 @@ public class ShippingOrderDetailActivity extends BaseActivity {
         rvOrderProducts = findViewById(R.id.rvOrderProducts);
         btnCancelOrder = findViewById(R.id.btnCancelOrder);
         layoutStatusHeader = findViewById(R.id.layoutStatusHeader);
+        layoutCustomerActions = findViewById(R.id.layoutCustomerActions);
+        btnConfirmReceipt = findViewById(R.id.btnConfirmReceipt);
+        btnDisputeOrder = findViewById(R.id.btnDisputeOrder);
     }
 
     private void setUpListener() {
@@ -117,6 +120,12 @@ public class ShippingOrderDetailActivity extends BaseActivity {
                     showCancelOrderDialog(order);
                 }
             });
+        }
+        if (btnConfirmReceipt != null) {
+            btnConfirmReceipt.setOnClickListener(v -> confirmOrderReceipt());
+        }
+        if (btnDisputeOrder != null) {
+            btnDisputeOrder.setOnClickListener(v -> showDisputeDialog());
         }
     }
 
@@ -140,7 +149,13 @@ public class ShippingOrderDetailActivity extends BaseActivity {
         if ("Đang giao hàng".equalsIgnoreCase(status) || "Shipping".equalsIgnoreCase(status)) {
             return getString(R.string.status_shipping);
         }
-        if ("Đã giao hàng".equalsIgnoreCase(status) || "Đã hoàn thành".equalsIgnoreCase(status) || "Completed".equalsIgnoreCase(status)) {
+        if ("Đã giao hàng".equalsIgnoreCase(status)) {
+            return "Đã giao hàng";
+        }
+        if ("Khiếu nại".equalsIgnoreCase(status)) {
+            return "Khiếu nại";
+        }
+        if ("Đã hoàn thành".equalsIgnoreCase(status) || "Completed".equalsIgnoreCase(status)) {
             return getString(R.string.status_completed);
         }
         if ("Đã hủy".equalsIgnoreCase(status) || "Cancelled".equalsIgnoreCase(status)) {
@@ -166,6 +181,12 @@ public class ShippingOrderDetailActivity extends BaseActivity {
             if ("Đã hoàn thành".equalsIgnoreCase(status) || "completed".equalsIgnoreCase(status) || "done".equalsIgnoreCase(status)) {
                 tvStatusBadge.setTextColor(android.graphics.Color.parseColor("#2E7D32"));
                 tvStatusBadge.setBackgroundResource(R.drawable.bg_status_completed);
+            } else if ("Đã giao hàng".equalsIgnoreCase(status)) {
+                tvStatusBadge.setTextColor(android.graphics.Color.parseColor("#2E7D32"));
+                tvStatusBadge.setBackgroundResource(R.drawable.bg_status_completed);
+            } else if ("Khiếu nại".equalsIgnoreCase(status)) {
+                tvStatusBadge.setTextColor(android.graphics.Color.parseColor("#C62828"));
+                tvStatusBadge.setBackgroundResource(R.drawable.bg_status_cancelled);
             } else if ("Đã hủy".equalsIgnoreCase(status) || "cancelled".equalsIgnoreCase(status) || "cancel".equalsIgnoreCase(status)) {
                 tvStatusBadge.setTextColor(android.graphics.Color.parseColor("#C62828"));
                 tvStatusBadge.setBackgroundResource(R.drawable.bg_status_cancelled);
@@ -181,14 +202,22 @@ public class ShippingOrderDetailActivity extends BaseActivity {
             }
         }
         if (layoutStatusHeader != null) {
-            if ("Đã hoàn thành".equalsIgnoreCase(status) || "completed".equalsIgnoreCase(status) || "done".equalsIgnoreCase(status)) {
+            if ("Đã hoàn thành".equalsIgnoreCase(status) || "completed".equalsIgnoreCase(status) || "done".equalsIgnoreCase(status) || "Đã giao hàng".equalsIgnoreCase(status)) {
                 layoutStatusHeader.setBackgroundResource(R.drawable.bg_detail_section_completed);
-            } else if ("Đã hủy".equalsIgnoreCase(status) || "cancelled".equalsIgnoreCase(status) || "cancel".equalsIgnoreCase(status)) {
+            } else if ("Đã hủy".equalsIgnoreCase(status) || "cancelled".equalsIgnoreCase(status) || "cancel".equalsIgnoreCase(status) || "Khiếu nại".equalsIgnoreCase(status)) {
                 layoutStatusHeader.setBackgroundResource(R.drawable.bg_detail_section_cancelled);
             } else if ("Chờ xác nhận".equalsIgnoreCase(status) || "pending".equalsIgnoreCase(status) || "Chờ xử lý".equalsIgnoreCase(status)) {
                 layoutStatusHeader.setBackgroundResource(R.drawable.bg_detail_section_warm);
             } else {
                 layoutStatusHeader.setBackgroundResource(R.drawable.bg_detail_section_shipping);
+            }
+        }
+        if (layoutCustomerActions != null) {
+            if ("Đã giao hàng".equalsIgnoreCase(status) || "Đang giao hàng".equalsIgnoreCase(status)
+                    || (("Đã hoàn thành".equalsIgnoreCase(status) || "completed".equalsIgnoreCase(status) || "done".equalsIgnoreCase(status)) && !order.isCustomerConfirmed())) {
+                layoutCustomerActions.setVisibility(View.VISIBLE);
+            } else {
+                layoutCustomerActions.setVisibility(View.GONE);
             }
         }
         if (btnCancelOrder != null) {
@@ -466,6 +495,11 @@ public class ShippingOrderDetailActivity extends BaseActivity {
             tvWarehouse.setText(getString(R.string.status_warehouse_at, warehouseTime));
             tvDelivering.setText(getString(R.string.status_shipping) + "\n" + deliveringTime + "\n" + (getString(R.string.status_shipping_desc).contains("\n") ? getString(R.string.status_shipping_desc).substring(getString(R.string.status_shipping_desc).indexOf("\n") + 1) : ""));
             tvCompleted.setText(getString(R.string.status_completed_desc, (estimatedDateStr.isEmpty() ? getString(R.string.after_5_days) : estimatedDateStr)));
+        } else if ("Khiếu nại".equalsIgnoreCase(status)) {
+            tvConfirmed.setText(getString(R.string.status_confirmed_at, confirmedTime));
+            tvWarehouse.setText(getString(R.string.status_warehouse_at, warehouseTime));
+            tvDelivering.setText(getString(R.string.status_shipping) + "\n" + deliveringTime + "\n" + (getString(R.string.status_shipping_desc).contains("\n") ? getString(R.string.status_shipping_desc).substring(getString(R.string.status_shipping_desc).indexOf("\n") + 1) : ""));
+            tvCompleted.setText("Đơn hàng bị khiếu nại: " + (order.getDisputeReason() != null && !order.getDisputeReason().isEmpty() ? order.getDisputeReason() : "Chưa nhận được hàng"));
         } else if ("Đã giao hàng".equalsIgnoreCase(status) || "Đã hoàn thành".equalsIgnoreCase(status)) {
             tvConfirmed.setText(getString(R.string.status_confirmed_at, confirmedTime));
             tvWarehouse.setText(getString(R.string.status_warehouse_at, warehouseTime));
@@ -497,6 +531,22 @@ public class ShippingOrderDetailActivity extends BaseActivity {
             layoutDelivering.setAlpha(1.0f);
             ivDelivering.setBackgroundResource(R.drawable.bg_timeline_active);
             ivDelivering.setImageResource(R.drawable.ic_order_shipping);
+        } else if ("Khiếu nại".equalsIgnoreCase(status)) {
+            layoutConfirmed.setAlpha(1.0f);
+            ivConfirmed.setBackgroundResource(R.drawable.bg_timeline_done);
+            ivConfirmed.setImageResource(R.drawable.ic_active);
+
+            layoutWarehouse.setAlpha(1.0f);
+            ivWarehouse.setBackgroundResource(R.drawable.bg_timeline_done);
+            ivWarehouse.setImageResource(R.drawable.ic_active);
+
+            layoutDelivering.setAlpha(1.0f);
+            ivDelivering.setBackgroundResource(R.drawable.bg_timeline_done);
+            ivDelivering.setImageResource(R.drawable.ic_active);
+
+            layoutCompleted.setAlpha(1.0f);
+            ivCompleted.setBackgroundResource(R.drawable.bg_timeline_pending);
+            ivCompleted.setImageResource(R.drawable.ic_reject);
         } else if ("Đã giao hàng".equalsIgnoreCase(status) || "Đã hoàn thành".equalsIgnoreCase(status)) {
             layoutConfirmed.setAlpha(1.0f);
             ivConfirmed.setBackgroundResource(R.drawable.bg_timeline_done);
@@ -543,6 +593,115 @@ public class ShippingOrderDetailActivity extends BaseActivity {
             Log.e("ShippingOrderDetail", "Error generating fallback timeline time", e);
         }
         return "";
+    }
+
+    private void confirmOrderReceipt() {
+        if (order == null) return;
+        java.util.Map<String, Object> body = new java.util.HashMap<>();
+        body.put("orderId", order.getOrderId());
+        
+        com.nguyenmanhphuc.storehubapp.utils.LoadingDialogHelper loading = new com.nguyenmanhphuc.storehubapp.utils.LoadingDialogHelper(this);
+        loading.setMessage("Đang xác nhận...");
+        loading.show();
+
+        apiService.confirmReceipt(HttpResquest.authorizationHeader(this), body)
+                .enqueue(new Callback<Response<Order>>() {
+                    @Override
+                    public void onResponse(@NonNull Call<Response<Order>> call, @NonNull retrofit2.Response<Response<Order>> response) {
+                        loading.dismiss();
+                        if (response.isSuccessful() && response.body() != null && response.body().getCode() == 200) {
+                            Toast.makeText(ShippingOrderDetailActivity.this, "Xác nhận đã nhận hàng thành công!", Toast.LENGTH_SHORT).show();
+                            DataCache.get().invalidate("user_orders");
+                            finish();
+                        } else {
+                            Toast.makeText(ShippingOrderDetailActivity.this, "Không thể xác nhận nhận hàng", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<Response<Order>> call, @NonNull Throwable t) {
+                        loading.dismiss();
+                        Toast.makeText(ShippingOrderDetailActivity.this, "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void showDisputeDialog() {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_cancel_order);
+
+        TextView tvTitle = dialog.findViewById(R.id.tvTitleCancelDialog);
+        if (tvTitle != null) {
+            tvTitle.setText("Khiếu nại / Báo chưa nhận hàng");
+        }
+        
+        RadioGroup rgReasons = dialog.findViewById(R.id.rgCancelReasons);
+        if (rgReasons != null) {
+            rgReasons.setVisibility(View.GONE);
+        }
+        
+        final EditText edtReason = dialog.findViewById(R.id.edtCancelNote);
+        if (edtReason != null) {
+            edtReason.setHint("Nhập lý do khiếu nại (ví dụ: Shipper chưa giao hàng, hàng hư hỏng...)");
+        }
+
+        ImageView btnCloseDialog = dialog.findViewById(R.id.btnCloseDialog);
+        MaterialButton btnDismiss = dialog.findViewById(R.id.btnDismissCancel);
+        MaterialButton btnConfirm = dialog.findViewById(R.id.btnConfirmCancel);
+
+        if (btnCloseDialog != null) btnCloseDialog.setOnClickListener(v -> dialog.dismiss());
+        if (btnDismiss != null) btnDismiss.setOnClickListener(v -> dialog.dismiss());
+
+        if (btnConfirm != null) {
+            btnConfirm.setText("Gửi khiếu nại");
+            btnConfirm.setOnClickListener(v -> {
+                String reason = edtReason != null ? edtReason.getText().toString().trim() : "";
+                if (reason.isEmpty()) {
+                    Toast.makeText(ShippingOrderDetailActivity.this, "Vui lòng nhập lý do khiếu nại!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                dialog.dismiss();
+                executeDisputeOrder(reason);
+            });
+        }
+
+        dialog.show();
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+    }
+
+    private void executeDisputeOrder(String reason) {
+        if (order == null) return;
+        java.util.Map<String, Object> body = new java.util.HashMap<>();
+        body.put("orderId", order.getOrderId());
+        body.put("reason", reason);
+
+        com.nguyenmanhphuc.storehubapp.utils.LoadingDialogHelper loading = new com.nguyenmanhphuc.storehubapp.utils.LoadingDialogHelper(this);
+        loading.setMessage("Đang gửi khiếu nại...");
+        loading.show();
+
+        apiService.disputeOrder(HttpResquest.authorizationHeader(this), body)
+                .enqueue(new Callback<Response<Order>>() {
+                    @Override
+                    public void onResponse(@NonNull Call<Response<Order>> call, @NonNull retrofit2.Response<Response<Order>> response) {
+                        loading.dismiss();
+                        if (response.isSuccessful() && response.body() != null && response.body().getCode() == 200) {
+                            Toast.makeText(ShippingOrderDetailActivity.this, "Đã gửi khiếu nại thành công!", Toast.LENGTH_SHORT).show();
+                            DataCache.get().invalidate("user_orders");
+                            finish();
+                        } else {
+                            Toast.makeText(ShippingOrderDetailActivity.this, "Không thể gửi khiếu nại", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<Response<Order>> call, @NonNull Throwable t) {
+                        loading.dismiss();
+                        Toast.makeText(ShippingOrderDetailActivity.this, "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     @Override

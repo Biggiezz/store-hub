@@ -154,6 +154,18 @@ public interface ApiServices {
             @Body CancelOrderRequest request
     );
 
+    @POST("api/oderRouter/confirm-receipt")
+    Call<Response<Order>> confirmReceipt(
+            @Header("Authorization") String token,
+            @Body java.util.Map<String, Object> body
+    );
+
+    @POST("api/oderRouter/dispute-order")
+    Call<Response<Order>> disputeOrder(
+            @Header("Authorization") String token,
+            @Body java.util.Map<String, Object> body
+    );
+
     @POST("api/oderRouter/create-zalopay-order")
     Call<Response<com.google.gson.JsonObject>> createZaloPayOrder(
             @Header("Authorization") String token,

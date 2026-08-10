@@ -53,7 +53,7 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
     private boolean resumedOnce;
     
     private EditText etSearchOrders;
-    private TextView tvFilterAll, tvFilterPending, tvFilterConfirmed, tvFilterShipping, tvFilterCompleted, tvFilterCancelled;
+    private TextView tvFilterAll, tvFilterPending, tvFilterConfirmed, tvFilterShipping, tvFilterCompleted, tvFilterCancelled, tvFilterDisputed;
     private final ArrayList<Order> allOrders = new ArrayList<>();
     private String selectedStatusFilter = "all";
 
@@ -87,6 +87,7 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
         tvFilterShipping = findViewById(R.id.tvFilterShipping);
         tvFilterCompleted = findViewById(R.id.tvFilterCompleted);
         tvFilterCancelled = findViewById(R.id.tvFilterCancelled);
+        tvFilterDisputed = findViewById(R.id.tvFilterDisputed);
 
         // Set Tab Click Listeners
         tvFilterAll.setOnClickListener(v -> selectFilterTab("all"));
@@ -95,6 +96,9 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
         tvFilterShipping.setOnClickListener(v -> selectFilterTab("Đang giao"));
         tvFilterCompleted.setOnClickListener(v -> selectFilterTab("Đã hoàn thành"));
         tvFilterCancelled.setOnClickListener(v -> selectFilterTab("Đã hủy"));
+        if (tvFilterDisputed != null) {
+            tvFilterDisputed.setOnClickListener(v -> selectFilterTab("Khiếu nại"));
+        }
 
         // Set Search Input Listener
         etSearchOrders.addTextChangedListener(new TextWatcher() {
@@ -449,6 +453,7 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
         updateTabStyle(tvFilterShipping, "Đang giao");
         updateTabStyle(tvFilterCompleted, "Đã hoàn thành");
         updateTabStyle(tvFilterCancelled, "Đã hủy");
+        updateTabStyle(tvFilterDisputed, "Khiếu nại");
     }
 
     private void updateTabStyle(TextView tv, String status) {
@@ -483,6 +488,9 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
                 matchesStatus = "Đã giao hàng".equalsIgnoreCase(status) 
                         || "Đã hoàn thành".equalsIgnoreCase(status) 
                         || "completed".equalsIgnoreCase(status);
+            } else if ("Khiếu nại".equals(selectedStatusFilter)) {
+                matchesStatus = "Khiếu nại".equalsIgnoreCase(status)
+                        || "disputed".equalsIgnoreCase(status);
             } else if ("Đã hủy".equals(selectedStatusFilter)) {
                 matchesStatus = "Đã hủy".equalsIgnoreCase(status) 
                         || "cancelled".equalsIgnoreCase(status) 
