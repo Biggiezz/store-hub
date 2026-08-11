@@ -28,6 +28,8 @@ import retrofit2.Callback;
 
 public class RegisterActivity extends BaseActivity {
 
+    private static final String EMAIL_PATTERN = "^[a-zA-Z0-9_%+-]+(?:\\.[a-zA-Z0-9_%+-]+)*@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+
     private TextInputEditText edtFullName, edtEmail, edtPhone, edtPassword, edtConfirmPassword;
     private TextInputLayout tilFullName, tilEmail, tilPhone, tilPassword, tilConfirmPassword;
     private MaterialButton btnRegister;
@@ -185,7 +187,7 @@ public class RegisterActivity extends BaseActivity {
                 if (firstErrorView == null) firstErrorView = tilEmail;
             }
             hasError = true;
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        } else if (!email.matches(EMAIL_PATTERN)) {
             if (tilEmail != null) {
                 tilEmail.setError(getString(R.string.register_email_invalid));
                 if (firstErrorView == null) firstErrorView = tilEmail;
