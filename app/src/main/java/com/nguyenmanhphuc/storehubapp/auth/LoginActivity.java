@@ -5,12 +5,22 @@ import com.google.android.material.textfield.TextInputLayout;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.CancellationSignal;
 import android.util.Patterns;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.credentials.Credential;
+import androidx.credentials.CredentialManager;
+import androidx.credentials.CredentialManagerCallback;
+import androidx.credentials.CustomCredential;
+import androidx.credentials.GetCredentialRequest;
+import androidx.credentials.GetCredentialResponse;
+import androidx.credentials.exceptions.GetCredentialCancellationException;
+import androidx.credentials.exceptions.GetCredentialException;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -24,6 +34,7 @@ import com.nguyenmanhphuc.storehubapp.model.Product;
 import com.nguyenmanhphuc.storehubapp.model.response.LoginResponse;
 import com.nguyenmanhphuc.storehubapp.model.response.Response;
 import com.nguyenmanhphuc.storehubapp.model.request.LoginRequest;
+import com.nguyenmanhphuc.storehubapp.model.request.GoogleLoginRequest;
 import com.nguyenmanhphuc.storehubapp.model.User;
 import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
 import com.nguyenmanhphuc.storehubapp.utils.SharedPreferencesManager;
@@ -33,6 +44,8 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption;
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 
 import java.util.ArrayList;
 
@@ -43,9 +56,10 @@ public class LoginActivity extends BaseActivity {
 
     private TextInputEditText edtEmail, edtPassword;
     private TextInputLayout tilEmail, tilPassword;
-    private MaterialButton btnLogin;
+    private MaterialButton btnLogin, btnGoogleLogin;
     private TextView tvRegisterNow;
     private SharedPreferencesManager prefManager;
+    private CredentialManager credentialManager;
 
     private ArrayList<Product> preloadedProducts = null;
     private ArrayList<News> preloadedNews = null;
@@ -63,6 +77,7 @@ public class LoginActivity extends BaseActivity {
             return insets;
         });
         prefManager = new SharedPreferencesManager(this);
+        credentialManager = CredentialManager.create(this);
 
         initUi();
         setUpListener();
@@ -74,12 +89,16 @@ public class LoginActivity extends BaseActivity {
         tilEmail = findViewById(R.id.tilEmail);
         tilPassword = findViewById(R.id.tilPassword);
         btnLogin = findViewById(R.id.btnLogin);
+        btnGoogleLogin = findViewById(R.id.btnGoogleLogin);
         tvRegisterNow = findViewById(R.id.tvRegisterNow);
     }
 
     private void setUpListener() {
         if (btnLogin != null) {
             btnLogin.setOnClickListener(v -> handleLogin());
+        }
+        if (btnGoogleLogin != null) {
+            btnGoogleLogin.setOnClickListener(v -> startGoogleSignIn());
         }
 
         if (tvRegisterNow != null) {
@@ -107,6 +126,90 @@ public class LoginActivity extends BaseActivity {
                 @Override public void afterTextChanged(android.text.Editable s) {}
             });
         }
+    }
+
+    private void startGoogleSignIn() {
+        String clientId = getString(R.string.google_web_client_id).trim();
+        if (clientId.isEmpty() || clientId.startsWith("YOUR_GOOGLE_WEB_CLIENT_ID")) {
+            Toast.makeText(this, R.string.google_login_not_configured, Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        GetSignInWithGoogleOption googleOption = new GetSignInWithGoogleOption.Builder(clientId).build();
+        GetCredentialRequest request = new GetCredentialRequest.Builder()
+                .addCredentialOption(googleOption)
+                .build();
+
+        credentialManager.getCredentialAsync(
+                this,
+                request,
+                new CancellationSignal(),
+                ContextCompat.getMainExecutor(this),
+                new CredentialManagerCallback<GetCredentialResponse, GetCredentialException>() {
+                    @Override
+                    public void onResult(GetCredentialResponse result) {
+                        handleGoogleCredential(result.getCredential());
+                    }
+
+                    @Override
+                    public void onError(@NonNull GetCredentialException e) {
+                        int message = e instanceof GetCredentialCancellationException
+                                ? R.string.google_login_cancelled
+                                : R.string.google_login_failed;
+                        Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+    }
+
+    private void handleGoogleCredential(Credential credential) {
+        if (!(credential instanceof CustomCredential)
+                || !GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL.equals(credential.getType())) {
+            Toast.makeText(this, R.string.google_login_failed, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            GoogleIdTokenCredential googleCredential = GoogleIdTokenCredential.createFrom(credential.getData());
+            loginWithGoogleToken(googleCredential.getIdToken());
+        } catch (RuntimeException e) {
+            Toast.makeText(this, R.string.google_login_failed, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void loginWithGoogleToken(String idToken) {
+        LoadingDialogHelper loadingDialog = new LoadingDialogHelper(this);
+        loadingDialog.setMessage(getString(R.string.google_login_loading));
+        loadingDialog.show();
+
+        new HttpResquest().callAPI().googleLogin(new GoogleLoginRequest(idToken))
+                .enqueue(new Callback<LoginResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<LoginResponse> call,
+                                           @NonNull retrofit2.Response<LoginResponse> response) {
+                        if (response.isSuccessful() && response.body() != null
+                                && response.body().getCode() == 200) {
+                            LoginResponse apiResponse = response.body();
+                            prefManager.saveUserSession(apiResponse.getToken(), apiResponse.getData());
+                            loadingDialog.setMessage(getString(R.string.loading_product_data));
+                            preloadData(loadingDialog);
+                            return;
+                        }
+                        loadingDialog.dismiss();
+                        String message = response.body() != null
+                                ? response.body().getMessage()
+                                : getString(R.string.google_login_failed);
+                        Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable t) {
+                        loadingDialog.dismiss();
+                        Toast.makeText(LoginActivity.this,
+                                String.format(getString(R.string.connection_error_prefix), t.getMessage()),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void handleLogin() {

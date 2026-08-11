@@ -9,6 +9,7 @@ import com.nguyenmanhphuc.storehubapp.model.User;
 import com.nguyenmanhphuc.storehubapp.model.request.AddToCartRequest;
 import com.nguyenmanhphuc.storehubapp.model.request.CancelOrderRequest;
 import com.nguyenmanhphuc.storehubapp.model.request.LoginRequest;
+import com.nguyenmanhphuc.storehubapp.model.request.GoogleLoginRequest;
 import com.nguyenmanhphuc.storehubapp.model.request.RegisterRequest;
 import com.nguyenmanhphuc.storehubapp.model.request.ReplyReviewRequest;
 import com.nguyenmanhphuc.storehubapp.model.request.UpdateQuantityRequest;
@@ -213,6 +214,9 @@ public interface ApiServices {
 
     @POST("users/login")
     Call<LoginResponse> login(@Body LoginRequest request);
+
+    @POST("users/google-login")
+    Call<LoginResponse> googleLogin(@Body GoogleLoginRequest request);
 
     @GET("users/get-all-users")
     Call<Response<ArrayList<User>>> getListUsers(@Header("Authorization") String token);

@@ -785,4 +785,13 @@
     <string name="color_brown">Brown</string>
     <string name="color_cyan">Cyan</string>
     <string name="color_olive">Olive</string>
+    <string name="or_continue_with">Or continue with</string>
+    <string name="continue_with_google">Continue with Google</string>
+    <string name="google_login_not_configured">Google Sign-In has not been configured.</string>
+    <string name="google_login_cancelled">Google Sign-In was cancelled.</string>
+    <string name="google_login_failed">Unable to sign in with Google.</string>
+    <string name="google_login_loading">Signing in with Google...</string>
+    <string name="profile_incomplete_title">Shipping information required</string>
+    <string name="profile_incomplete_message">Please update your phone number and address before placing an order.</string>
+    <string name="update_now">Update now</string>
 </resources>

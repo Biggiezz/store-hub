@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -177,8 +178,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
 
         if (btnChangeAddress != null) {
             btnChangeAddress.setOnClickListener(v ->
-                    Toast.makeText(this, getString(R.string.toast_feature_under_dev), Toast.LENGTH_SHORT).show()
-            );
+                    startActivity(new android.content.Intent(this, EditProfileActivity.class)));
         }
 
         if (btnCheckout != null) {
@@ -187,9 +187,30 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
                     Toast.makeText(this, this.getString(R.string.toast_gio_hang_dang_trong), Toast.LENGTH_SHORT).show();
                     return;
                 }
+                if (!hasCompleteShippingProfile()) {
+                    showProfileIncompleteDialog();
+                    return;
+                }
                 startActivity(PaymentConfirmationActivity.createIntent(this, cartItems));
             });
         }
+    }
+
+    private boolean hasCompleteShippingProfile() {
+        User user = new SharedPreferencesManager(this).getUser();
+        return user != null
+                && !TextUtils.isEmpty(user.getPhone())
+                && !TextUtils.isEmpty(user.getAddress());
+    }
+
+    private void showProfileIncompleteDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.profile_incomplete_title)
+                .setMessage(R.string.profile_incomplete_message)
+                .setPositiveButton(R.string.update_now, (dialog, which) ->
+                        startActivity(new android.content.Intent(this, EditProfileActivity.class)))
+                .setNegativeButton(R.string.cancel, null)
+                .show();
     }
 
     private void loadCartFromServer() {
