@@ -140,11 +140,7 @@ public class LoginActivity extends BaseActivity {
                 .addCredentialOption(googleOption)
                 .build();
 
-        credentialManager.getCredentialAsync(
-                this,
-                request,
-                new CancellationSignal(),
-                ContextCompat.getMainExecutor(this),
+        credentialManager.getCredentialAsync(this, request, new CancellationSignal(), ContextCompat.getMainExecutor(this),
                 new CredentialManagerCallback<GetCredentialResponse, GetCredentialException>() {
                     @Override
                     public void onResult(GetCredentialResponse result) {
