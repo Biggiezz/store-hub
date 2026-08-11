@@ -5,6 +5,7 @@ import com.nguyenmanhphuc.storehubapp.R;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,16 +16,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.nguyenmanhphuc.storehubapp.model.CartItem;
 import com.nguyenmanhphuc.storehubapp.model.Order;
+import com.nguyenmanhphuc.storehubapp.model.User;
 import com.nguyenmanhphuc.storehubapp.model.response.Response;
 import com.nguyenmanhphuc.storehubapp.services.ApiServices;
 import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
 import com.nguyenmanhphuc.storehubapp.utils.DataCache;
+import com.nguyenmanhphuc.storehubapp.utils.SharedPreferencesManager;
 import com.nguyenmanhphuc.storehubapp.zalopay.Constant.AppInfo;
 import com.google.android.material.button.MaterialButton;
 
@@ -106,7 +110,30 @@ public class PaymentConfirmationActivity extends BaseActivity {
         btnBack.setOnClickListener(v -> finish());
         optionZaloPay.setOnClickListener(v -> selectPayment(rbZaloPay, rbCod));
         optionCod.setOnClickListener(v -> selectPayment(rbCod, rbZaloPay));
-        btnConfirmPayment.setOnClickListener(v -> createOrder());
+        btnConfirmPayment.setOnClickListener(v -> {
+            if (hasCompleteShippingProfile()) {
+                createOrder();
+            } else {
+                showProfileIncompleteDialog();
+            }
+        });
+    }
+
+    private boolean hasCompleteShippingProfile() {
+        User user = new SharedPreferencesManager(this).getUser();
+        return user != null
+                && !TextUtils.isEmpty(user.getPhone())
+                && !TextUtils.isEmpty(user.getAddress());
+    }
+
+    private void showProfileIncompleteDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.profile_incomplete_title)
+                .setMessage(R.string.profile_incomplete_message)
+                .setPositiveButton(R.string.update_now, (dialog, which) ->
+                        startActivity(new Intent(this, EditProfileActivity.class)))
+                .setNegativeButton(R.string.cancel, null)
+                .show();
     }
 
     private void bindSummary() {
