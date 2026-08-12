@@ -794,7 +794,6 @@
     <string name="google_login_cancelled">Bạn đã hủy đăng nhập Google.</string>
     <string name="google_login_failed">Không thể đăng nhập bằng Google.</string>
     <string name="google_login_loading">Đang đăng nhập bằng Google...</string>
-    <string name="google_web_client_id" translatable="false">988592970343-2anhs3ktjhv6nn10jqkoqte9qdupkhrs.apps.googleusercontent.com</string>
     <string name="profile_incomplete_title">Cần cập nhật thông tin giao hàng</string>
     <string name="profile_incomplete_message">Vui lòng cập nhật số điện thoại và địa chỉ trước khi đặt hàng.</string>
     <string name="update_now">Cập nhật ngay</string>

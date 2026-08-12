@@ -2,11 +2,11 @@ package com.nguyenmanhphuc.storehubapp.model.request;
 
 import com.google.gson.annotations.SerializedName;
 
-public class GoogleLoginRequest {
+public class FirebaseLoginRequest {
     @SerializedName("idToken")
     private final String idToken;
 
-    public GoogleLoginRequest(String idToken) {
+    public FirebaseLoginRequest(String idToken) {
         this.idToken = idToken;
     }
 

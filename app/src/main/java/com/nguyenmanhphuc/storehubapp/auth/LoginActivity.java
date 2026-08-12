@@ -42,13 +42,16 @@ import com.nguyenmanhphuc.storehubapp.admin.HomePageManagementActivity;
 import com.nguyenmanhphuc.storehubapp.model.News;
 import com.nguyenmanhphuc.storehubapp.model.Product;
 import com.nguyenmanhphuc.storehubapp.model.User;
-import com.nguyenmanhphuc.storehubapp.model.request.GoogleLoginRequest;
+import com.nguyenmanhphuc.storehubapp.model.request.FirebaseLoginRequest;
 import com.nguyenmanhphuc.storehubapp.model.request.LoginRequest;
 import com.nguyenmanhphuc.storehubapp.model.response.LoginResponse;
 import com.nguyenmanhphuc.storehubapp.model.response.Response;
 import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
 import com.nguyenmanhphuc.storehubapp.utils.LoadingDialogHelper;
 import com.nguyenmanhphuc.storehubapp.utils.SharedPreferencesManager;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.GoogleAuthProvider;
 
 import java.util.ArrayList;
 
@@ -57,12 +60,15 @@ import retrofit2.Callback;
 
 public class LoginActivity extends BaseActivity {
 
+    private static final String TAG = "LoginActivity";
+
     private TextInputEditText edtEmail, edtPassword;
     private TextInputLayout tilEmail, tilPassword;
     private MaterialButton btnLogin, btnGoogleLogin;
     private TextView tvRegisterNow;
     private SharedPreferencesManager prefManager;
     private CredentialManager credentialManager;
+    private FirebaseAuth firebaseAuth;
 
     private ArrayList<Product> preloadedProducts = null;
     private ArrayList<News> preloadedNews = null;
@@ -81,6 +87,7 @@ public class LoginActivity extends BaseActivity {
         });
         prefManager = new SharedPreferencesManager(this);
         credentialManager = CredentialManager.create(this);
+        firebaseAuth = FirebaseAuth.getInstance();
 
         initUi();
         setUpListener();
@@ -146,8 +153,8 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void startGoogleSignIn() {
-        String clientId = getString(R.string.google_web_client_id).trim();
-        if (clientId.isEmpty() || clientId.startsWith("YOUR_GOOGLE_WEB_CLIENT_ID")) {
+        String clientId = getString(R.string.default_web_client_id).trim();
+        if (clientId.isEmpty()) {
             Toast.makeText(this, R.string.google_login_not_configured, Toast.LENGTH_LONG).show();
             return;
         }
@@ -174,16 +181,14 @@ public class LoginActivity extends BaseActivity {
 
                     @Override
                     public void onError(@NonNull GetCredentialException e) {
-                        Log.e("LoginActivity", "Google Auth Error: " + e.getClass().getName());
+                        Log.e(TAG, "Google credential failed: " + e.getType(), e);
 
                         if (e instanceof NoCredentialException) {
-                            // Thông báo cho người dùng rằng không tìm thấy tài khoản Google nào trên máy
                             Toast.makeText(LoginActivity.this, "Không tìm thấy tài khoản Google trên thiết bị. Vui lòng kiểm tra cài đặt.", Toast.LENGTH_LONG).show();
                         } else if (e instanceof GetCredentialCancellationException) {
-                            // Người dùng nhấn back hoặc click ra ngoài để hủy
-                            Log.d("LoginActivity", "User cancelled the sign-in.");
+                            Toast.makeText(LoginActivity.this, R.string.google_login_cancelled, Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(LoginActivity.this, "Lỗi: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(LoginActivity.this, R.string.google_login_failed, Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
@@ -199,18 +204,43 @@ public class LoginActivity extends BaseActivity {
 
         try {
             GoogleIdTokenCredential googleCredential = GoogleIdTokenCredential.createFrom(credential.getData());
-            loginWithGoogleToken(googleCredential.getIdToken());
+            authenticateWithFirebase(googleCredential.getIdToken());
         } catch (RuntimeException e) {
+            Log.e(TAG, "Cannot parse Google credential", e);
             Toast.makeText(this, R.string.google_login_failed, Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void loginWithGoogleToken(String idToken) {
+    private void authenticateWithFirebase(String googleIdToken) {
         LoadingDialogHelper loadingDialog = new LoadingDialogHelper(this);
         loadingDialog.setMessage(getString(R.string.google_login_loading));
         loadingDialog.show();
 
-        new HttpResquest().callAPI().googleLogin(new GoogleLoginRequest(idToken))
+        AuthCredential credential = GoogleAuthProvider.getCredential(googleIdToken, null);
+        firebaseAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, task -> {
+                    if (!task.isSuccessful() || firebaseAuth.getCurrentUser() == null) {
+                        loadingDialog.dismiss();
+                        Log.e(TAG, "Firebase sign-in failed", task.getException());
+                        Toast.makeText(this, R.string.google_login_failed, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    firebaseAuth.getCurrentUser().getIdToken(true)
+                            .addOnCompleteListener(tokenTask -> {
+                                if (!tokenTask.isSuccessful() || tokenTask.getResult().getToken() == null) {
+                                    loadingDialog.dismiss();
+                                    Log.e(TAG, "Cannot obtain Firebase ID token", tokenTask.getException());
+                                    Toast.makeText(this, R.string.google_login_failed, Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                loginWithFirebaseToken(tokenTask.getResult().getToken(), loadingDialog);
+                            });
+                });
+    }
+
+    private void loginWithFirebaseToken(String firebaseIdToken, LoadingDialogHelper loadingDialog) {
+        new HttpResquest().callAPI().googleLogin(new FirebaseLoginRequest(firebaseIdToken))
                 .enqueue(new Callback<LoginResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<LoginResponse> call,

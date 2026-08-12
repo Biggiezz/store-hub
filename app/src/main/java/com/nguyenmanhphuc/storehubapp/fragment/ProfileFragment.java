@@ -24,6 +24,7 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.nguyenmanhphuc.storehubapp.ChangePasswordActivity;
 import com.nguyenmanhphuc.storehubapp.EditProfileActivity;
 import com.nguyenmanhphuc.storehubapp.MainActivity;
@@ -305,6 +306,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onResponse(@NonNull Call<Response<Void>> call, @NonNull retrofit2.Response<Response<Void>> response) {
                 if (!isAdded()) return;
+                FirebaseAuth.getInstance().signOut();
                 sharedPreferencesManager.logout();
                 MainActivity.preloadedProducts = null;
                 MainActivity.preloadedNews = null;
@@ -318,6 +320,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onFailure(@NonNull Call<Response<Void>> call, @NonNull Throwable t) {
                 if (!isAdded()) return;
+                FirebaseAuth.getInstance().signOut();
                 sharedPreferencesManager.logout();
                 MainActivity.preloadedProducts = null;
                 MainActivity.preloadedNews = null;
