@@ -283,12 +283,12 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         try {
             stockVal = Integer.parseInt(rawStock);
             if (stockVal < 0) {
-                stockInput.setError("Số lượng tồn kho không được âm");
+                stockInput.setError(getString(R.string.toast_so_luong_khong_la_so_am));
                 stockInput.requestFocus();
                 return;
             }
         } catch (NumberFormatException e) {
-            stockInput.setError("Số lượng tồn kho phải là số hợp lệ");
+            stockInput.setError(getString(R.string.toast_ton_kho_phai_la_so));
             stockInput.requestFocus();
             return;
         }
@@ -314,7 +314,7 @@ public class ProductFormManagementActivity extends AppCompatActivity {
                 return;
             }
         } catch (NumberFormatException e) {
-            priceInput.setError("Giá bán phải là số hợp lệ");
+            stockInput.setError(getString(R.string.toast_gia_ban_la_so_hop_le));
             priceInput.requestFocus();
             return;
         }

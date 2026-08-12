@@ -798,4 +798,7 @@
     <string name="profile_incomplete_title">Cần cập nhật thông tin giao hàng</string>
     <string name="profile_incomplete_message">Vui lòng cập nhật số điện thoại và địa chỉ trước khi đặt hàng.</string>
     <string name="update_now">Cập nhật ngay</string>
+    <string name="toast_so_luong_khong_la_so_am">Số lượng tồn kho không được âm.</string>
+    <string name="toast_ton_kho_phai_la_so">Số lượng tồn kho phải là số hợp lệ.</string>
+    <string name="toast_gia_ban_la_so_hop_le">Giá bán phải là số hợp lệ.</string>
 </resources>

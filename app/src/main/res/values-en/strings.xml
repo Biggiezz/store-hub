@@ -794,4 +794,7 @@
     <string name="profile_incomplete_title">Shipping information required</string>
     <string name="profile_incomplete_message">Please update your phone number and address before placing an order.</string>
     <string name="update_now">Update now</string>
+    <string name="toast_so_luong_khong_la_so_am">Inventory levels must not be negative.</string>
+    <string name="toast_ton_kho_phai_la_so">The inventory quantity must be a valid number.</string>
+    <string name="toast_gia_ban_la_so_hop_le">The selling price must be a valid number.</string>
 </resources>
