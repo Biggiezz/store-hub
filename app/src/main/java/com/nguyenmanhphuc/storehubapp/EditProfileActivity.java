@@ -211,7 +211,7 @@ public class EditProfileActivity extends BaseActivity {
             return;
         }
 
-        if (!phone.matches("^[0-9]{10,11}$")) {
+        if (!phone.matches("^[0-9]{10}$")) {
             if (tilProfilePhone != null) {
                 tilProfilePhone.setError(getString(R.string.toast_so_dien_thoai_phai_tu_10_11_chu_so));
                 tilProfilePhone.requestFocus();

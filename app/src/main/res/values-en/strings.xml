@@ -526,7 +526,7 @@
     <string name="toast_mat_khau_hien_tai_khong_chinh_xac">Current password is incorrect</string>
     <string name="toast_mat_khau_moi_phai_toi_thieu_8_ky_tu_bao_">New password must be at least 8 characters, containing letters and numbers</string>
     <string name="toast_mat_khau_xac_nhan_khong_khop">Confirm password does not match</string>
-    <string name="toast_so_dien_thoai_phai_tu_10_11_chu_so">Phone number must be 10-11 digits</string>
+    <string name="toast_so_dien_thoai_phai_tu_10_11_chu_so">Phone number must be exactly 10 digits</string>
     <string name="toast_tao_bai_viet_moi_thanh_cong">New article created successfully!</string>
     <string name="toast_ten_va_ma_mau_khong_duoc_bo_trong">Name and color code cannot be empty</string>
     <string name="toast_thanh_toan_zalopay_thanh_cong">ZaloPay payment successful</string>
@@ -680,7 +680,7 @@
     <string name="register_email_required">Please enter your email</string>
     <string name="register_email_invalid">Invalid email address</string>
     <string name="register_phone_required">Please enter your phone number</string>
-    <string name="register_phone_digits">Phone number must be 10-11 digits</string>
+    <string name="register_phone_digits">Phone number must be exactly 10 digits</string>
     <string name="register_password_required">Please enter a password</string>
     <string name="register_password_min">Password must be at least 6 characters</string>
     <string name="register_confirm_required">Please confirm your password</string>

@@ -259,12 +259,13 @@ public class ProductFormManagementActivity extends AppCompatActivity {
     private void submitProduct() {
         String name = nameInput.getText().toString().trim();
         String description = descriptionInput.getText().toString().trim();
-        String stock = stockInput.getText().toString().trim();
-        String price = priceInput.getText().toString().replaceAll("[^0-9]", "");
+        String rawStock = stockInput.getText().toString().trim();
+        String rawPrice = priceInput.getText().toString().trim();
         boolean editMode = productId != null && !productId.isBlank();
 
         if (name.isEmpty()) {
             nameInput.setError(getString(R.string.enter_product_name));
+            nameInput.requestFocus();
             return;
         }
         if (selectedCategory == null) {
@@ -272,14 +273,53 @@ public class ProductFormManagementActivity extends AppCompatActivity {
             return;
         }
         String categoryId = selectedCategory.get_id();
-        if (stock.isEmpty()) {
+
+        if (rawStock.isEmpty()) {
             stockInput.setError(getString(R.string.enter_stock));
+            stockInput.requestFocus();
             return;
         }
-        if (price.isEmpty() || "0".equals(price)) {
+        int stockVal;
+        try {
+            stockVal = Integer.parseInt(rawStock);
+            if (stockVal < 0) {
+                stockInput.setError("Số lượng tồn kho không được âm");
+                stockInput.requestFocus();
+                return;
+            }
+        } catch (NumberFormatException e) {
+            stockInput.setError("Số lượng tồn kho phải là số hợp lệ");
+            stockInput.requestFocus();
+            return;
+        }
+        String stock = String.valueOf(stockVal);
+
+        if (rawPrice.isEmpty()) {
             priceInput.setError(getString(R.string.price_must_be_positive));
+            priceInput.requestFocus();
             return;
         }
+        if (rawPrice.contains("-")) {
+            priceInput.setError(getString(R.string.price_must_be_positive));
+            priceInput.requestFocus();
+            return;
+        }
+        String cleanPrice = rawPrice.replaceAll("[.,\\s]", "");
+        long priceVal;
+        try {
+            priceVal = Long.parseLong(cleanPrice);
+            if (priceVal <= 0) {
+                priceInput.setError(getString(R.string.price_must_be_positive));
+                priceInput.requestFocus();
+                return;
+            }
+        } catch (NumberFormatException e) {
+            priceInput.setError("Giá bán phải là số hợp lệ");
+            priceInput.requestFocus();
+            return;
+        }
+        String price = String.valueOf(priceVal);
+
         if (!editMode && selectedImageUri == null) {
             Toast.makeText(this, this.getString(R.string.toast_vui_long_chon_hinh_anh_san_pham), Toast.LENGTH_SHORT).show();
             return;
@@ -455,7 +495,8 @@ public class ProductFormManagementActivity extends AppCompatActivity {
         Button customColorPicker = dialogView.findViewById(R.id.btnAdminCustomColorPicker);
         colorNameInput.setFocusable(true);
         colorNameInput.setFocusableInTouchMode(true);
-        hexInput.setFocusable(false);
+        hexInput.setFocusable(true);
+        hexInput.setFocusableInTouchMode(true);
         setColor(preview, editing ? parseColorSafely(color.getHex()) : Color.LTGRAY);
         if (editing) bindColorDialog(color, colorNameInput, hexInput, defaultCheck);
         addColorPalette(colorNameInput, hexInput, preview, dialogView.findViewById(R.id.adminColorPalette));
@@ -530,12 +571,20 @@ public class ProductFormManagementActivity extends AppCompatActivity {
             return;
         }
 
+        // Validate Hex Color Code
+        String hexPattern = "^#?([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$";
+        if (!hex.matches(hexPattern)) {
+            Toast.makeText(this, "Mã màu Hex không hợp lệ (Ví dụ: #FFFFFF hoặc FFF)", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         ProductColor target = editing ? color : new ProductColor();
         if (defaultCheck.isChecked()) {
             for (ProductColor item : productColors) item.setDefault(false);
         }
         target.setName(name);
-        target.setHex(hex.startsWith("#") ? hex : "#" + hex);
+        String formattedHex = hex.startsWith("#") ? hex : "#" + hex;
+        target.setHex(formattedHex.toUpperCase());
         target.setDefault(defaultCheck.isChecked());
         if (!editing) productColors.add(target);
         renderAdminColors();
