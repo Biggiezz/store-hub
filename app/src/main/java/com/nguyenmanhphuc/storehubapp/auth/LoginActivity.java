@@ -1,17 +1,20 @@
 package com.nguyenmanhphuc.storehubapp.auth;
 
-import com.nguyenmanhphuc.storehubapp.utils.LoadingDialogHelper;
-import com.google.android.material.textfield.TextInputLayout;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CancellationSignal;
+import android.util.Log;
 import android.util.Patterns;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.credentials.Credential;
 import androidx.credentials.CredentialManager;
 import androidx.credentials.CredentialManagerCallback;
@@ -20,32 +23,32 @@ import androidx.credentials.GetCredentialRequest;
 import androidx.credentials.GetCredentialResponse;
 import androidx.credentials.exceptions.GetCredentialCancellationException;
 import androidx.credentials.exceptions.GetCredentialException;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.credentials.exceptions.NoCredentialException;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
+import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption;
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.nguyenmanhphuc.storehubapp.BaseActivity;
 import com.nguyenmanhphuc.storehubapp.MainActivity;
 import com.nguyenmanhphuc.storehubapp.R;
 import com.nguyenmanhphuc.storehubapp.admin.HomePageManagementActivity;
 import com.nguyenmanhphuc.storehubapp.model.News;
 import com.nguyenmanhphuc.storehubapp.model.Product;
+import com.nguyenmanhphuc.storehubapp.model.User;
+import com.nguyenmanhphuc.storehubapp.model.request.GoogleLoginRequest;
+import com.nguyenmanhphuc.storehubapp.model.request.LoginRequest;
 import com.nguyenmanhphuc.storehubapp.model.response.LoginResponse;
 import com.nguyenmanhphuc.storehubapp.model.response.Response;
-import com.nguyenmanhphuc.storehubapp.model.request.LoginRequest;
-import com.nguyenmanhphuc.storehubapp.model.request.GoogleLoginRequest;
-import com.nguyenmanhphuc.storehubapp.model.User;
 import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
+import com.nguyenmanhphuc.storehubapp.utils.LoadingDialogHelper;
 import com.nguyenmanhphuc.storehubapp.utils.SharedPreferencesManager;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption;
-import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 
 import java.util.ArrayList;
 
@@ -110,20 +113,34 @@ public class LoginActivity extends BaseActivity {
 
         if (edtEmail != null) {
             edtEmail.addTextChangedListener(new android.text.TextWatcher() {
-                @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-                @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
                     if (tilEmail != null) tilEmail.setError(null);
                 }
-                @Override public void afterTextChanged(android.text.Editable s) {}
+
+                @Override
+                public void afterTextChanged(android.text.Editable s) {
+                }
             });
         }
         if (edtPassword != null) {
             edtPassword.addTextChangedListener(new android.text.TextWatcher() {
-                @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-                @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
                     if (tilPassword != null) tilPassword.setError(null);
                 }
-                @Override public void afterTextChanged(android.text.Editable s) {}
+
+                @Override
+                public void afterTextChanged(android.text.Editable s) {
+                }
             });
         }
     }
@@ -135,9 +152,17 @@ public class LoginActivity extends BaseActivity {
             return;
         }
 
-        GetSignInWithGoogleOption googleOption = new GetSignInWithGoogleOption.Builder(clientId).build();
+        GetGoogleIdOption googleIdOption = new GetGoogleIdOption.Builder()
+                .setFilterByAuthorizedAccounts(false)
+                .setServerClientId(clientId)
+                .setAutoSelectEnabled(false)
+                .build();
+
+        GetSignInWithGoogleOption signInWithGoogleOption = new GetSignInWithGoogleOption.Builder(clientId).build();
+
         GetCredentialRequest request = new GetCredentialRequest.Builder()
-                .addCredentialOption(googleOption)
+                .addCredentialOption(googleIdOption)
+                .addCredentialOption(signInWithGoogleOption)
                 .build();
 
         credentialManager.getCredentialAsync(this, request, new CancellationSignal(), ContextCompat.getMainExecutor(this),
@@ -149,10 +174,17 @@ public class LoginActivity extends BaseActivity {
 
                     @Override
                     public void onError(@NonNull GetCredentialException e) {
-                        int message = e instanceof GetCredentialCancellationException
-                                ? R.string.google_login_cancelled
-                                : R.string.google_login_failed;
-                        Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
+                        Log.e("LoginActivity", "Google Auth Error: " + e.getClass().getName());
+
+                        if (e instanceof NoCredentialException) {
+                            // Thông báo cho người dùng rằng không tìm thấy tài khoản Google nào trên máy
+                            Toast.makeText(LoginActivity.this, "Không tìm thấy tài khoản Google trên thiết bị. Vui lòng kiểm tra cài đặt.", Toast.LENGTH_LONG).show();
+                        } else if (e instanceof GetCredentialCancellationException) {
+                            // Người dùng nhấn back hoặc click ra ngoài để hủy
+                            Log.d("LoginActivity", "User cancelled the sign-in.");
+                        } else {
+                            Toast.makeText(LoginActivity.this, "Lỗi: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
                     }
                 }
         );
