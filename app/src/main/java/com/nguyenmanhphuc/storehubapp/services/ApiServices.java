@@ -118,7 +118,10 @@ public interface ApiServices {
     );
 
     @POST("api/productsRouter/reply-review")
-    Call<Response<Product>> replyReview(@Body ReplyReviewRequest request);
+    Call<Response<Product>> replyReview(
+            @Header("Authorization") String token,
+            @Body ReplyReviewRequest request
+    );
 
     @POST("api/oderRouter/create-order")
     Call<Response<Order>> createOrder(

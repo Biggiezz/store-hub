@@ -224,8 +224,20 @@ public class AddUserActivity extends AppCompatActivity {
             return;
         }
 
+        if (!phone.matches("^[0-9]{10}$")) {
+            etPhone.setError(getString(R.string.register_phone_digits));
+            etPhone.requestFocus();
+            return;
+        }
+
         if (TextUtils.isEmpty(email)) {
             etEmail.setError(getString(R.string.enter_email_required));
+            etEmail.requestFocus();
+            return;
+        }
+
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            etEmail.setError(getString(R.string.register_email_invalid));
             etEmail.requestFocus();
             return;
         }
@@ -235,10 +247,17 @@ public class AddUserActivity extends AppCompatActivity {
             return;
         }
 
-        if (userToEdit == null && TextUtils.isEmpty(password)) {
-            etPassword.setError(getString(R.string.register_password_required));
-            etPassword.requestFocus();
-            return;
+        if (userToEdit == null) {
+            if (TextUtils.isEmpty(password)) {
+                etPassword.setError(getString(R.string.register_password_required));
+                etPassword.requestFocus();
+                return;
+            }
+            if (password.length() < 8 || !password.matches(".*[a-zA-Z].*") || !password.matches(".*\\d.*")) {
+                etPassword.setError(getString(R.string.password_new_validation));
+                etPassword.requestFocus();
+                return;
+            }
         }
 
         User newUser = new User(

@@ -546,7 +546,7 @@
     <string name="toast_mat_khau_hien_tai_khong_chinh_xac">Mật khẩu hiện tại không chính xác</string>
     <string name="toast_mat_khau_moi_phai_toi_thieu_8_ky_tu_bao_">Mật khẩu mới phải tối thiểu 8 ký tự, bao gồm cả chữ cái và số</string>
     <string name="toast_mat_khau_xac_nhan_khong_khop">Mật khẩu xác nhận không khớp</string>
-    <string name="toast_so_dien_thoai_phai_tu_10_11_chu_so">Số điện thoại phải từ 10-11 chữ số</string>
+    <string name="toast_so_dien_thoai_phai_tu_10_11_chu_so">Số điện thoại phải đúng 10 chữ số</string>
     <string name="toast_tao_bai_viet_moi_thanh_cong">Tạo bài viết mới thành công!</string>
     <string name="toast_ten_va_ma_mau_khong_duoc_bo_trong">Tên và mã màu không được bỏ trống</string>
     <string name="toast_thanh_toan_zalopay_thanh_cong">Thanh toán ZaloPay thành công</string>
@@ -683,7 +683,7 @@
     <string name="register_email_required">Vui lòng nhập Email</string>
     <string name="register_email_invalid">Email không hợp lệ</string>
     <string name="register_phone_required">Vui lòng nhập số điện thoại</string>
-    <string name="register_phone_digits">Số điện thoại phải từ 10-11 chữ số</string>
+    <string name="register_phone_digits">Số điện thoại phải đúng 10 chữ số</string>
     <string name="register_password_required">Vui lòng nhập mật khẩu</string>
     <string name="register_password_min">Mật khẩu phải có ít nhất 6 ký tự</string>
     <string name="register_confirm_required">Vui lòng xác nhận mật khẩu</string>

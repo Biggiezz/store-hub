@@ -99,7 +99,8 @@ public class ReplyReviewActivity extends AppCompatActivity {
                 return;
             }
 
-            new HttpResquest().callAPI().replyReview(new ReplyReviewRequest(productId, review.getId(), replyText))
+            String token = HttpResquest.authorizationHeader(this);
+            new HttpResquest().callAPI().replyReview(token, new ReplyReviewRequest(productId, review.getId(), replyText))
                     .enqueue(new Callback<Response<Product>>() {
                         @Override
                         public void onResponse(Call<Response<Product>> call, retrofit2.Response<Response<Product>> response) {

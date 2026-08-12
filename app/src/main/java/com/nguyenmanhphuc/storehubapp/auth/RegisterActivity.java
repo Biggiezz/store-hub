@@ -201,7 +201,7 @@ public class RegisterActivity extends BaseActivity {
                 if (firstErrorView == null) firstErrorView = tilPhone;
             }
             hasError = true;
-        } else if (!phone.matches("^[0-9]{10,11}$")) {
+        } else if (!phone.matches("^[0-9]{10}$")) {
             if (tilPhone != null) {
                 tilPhone.setError(getString(R.string.register_phone_digits));
                 if (firstErrorView == null) firstErrorView = tilPhone;
