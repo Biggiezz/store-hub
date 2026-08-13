@@ -25,6 +25,7 @@ import com.nguyenmanhphuc.storehubapp.admin.adapter.AdminReviewAdapter;
 import com.nguyenmanhphuc.storehubapp.admin.adapter.AdminReviewAdapter.ReviewWithProduct;
 import com.nguyenmanhphuc.storehubapp.model.Product;
 import com.nguyenmanhphuc.storehubapp.model.ProductReview;
+import com.nguyenmanhphuc.storehubapp.model.Pagination;
 import com.nguyenmanhphuc.storehubapp.model.response.Response;
 import com.nguyenmanhphuc.storehubapp.services.ApiServices;
 import com.nguyenmanhphuc.storehubapp.services.HttpResquest;
@@ -50,6 +51,12 @@ public class ManagementReviewsActivity extends AppCompatActivity {
     private ApiServices apiServices;
 
     private SwipeRefreshLayout swipeRefreshLayout;
+    private static final int PAGE_SIZE = 10;
+    private int currentPage = 1;
+    private int totalPages = 1;
+    private boolean isLoading;
+    private boolean resumedOnce;
+    private Call<Response<ArrayList<Product>>> reviewsCall;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +104,18 @@ public class ManagementReviewsActivity extends AppCompatActivity {
             startActivity(intent);
         });
         rvReviews.setAdapter(adapter);
+        rvReviews.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy <= 0 || isLoading || currentPage >= totalPages) return;
+                RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+                if (manager instanceof LinearLayoutManager
+                        && ((LinearLayoutManager) manager).findLastVisibleItemPosition() >= adapter.getItemCount() - 3) {
+                    loadReviewsPage(currentPage + 1, true);
+                }
+            }
+        });
     }
 
     private void setupListeners() {
@@ -149,22 +168,45 @@ public class ManagementReviewsActivity extends AppCompatActivity {
     }
 
     private void loadReviews() {
+        if (reviewsCall != null) reviewsCall.cancel();
+        isLoading = false;
+        currentPage = 1;
+        totalPages = 1;
+        loadReviewsPage(1, false);
+    }
+
+    private void loadReviewsPage(int page, boolean append) {
+        if (isLoading) return;
+        isLoading = true;
         boolean isSwipeRefreshing = swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing();
-        if (!isSwipeRefreshing) {
+        if (!append && !isSwipeRefreshing) {
             if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
         }
-        if (rvReviews != null) rvReviews.setVisibility(View.GONE);
-        if (tvEmptyState != null) tvEmptyState.setVisibility(View.GONE);
+        if (!append) {
+            if (rvReviews != null) rvReviews.setVisibility(View.GONE);
+            if (tvEmptyState != null) tvEmptyState.setVisibility(View.GONE);
+        }
 
-        apiServices.getListProduct(1, 1000, "", false, "").enqueue(new Callback<Response<ArrayList<Product>>>() {
+        if (reviewsCall != null) reviewsCall.cancel();
+        reviewsCall = apiServices.getListProduct(page, PAGE_SIZE, "", false, "");
+        reviewsCall.enqueue(new Callback<Response<ArrayList<Product>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
                 if (isFinishing() || isDestroyed()) return;
+                isLoading = false;
                 if (progressBar != null) progressBar.setVisibility(View.GONE);
                 if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
-                    allReviews.clear();
+                    if (!append) allReviews.clear();
                     ArrayList<Product> products = response.body().getData();
+                    Pagination pagination = response.body().getPagination();
+                    if (pagination != null) {
+                        currentPage = pagination.getCurrentPage();
+                        totalPages = Math.max(currentPage, pagination.getTotalPages());
+                    } else {
+                        currentPage = page;
+                        totalPages = products.size() == PAGE_SIZE ? page + 1 : page;
+                    }
                     
                     for (Product product : products) {
                         if (product.getReviews() != null) {
@@ -184,6 +226,8 @@ public class ManagementReviewsActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull Throwable t) {
                 if (isFinishing() || isDestroyed()) return;
+                if (call.isCanceled()) return;
+                isLoading = false;
                 if (progressBar != null) progressBar.setVisibility(View.GONE);
                 if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                 Toast.makeText(ManagementReviewsActivity.this, String.format(getString(R.string.connection_error_prefix), t.getMessage()), Toast.LENGTH_SHORT).show();
@@ -220,15 +264,30 @@ public class ManagementReviewsActivity extends AppCompatActivity {
         if (filteredReviews.isEmpty()) {
             tvEmptyState.setVisibility(View.VISIBLE);
             rvReviews.setVisibility(View.GONE);
+            if (!isLoading && currentPage < totalPages) {
+                loadReviewsPage(currentPage + 1, true);
+            }
         } else {
             tvEmptyState.setVisibility(View.GONE);
             rvReviews.setVisibility(View.VISIBLE);
+            rvReviews.post(() -> {
+                if (!isLoading && currentPage < totalPages && !rvReviews.canScrollVertically(1)) {
+                    loadReviewsPage(currentPage + 1, true);
+                }
+            });
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        loadReviews();
+        if (resumedOnce) loadReviews();
+        resumedOnce = true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (reviewsCall != null) reviewsCall.cancel();
+        super.onDestroy();
     }
 }

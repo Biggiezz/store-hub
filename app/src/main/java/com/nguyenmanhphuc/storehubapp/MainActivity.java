@@ -98,6 +98,7 @@ public class MainActivity extends BaseActivity {
     private boolean isProductsLoaded = false;
     private boolean isCategoriesLoaded = false;
     private boolean isNewsLoaded = false;
+    private Call<Response<ArrayList<Product>>> featuredProductsCall;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,10 +120,8 @@ public class MainActivity extends BaseActivity {
             allProductsList = preloadedProducts;
             preloadedProducts = null;
             isProductsLoaded = true;
-            fetchCategories();
-        } else {
-            fetchProducts();
         }
+        fetchCategories();
 
         if (preloadedNews != null) {
             newsAdapter.updateData(preloadedNews);
@@ -197,7 +196,6 @@ public class MainActivity extends BaseActivity {
         isCategoriesLoaded = false;
         isNewsLoaded = false;
         fetchCategories();
-        fetchProducts();
         fetchNews();
     }
 
@@ -276,7 +274,6 @@ public class MainActivity extends BaseActivity {
                 }
             }
         });
-        fetchCategories();
     }
 
     @Override
@@ -422,9 +419,10 @@ public class MainActivity extends BaseActivity {
                 if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     categoriesList = response.body().getData();
                     if (!categoriesList.isEmpty()) {
-                        activeCategory = categoriesList.get(0).get_id();
+                        activeCategory = findDefaultCategoryId(categoriesList);
                     }
                     renderCategoryButtons(categoriesList);
+                    fetchProducts();
                 } else {
                     useFallbackCategories();
                 }
@@ -450,6 +448,7 @@ public class MainActivity extends BaseActivity {
         );
         activeCategory = "2"; // Máy tính
         renderCategoryButtons(categoriesList);
+        fetchProducts();
     }
 
     private void renderCategoryButtons(List<Category> categories) {
@@ -470,7 +469,16 @@ public class MainActivity extends BaseActivity {
             layoutCategories.addView(btn);
             dynamicCategoryButtons.add(btn);
         }
-        filterProductsByCategory(activeCategory);
+    }
+
+    private String findDefaultCategoryId(List<Category> categories) {
+        String computerLabel = getString(R.string.category_computers);
+        for (Category category : categories) {
+            if (computerLabel.equalsIgnoreCase(getLocalizedCategoryName(category.getName()))) {
+                return category.get_id();
+            }
+        }
+        return categories.get(0).get_id();
     }
 
     private String getLocalizedCategoryName(String rawName) {
@@ -498,7 +506,7 @@ public class MainActivity extends BaseActivity {
             btn.setSelected(isActive);
         }
 
-        filterProductsByCategory(activeCategory);
+        fetchProducts();
     }
 
     private void filterProductsByCategory(String categoryId) {
@@ -520,18 +528,17 @@ public class MainActivity extends BaseActivity {
 
     private void fetchProducts() {
         HttpResquest httpResquest = new HttpResquest();
-        httpResquest.callAPI().getListProduct(1, 50, "", false, "").enqueue(new Callback<Response<ArrayList<Product>>>() {
+        if (featuredProductsCall != null) featuredProductsCall.cancel();
+        featuredProductsCall = httpResquest.callAPI().getListProduct(1, FEATURED_PRODUCT_LIMIT, activeCategory, false, "");
+        featuredProductsCall.enqueue(new Callback<Response<ArrayList<Product>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
+                if (call.isCanceled()) return;
                 if (response.isSuccessful() && response.body() != null) {
                     Response<ArrayList<Product>> apiResponse = response.body();
                     if (apiResponse.getCode() == 200 && apiResponse.getData() != null) {
                         allProductsList = apiResponse.getData();
-                        if (categoriesList.isEmpty()) {
-                            fetchCategories();
-                        } else {
-                            filterProductsByCategory(activeCategory);
-                        }
+                        filterProductsByCategory(activeCategory);
                     } else {
                         Log.e("MainActivity", "Server response error: " + apiResponse.getMessage());
                     }
@@ -544,6 +551,7 @@ public class MainActivity extends BaseActivity {
 
             @Override
             public void onFailure(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull Throwable t) {
+                if (call.isCanceled()) return;
                 Log.e("MainActivity", "Error fetching products", t);
                 isProductsLoaded = true;
                 checkLoadingComplete();

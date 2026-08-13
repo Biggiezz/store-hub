@@ -36,6 +36,7 @@ public class PostManagementFragment extends Fragment implements PostManagementAd
     private FloatingActionButton fabAdd;
     private ApiServices apiServices;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private boolean resumedOnce;
 
     @Nullable
     @Override
@@ -122,6 +123,7 @@ public class PostManagementFragment extends Fragment implements PostManagementAd
     @Override
     public void onResume() {
         super.onResume();
-        loadNews();
+        if (resumedOnce) loadNews();
+        resumedOnce = true;
     }
 }

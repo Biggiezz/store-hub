@@ -77,6 +77,7 @@ public class OderFragment extends Fragment {
     private static final long ORDERS_TTL_MS = 60 * 1000L; // 1 phút
     private static final String CACHE_ORDERS = "user_orders";
     private static final String CACHE_CART   = "user_cart";
+    private boolean resumedOnce;
 
     @Nullable
     @Override
@@ -153,7 +154,8 @@ public class OderFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        loadOrdersAndCart();
+        if (resumedOnce) loadOrdersAndCart();
+        resumedOnce = true;
     }
 
     private void loadOrdersAndCart() {

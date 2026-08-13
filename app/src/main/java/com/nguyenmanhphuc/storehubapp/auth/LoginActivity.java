@@ -349,26 +349,8 @@ public class LoginActivity extends BaseActivity {
         preloadedProducts = null;
         preloadedNews = null;
 
-        // Tải danh sách sản phẩm (50 sản phẩm để phục vụ lọc danh mục)
-        httpResquest.callAPI().getListProduct(1, 50, "", false, "").enqueue(new Callback<Response<ArrayList<Product>>>() {
-            @Override
-            public void onResponse(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull retrofit2.Response<Response<ArrayList<Product>>> response) {
-                isProductsCallDone = true;
-                if (response.isSuccessful() && response.body() != null) {
-                    Response<ArrayList<Product>> apiResponse = response.body();
-                    if (apiResponse.getCode() == 200) {
-                        preloadedProducts = apiResponse.getData();
-                    }
-                }
-                preloadProductImages(loadingDialog);
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<Response<ArrayList<Product>>> call, @NonNull Throwable t) {
-                isProductsCallDone = true;
-                checkPreloadComplete(loadingDialog);
-            }
-        });
+        // Sản phẩm nổi bật phụ thuộc danh mục mặc định; MainActivity sẽ tải đúng danh mục đó.
+        isProductsCallDone = true;
 
         // Tải danh sách tin tức
         httpResquest.callAPI().getListNews(1, 5, "published").enqueue(new Callback<Response<ArrayList<News>>>() {

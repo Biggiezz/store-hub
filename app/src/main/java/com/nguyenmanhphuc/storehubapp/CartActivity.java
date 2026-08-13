@@ -63,6 +63,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
     /** TTL riêng cho giỏ hàng: 2 phút */
     private static final long CART_TTL_MS = 2 * 60 * 1000L;
     private static final String CACHE_KEY = "user_cart";
+    private boolean resumedOnce;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +99,10 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
     @Override
     protected void onResume() {
         super.onResume();
+        if (!resumedOnce) {
+            resumedOnce = true;
+            return;
+        }
         loadUserInfo();
 
         // Neu cache bi invalidate (vi du: vua them SP vao gio tu ProductDetail)

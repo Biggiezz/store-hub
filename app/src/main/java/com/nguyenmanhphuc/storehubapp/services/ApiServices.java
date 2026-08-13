@@ -136,7 +136,9 @@ public interface ApiServices {
 
     @GET("api/oderRouter/admin/orders")
     Call<Response<ArrayList<Order>>> getAdminOrders(
-            @Header("Authorization") String token
+            @Header("Authorization") String token,
+            @Query("page") int page,
+            @Query("limit") int limit
     );
 
     @GET("api/oderRouter/admin/orders/{id}")
