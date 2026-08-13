@@ -80,6 +80,8 @@ public class ProductsFragment extends Fragment {
     private Call<Response<ArrayList<Product>>> currentCall;
     private int loadGeneration;
     private static final String CACHE_KEY = "user_products";
+    private static final String CACHE_PAGE_KEY = "user_products_current_page";
+    private static final String CACHE_TOTAL_PAGES_KEY = "user_products_total_pages";
 
     @Nullable
     @Override
@@ -103,6 +105,10 @@ public class ProductsFragment extends Fragment {
             allProducts.clear();
             allProducts.addAll(cached);
             productAdapter.updateData(allProducts);
+            Integer cachedPage = DataCache.get().get(CACHE_PAGE_KEY, Integer.class);
+            Integer cachedTotalPages = DataCache.get().get(CACHE_TOTAL_PAGES_KEY, Integer.class);
+            currentPage = cachedPage == null ? Math.max(1, (cached.size() + LIMIT - 1) / LIMIT) : cachedPage;
+            totalPages = cachedTotalPages == null ? currentPage + 1 : Math.max(currentPage, cachedTotalPages);
             if (progressBar != null) progressBar.setVisibility(View.GONE);
             if (rvProducts != null) rvProducts.setVisibility(View.VISIBLE);
         } else {
@@ -289,11 +295,6 @@ public class ProductsFragment extends Fragment {
         }
         allProducts.addAll(products);
 
-        // Chỉ cache trang đầu (kết quả mặc định, không search, không filter)
-        if (currentPage == 1 && currentSearchKeyword.isEmpty() && currentCategory.isEmpty() && currentSort.isEmpty()) {
-            DataCache.get().put(CACHE_KEY, new ArrayList<>(allProducts));
-        }
-
         if (pagination != null) {
             totalPages = Math.max(1, pagination.getTotalPages());
             currentPage = pagination.getCurrentPage();
@@ -303,6 +304,12 @@ public class ProductsFragment extends Fragment {
             }
         }
         isLoading = false;
+
+        if (currentSearchKeyword.isEmpty() && currentCategory.isEmpty() && currentSort.isEmpty()) {
+            DataCache.get().put(CACHE_KEY, new ArrayList<>(allProducts));
+            DataCache.get().put(CACHE_PAGE_KEY, currentPage);
+            DataCache.get().put(CACHE_TOTAL_PAGES_KEY, totalPages);
+        }
 
         productAdapter.updateData(allProducts);
 

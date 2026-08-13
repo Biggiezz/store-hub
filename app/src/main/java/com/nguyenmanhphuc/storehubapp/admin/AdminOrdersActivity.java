@@ -56,6 +56,10 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
     private TextView tvFilterAll, tvFilterPending, tvFilterConfirmed, tvFilterShipping, tvFilterCompleted, tvFilterCancelled, tvFilterDisputed;
     private final ArrayList<Order> allOrders = new ArrayList<>();
     private String selectedStatusFilter = "all";
+    private static final int PAGE_SIZE = 10;
+    private int currentPage = 1;
+    private int totalPages = 1;
+    private boolean isLoading;
 
 
     @Override
@@ -123,6 +127,18 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
         rvAdminOrders.setLayoutManager(new LinearLayoutManager(this));
         adapter = new AdminOrderAdapter(this, this);
         rvAdminOrders.setAdapter(adapter);
+        rvAdminOrders.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy <= 0 || isLoading || currentPage >= totalPages) return;
+                RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+                if (manager instanceof LinearLayoutManager
+                        && ((LinearLayoutManager) manager).findLastVisibleItemPosition() >= adapter.getItemCount() - 3) {
+                    loadOrdersPage(currentPage + 1, true);
+                }
+            }
+        });
 
         apiService = new HttpResquest().callAPI();
         preferencesManager = new SharedPreferencesManager(this);
@@ -138,25 +154,39 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
     }
 
     private void loadOrders() {
-        setLoading(true);
-        if (ordersCall != null) {
-            ordersCall.cancel();
-        }
+        if (ordersCall != null) ordersCall.cancel();
+        isLoading = false;
+        currentPage = 1;
+        totalPages = 1;
+        loadOrdersPage(1, false);
+    }
 
-        ordersCall = apiService.getAdminOrders(getAuthHeader());
+    private void loadOrdersPage(int page, boolean append) {
+        if (isLoading) return;
+        isLoading = true;
+        if (!append) setLoading(true);
+        if (ordersCall != null) ordersCall.cancel();
+
+        ordersCall = apiService.getAdminOrders(getAuthHeader(), page, PAGE_SIZE);
         ordersCall.enqueue(new Callback<Response<ArrayList<Order>>>() {
             @Override
             public void onResponse(@NonNull Call<Response<ArrayList<Order>>> call, @NonNull retrofit2.Response<Response<ArrayList<Order>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     ArrayList<Order> orderList = response.body().getData();
-                    if (orderList != null && !orderList.isEmpty()) {
-                        fetchLatestUsersAndUpdateOrders(orderList);
+                    if (!append) allOrders.clear();
+                    if (orderList != null) allOrders.addAll(orderList);
+                    if (response.body().getPagination() != null) {
+                        currentPage = response.body().getPagination().getCurrentPage();
+                        totalPages = Math.max(currentPage, response.body().getPagination().getTotalPages());
                     } else {
-                        setLoading(false);
-                        allOrders.clear();
-                        filterAndSearchOrders();
+                        currentPage = page;
+                        totalPages = orderList != null && orderList.size() == PAGE_SIZE ? page + 1 : page;
                     }
+                    isLoading = false;
+                    setLoading(false);
+                    filterAndSearchOrders();
                 } else {
+                    isLoading = false;
                     setLoading(false);
                     Toast.makeText(AdminOrdersActivity.this, AdminOrdersActivity.this.getString(R.string.toast_khong_the_tai_danh_sach_don_hang), Toast.LENGTH_SHORT).show();
                 }
@@ -165,10 +195,11 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
             @Override
             public void onFailure(@NonNull Call<Response<ArrayList<Order>>> call, @NonNull Throwable t) {
                 if (call.isCanceled()) return;
+                isLoading = false;
                 setLoading(false);
                 Log.e("AdminOrdersActivity", "Error loading orders", t);
                 Toast.makeText(AdminOrdersActivity.this, AdminOrdersActivity.this.getString(R.string.toast_loi_ket_noi_may_chu), Toast.LENGTH_SHORT).show();
-                allOrders.clear();
+                if (!append) allOrders.clear();
                 filterAndSearchOrders();
             }
         });
@@ -537,6 +568,15 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
         }
         if (adapter != null) {
             adapter.updateData(filteredList);
+        }
+        if (filteredList.isEmpty() && !isLoading && currentPage < totalPages) {
+            loadOrdersPage(currentPage + 1, true);
+        } else if (rvAdminOrders != null) {
+            rvAdminOrders.post(() -> {
+                if (!isLoading && currentPage < totalPages && !rvAdminOrders.canScrollVertically(1)) {
+                    loadOrdersPage(currentPage + 1, true);
+                }
+            });
         }
     }
 

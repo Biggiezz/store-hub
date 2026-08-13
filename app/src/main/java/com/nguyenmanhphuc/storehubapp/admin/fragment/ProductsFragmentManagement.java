@@ -61,6 +61,8 @@ public class ProductsFragmentManagement extends Fragment {
     private ProgressBar progressBarLoadMore;
     private SwipeRefreshLayout swipeRefreshLayout;
     private static final String CACHE_KEY = "admin_products";
+    private static final String CACHE_PAGE_KEY = "admin_products_current_page";
+    private static final String CACHE_TOTAL_PAGES_KEY = "admin_products_total_pages";
 
     @Nullable
     @Override
@@ -145,6 +147,10 @@ public class ProductsFragmentManagement extends Fragment {
         ArrayList<Product> cached = DataCache.get().get(CACHE_KEY, ArrayList.class);
         if (cached != null && !cached.isEmpty() && allProducts.isEmpty()) {
             allProducts.addAll(cached);
+            Integer cachedPage = DataCache.get().get(CACHE_PAGE_KEY, Integer.class);
+            Integer cachedTotalPages = DataCache.get().get(CACHE_TOTAL_PAGES_KEY, Integer.class);
+            currentPage = cachedPage == null ? Math.max(1, (cached.size() + PAGE_SIZE - 1) / PAGE_SIZE) : cachedPage;
+            totalPages = cachedTotalPages == null ? currentPage + 1 : Math.max(currentPage, cachedTotalPages);
             if (adapter != null) adapter.submitList(new ArrayList<>(allProducts));
             if (progressBar != null) progressBar.setVisibility(View.GONE);
             if (grid != null) grid.setVisibility(View.VISIBLE);
@@ -287,14 +293,16 @@ public class ProductsFragmentManagement extends Fragment {
                         allProducts.addAll(newData);
                         adapter.submitList(new ArrayList<>(allProducts));
                         // Cache kết quả trang 1 mặc định (không search, không filter)
-                        String keyword = searchInput == null ? "" : searchInput.getText().toString().trim();
-                        if (currentPage == 1 && keyword.isEmpty() && selectedCategory.isEmpty()) {
-                            DataCache.get().put(CACHE_KEY, new ArrayList<>(allProducts));
-                        }
                     }
                     Pagination pagination = response.body().getPagination();
                     totalPages = pagination == null ? 1 : Math.max(1, pagination.getTotalPages());
                     currentPage = pagination == null ? 1 : pagination.getCurrentPage();
+                    String currentKeyword = searchInput == null ? "" : searchInput.getText().toString().trim();
+                    if (currentKeyword.isEmpty() && selectedCategory.isEmpty()) {
+                        DataCache.get().put(CACHE_KEY, new ArrayList<>(allProducts));
+                        DataCache.get().put(CACHE_PAGE_KEY, currentPage);
+                        DataCache.get().put(CACHE_TOTAL_PAGES_KEY, totalPages);
+                    }
                 } else {
                     Toast.makeText(requireContext(), requireContext().getString(R.string.toast_khong_the_tai_danh_sach_san_pham), Toast.LENGTH_SHORT).show();
                 }
