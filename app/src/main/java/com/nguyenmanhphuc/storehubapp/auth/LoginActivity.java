@@ -33,6 +33,8 @@ import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 import com.google.android.material.button.MaterialButton;
+
+
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.nguyenmanhphuc.storehubapp.BaseActivity;
@@ -159,17 +161,12 @@ public class LoginActivity extends BaseActivity {
             return;
         }
 
-        GetGoogleIdOption googleIdOption = new GetGoogleIdOption.Builder()
-                .setFilterByAuthorizedAccounts(false)
-                .setServerClientId(clientId)
-                .setAutoSelectEnabled(false)
-                .build();
-
-        GetSignInWithGoogleOption signInWithGoogleOption = new GetSignInWithGoogleOption.Builder(clientId).build();
+        // GetSignInWithGoogleOption mở dialog chọn tài khoản Google trực tiếp,
+        // không yêu cầu SHA-1 phải đăng ký trên Firebase Console.
+        GetSignInWithGoogleOption signInOption = new GetSignInWithGoogleOption.Builder(clientId).build();
 
         GetCredentialRequest request = new GetCredentialRequest.Builder()
-                .addCredentialOption(googleIdOption)
-                .addCredentialOption(signInWithGoogleOption)
+                .addCredentialOption(signInOption)
                 .build();
 
         credentialManager.getCredentialAsync(this, request, new CancellationSignal(), ContextCompat.getMainExecutor(this),
@@ -181,23 +178,21 @@ public class LoginActivity extends BaseActivity {
 
                     @Override
                     public void onError(@NonNull GetCredentialException e) {
-                        Log.e(TAG, "Google credential failed: " + e.getType(), e);
+                        Log.e(TAG, "Google credential failed type: " + e.getType() + " | class: " + e.getClass().getSimpleName() + " | msg: " + e.getMessage(), e);
 
-                        if (e instanceof NoCredentialException) {
-                            Toast.makeText(LoginActivity.this, "Không tìm thấy tài khoản Google trên thiết bị. Vui lòng kiểm tra cài đặt.", Toast.LENGTH_LONG).show();
-                        } else if (e instanceof GetCredentialCancellationException) {
+                        if (e instanceof GetCredentialCancellationException) {
                             Toast.makeText(LoginActivity.this, R.string.google_login_cancelled, Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(LoginActivity.this, R.string.google_login_failed, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, getString(R.string.google_login_failed) + " (" + e.getType() + ")", Toast.LENGTH_LONG).show();
                         }
                     }
                 }
         );
     }
 
+
     private void handleGoogleCredential(Credential credential) {
-        if (!(credential instanceof CustomCredential)
-                || !GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL.equals(credential.getType())) {
+        if (!(credential instanceof CustomCredential)) {
             Toast.makeText(this, R.string.google_login_failed, Toast.LENGTH_SHORT).show();
             return;
         }
@@ -210,6 +205,9 @@ public class LoginActivity extends BaseActivity {
             Toast.makeText(this, R.string.google_login_failed, Toast.LENGTH_SHORT).show();
         }
     }
+
+
+
 
     private void authenticateWithFirebase(String googleIdToken) {
         LoadingDialogHelper loadingDialog = new LoadingDialogHelper(this);

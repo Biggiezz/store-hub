@@ -11,6 +11,7 @@ constraintlayout = "2.1.4"
 okhttp = "4.11.0"
 ucrop = "2.2.8"
 swiperefreshlayout = "1.2.0"
+firebaseAuth = "24.2.0"
 
 [libraries]
 commons-codec = { module = "commons-codec:commons-codec", version.ref = "commonsCodec" }
@@ -24,6 +25,7 @@ constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayo
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 ucrop = { group = "com.github.yalantis", name = "ucrop", version.ref = "ucrop" }
 swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
