@@ -166,7 +166,8 @@ public class ProfileFragment extends Fragment {
             }
 
             if (user.getId() != null && !user.getId().isEmpty()) {
-                new HttpResquest().callAPI().getUserById(user.getId()).enqueue(new Callback<Response<User>>() {
+                String token = HttpResquest.authorizationHeader(requireContext());
+                new HttpResquest().callAPI().getUserById(token, user.getId()).enqueue(new Callback<Response<User>>() {
                     @Override
                     public void onResponse(@NonNull Call<Response<User>> call, @NonNull retrofit2.Response<Response<User>> response) {
                         if (!isAdded()) return;

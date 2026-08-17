@@ -38,6 +38,16 @@
             android:text="@string/tech_news_title"
             android:textColor="@color/dark_green"
             android:textSize="20sp" />
+
+        <ImageView
+            android:id="@+id/btnViewBookmarks"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Bài viết đã lưu"
+            android:padding="4dp"
+            android:src="@drawable/ic_bookmark"
+            app:tint="@color/dark_green" />
     </LinearLayout>
 
     <View

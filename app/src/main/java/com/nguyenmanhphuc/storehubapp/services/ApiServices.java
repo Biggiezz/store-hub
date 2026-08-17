@@ -109,6 +109,7 @@ public interface ApiServices {
     @Multipart
     @POST("api/productsRouter/add-review")
     Call<Response<Product>> addReview(
+            @Header("Authorization") String token,
             @Part("productId") okhttp3.RequestBody productId,
             @Part("customerName") okhttp3.RequestBody customerName,
             @Part("customerImage") okhttp3.RequestBody customerImage,
@@ -178,8 +179,7 @@ public interface ApiServices {
             @Body java.util.Map<String, Object> body
     );
 
-    @POST("api/oderRouter/update-status")
-    Call<Response<Order>> updateOrderStatus(@Body UpdateStatusRequest request);
+
 
     @POST("api/oderRouter/clear-cart")
     Call<Response<Object>> clearCart(@Header("Authorization") String token);
@@ -193,6 +193,9 @@ public interface ApiServices {
     // Lấy chi tiết một bài viết tin tức dựa vào ID
     @GET("api/newsRouter/get-news-by-id/{id}")
     Call<Response<News>> getNewsById(@Path("id") String id);
+
+    @POST("api/newsRouter/like-news/{id}")
+    Call<Response<Integer>> likeNews(@Path("id") String id, @Body Map<String, String> body);
 
     @POST("api/newsRouter/add-news")
     Call<Response<News>> addNews(@Body News news);
@@ -234,9 +237,6 @@ public interface ApiServices {
             @Query("type") String type,
             @Query("search") String search
     );
-
-    @GET("users/get-user-by-id/{id}")
-    Call<Response<User>> getUserById(@Path("id") String id);
 
     @GET("users/get-user-by-id/{id}")
     Call<Response<User>> getUserById(
@@ -306,14 +306,24 @@ public interface ApiServices {
     Call<Response<Void>> setOffline(@Header("Authorization") String authHeader);
 
     @GET("users/admin/dashboard")
-    Call<Response<DashboardData>> getAdminDashboardStats();
+    Call<Response<DashboardData>> getAdminDashboardStats(@Header("Authorization") String token);
 
     @GET("users/admin/revenue-stats")
-    Call<Response<RevenueData>> getRevenueStats(@Query("period") int period);
+    Call<Response<RevenueData>> getRevenueStats(
+            @Header("Authorization") String token,
+            @Query("period") int period
+    );
 
     @GET("users/admin/revenue-stats")
     Call<Response<RevenueData>> getRevenueStatsWithLimit(
+            @Header("Authorization") String token,
             @Query("period") int period,
             @Query("activityLimit") int activityLimit
     );
+
+    @POST("users/forgot-password")
+    Call<Response<Void>> forgotPassword(@Body Map<String, String> body);
+
+    @POST("users/verify-reset-otp")
+    Call<Response<Void>> verifyResetOtp(@Body Map<String, String> body);
 }

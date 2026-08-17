@@ -67,7 +67,7 @@ public class LoginActivity extends BaseActivity {
     private TextInputEditText edtEmail, edtPassword;
     private TextInputLayout tilEmail, tilPassword;
     private MaterialButton btnLogin, btnGoogleLogin;
-    private TextView tvRegisterNow;
+    private TextView tvRegisterNow, tvForgotPassword;
     private SharedPreferencesManager prefManager;
     private CredentialManager credentialManager;
     private FirebaseAuth firebaseAuth;
@@ -103,6 +103,7 @@ public class LoginActivity extends BaseActivity {
         btnLogin = findViewById(R.id.btnLogin);
         btnGoogleLogin = findViewById(R.id.btnGoogleLogin);
         tvRegisterNow = findViewById(R.id.tvRegisterNow);
+        tvForgotPassword = findViewById(R.id.tvForgotPassword);
     }
 
     private void setUpListener() {
@@ -116,6 +117,13 @@ public class LoginActivity extends BaseActivity {
         if (tvRegisterNow != null) {
             tvRegisterNow.setOnClickListener(v -> {
                 Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(intent);
+            });
+        }
+
+        if (tvForgotPassword != null) {
+            tvForgotPassword.setOnClickListener(v -> {
+                Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
                 startActivity(intent);
             });
         }
@@ -182,6 +190,8 @@ public class LoginActivity extends BaseActivity {
 
                         if (e instanceof GetCredentialCancellationException) {
                             Toast.makeText(LoginActivity.this, R.string.google_login_cancelled, Toast.LENGTH_SHORT).show();
+                        } else if (e instanceof NoCredentialException) {
+                            Toast.makeText(LoginActivity.this, R.string.google_login_no_credential, Toast.LENGTH_LONG).show();
                         } else {
                             Toast.makeText(LoginActivity.this, getString(R.string.google_login_failed) + " (" + e.getType() + ")", Toast.LENGTH_LONG).show();
                         }
@@ -275,32 +285,40 @@ public class LoginActivity extends BaseActivity {
         if (tilEmail != null) tilEmail.setError(null);
         if (tilPassword != null) tilPassword.setError(null);
 
+        boolean isValid = true;
+        android.view.View firstFocusView = null;
+
         if (email.isEmpty()) {
             if (tilEmail != null) {
                 tilEmail.setError(getString(R.string.toast_enter_email));
-                tilEmail.requestFocus();
+                firstFocusView = tilEmail;
             } else {
                 Toast.makeText(this, getString(R.string.toast_enter_email), Toast.LENGTH_SHORT).show();
             }
-            return;
-        }
-
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            isValid = false;
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             if (tilEmail != null) {
                 tilEmail.setError(getString(R.string.toast_invalid_email));
-                tilEmail.requestFocus();
+                firstFocusView = tilEmail;
             } else {
                 Toast.makeText(this, getString(R.string.toast_invalid_email), Toast.LENGTH_SHORT).show();
             }
-            return;
+            isValid = false;
         }
 
         if (password.isEmpty()) {
             if (tilPassword != null) {
                 tilPassword.setError(getString(R.string.toast_enter_password));
-                tilPassword.requestFocus();
+                if (firstFocusView == null) firstFocusView = tilPassword;
             } else {
                 Toast.makeText(this, getString(R.string.toast_enter_password), Toast.LENGTH_SHORT).show();
+            }
+            isValid = false;
+        }
+
+        if (!isValid) {
+            if (firstFocusView != null) {
+                firstFocusView.requestFocus();
             }
             return;
         }

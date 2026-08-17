@@ -138,7 +138,8 @@ public class StatsManagerFragment extends Fragment {
         if (layoutStatsContent != null) layoutStatsContent.setVisibility(View.GONE);
 
         HttpResquest request = new HttpResquest();
-        request.callAPI().getRevenueStats(position).enqueue(new Callback<Response<RevenueData>>() {
+        String token = HttpResquest.authorizationHeader(requireContext());
+        request.callAPI().getRevenueStats(token, position).enqueue(new Callback<Response<RevenueData>>() {
             @Override
             public void onResponse(@NonNull Call<Response<RevenueData>> call, @NonNull retrofit2.Response<Response<RevenueData>> response) {
                 if (!isAdded()) return;

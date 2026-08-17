@@ -800,4 +800,6 @@
     <string name="toast_so_luong_khong_la_so_am">Số lượng tồn kho không được âm.</string>
     <string name="toast_ton_kho_phai_la_so">Số lượng tồn kho phải là số hợp lệ.</string>
     <string name="toast_gia_ban_la_so_hop_le">Giá bán phải là số hợp lệ.</string>
+    <string name="google_login_no_credential">Không tìm thấy tài khoản Google nào trên thiết bị.</string>
+    <string name="no_products_found">Không tìm thấy sản phẩm phù hợp</string>
 </resources>

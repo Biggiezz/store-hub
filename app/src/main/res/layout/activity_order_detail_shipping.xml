@@ -344,10 +344,13 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/btnContactSupport"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginTop="24dp"
                 android:background="@drawable/bg_button"
+                android:clickable="true"
+                android:focusable="true"
                 android:fontFamily="@font/shopee_display"
                 android:gravity="center"
                 android:text="@string/contact_support"

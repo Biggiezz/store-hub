@@ -298,7 +298,8 @@ public class AdminHomeFragment extends Fragment {
 
     private void fetchDashboardStats() {
         HttpResquest request = new HttpResquest();
-        request.callAPI().getAdminDashboardStats().enqueue(new Callback<Response<DashboardData>>() {
+        String token = HttpResquest.authorizationHeader(requireContext());
+        request.callAPI().getAdminDashboardStats(token).enqueue(new Callback<Response<DashboardData>>() {
             @Override
             public void onResponse(@NonNull Call<Response<DashboardData>> call, @NonNull retrofit2.Response<Response<DashboardData>> response) {
                 checkRefreshComplete();

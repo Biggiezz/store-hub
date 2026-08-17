@@ -88,6 +88,9 @@
             android:name=".auth.LoginActivity"
             android:exported="false" />
         <activity
+            android:name=".auth.ForgotPasswordActivity"
+            android:exported="false" />
+        <activity
             android:name=".NewsDetailActivity"
             android:exported="false" />
 

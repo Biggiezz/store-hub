@@ -426,7 +426,11 @@ public class AdminOrderDetailActivity extends AppCompatActivity {
             if (normCurrent.equals(normTarget)) return false;
             
             if ("Đã hủy".equals(normTarget)) {
-                return isSuperAdmin && ("Chờ xác nhận".equals(normCurrent) || "Đã xác nhận".equals(normCurrent) || "Khiếu nại".equals(normCurrent));
+                if (isSuperAdmin) {
+                    return "Chờ xác nhận".equals(normCurrent) || "Đã xác nhận".equals(normCurrent) || "Khiếu nại".equals(normCurrent);
+                } else {
+                    return "Khiếu nại".equals(normCurrent);
+                }
             }
             
             if ("Chờ xác nhận".equals(normCurrent) && "Đã xác nhận".equals(normTarget)) return true;

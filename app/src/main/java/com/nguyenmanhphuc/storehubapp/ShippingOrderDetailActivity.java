@@ -3,6 +3,7 @@ package com.nguyenmanhphuc.storehubapp;
 import com.nguyenmanhphuc.storehubapp.R;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -53,7 +54,7 @@ public class ShippingOrderDetailActivity extends BaseActivity {
     private ImageView btnBack;
     private Order order;
     private LinearLayout layoutConfirmed, layoutWarehouse, layoutDelivering, layoutCompleted, layoutStatusHeader, layoutCustomerActions;
-    private View btnCancelOrder, btnConfirmReceipt, btnDisputeOrder;
+    private View btnCancelOrder, btnConfirmReceipt, btnDisputeOrder, btnContactSupport;
     private ImageView ivConfirmed, ivWarehouse, ivDelivering, ivCompleted;
     private RecyclerView rvOrderProducts;
     private OrderProductAdapter adapter;
@@ -108,6 +109,7 @@ public class ShippingOrderDetailActivity extends BaseActivity {
         layoutCustomerActions = findViewById(R.id.layoutCustomerActions);
         btnConfirmReceipt = findViewById(R.id.btnConfirmReceipt);
         btnDisputeOrder = findViewById(R.id.btnDisputeOrder);
+        btnContactSupport = findViewById(R.id.btnContactSupport);
     }
 
     private void setUpListener() {
@@ -126,6 +128,9 @@ public class ShippingOrderDetailActivity extends BaseActivity {
         }
         if (btnDisputeOrder != null) {
             btnDisputeOrder.setOnClickListener(v -> showDisputeDialog());
+        }
+        if (btnContactSupport != null) {
+            btnContactSupport.setOnClickListener(v -> showContactSupportDialog());
         }
     }
 
@@ -215,6 +220,13 @@ public class ShippingOrderDetailActivity extends BaseActivity {
         if (layoutCustomerActions != null) {
             if ("Đã giao hàng".equalsIgnoreCase(status) || "Đang giao hàng".equalsIgnoreCase(status)
                     || (("Đã hoàn thành".equalsIgnoreCase(status) || "completed".equalsIgnoreCase(status) || "done".equalsIgnoreCase(status)) && !order.isCustomerConfirmed())) {
+                if (btnDisputeOrder != null) {
+                    if (order.getDisputedAt() != null && !order.getDisputedAt().isEmpty()) {
+                        btnDisputeOrder.setVisibility(View.GONE);
+                    } else {
+                        btnDisputeOrder.setVisibility(View.VISIBLE);
+                    }
+                }
                 layoutCustomerActions.setVisibility(View.VISIBLE);
             } else {
                 layoutCustomerActions.setVisibility(View.GONE);
@@ -702,6 +714,45 @@ public class ShippingOrderDetailActivity extends BaseActivity {
                         Toast.makeText(ShippingOrderDetailActivity.this, "Lỗi kết nối máy chủ", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private void showContactSupportDialog() {
+        if (order == null) return;
+
+        String[] options = {"Gọi Hotline (1900 1234)", "Gửi Email hỗ trợ"};
+
+        new android.app.AlertDialog.Builder(this)
+                .setTitle("Liên hệ hỗ trợ")
+                .setItems(options, (dialog, which) -> {
+                    if (which == 0) {
+                        Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                        callIntent.setData(android.net.Uri.parse("tel:19001234"));
+                        startActivity(callIntent);
+                    } else if (which == 1) {
+                        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+                        emailIntent.setData(android.net.Uri.parse("mailto:"));
+                        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"support@storehub.com"});
+
+                        String subject = "[StoreHub] Hỗ trợ đơn hàng #" + order.getOrderCode();
+                        String body = "Xin chào StoreHub,\n\nTôi cần hỗ trợ về đơn hàng này:\n" +
+                                "- Mã đơn hàng: " + order.getOrderCode() + " (ID: " + order.getOrderId() + ")\n" +
+                                "- Trạng thái: " + (order.getStatus() != null ? order.getStatus() : "") + "\n" +
+                                "- Số tiền: " + (order.getTotalPrice() + order.getShippingFee()) + " đ\n\n" +
+                                "Vấn đề của tôi là: (Vui lòng điền chi tiết tại đây)\n\n" +
+                                "Xin cảm ơn!";
+
+                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+                        emailIntent.putExtra(Intent.EXTRA_TEXT, body);
+
+                        try {
+                            startActivity(Intent.createChooser(emailIntent, "Gửi Email hỗ trợ qua"));
+                        } catch (android.content.ActivityNotFoundException ex) {
+                            Toast.makeText(this, "Không tìm thấy ứng dụng gửi Email trên thiết bị!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                })
+                .setNegativeButton("Hủy", null)
+                .show();
     }
 
     @Override

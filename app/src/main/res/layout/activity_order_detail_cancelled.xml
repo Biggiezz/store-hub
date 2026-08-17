@@ -166,10 +166,13 @@
                 android:layout_marginTop="16dp" />
 
             <TextView
+                android:id="@+id/btnReorder"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginTop="40dp"
                 android:background="@drawable/bg_button"
+                android:clickable="true"
+                android:focusable="true"
                 android:fontFamily="@font/shopee_display"
                 android:gravity="center"
                 android:text="@string/reorder_products"
@@ -178,10 +181,13 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/btnContactSupport"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginTop="12dp"
                 android:background="@drawable/bg_detail_secondary_button"
+                android:clickable="true"
+                android:focusable="true"
                 android:gravity="center"
                 android:text="@string/contact_support"
                 android:textColor="#434844"

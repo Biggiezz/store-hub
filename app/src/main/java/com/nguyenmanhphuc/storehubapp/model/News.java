@@ -18,6 +18,7 @@ public class News implements Serializable {
     private String author;
     // Ngày giờ tạo bài viết
     private String createdAt;
+    private int likes;
 
     public News() {
     }
@@ -88,5 +89,13 @@ public class News implements Serializable {
 
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public int getLikes() {
+        return likes;
+    }
+
+    public void setLikes(int likes) {
+        this.likes = likes;
     }
 }

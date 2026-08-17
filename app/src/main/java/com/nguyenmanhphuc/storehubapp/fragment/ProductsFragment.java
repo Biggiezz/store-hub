@@ -62,6 +62,7 @@ public class ProductsFragment extends Fragment {
     private MaterialButton btnPrice, btnAZ, btnZA;
     private ImageView btnFilterCategory;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private TextView tvEmptyState;
 
     private final ArrayList<Product> allProducts = new ArrayList<>();
     private final ArrayList<Category> categoriesList = new ArrayList<>();
@@ -110,7 +111,13 @@ public class ProductsFragment extends Fragment {
             currentPage = cachedPage == null ? Math.max(1, (cached.size() + LIMIT - 1) / LIMIT) : cachedPage;
             totalPages = cachedTotalPages == null ? currentPage + 1 : Math.max(currentPage, cachedTotalPages);
             if (progressBar != null) progressBar.setVisibility(View.GONE);
-            if (rvProducts != null) rvProducts.setVisibility(View.VISIBLE);
+            if (allProducts.isEmpty()) {
+                if (rvProducts != null) rvProducts.setVisibility(View.GONE);
+                if (tvEmptyState != null) tvEmptyState.setVisibility(View.VISIBLE);
+            } else {
+                if (rvProducts != null) rvProducts.setVisibility(View.VISIBLE);
+                if (tvEmptyState != null) tvEmptyState.setVisibility(View.GONE);
+            }
         } else {
             loadFirstPage();
         }
@@ -130,6 +137,7 @@ public class ProductsFragment extends Fragment {
         btnZA = view.findViewById(R.id.btnZA);
         btnFilterCategory = view.findViewById(R.id.btnFilterCategory);
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+        tvEmptyState = view.findViewById(R.id.tvEmptyState);
 
         if (swipeRefreshLayout != null) {
             swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.dark_green));
@@ -315,7 +323,15 @@ public class ProductsFragment extends Fragment {
 
         if (progressBar != null) progressBar.setVisibility(View.GONE);
         if (progressBarLoadMore != null) progressBarLoadMore.setVisibility(View.GONE);
-        if (rvProducts != null) rvProducts.setVisibility(View.VISIBLE);
+        
+        if (allProducts.isEmpty()) {
+            if (rvProducts != null) rvProducts.setVisibility(View.GONE);
+            if (tvEmptyState != null) tvEmptyState.setVisibility(View.VISIBLE);
+        } else {
+            if (rvProducts != null) rvProducts.setVisibility(View.VISIBLE);
+            if (tvEmptyState != null) tvEmptyState.setVisibility(View.GONE);
+        }
+        
         if (swipeRefreshLayout != null) {
             swipeRefreshLayout.setRefreshing(false);
         }

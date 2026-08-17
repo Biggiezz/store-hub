@@ -174,7 +174,8 @@ public class WriteReviewActivity extends BaseActivity {
             btnSubmitReview.setEnabled(false);
             btnSubmitReview.setText(getString(R.string.submitting_review));
 
-            apiServices.addReview(productIdBody, customerNameBody, customerImageBody, ratingBody, contentBody, orderIdBody, mediaParts)
+            String token = HttpResquest.authorizationHeader(this);
+            apiServices.addReview(token, productIdBody, customerNameBody, customerImageBody, ratingBody, contentBody, orderIdBody, mediaParts)
                     .enqueue(new Callback<com.nguyenmanhphuc.storehubapp.model.response.Response<Product>>() {
                 @Override
                 public void onResponse(@NonNull Call<com.nguyenmanhphuc.storehubapp.model.response.Response<Product>> call, @NonNull Response<com.nguyenmanhphuc.storehubapp.model.response.Response<Product>> response) {

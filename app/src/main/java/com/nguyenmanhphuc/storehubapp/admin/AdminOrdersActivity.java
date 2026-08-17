@@ -294,6 +294,12 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
         if (s.contains("đang giao hàng") || s.contains("shipping") || s.contains("delivering")) {
             return "Đang giao hàng";
         }
+        if (s.contains("đã giao hàng") || s.contains("delivered")) {
+            return "Đã giao hàng";
+        }
+        if (s.contains("khiếu nại") || s.contains("disputed") || s.contains("dispute") || s.contains("complain")) {
+            return "Khiếu nại";
+        }
         if (s.contains("đã hoàn thành") || s.contains("completed") || s.contains("done")) {
             return "Đã hoàn thành";
         }
@@ -317,7 +323,13 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
         if ("Đang giao hàng".equalsIgnoreCase(status) || "Shipping".equalsIgnoreCase(status)) {
             return getString(R.string.status_shipping);
         }
-        if ("Đã giao hàng".equalsIgnoreCase(status) || "Đã hoàn thành".equalsIgnoreCase(status) || "Completed".equalsIgnoreCase(status)) {
+        if ("Đã giao hàng".equalsIgnoreCase(status) || "Delivered".equalsIgnoreCase(status)) {
+            return "Đã giao hàng";
+        }
+        if ("Khiếu nại".equalsIgnoreCase(status) || "Disputed".equalsIgnoreCase(status)) {
+            return "Khiếu nại";
+        }
+        if ("Đã hoàn thành".equalsIgnoreCase(status) || "Completed".equalsIgnoreCase(status)) {
             return getString(R.string.status_completed);
         }
         if ("Đã hủy".equalsIgnoreCase(status) || "Cancelled".equalsIgnoreCase(status)) {
@@ -331,30 +343,47 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
             "Đã xác nhận",
             "Đã rời kho",
             "Đang giao hàng",
+            "Đã giao hàng",
+            "Khiếu nại",
             "Đã hoàn thành",
             "Đã hủy"
     };
 
     private class StatusAdapter extends android.widget.ArrayAdapter<String> {
         private final int currentStatusIndex;
-        private final int nextValidIndex;
-        private final int cancelIndex;
+        private final String normCurrent;
         private final boolean isSuperAdmin;
 
-        public StatusAdapter(android.content.Context context, String[] objects, int currentStatusIndex, int nextValidIndex, int cancelIndex, boolean isSuperAdmin) {
+        public StatusAdapter(android.content.Context context, String[] objects, int currentStatusIndex, String normCurrent, boolean isSuperAdmin) {
             super(context, android.R.layout.select_dialog_singlechoice, objects);
             this.currentStatusIndex = currentStatusIndex;
-            this.nextValidIndex = nextValidIndex;
-            this.cancelIndex = cancelIndex;
+            this.normCurrent = normCurrent;
             this.isSuperAdmin = isSuperAdmin;
         }
 
         @Override
         public boolean isEnabled(int position) {
-            if (position == cancelIndex) {
-                return isSuperAdmin && (currentStatusIndex == 0 || currentStatusIndex == 1);
+            String targetStatus = getItem(position);
+            String normTarget = normalizeStatus(targetStatus);
+            
+            if (normCurrent.equals(normTarget)) return false;
+            
+            if ("Đã hủy".equals(normTarget)) {
+                if (isSuperAdmin) {
+                    return "Chờ xác nhận".equals(normCurrent) || "Đã xác nhận".equals(normCurrent) || "Khiếu nại".equals(normCurrent);
+                } else {
+                    return "Khiếu nại".equals(normCurrent);
+                }
             }
-            return position == nextValidIndex;
+            
+            if ("Chờ xác nhận".equals(normCurrent) && "Đã xác nhận".equals(normTarget)) return true;
+            if ("Đã xác nhận".equals(normCurrent) && "Đã rời kho".equals(normTarget)) return true;
+            if ("Đã rời kho".equals(normCurrent) && "Đang giao hàng".equals(normTarget)) return true;
+            if ("Đang giao hàng".equals(normCurrent) && ("Đã giao hàng".equals(normTarget) || "Đã hoàn thành".equals(normTarget))) return true;
+            if ("Đã giao hàng".equals(normCurrent) && ("Đã hoàn thành".equals(normTarget) || "Khiếu nại".equals(normTarget))) return true;
+            if ("Khiếu nại".equals(normCurrent) && ("Đang giao hàng".equals(normTarget) || "Đã hoàn thành".equals(normTarget))) return true;
+            
+            return false;
         }
 
         @androidx.annotation.NonNull
@@ -386,9 +415,14 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
         if (order == null || order.getOrderId().isEmpty()) return;
 
         String currentStatus = order.getStatus();
-        
-        int currentStatusIndex = -1;
         String normalized = normalizeStatus(currentStatus);
+        
+        if ("Đã hoàn thành".equals(normalized) || "Đã hủy".equals(normalized)) {
+            Toast.makeText(this, this.getString(R.string.toast_don_hang_da_o_trang_thai_cuoi_cung_khong), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        int currentStatusIndex = -1;
         for (int i = 0; i < allStatuses.length; i++) {
             if (allStatuses[i].equals(normalized)) {
                 currentStatusIndex = i;
@@ -396,24 +430,12 @@ public class AdminOrdersActivity extends AppCompatActivity implements AdminOrder
             }
         }
 
-        int nextValidIndex = -1;
-        if (currentStatusIndex >= 0 && currentStatusIndex < 4) {
-            nextValidIndex = currentStatusIndex + 1;
-        }
-
-        int cancelIndex = 5;
-
-        if (currentStatusIndex == 4 || currentStatusIndex == 5) {
-            Toast.makeText(this, this.getString(R.string.toast_don_hang_da_o_trang_thai_cuoi_cung_khong), Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         User currentUser = new SharedPreferencesManager(this).getUser();
         boolean isSuperAdmin = currentUser != null && currentUser.isSuperAdmin();
 
         final int finalCurrentStatusIndex = currentStatusIndex;
         final int[] selectedIndex = {finalCurrentStatusIndex};
-        StatusAdapter adapter = new StatusAdapter(this, allStatuses, finalCurrentStatusIndex, nextValidIndex, cancelIndex, isSuperAdmin);
+        StatusAdapter adapter = new StatusAdapter(this, allStatuses, finalCurrentStatusIndex, normalized, isSuperAdmin);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(String.format(getString(R.string.choose_new_status_title), order.getOrderCode()));

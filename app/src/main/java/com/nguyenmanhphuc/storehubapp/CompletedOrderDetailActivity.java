@@ -20,10 +20,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.nguyenmanhphuc.storehubapp.adapter.OrderProductAdapter;
 import com.nguyenmanhphuc.storehubapp.model.CartItem;
 import com.nguyenmanhphuc.storehubapp.model.Order;
+import com.nguyenmanhphuc.storehubapp.model.response.Response;
 import com.nguyenmanhphuc.storehubapp.utils.DateTimeUtils;
 
 import java.text.NumberFormat;
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import androidx.annotation.NonNull;
 
 /**
  * Giao diện chi tiết đơn hàng đã hoàn thành kết nối dữ liệu thật.
@@ -34,6 +39,7 @@ public class CompletedOrderDetailActivity extends BaseActivity {
     private OrderProductAdapter adapter;
     private TextView tvSubtotal, tvShippingFee, tvTotal, tvPaymentMethod, tvOrderDetailCode;
     private TextView tvShippingNamePhone, tvShippingAddress, btnReview, tvVoucher, tvStatusText, tvCompletedTime;
+    private TextView btnReorder;
     private Order order;
 
     private final ActivityResultLauncher<Intent> writeReviewLauncher = registerForActivityResult(
@@ -84,6 +90,7 @@ public class CompletedOrderDetailActivity extends BaseActivity {
         tvShippingNamePhone = findViewById(R.id.tvShippingNamePhone);
         tvShippingAddress = findViewById(R.id.tvShippingAddress);
         btnReview = findViewById(R.id.btnReview);
+        btnReorder = findViewById(R.id.btnReorder);
 
         rvOrderProducts = findViewById(R.id.rvOrderProducts);
     }
@@ -114,6 +121,9 @@ public class CompletedOrderDetailActivity extends BaseActivity {
                     writeReviewLauncher.launch(intent);
                 }
             });
+        }
+        if (btnReorder != null) {
+            btnReorder.setOnClickListener(v -> reorderProducts());
         }
     }
 
@@ -231,5 +241,59 @@ public class CompletedOrderDetailActivity extends BaseActivity {
     private String formatPrice(long price) {
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
         return formatter.format(price);
+    }
+
+    private void reorderProducts() {
+        if (order == null || order.getItems() == null || order.getItems().isEmpty()) {
+            return;
+        }
+
+        com.nguyenmanhphuc.storehubapp.utils.LoadingDialogHelper loading = new com.nguyenmanhphuc.storehubapp.utils.LoadingDialogHelper(this);
+        loading.setMessage("Đang thêm sản phẩm vào giỏ...");
+        loading.show();
+
+        String token = com.nguyenmanhphuc.storehubapp.services.HttpResquest.authorizationHeader(this);
+        com.nguyenmanhphuc.storehubapp.services.ApiServices apiServices = new com.nguyenmanhphuc.storehubapp.services.HttpResquest().callAPI();
+
+        addItemsToCart(apiServices, token, order.getItems(), 0, loading);
+    }
+
+    private void addItemsToCart(com.nguyenmanhphuc.storehubapp.services.ApiServices apiServices, String token, java.util.ArrayList<CartItem> items, int index, com.nguyenmanhphuc.storehubapp.utils.LoadingDialogHelper loading) {
+        if (index >= items.size()) {
+            loading.dismiss();
+            Toast.makeText(this, "Đã thêm sản phẩm vào giỏ hàng thành công!", Toast.LENGTH_SHORT).show();
+            com.nguyenmanhphuc.storehubapp.utils.DataCache.get().invalidateExact("user_cart");
+            startActivity(new Intent(this, CartActivity.class));
+            return;
+        }
+
+        CartItem item = items.get(index);
+        com.nguyenmanhphuc.storehubapp.model.request.AddToCartRequest request = new com.nguyenmanhphuc.storehubapp.model.request.AddToCartRequest(
+                item.getProductId(),
+                item.getColorId(),
+                item.getQuantity()
+        );
+
+        apiServices.addToCart(token, request).enqueue(new Callback<Response<Object>>() {
+            @Override
+            public void onResponse(@NonNull Call<Response<Object>> call, @NonNull retrofit2.Response<Response<Object>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getCode() == 200) {
+                    addItemsToCart(apiServices, token, items, index + 1, loading);
+                } else {
+                    loading.dismiss();
+                    String errorMsg = "Không thể thêm sản phẩm '" + item.getProductName() + "' vào giỏ hàng.";
+                    if (response.body() != null && response.body().getMessage() != null) {
+                        errorMsg = response.body().getMessage();
+                    }
+                    Toast.makeText(CompletedOrderDetailActivity.this, errorMsg, Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Response<Object>> call, @NonNull Throwable t) {
+                loading.dismiss();
+                Toast.makeText(CompletedOrderDetailActivity.this, "Lỗi kết nối máy chủ khi thêm '" + item.getProductName() + "'", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }

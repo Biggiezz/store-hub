@@ -34,7 +34,9 @@ public class NewsActivity extends AppCompatActivity {
     private static final int LIMIT = 5;
 
     private RecyclerView rvAllNews;
-    private ImageView btnBackNews;
+    private ImageView btnBackNews, btnViewBookmarks;
+    private boolean showOnlyBookmarks = false;
+    private final ArrayList<News> originalNewsList = new ArrayList<>();
     private NewsAdapter newsAdapter;
     private Call<Response<ArrayList<News>>> currentCall;
     private int loadGeneration = 0;
@@ -69,6 +71,8 @@ public class NewsActivity extends AppCompatActivity {
         // Nếu cache còn hợp lệ → hiện data ngay, không fetch
         ArrayList<News> cached = DataCache.get().get(CACHE_KEY, ArrayList.class);
         if (cached != null && !cached.isEmpty()) {
+            originalNewsList.clear();
+            originalNewsList.addAll(cached);
             newsAdapter.updateData(cached);
             if (progressBarNews != null) progressBarNews.setVisibility(View.GONE);
             if (rvAllNews != null) rvAllNews.setVisibility(View.VISIBLE);
@@ -81,6 +85,7 @@ public class NewsActivity extends AppCompatActivity {
     private void initUi() {
         rvAllNews = findViewById(R.id.rvAllNews);
         btnBackNews = findViewById(R.id.btnBackNews);
+        btnViewBookmarks = findViewById(R.id.btnViewBookmarks);
         progressBarNews = findViewById(R.id.progressBarNews);
         progressBarNewsLoadMore = findViewById(R.id.progressBarNewsLoadMore);
 
@@ -108,6 +113,16 @@ public class NewsActivity extends AppCompatActivity {
     private void setUpListener() {
         if (btnBackNews != null) {
             btnBackNews.setOnClickListener(v -> finish());
+        }
+
+        if (btnViewBookmarks != null) {
+            btnViewBookmarks.setOnClickListener(v -> {
+                showOnlyBookmarks = !showOnlyBookmarks;
+                int activeColor = ContextCompat.getColor(this, R.color.rating_gold);
+                int inactiveColor = ContextCompat.getColor(this, R.color.dark_green);
+                btnViewBookmarks.setColorFilter(showOnlyBookmarks ? activeColor : inactiveColor);
+                filterBookmarks();
+            });
         }
 
 
@@ -173,10 +188,13 @@ public class NewsActivity extends AppCompatActivity {
                         hasReachedEnd = true;
                     }
                     if (page == 1) {
+                        originalNewsList.clear();
+                        originalNewsList.addAll(news);
                         newsAdapter.updateData(news);
                         // Cache trang 1 (danh sách mặc định)
                         DataCache.get().put(CACHE_KEY, new ArrayList<>(news));
                     } else {
+                        originalNewsList.addAll(news);
                         newsAdapter.addData(news);
                     }
                     checkIfNeedMoreData();
@@ -224,6 +242,31 @@ public class NewsActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (showOnlyBookmarks) {
+            filterBookmarks();
+        }
+    }
+
+    private void filterBookmarks() {
+        if (showOnlyBookmarks) {
+            android.content.SharedPreferences prefs = getSharedPreferences("news_prefs", MODE_PRIVATE);
+            ArrayList<News> filtered = new ArrayList<>();
+            for (News n : originalNewsList) {
+                if (prefs.getBoolean("bookmark_" + n.get_id(), false)) {
+                    filtered.add(n);
+                }
+            }
+            newsAdapter.updateData(filtered);
+            if (swipeRefreshLayout != null) swipeRefreshLayout.setEnabled(false);
+        } else {
+            newsAdapter.updateData(originalNewsList);
+            if (swipeRefreshLayout != null) swipeRefreshLayout.setEnabled(true);
+        }
     }
 
     @Override
