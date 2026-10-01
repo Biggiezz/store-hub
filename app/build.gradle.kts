@@ -11,8 +11,8 @@ android {
         applicationId = "com.nguyenmanhphuc.storehubapp"
         minSdk = 29
         targetSdk = 36
-        versionCode = 24
-        versionName = "1.2.0"
+        versionCode = 25
+        versionName = "1.2.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
