@@ -127,7 +127,6 @@
             android:exported="false" />
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/Theme.StoreHub.UCrop" />
 
         <service

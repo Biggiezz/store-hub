@@ -364,7 +364,7 @@
     <!-- Theme dành riêng cho uCrop để không bị dính Status Bar -->
     <style name="Theme.StoreHub.UCrop" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@color/dark_green</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowContentOverlay">@null</item>
         <!-- Can thiệp vào chiều cao và khoảng cách của Toolbar -->

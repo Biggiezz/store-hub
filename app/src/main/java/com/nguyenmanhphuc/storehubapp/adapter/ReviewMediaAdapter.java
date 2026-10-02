@@ -3,6 +3,7 @@ package com.nguyenmanhphuc.storehubapp.adapter;
 import android.app.Dialog;
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,9 @@ import android.widget.VideoView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -133,15 +137,23 @@ public class ReviewMediaAdapter extends RecyclerView.Adapter<ReviewMediaAdapter.
         if (window != null) {
             window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
             window.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.BLACK));
-            window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            
-            // Ép buộc vẽ tràn viền xuyên qua khu vực Notch (tai thỏ)
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
-                window.getAttributes().layoutInDisplayCutoutMode = 
+
+            // Edge-to-edge: ẩn system bars bằng WindowInsetsController thay vì FLAG_FULLSCREEN (deprecated)
+           WindowCompat.setDecorFitsSystemWindows(window, false);
+           WindowInsetsControllerCompat controller =
+                    WindowCompat.getInsetsController(window, window.getDecorView());
+            controller.hide(WindowInsetsCompat.Type.systemBars());
+            controller.setSystemBarsBehavior(
+                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+
+            // Vẽ tràn viền xuyên qua khu vực Notch
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                window.getAttributes().layoutInDisplayCutoutMode =
+                    WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS;
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                window.getAttributes().layoutInDisplayCutoutMode =
                     WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
             }
-            // Tắt tự động căn lề hệ thống để phủ kín toàn bộ màn hình
-            androidx.core.view.WindowCompat.setDecorFitsSystemWindows(window, false);
         }
     }
 

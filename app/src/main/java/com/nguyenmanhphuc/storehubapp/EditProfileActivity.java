@@ -168,7 +168,7 @@ public class EditProfileActivity extends BaseActivity {
         options.setCompressionFormat(android.graphics.Bitmap.CompressFormat.JPEG);
         options.setCompressionQuality(90);
         options.setToolbarColor(ContextCompat.getColor(this, R.color.dark_green));
-        options.setStatusBarColor(ContextCompat.getColor(this, R.color.dark_green));
+        // setStatusBarColor removed — deprecated in Android 15 edge-to-edge; color set via UCrop theme
         options.setToolbarWidgetColor(ContextCompat.getColor(this, R.color.white));
 
         Uri destinationUri = Uri.fromFile(new File(getCacheDir(), destinationFileName));
