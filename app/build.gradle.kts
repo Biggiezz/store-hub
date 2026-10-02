@@ -11,8 +11,8 @@ android {
         applicationId = "com.nguyenmanhphuc.storehubapp"
         minSdk = 29
         targetSdk = 36
-        versionCode = 26
-        versionName = "1.2.2"
+        versionCode = 27
+        versionName = "1.2.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -31,6 +31,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            ndk {
+                debugSymbolLevel = "SYMBOL_TABLE"
+            }
         }
     }
     compileOptions {
