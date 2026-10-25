@@ -450,6 +450,12 @@ public class ProductDetailActivity extends BaseActivity {
             public void onResponse(@NonNull Call<Response<Object>> call, @NonNull retrofit2.Response<Response<Object>> response) {
                 setCartLoading(false);
                 if (!response.isSuccessful() || response.body() == null) {
+                    if (response.code() == 401 || response.code() == 403) {
+                        pref.logout();
+                        Toast.makeText(ProductDetailActivity.this, "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(ProductDetailActivity.this, LoginActivity.class));
+                        return;
+                    }
                     Toast.makeText(ProductDetailActivity.this, getString(R.string.add_to_cart_failed_toast), Toast.LENGTH_SHORT).show();
                     return;
                 }

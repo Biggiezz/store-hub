@@ -286,10 +286,20 @@ public class AddUserActivity extends AppCompatActivity {
                         Toast.makeText(AddUserActivity.this, String.format(getString(R.string.add_user_success_format), fullName), Toast.LENGTH_LONG).show();
                         setResult(RESULT_OK);
                         finish();
-                    } else if (response.body() != null && response.body().getMessage() != null) {
-                        Toast.makeText(AddUserActivity.this, response.body().getMessage(), Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(AddUserActivity.this, AddUserActivity.this.getString(R.string.toast_loi_khi_them_nguoi_dung), Toast.LENGTH_SHORT).show();
+                        String errorMsg = AddUserActivity.this.getString(R.string.toast_loi_khi_them_nguoi_dung);
+                        try {
+                            if (response.errorBody() != null) {
+                                String errStr = response.errorBody().string();
+                                com.google.gson.JsonObject errObj = new Gson().fromJson(errStr, com.google.gson.JsonObject.class);
+                                if (errObj != null && errObj.has("message")) {
+                                    errorMsg = errObj.get("message").getAsString();
+                                }
+                            } else if (response.body() != null && response.body().getMessage() != null) {
+                                errorMsg = response.body().getMessage();
+                            }
+                        } catch (Exception ignored) {}
+                        Toast.makeText(AddUserActivity.this, errorMsg, Toast.LENGTH_LONG).show();
                     }
                 }
 
@@ -307,10 +317,20 @@ public class AddUserActivity extends AppCompatActivity {
                         Toast.makeText(AddUserActivity.this, String.format(getString(R.string.add_user_success_format), fullName), Toast.LENGTH_LONG).show();
                         setResult(RESULT_OK);
                         finish();
-                    } else if (response.body() != null && response.body().getMessage() != null) {
-                        Toast.makeText(AddUserActivity.this, response.body().getMessage(), Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(AddUserActivity.this, AddUserActivity.this.getString(R.string.toast_loi_khi_them_nguoi_dung), Toast.LENGTH_SHORT).show();
+                        String errorMsg = AddUserActivity.this.getString(R.string.toast_loi_khi_them_nguoi_dung);
+                        try {
+                            if (response.errorBody() != null) {
+                                String errStr = response.errorBody().string();
+                                com.google.gson.JsonObject errObj = new Gson().fromJson(errStr, com.google.gson.JsonObject.class);
+                                if (errObj != null && errObj.has("message")) {
+                                    errorMsg = errObj.get("message").getAsString();
+                                }
+                            } else if (response.body() != null && response.body().getMessage() != null) {
+                                errorMsg = response.body().getMessage();
+                            }
+                        } catch (Exception ignored) {}
+                        Toast.makeText(AddUserActivity.this, errorMsg, Toast.LENGTH_LONG).show();
                     }
                 }
 
